@@ -1,0 +1,57 @@
+#### get the list of employe
+
+GET http://localhost:3001/api/login HTTP/1.1
+Content-Type: application/json
+
+{
+}
+
+####
+
+GET http://localhost:3001/api/employee HTTP/1.1
+Content-Type: application/json
+
+{
+}
+
+#### get the list of counters
+GET http://localhost:3001/api/counter HTTP/1.1
+Content-Type: application/json
+
+{
+}
+
+#### get the list of services availabl
+GET http://localhost:3001/api/services HTTP/1.1
+Content-Type: application/json
+
+{
+}
+
+####
+POST http://localhost:3001/api/service HTTP/1.1
+Content-Type: application/json
+
+{
+    "type":"Consulting2",
+    "time":1800,
+    "counterList": [1,2,3,4]
+}
+
+
+#####
+POST http://localhost:3001/api/ticket HTTP/1.1
+Content-Type: application/json
+
+{
+    "service":9
+}
+
+
+
+####
+DELETE http://localhost:3001/api/services/9/delete HTTP/1.1
+Content-Type: application/json
+
+{
+}
