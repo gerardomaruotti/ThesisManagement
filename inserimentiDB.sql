@@ -125,4 +125,26 @@ Scrivere gli inserimenti nel DB e caricarli su github. Dividere ogni blocco una 
 **/
 
 
-INSERT INTO "DEGREE" VALUES("LM53", "Laurea magistrale in Ingegneria Dei Materiali")
+INSERT INTO "DEGREE" VALUES("LM-53", "Laurea magistrale in Ingegneria Dei Materiali");
+INSERT INTO "DEGREE" VALUES("LM-29", "Laurea magistrale in Ingegneria Elettronica");
+INSERT INTO "DEGREE" VALUES("LM-31", "Laurea magistrale in Ingegneria Gestionale");
+INSERT INTO "DEGREE" VALUES("LM-33", "Laurea magistrale in Ingegneria Meccanica");
+INSERT INTO "DEGREE" VALUES("LM-25", "Laurea magistrale in Mechatronic Engineering");
+INSERT INTO "DEGREE" VALUES("LM-32", "Laurea magistrale in Ingegneria Infortmatica");
+INSERT INTO "DEGREE" VALUES("LM-20", "Laurea magistrale in Ingegneria Aerospaziale");
+INSERT INTO "DEGREE" VALUES("LM-21", "Laurea magistrale in Ingegneria Biomedica");
+
+INSERT INTO "GROUP" VALUES("GR-16", "Software Engineering Group");
+INSERT INTO "GROUP" VALUES("GR-05", "Electronic Cad and Reliabilty Check");
+INSERT INTO "GROUP" VALUES("GR-13", "Metodi Formali");
+INSERT INTO "GROUP" VALUES("GR-04", "Database and Data Mining Group");
+INSERT INTO "GROUP" VALUES("GR-10", "Intelligent and Interactive System Group");
+
+
+INSERT INTO "DEPARTMENT" VALUES("DAUIN", "Dipartimento di Automatica e Informatica");
+INSERT INTO "DEPARTMENT" VALUES("DIMEAS", "Dipartimento di INGEGNERIA MECCANICA E AEROSPAZIALE");
+INSERT INTO "DEPARTMENT" VALUES("DET", "Dipartimento di Elettronica e Telecomunicazioni");
+INSERT INTO "DEPARTMENT" VALUES("DISAT", "Dipartimento Scienza Applicata e Tecnologia");
+INSERT INTO "DEPARTMENT" VALUES("DIGEP", "Dipartimento di Ingegneria Gestionale e della Produzione");
+
+INSERT INTO "TEACHER" VALUES("d123456", "Marco", "Torchiano", );
