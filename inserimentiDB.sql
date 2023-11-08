@@ -125,3 +125,4 @@ Scrivere gli inserimenti nel DB e caricarli su github. Dividere ogni blocco una 
 **/
 
 
+INSERT INTO "DEGREE" VALUES("LM53", "Laurea magistrale in Ingegneria Dei Materiali")
