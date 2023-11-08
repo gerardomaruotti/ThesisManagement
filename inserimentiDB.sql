@@ -134,6 +134,12 @@ INSERT INTO "DEGREE" VALUES("LM-32", "Laurea magistrale in Ingegneria Infortmati
 INSERT INTO "DEGREE" VALUES("LM-20", "Laurea magistrale in Ingegneria Aerospaziale");
 INSERT INTO "DEGREE" VALUES("LM-21", "Laurea magistrale in Ingegneria Biomedica");
 
+INSERT INTO "STUDENT" VALUES("s319852", "Evelina Marija", "Bratuhina", "F", "Lettone", "s319852@studenti.polito.it", "2022", "LM32");
+INSERT INTO "STUDENT" VALUES("s313373", "Fabio", "Mangani", "M", "Italiana", "s313373@studenti.polito.it", "2022", "LM32");
+INSERT INTO "STUDENT" VALUES("s297632", "Luke", "Smith", "M", "Inglese", "s297632@studenti.polito.it", "2021", "LM25");
+INSERT INTO "STUDENT" VALUES("s317977", "Giacomo", "Cauda", "M", "Italiana", "s317977@studenti.polito.it", "2022", "LM29");
+INSERT INTO "STUDENT" VALUES("s317642", "Gerardo", "Maruotti", "M", "Italiana", "s3317642@studenti.polito.it", "2022", "LM20");
+
 INSERT INTO "GROUP" VALUES("GR-16", "Software Engineering Group");
 INSERT INTO "GROUP" VALUES("GR-05", "Electronic Cad and Reliabilty Check");
 INSERT INTO "GROUP" VALUES("GR-13", "Metodi Formali");
