@@ -11,6 +11,8 @@ root.render(
 		clientId='IdPkHtJco46KuOAgf1Tp8LjBDRc0b2fg'
 		authorizationParams={{
 			redirect_uri: window.location.origin,
+			audience: 'https://thesismanagement.eu.auth0.com/api/v2/',
+			scope: 'read:current_user update:current_user_metadata',
 		}}
 	>
 		<App />
