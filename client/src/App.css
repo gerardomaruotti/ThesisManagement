@@ -8,3 +8,19 @@ body {
 h1 {
 	font-weight: 700;
 }
+
+/* student home */
+.buttons-rapid-filter {
+	border: 1px solid #001E38;
+	margin-right: 20px;
+}
+
+/* proposal card */
+.custom-card {
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+	transition: box-shadow 0.3s;
+}
+
+.custom-card:hover {
+	box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+}
