@@ -11,7 +11,7 @@ h1 {
 
 /* student home */
 .buttons-rapid-filter {
-	border: 1px solid #001E38;
+	border: 1px solid #001e38;
 	margin-right: 20px;
 }
 
@@ -23,4 +23,17 @@ h1 {
 
 .custom-card:hover {
 	box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Header */
+
+.headerButton {
+	font-weight: 700;
+}
+
+/* Professor Home */
+.insert-proposal {
+	position: absolute;
+	bottom: 20px;
+	right: 20px;
 }
