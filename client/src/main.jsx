@@ -7,11 +7,11 @@ const root = createRoot(document.getElementById('root'));
 
 root.render(
 	<Auth0Provider
-		domain='dev-1v67v8wnwnvivonl.us.auth0.com'
-		clientId='Psju9rPDQ1Ngh4JRo8zFAa4iVVtrV57E'
+		domain='thesismanagement.eu.auth0.com'
+		clientId='IdPkHtJco46KuOAgf1Tp8LjBDRc0b2fg'
 		authorizationParams={{
 			redirect_uri: window.location.origin,
-			audience: 'https://dev-1v67v8wnwnvivonl.us.auth0.com/api/v2/',
+			audience: 'https://thesismanagement.eu.auth0.com/api/v2/',
 			scope: 'read:current_user update:current_user_metadata',
 		}}
 	>
