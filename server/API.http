@@ -1,4 +1,30 @@
 #### get the list of employe
+## Note Front End:
+##
+##  Per la insert della Tesi:
+##  - serve: nulla (ritornare un res status 200) 
+##  - mandiamo: accessToken del professore (verifica sia un prof), titolo, ID teacher, lista Id co-supervisors, lista keywords, 
+##              lista di types, stringa "required knowledge", stringa "notes", stringa "description", expiration date, stringa level, stringa Cds
+##
+##  Per la visualizzazione delle tesi:
+##  - serve: lista di oggetti Tesi con ID, titolo, tipi (in teoria servirebbero solo quello "abroad" e/o "in company" (magari si può fare un filtro backend oppure front end)
+##  , supervisore (no co-supervisor), Keywords, description (di tutte le tesi), required knowledge e notes del corso di laurea dello studente che ne fa richiesta  
+##  - mandiamo: token di accesso ( fare retrieve delle info dello studente per recuperare il corso)
+##
+##  Per la visualizzazione delle tesi con filtro:
+##  - serve: stessa cosa di sopra
+##  - mandiamo: token di accesso ( fare retrieve delle info dello studente per recuperare il corso), lista di: supervisor, co-supervisor, keywords, groups, types, 
+##    expiration date (si manda data "massima" quindi vogliamo quelli che sono VALIDI entro quella data, non quelli che scadono)
+##
+##  Per la visualizzazione del filtro e anche per l'inserimento di una tesi:
+##  - serve: una serie di GET: lista di teacher (solo Id e nome e cognome), lista di Keyword, list di Groups, lista di Tipi
+##  - mandiamo: access token (giusto per verificare che sia ancora loggato)
+##
+## Per la visualizzazione di una tesi:
+##  - serve: un oggetto Tesi con tutti i campi (array di: Keywords, Types, Groups, Co-supervisors)
+##  - mandiamo: access token ( magari per controllare se può vederla, check sul corso di laurea), ID della tesi
+##
+## Se viene in mente altro aggiungiamo :)
 
 GET http://localhost:3001/api/login HTTP/1.1
 Content-Type: application/json
