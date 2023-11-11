@@ -22,7 +22,33 @@ app.use(cors(corsOptions));
 
 
 
+app.get("/api/keywords", (req,res) => {
+	db.getKeywords()
+	.then(keywords=>res.status(200).json(keywords))
+	.catch((err)=> {console.log(err); res.status(503).json("getKeywords error")})
+});
 
+
+app.get("/api/types", (req,res) => {
+	db.getTypes()
+	.then(types => res.status(200).json(types))
+	.catch((err)=>{console.log(err); res.status(503).json("getTypes error")})
+})
+
+
+
+app.get("/api/teachers", (req,res)=>{
+	db.getTeachers()
+	.then(teachers=> res.status(200).json(teachers))
+	.catch((err)=>{console.log(err); res.status(503).json("getTeachers error")})
+})
+
+
+app.get("/api/cds", (req,res)=>{
+	db.getCdS()
+	.then(cds=>res.status(200).json(cds))
+	.catch((err)=>{console.log(err); res.status(503).json("getCds error")})
+})
 //METODI API
 //fare metodo gestione autenticazione --> che ritorna ID matricla e chekka auth0
 
