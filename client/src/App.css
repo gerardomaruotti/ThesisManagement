@@ -28,7 +28,7 @@ h1 {
 /* Header */
 
 .headerButton {
-	font-weight: 700;
+	font-weight: 600;
 }
 
 /* Professor Home */
@@ -36,4 +36,9 @@ h1 {
 	position: absolute;
 	bottom: 20px;
 	right: 20px;
+}
+
+/* InsertProposal */
+.form-button {
+	margin: 10px;
 }

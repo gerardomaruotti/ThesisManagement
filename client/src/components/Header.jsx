@@ -10,7 +10,7 @@ function Header(props) {
 	return (
 		<Navbar collapseOnSelect expand='lg' style={{ backgroundColor: Color.primary }} variant='dark'>
 			<Navbar.Brand className='me-auto' style={{ paddingLeft: '20px' }}>
-				<img src={logo_white} alt='Logo' style={{ height: '35px' }} />
+				<img src={logo_white} alt='Logo' style={{ height: '40px' }} />
 				{/* Thesis Management */}
 			</Navbar.Brand>
 			<Navbar.Toggle aria-controls='responsive-navbar-nav' />
