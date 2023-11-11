@@ -26,19 +26,21 @@ app.use(cors(corsOptions));
 //METODI API
 //fare metodo gestione autenticazione --> che ritorna ID matricla e chekka auth0
 
-
+/*
 //return the thesis corresponding to a professor.
 app.get('/api/thesis/teacher', async (req, res) => {
 	try {
 		//const counters = await db.listOfCounter();
-		res.status(200).json(/*counters*/);
+		res.status(200).json();
 	} catch (err) {
 		res.status(500).end();
 	}
 });
+*/
 
-//return all thesis of the department of the student
-app.get('/api/thesis/student', async (req, res) => {
+//return all thesis of the department of the student/professor 
+app.get('/api/thesis', async (req, res) => {
+	//usare req.params == null per verificare se ci sono i filtri 
 	try {
 		//const counters = await db.listOfCounter();
 
@@ -50,8 +52,11 @@ app.get('/api/thesis/student', async (req, res) => {
 	}
 });
 
-//servizio per inserimento --> lista teacher (id, group)
-//servizio per inserimento --> lista groups (id, group)
+//servizio per inserimento --> lista teacher (id, teacher)
+//GRUPPI --> aggiungo la tesi ai gruppi di cui fa parte il professore e tutti i co-supervisori che sono professori 
+//servizio per inserimento --> lista keyword-distinct (id, keyword)
+//servizio per inserimento --> lista type-distinct (id, type)
+//servizio per inserimento --> lista corsi di studi-distinct (id, cods)
 app.get('/api/thesis/inert/info', async (req, res) => {
 	try {
 		//const counters = await db.listOfCounter();
@@ -77,6 +82,7 @@ app.post('/api/thesis/insert', async (req, res) => {
 
 //ritorniamo le liste di campi necessari per la visualizzazione intera della thesi 
 app.get('/api/thesis/details', async (req, res) => {
+	//prendere nel param l'id della thesis 
 	try {
 		//const counters = await db.listOfCounter();
 

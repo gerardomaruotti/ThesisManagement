@@ -17,7 +17,7 @@
 ##    expiration date (si manda data "massima" quindi vogliamo quelli che sono VALIDI entro quella data, non quelli che scadono)
 ##
 ##  Per la visualizzazione del filtro e anche per l'inserimento di una tesi:
-##  - serve: una serie di GET: lista di teacher (solo Id e nome e cognome), lista di Keyword, list di Groups, lista di Tipi
+##  - serve: una serie di GET: lista di teacher (solo Id e nome e cognome),  list di Groups
 ##  - mandiamo: access token (giusto per verificare che sia ancora loggato)
 ##
 ## Per la visualizzazione di una tesi:
@@ -26,12 +26,10 @@
 ##
 ## Se viene in mente altro aggiungiamo :)
 
-GET http://localhost:3001/api/login HTTP/1.1
+GET http://localhost:3001/api/thesis HTTP/1.1
 Content-Type: application/json
 
-{
-}
-
+##passare i filtri in params 
 ####
 
 GET http://localhost:3001/api/employee HTTP/1.1
