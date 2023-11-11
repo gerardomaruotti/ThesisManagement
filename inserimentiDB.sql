@@ -105,11 +105,10 @@ CREATE TABLE IF NOT EXISTS "THESIS_STATUS"(
 
 CREATE TABLE IF NOT EXISTS "CO_SUPERVISOR"(
   "THESIS" INTEGER NOT NULL,
-  "CO-SUPERVISOR" VARCHAR(50), /*sarà la matricola / codice identificativo della persona, che se è teacher d313664 se esterno sarà un altro codice*/
-  "TEACHER_ROLE" INTEGER, /*SE 0--> NO TEACHER, SE 1 --> TEACHER*/
+  "NAME" VARCHAR(25),
+  "EMAIL" VARCHAR(50), 
   FOREIGN key("THESIS") REFERENCES "THESIS"("ID_THESIS"),
-  /*FOREIGN key("TEACHER") REFERENCES "TEACHER"("ID"),*/
-  PRIMARY key("THESIS","TEACHER")
+  PRIMARY key("THESIS")
 );
 
 CREATE TABLE IF NOT EXISTS "KEYWORD"(
@@ -200,14 +199,8 @@ INSERT INTO "THESIS" (TITLE,DESCRIPTION,REQUIRED_KNOWLEDGE,NOTES,EXPIRATION_DATE
 INSERT INTO "THESIS" (TITLE,DESCRIPTION,REQUIRED_KNOWLEDGE,NOTES,EXPIRATION_DATE,LEVEL,DEGREE,SUPERVISOR) VALUES("Statistical modeling of genomic sequences", "The information content of a genomic sequence can be measured using various information-theoretic measures, such as entropy, mutual information, and compression complexity. For example, the entropy measures the uncertainty or randomness of the sequence, with higher entropy indicating more randomness and lower entropy indicating more predictability. Mutual information can be used to quantify the dependence between different regions of the genome. Compression complexity quantifies the shortest possible description length of the sequence.", "programming, probability theory, statistical inference", "", "28/03/2024", "MSc", "LM-29", "d123457");
 
 
-INSERT INTO "THESIS_STATUS" VALUES("1","1");
-INSERT INTO "THESIS_STATUS" VALUES("2","1");
-INSERT INTO "THESIS_STATUS" VALUES("3","1");
-INSERT INTO "THESIS_STATUS" VALUES("4","1");
-INSERT INTO "THESIS_STATUS" VALUES("5","1");
-
-INSERT INTO "CO_SUPERVISOR" VALUES("2", "d123463", 1);
-INSERT INTO "CO_SUPERVISOR" VALUES("5", "d123458", 1);
+INSERT INTO "CO_SUPERVISOR" VALUES("2", "Antonio Vetrò","d123463@polito.it");
+INSERT INTO "CO_SUPERVISOR" VALUES("5", "Lorenzo Casalino","d123458@polito.it");
 
 
 INSERT INTO "KEYWORD" VALUES("1", "CYBERSECURITY");
