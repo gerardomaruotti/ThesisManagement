@@ -27,7 +27,7 @@ function StudentHome() {
                         </Col>
                     </Row>
                     <Row style={{ marginTop: 25, paddingBottom: 20 }}>
-                        <Col md={9}>
+                        <Col sm={9}>
                             <Nav variant="pills" defaultActiveKey="all">
                                 <Nav.Item>
                                     <Nav.Link eventKey="all" className="buttons-rapid-filter">All</Nav.Link>
@@ -40,7 +40,7 @@ function StudentHome() {
                                 </Nav.Item>
                             </Nav>
                         </Col>
-                        <Col md={3}>
+                        <Col sm={3}>
                             <Button variant='primary' style={{ borderRadius: 50, float: 'right', width: 115 }} onClick={() => setFiltersShow(true)}>
                                 <span style={{ marginRight: 12 }}>Filters</span>
                                 <i className="bi bi-filter-circle"></i>
