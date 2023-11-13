@@ -9,13 +9,18 @@ h1 {
 	font-weight: 700;
 }
 
-/* student home */
+/* Student home */
 .buttons-rapid-filter {
-	border: 1px solid #001e38;
+	border: 1px solid #001e38 !important;
 	margin-right: 20px;
 }
 
-/* proposal card */
+.buttons-rapid-filter:hover {
+	background-color: #001e38 !important;
+	color: white !important;
+}
+
+/* Proposal card */
 .custom-card {
 	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 	transition: box-shadow 0.3s;

@@ -2,8 +2,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import Select from 'react-select';
 import CreatableSelect from 'react-select/creatable';
-import { Form, Button, Card, Row, Col, Container } from 'react-bootstrap';
-import { useState } from 'react';
+import { Form, Button, Row, Col, Container } from 'react-bootstrap';
+import { useEffect, useState } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 import { useNavigate } from 'react-router-dom';
 import { colorStyles } from '../constants/colors.js';
@@ -14,6 +14,8 @@ function InsertProposal(props) {
 	const [selectedKeywords, setSelectedKeywords] = useState([]);
 	const [selectedCoSupervisors, setSelectedCoSupervisors] = useState([]);
 	const [selectedType, setSelectedType] = useState([]);
+	const [selectedLevel, setSelectedLevel] = useState('');
+	const [selectedCds, setSelectedCds] = useState('');
 
 	const {
 		title,
@@ -26,8 +28,6 @@ function InsertProposal(props) {
 		setNotes,
 		keywords,
 		setKeywords,
-		groups,
-		setGroups,
 		supervisor,
 		setSupervisor,
 		coSupervisors,
@@ -43,8 +43,8 @@ function InsertProposal(props) {
 	} = props;
 
 	const levels = [
-		{ value: 'Bachelor', label: 'Bachelor' },
-		{ value: 'Master', label: 'Master' },
+		{ value: 'BSc', label: 'BSc' },
+		{ value: 'MSc', label: 'MSc' },
 	];
 
 	function handleSubmit(event) {
@@ -57,7 +57,7 @@ function InsertProposal(props) {
 	}
 
 	return (
-		<>
+		<Container>
 			<Form style={{ padding: 20, margin: 20 }} onSubmit={handleSubmit}>
 				<Row>
 					<Col md={4}>
@@ -119,7 +119,7 @@ function InsertProposal(props) {
 					</Button>
 				</Container>
 			</Form>
-		</>
+		</Container>
 	);
 }
 

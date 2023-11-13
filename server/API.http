@@ -24,6 +24,11 @@
 ##  - serve: un oggetto Tesi con tutti i campi (array di: Keywords, Types, Groups, Co-supervisors)
 ##  - mandiamo: access token ( magari per controllare se può vederla, check sul corso di laurea), ID della tesi
 ##
+##  Per la visualizzazione delle tesi di un professore:
+##  - serve: lista di oggetti Tesi con ID, titolo, tipi (in teoria servirebbero solo quello "abroad" e/o "in company" (magari si può fare un filtro backend oppure front end)
+##  , supervisore (no co-supervisor), Keywords, description (di tutte le tesi), required knowledge e notes del corso di laurea dello studente che ne fa richiesta  
+##  - mandiamo: token di accesso del professore
+
 ## Se viene in mente altro aggiungiamo :)
 
 
