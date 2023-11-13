@@ -90,23 +90,38 @@ app.post('/api/thesis/groups', async (req, res) => {
 
 
 
-
-
-
-
-
-
 //ritorniamo le liste di campi necessari per la visualizzazione intera della thesi 
-app.get('/api/thesis/details', async (req, res) => {
-	//prendere nel param l'id della thesis 
-	try {
-		//const counters = await db.listOfCounter();
+app.get('/api/thesis/:id', async (req, res) => {
+	//fare il check se l'utente può effettivamente vedere la tesi, tramite access token controllo corso di laurea dell'utente se studente
+	const thesisID = req.params.id;
 
-    //gestione dei filtri interna 
-    //separare i casi con filtro e senza filtro 
-		res.status(200).json(/*counters*/);
+	try {
+		const infoThesis = await db.getThesis(thesisID);
+		const titleDegree = await db.getTitleDegree(infoThesis.cds);
+		const supervisor = await db.getSupervisor(infoThesis.supervisor);
+		const keywords = await db.getKeywordsbyId(thesisID);
+		const types = await db.getTypesbyId(thesisID);
+		const groups = await db.getGroupSupervisorAndCoSupervisor(thesisID);
+		const coSupervisors = await db.getCoSupervisors(thesisID);
+
+		let thesis = {
+			title: infoThesis.title,
+			description: infoThesis.description,
+			requiredKnowledge: infoThesis.requiredKnowledge,
+			notes: infoThesis.notes,
+			expirationDate: infoThesis.expirationDate,
+			level: infoThesis.level,
+			cds: titleDegree,
+			supervisor: supervisor,			//arriva come oggetto con name e surname
+			keywords: keywords,
+			types: types,
+			groups: groups,
+			coSupervisors: coSupervisors,
+		};
+
+		res.status(200).json(thesis);
 	} catch (err) {
-		res.status(500).end();
+		res.status(500).json({ error: 'Errore visualizzazione tesi' });
 	}
 });
 
