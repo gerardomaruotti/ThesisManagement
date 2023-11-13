@@ -109,6 +109,46 @@ const db = new sqlite.Database('thesis_management.db', (err) => {
     });
   };
 
+  exports.getTeacher = (codSupervisor) => {
+    return new Promise((resolve, reject) => {
+      const sql = 'SELECT NAME,SURNAME FROM TEACHER WHERE ID=?';
+      db.get(sql, [codSupervisor], (err, row) => {
+        if (err) { 
+            reject(err); 
+            return;
+        }
+        else {
+            let teacher={
+                name: row.NAME,
+                surname: row.SURNAME 
+            };
+  
+            resolve(teacher)
+        }
+      });
+    });
+  };
+  
+  exports.getCoSupervisors = (idThesis) => {
+    return new Promise((resolve, reject) => {
+      const sql = 'SELECT NAME, SURNAME FROM CO_SUPERVISOR WHERE THESIS=?';
+      db.all(sql, [idThesis], (err, rows) => {
+        if (err) { 
+            reject(err); 
+            return;
+        }
+        else {
+            const coSupervisors=rows.map((elem)=>({
+                name: elem.NAME,
+                surname: elem.SURNAME
+            }));
+  
+            resolve(coSupervisors)
+        }
+      });
+    });
+  };
+
   exports.getCdS = () => {
     return new Promise((resolve, reject) => {
       const sql = 'SELECT * FROM DEGREE';
@@ -127,6 +167,21 @@ const db = new sqlite.Database('thesis_management.db', (err) => {
       });
     });
   };
+
+  exports.getTitleDegree = (codDegree) =>{
+    return new Promise((resolve, reject) => {
+      const sql = 'SELECT TITLE_DEGREE FROM DEGREE WHERE COD_DEGREE=?';
+      db.get(sql, [codDegree], (err, row) => {
+        if (err) { 
+            reject(err); 
+            return;
+        }
+        else {
+            resolve(row.TITLE_DEGREE)
+        }
+      });
+    });
+  }
 
   exports.getGroupSupervisorAndCoSupervisor = (idThesis) => {
     return new Promise((resolve, reject) => {
@@ -215,59 +270,4 @@ const db = new sqlite.Database('thesis_management.db', (err) => {
             }
         });
     });
-};
-
-exports.getTitleDegree = (codDegree) =>{
-  return new Promise((resolve, reject) => {
-    const sql = 'SELECT TITLE_DEGREE FROM DEGREE WHERE COD_DEGREE=?';
-    db.get(sql, [codDegree], (err, row) => {
-      if (err) { 
-          reject(err); 
-          return;
-      }
-      else {
-          resolve(row.TITLE_DEGREE)
-      }
-    });
-  });
-}
-
-exports.getTeacher = (codSupervisor) => {
-  return new Promise((resolve, reject) => {
-    const sql = 'SELECT NAME,SURNAME FROM TEACHER WHERE ID=?';
-    db.get(sql, [codSupervisor], (err, row) => {
-      if (err) { 
-          reject(err); 
-          return;
-      }
-      else {
-          let teacher={
-              name: row.NAME,
-              surname: row.SURNAME 
-          };
-
-          resolve(teacher)
-      }
-    });
-  });
-};
-
-exports.getCoSupervisors = (idThesis) => {
-  return new Promise((resolve, reject) => {
-    const sql = 'SELECT NAME, SURNAME FROM CO_SUPERVISOR WHERE THESIS=?';
-    db.all(sql, [idThesis], (err, rows) => {
-      if (err) { 
-          reject(err); 
-          return;
-      }
-      else {
-          const coSupervisors=rows.map((elem)=>({
-              name: elem.NAME,
-              surname: elem.SURNAME
-          }));
-
-          resolve(coSupervisors)
-      }
-    });
-  });
 };
