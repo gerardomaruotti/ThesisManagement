@@ -12,7 +12,7 @@ function ProposalCard() {
                     ARMADA: A Framework for Automatic Hardware Design Debugging and Repair
                 </div>
 
-                <div style={{ fontWeight: 'semi-bold', fontSize: 14, marginTop: 20 }}>
+                <div style={{ fontWeight: 'semi-bold', fontSize: 14, marginTop: 15 }}>
                     <span className="badge" style={{ backgroundColor: 'rgba(230, 120, 43, 0.1)', color: Color.secondary, padding: '0.5em 1.2em', borderRadius: '0.25rem', marginRight: 10 }}>
                         RTL DEBUGGING
                     </span>
