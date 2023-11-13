@@ -45,11 +45,33 @@ Content-Type: application/json
 
 
  
-##### insert of a thesis by a professor ####                             
+##### get the list of groups correlated to a thesis (by supervisor and co supervisor) ####                             
 POST http://localhost:3001/api/thesis/groups HTTP/1.1
 Content-Type: application/json
-
+ 
 {
     "ID":1
 }
 
+
+#### insert of a thesis ####                                         
+POST http://localhost:3001/api/insert/thesis HTTP/1.1  
+Content-Type: application/json
+
+#ricordae inserimenti in THSIS_STATUS, KEYWORDS, CO_SUPERVISORS 
+{
+    "title":"The best thesis in the world",
+    "description":"Best thesis to do man!",
+    "required_knowledge":"programming, soft skills...",
+    "notes":"Best thesis in the world",
+    "expiration_date":"20/12/2023",
+    "level":"MSc",
+    "degree":"LM-53",
+    "supervisor" : "d123457",
+    "co_supervisors" : [
+        {"name":"Carlo", "surname":"Rafele", "email":"d123461@polito.it"},
+        {"name":"Antonio", "surname":"Vetrò", "email":"d123463@polito.it"},
+        {"name":"Lorenza", "surname":"Maggio", "email":"maggio_lorenza@lamborghini.it"}
+    ],
+    "keywords":["AEREOSPACE", "SECURITY", "MUD"]
+}

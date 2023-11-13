@@ -108,3 +108,47 @@ const db = new sqlite.Database('thesis_management.db', (err) => {
       });
     });
   };
+
+  exports.insertThesis = (title,description,req_know,notes,exp_date,level,degree,supervisor) => {
+    return new Promise((resolve, reject) => {
+      const sql = 'INSERT INTO thesis (title, description, required_knowledge, notes, expiration_date, level, degree, supervisor) VALUES(?, ?, ?, ?, ?, ?, ?, ?)';
+      db.run(sql, [title,description,req_know,notes,exp_date,level,degree,supervisor], function (err) {
+        if (err) {
+          console.log(err)
+          reject(err);
+          return;
+        }
+        resolve(this.lastID);
+      });
+    });
+  };
+
+  exports.insertCoSupervisor = (id, name, surname, email) => {
+    return new Promise((resolve, reject) => {
+      const sql = 'INSERT INTO co_supervisor (thesis, name, surname, email) VALUES(?, ?, ?, ?)';
+      db.run(sql, [id, name, surname, email], function (err) {
+        if (err) {
+          console.log(err)
+          reject(err);
+          return;
+        }
+        resolve(this.lastID);
+      });
+    });
+  };
+
+  exports.insertKeyword = (id, keyword) => {
+    return new Promise((resolve, reject) => {
+      const sql = 'INSERT INTO keyword (thesis, keyword) VALUES(?, ?)';
+      db.run(sql, [id, keyword], function (err) {
+        if (err) {
+          console.log(err)
+          reject(err);
+          return;
+        }
+        resolve(this.lastID);
+      });
+    });
+  };
+
+

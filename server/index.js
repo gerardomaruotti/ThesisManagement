@@ -71,13 +71,61 @@ app.get('/api/thesis', async (req, res) => {
 
 //gestione degli inserimenti nelle varie tabelle secondarie (keyword etc..) 
 //GRUPPI --> aggiungo la tesi ai gruppi di cui fa parte il professore e tutti i co-supervisori che sono professori 
-app.post('/api/thesis/groups', async (req, res) => {
+app.post('/api/thesis/groups',  [
+	check('ID').isInt(), //INT check
+  ],async (req, res) => {
 	const thesisID = req.body.ID;
 	try {
 		//i need groups of supervisor and co-supervisor of the thesis
 		const groups = await db.getGroupSupervisorAndCoSupervisor(thesisID);
 		console.log(groups)
 		return res.status(200).json(groups);
+	} catch (err) {
+		return res.status(503).json({ error: 'Errore nell inserimento' });
+	}
+});
+
+app.post('/api/insert/thesis',  [
+		check('title').isString(),
+		check('description').isString(),
+		check('required_knowledge').isString(), 
+		check('notes').isString(), 
+		check('expiration_date').isString(),
+		check('level').isString(), 
+		check('degree').isString(), 
+		check('supervisor').isString(), 
+		check('co-supervisors').isArray(), 
+		check('keywords').isArray()
+
+  	],async (req, res) => {
+	const title = req.body.title;
+	const description = req.body.description;
+	const req_know = req.body.required_knowledge;
+	const notes = req.body.notes;
+	const exp_date = req.body.expiration_date;
+	const level = req.body.level;
+	const degree = req.body.degree;
+	const supervisor = req.body.supervisor;
+	const co_supervisors = req.body.co_supervisors;
+	const keywords = req.body.keywords;
+	
+	try {
+		//i need groups of supervisor and co-supervisor of the thesis
+		const thesisId = await db.insertThesis(title,description,req_know,notes,exp_date,level,degree,supervisor);
+		
+		for (let i = 0; i<co_supervisors.length; i++){
+			console.log(co_supervisors[i])
+			const CoSupID = await db.insertCoSupervisor(thesisId, co_supervisors[i].name,co_supervisors[i].surname,co_supervisors[i].email)
+			console.log(CoSupID);
+		}
+
+		for (let i = 0; i<keywords.length; i++){
+			console.log(keywords[i])
+			const CoSupID = await db.insertKeyword(thesisId, keywords[i])
+			console.log(CoSupID);
+		}
+
+		return res.status(200).json();
 	} catch (err) {
 		return res.status(503).json({ error: 'Errore nell inserimento' });
 	}
