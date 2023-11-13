@@ -18,11 +18,11 @@ function Header(props) {
 				<div className='d-flex justify-content-between align-items-center w-100' style={{ paddingRight: '20px' }}>
 					<div>{/* Empty div to push the name to the center */}</div>
 					{isAuthenticated ? (
-						<Button style={{ backgroundColor: Color.secondary, border: 0, width: 100, borderRadius: 50, color: 'white' }} onClick={logout}>
+						<Button style={{ backgroundColor: Color.secondary, border: 0, width: 100, borderRadius: 50, color: 'white' }} size='sm' onClick={logout}>
 							<div className='headerButton'>LOGOUT</div>
 						</Button>
 					) : (
-						<Button style={{ width: 100, borderRadius: 50 }} variant='light' onClick={loginWithRedirect}>
+						<Button style={{ width: 100, borderRadius: 50 }} variant='light' size='sm' onClick={loginWithRedirect}>
 							<div className='headerButton'>LOGIN</div>
 						</Button>
 					)}
