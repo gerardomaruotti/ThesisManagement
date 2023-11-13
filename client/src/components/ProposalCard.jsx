@@ -63,7 +63,7 @@ function ProposalCard() {
 								className='badge'
 								style={{ backgroundColor: 'rgba(230, 120, 43, 0.1)', color: Color.secondary, padding: '1em 1em', borderRadius: '0.25rem' }}
 							>
-								<i className='bi bi-building-check'></i>
+								<i className='bi bi-building-check' style={{ fontSize: '16px' }}></i>
 							</span>
 							<span style={{ paddingLeft: 8, paddingRight: 24, color: 'rgba(0, 0, 0, 0.5)' }}>In Company</span>
 
@@ -71,7 +71,7 @@ function ProposalCard() {
 								className='badge'
 								style={{ backgroundColor: 'rgba(230, 120, 43, 0.1)', color: Color.secondary, padding: '1em 1em', borderRadius: '0.25rem' }}
 							>
-								<i className='bi bi-globe-americas'></i>
+								<i className='bi bi-globe-americas' style={{ fontSize: '16px' }}></i>
 							</span>
 							<span style={{ paddingLeft: 8, color: 'rgba(0, 0, 0, 0.5)' }}>Abroad</span>
 						</div>

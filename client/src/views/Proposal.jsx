@@ -10,7 +10,7 @@ function Proposal(props) {
 		<Container style={{ marginTop: 25 }}>
 			<Row>
 				<Col md={4}>
-					<Card style={{ padding: 20, cursor: 'pointer', paddingBottom: 30 }} className='custom-card'>
+					<Card style={{ padding: 20, paddingBottom: 30, position: 'sticky', top: 25 }} className='custom-card'>
 						<Row>
 							<Col md={12}>
 								<div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}> Supervisor </div>
@@ -35,18 +35,7 @@ function Proposal(props) {
 										className='badge'
 										style={{ backgroundColor: 'rgba(230, 120, 43, 0.1)', color: Color.secondary, padding: '1em 1em', borderRadius: '0.25rem' }}
 									>
-										<svg
-											xmlns='http://www.w3.org/2000/svg'
-											width='16'
-											height='16'
-											fill='currentColor'
-											className='bi bi-building-check'
-											viewBox='0 0 16 16'
-										>
-											<path d='M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm1.679-4.493-1.335 2.226a.75.75 0 0 1-1.174.144l-.774-.773a.5.5 0 0 1 .708-.708l.547.548 1.17-1.951a.5.5 0 1 1 .858.514Z' />
-											<path d='M2 1a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6.5a.5.5 0 0 1-1 0V1H3v14h3v-2.5a.5.5 0 0 1 .5-.5H8v4H3a1 1 0 0 1-1-1V1Z' />
-											<path d='M4.5 2a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Zm3 0a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Zm3 0a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Zm-6 3a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Zm3 0a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Zm3 0a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Zm-6 3a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Zm3 0a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Z' />
-										</svg>
+										<i className="bi bi-building-check" style={{ fontSize: '16px' }}></i>
 									</span>
 									<span style={{ marginLeft: 8, marginRight: 24, color: 'rgba(0, 0, 0, 0.5)' }}>In Company</span>
 
@@ -54,16 +43,7 @@ function Proposal(props) {
 										className='badge'
 										style={{ backgroundColor: 'rgba(230, 120, 43, 0.1)', color: Color.secondary, padding: '1em 1em', borderRadius: '0.25rem' }}
 									>
-										<svg
-											xmlns='http://www.w3.org/2000/svg'
-											width='16'
-											height='16'
-											fill='currentColor'
-											className='bi bi-globe-americas'
-											viewBox='0 0 16 16'
-										>
-											<path d='M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0ZM2.04 4.326c.325 1.329 2.532 2.54 3.717 3.19.48.263.793.434.743.484-.08.08-.162.158-.242.234-.416.396-.787.749-.758 1.266.035.634.618.824 1.214 1.017.577.188 1.168.38 1.286.983.082.417-.075.988-.22 1.52-.215.782-.406 1.48.22 1.48 1.5-.5 3.798-3.186 4-5 .138-1.243-2-2-3.5-2.5-.478-.16-.755.081-.99.284-.172.15-.322.279-.51.216-.445-.148-2.5-2-1.5-2.5.78-.39.952-.171 1.227.182.078.099.163.208.273.318.609.304.662-.132.723-.633.039-.322.081-.671.277-.867.434-.434 1.265-.791 2.028-1.12.712-.306 1.365-.587 1.579-.88A7 7 0 1 1 2.04 4.327Z' />
-										</svg>
+										<i className="bi bi-globe-americas" style={{ fontSize: '16px' }}></i>
 									</span>
 									<span style={{ marginLeft: 8, color: 'rgba(0, 0, 0, 0.5)' }}>Abroad</span>
 								</div>
@@ -75,18 +55,7 @@ function Proposal(props) {
 										className='badge'
 										style={{ backgroundColor: 'rgba(230, 120, 43, 0.1)', color: Color.secondary, padding: '1em 1em', borderRadius: '0.25rem' }}
 									>
-										<svg
-											xmlns='http://www.w3.org/2000/svg'
-											width='16'
-											height='16'
-											fill='currentColor'
-											className='bi bi-building-check'
-											viewBox='0 0 16 16'
-										>
-											<path d='M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm1.679-4.493-1.335 2.226a.75.75 0 0 1-1.174.144l-.774-.773a.5.5 0 0 1 .708-.708l.547.548 1.17-1.951a.5.5 0 1 1 .858.514Z' />
-											<path d='M2 1a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6.5a.5.5 0 0 1-1 0V1H3v14h3v-2.5a.5.5 0 0 1 .5-.5H8v4H3a1 1 0 0 1-1-1V1Z' />
-											<path d='M4.5 2a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Zm3 0a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Zm3 0a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Zm-6 3a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Zm3 0a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Zm3 0a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Zm-6 3a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Zm3 0a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Z' />
-										</svg>
+										<i className="bi bi-mortarboard-fill" style={{ fontSize: '16px' }}></i>
 									</span>
 									<span style={{ marginLeft: 8, color: 'rgba(0, 0, 0, 0.5)' }}>MSc in Computer Engineering</span>
 								</div>
@@ -98,18 +67,7 @@ function Proposal(props) {
 										className='badge'
 										style={{ backgroundColor: 'rgba(230, 120, 43, 0.1)', color: Color.secondary, padding: '1em 1em', borderRadius: '0.25rem' }}
 									>
-										<svg
-											xmlns='http://www.w3.org/2000/svg'
-											width='16'
-											height='16'
-											fill='currentColor'
-											className='bi bi-building-check'
-											viewBox='0 0 16 16'
-										>
-											<path d='M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm1.679-4.493-1.335 2.226a.75.75 0 0 1-1.174.144l-.774-.773a.5.5 0 0 1 .708-.708l.547.548 1.17-1.951a.5.5 0 1 1 .858.514Z' />
-											<path d='M2 1a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6.5a.5.5 0 0 1-1 0V1H3v14h3v-2.5a.5.5 0 0 1 .5-.5H8v4H3a1 1 0 0 1-1-1V1Z' />
-											<path d='M4.5 2a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Zm3 0a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Zm3 0a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Zm-6 3a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Zm3 0a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Zm3 0a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Zm-6 3a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Zm3 0a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Z' />
-										</svg>
+										<i className="bi bi-people" style={{ fontSize: '16px' }}></i>
 									</span>
 									<span style={{ marginLeft: 8, color: 'rgba(0, 0, 0, 0.5)' }}>DAUIN - GR-13 - METODI FORMALI - FM</span>
 								</div>
@@ -121,18 +79,7 @@ function Proposal(props) {
 										className='badge'
 										style={{ backgroundColor: 'rgba(230, 120, 43, 0.1)', color: Color.secondary, padding: '1em 1em', borderRadius: '0.25rem' }}
 									>
-										<svg
-											xmlns='http://www.w3.org/2000/svg'
-											width='16'
-											height='16'
-											fill='currentColor'
-											className='bi bi-building-check'
-											viewBox='0 0 16 16'
-										>
-											<path d='M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm1.679-4.493-1.335 2.226a.75.75 0 0 1-1.174.144l-.774-.773a.5.5 0 0 1 .708-.708l.547.548 1.17-1.951a.5.5 0 1 1 .858.514Z' />
-											<path d='M2 1a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6.5a.5.5 0 0 1-1 0V1H3v14h3v-2.5a.5.5 0 0 1 .5-.5H8v4H3a1 1 0 0 1-1-1V1Z' />
-											<path d='M4.5 2a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Zm3 0a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Zm3 0a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Zm-6 3a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Zm3 0a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Zm3 0a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Zm-6 3a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Zm3 0a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Z' />
-										</svg>
+										<i className="bi bi-calendar3" style={{ fontSize: '16px' }}></i>
 									</span>
 									<span style={{ marginLeft: 8, color: 'rgba(0, 0, 0, 0.5)' }}>31/03/2024</span>
 								</div>
@@ -204,10 +151,15 @@ function Proposal(props) {
 							<Col md={12}>
 								<div style={{ fontWeight: 'bold', fontSize: 15, marginTop: 15, color: '#E6782B' }}> Description </div>
 								<div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}>
-									ARMADA is a framework for automatic hardware design debugging and repair. It is based on the observation that the majority of bugs
-									in hardware designs are caused by a small set of common design errors. ARMADA uses a combination of static and dynamic analysis to
-									identify these errors and automatically repair them. ARMADA is built on top of the Yosys open-source synthesis tool and the Z3 SMT
-									solver. It is written in Python and is open-source.
+									<p>
+										In recent years, there has been an exponential growth in the size and complexity of System-on-Chip (SoC) designs targeting different specialized applications. The cost of an undetected bug in these systems is much higher than in traditional processor systems, as it may imply the loss of property or life. The problem is further exacerbated by the ever-shrinking time-to-market and ever-increasing design complexity and demand to churn out billions of hardware devices. Despite decades of research in simulation and formal methods for debugging and verifying pre-silicon register transfer level (RTL) design, RTL debugging is still one of the most time-consuming and resource-intensive processes in the contemporary hardware design cycle. Current industrial practice primarily uses regression techniques and what-if analysis for debugging. However, such methods are extremely time-consuming and often rely on deep insights from human experts. On the other hand, academic researchers have proposed automated debugging techniques using data-driven statistical analysis, SAT, and BDD. However, such methods often suffer from scalability issues, do not provide human-comprehensible explanations of failure root causes, and do not automatically create code patches to fix buggy designs. This project will address this critical problem by creating ARMADA, a new foundational infrastructure, and a comprehensive tool suite for pre-silicon RTL debugging. A critical insight is that recent advances in state-of-the-art deep learning models, such as Transformer, Large Language Models (LLMs), have enormous potential to root cause and localize, explain root causes that are human understandable, and generate code patches to debug the RTL designs. We propose integrating this insight in ARMADA to create a novel, scalable, and effective pre-silicon debugging and repairing framework.
+									</p>
+									<p>Intellectual Merit</p>
+									<p>The project will develop a unified foundational infrastructure and comprehensive suite of tools to enable streamlined pre-silicon RTL debugging and repairing of realistic SoCs.</p>
+									<p>(1) It will develop novel technologies for characterizing and classifying design failure traces for effective debugging and root cause analysis.</p>
+									<p>(2) It will create a framework for automatically localizing suspicious design components and design source codes.</p>
+									<p>(3) It will develop a framework to generate human-understandable explanations of design failures at different abstractions in natural language.</p>
+									<p>(4) It will develop novel technologies to automatically generate fixes, i.e., code patches to repair suspicious design components. The proposed approaches will be demonstrated on complex, realistic, industry-scale SoC designs.</p>
 								</div>
 							</Col>
 						</Row>
