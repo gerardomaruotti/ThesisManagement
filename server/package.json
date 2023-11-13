@@ -4,9 +4,8 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "test": "cls && jest",
-        "test:unit": "clear||cls && jest test/unit.test.js",
-        "test:integration": "clear||cls && jest test/integration.test.js",
+        "test": "jest",
+        "test:unit": "jest test/unit.test.js",
         "start": "node index.js"
     },
     "author": "",

@@ -189,4 +189,4 @@ app.post('/api/proposal/insert', async (req, res) => {
 	}
 });
 
-module.exports = { app, port };
+module.exports = { app, port, checkJwt };
