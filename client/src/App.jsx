@@ -10,7 +10,7 @@ import InsertProposal from './views/InsertProposal';
 import Proposal from './views/Proposal';
 
 function App() {
-	const { user, isAuthenticated, getAccessTokenSilently } = useAuth0();
+	const { user, isAuthenticated, getAccessTokenSilently, isLoading, loginWithRedirect } = useAuth0();
 	const [title, setTitle] = useState('');
 	const [requiredKnowledge, setRequiredKnowledge] = useState('');
 	const [description, setDescription] = useState('');
@@ -23,6 +23,16 @@ function App() {
 	const [type, setType] = useState([]);
 	const [expirationDate, setExpirationDate] = useState('');
 	// const [userMetadata, setUserMetadata] = useState(null);
+
+	function handleError(err) {
+		console.log(err);
+	}
+
+	// useEffect(() => {
+	// 	if (!isLoading && !isAuthenticated) {
+	// 		loginWithRedirect();
+	// 	}
+	// }, [isLoading, isAuthenticated, loginWithRedirect]);
 
 	useEffect(() => {
 		console.log('User is authenticated: ' + isAuthenticated);
