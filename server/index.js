@@ -52,17 +52,7 @@ app.get("/api/cds", (req,res)=>{
 //METODI API
 //fare metodo gestione autenticazione --> che ritorna ID matricla e chekka auth0
 
-/*
-//return the thesis corresponding to a professor.
-app.get('/api/thesis/teacher', async (req, res) => {
-	try {
-		//const counters = await db.listOfCounter();
-		res.status(200).json();
-	} catch (err) {
-		res.status(500).end();
-	}
-});
-*/
+
 
 //return all thesis of the department of the student/professor 
 app.get('/api/thesis', async (req, res) => {
@@ -78,28 +68,15 @@ app.get('/api/thesis', async (req, res) => {
 	}
 });
 
-//servizio per inserimento --> lista teacher (id, teacher)
-//GRUPPI --> aggiungo la tesi ai gruppi di cui fa parte il professore e tutti i co-supervisori che sono professori 
-//servizio per inserimento --> lista keyword-distinct (id, keyword)
-//servizio per inserimento --> lista type-distinct (id, type)
-//servizio per inserimento --> lista corsi di studi-distinct (id, cods)
-app.get('/api/thesis/inert/info', async (req, res) => {
-	try {
-		//const counters = await db.listOfCounter();
-
-    //gestione dei filtri interna 
-    //separare i casi con filtro e senza filtro 
-		res.status(200).json(/*counters*/);
-	} catch (err) {
-		res.status(500).end();
-	}
-});
-
 
 //gestione degli inserimenti nelle varie tabelle secondarie (keyword etc..) 
+//GRUPPI --> aggiungo la tesi ai gruppi di cui fa parte il professore e tutti i co-supervisori che sono professori 
 app.post('/api/thesis/insert', async (req, res) => {
 	try {
-		//const helpDesk = await db.insertHelpDesk(serviceId, counterList);
+		//i need groups of supervisor and co-supervisor of the thesis
+		
+		
+		console.log(db.cd)
 		return res.status(200).json('Inserimento avvenuto con successo');
 	} catch (err) {
 		return res.status(503).json({ error: 'Errore nell inserimento' });
