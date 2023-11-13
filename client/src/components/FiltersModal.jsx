@@ -1,5 +1,8 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Modal, Button } from 'react-bootstrap';
+import { Modal, Button, Container, Form, Row, Col } from 'react-bootstrap';
+import Select from 'react-select';
+import { colorStyles } from '../constants/colors.js';
+
 
 function FiltersModal(props) {
     return (
@@ -11,19 +14,66 @@ function FiltersModal(props) {
         >
             <Modal.Header closeButton>
                 <Modal.Title id="contained-modal-title-vcenter">
-                    Modal heading
+                    Filters of search
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <h4>Centered Modal</h4>
-                <p>
-                    Cras mattis consectetur purus sit amet fermentum. Cras justo odio,
-                    dapibus ac facilisis in, egestas eget quam. Morbi leo risus, porta ac
-                    consectetur ac, vestibulum at eros.
-                </p>
+                <Container>
+                    <Form>
+                        <Row>
+                            <Col md={6}>
+                                <Form.Group className='mb-3' controlId='formCoSupervisors'>
+                                    <Form.Label>Supervisors</Form.Label>
+                                    <Select isMulti options={[]} styles={colorStyles} />
+                                </Form.Group>
+                                <Form.Group className='mb-3' controlId='formCoSupervisors'>
+                                    <Form.Label>Co-supervisors</Form.Label>
+                                    <Select isMulti options={[]} styles={colorStyles} />
+                                </Form.Group>
+                                <Form.Group className='mb-3' controlId='formKeywords'>
+                                    <Form.Label>Keywords</Form.Label>
+                                    <Select isMulti options={[]} styles={colorStyles} />
+                                </Form.Group>
+                                <Form.Group className='mb-3' controlId='formGroups'>
+                                    <Form.Label>Groups</Form.Label>
+                                    <Select isMulti options={[]} styles={colorStyles} />
+                                </Form.Group>
+                            </Col>
+                            <Col md={6}>
+                                <Form.Group className='mb-3' controlId='formTypes'>
+                                    <Form.Label>Types</Form.Label>
+                                    <Select isMulti options={[]} styles={colorStyles} />
+                                </Form.Group>
+                                <Form.Group className='mb-3' controlId='formExpirationDate'>
+                                    <Form.Label>Expiration date:</Form.Label>
+                                    <Form.Check
+                                        label="All"
+                                        name="expirationDate"
+                                        type="radio"
+                                    />
+                                    <Form.Check
+                                        label="This week"
+                                        name="expirationDate"
+                                        type="radio"
+                                    />
+                                    <Form.Check
+                                        label="This month"
+                                        name="expirationDate"
+                                        type="radio"
+                                    />
+                                    <Form.Check
+                                        label="This year"
+                                        name="expirationDate"
+                                        type="radio"
+                                    />
+                                </Form.Group>
+                            </Col>
+                        </Row>
+                    </Form>
+                </Container>
             </Modal.Body>
             <Modal.Footer>
-                <Button onClick={props.onHide}>Close</Button>
+                <Button onClick={props.onHide}>Apply filters</Button>
             </Modal.Footer>
         </Modal>
     );

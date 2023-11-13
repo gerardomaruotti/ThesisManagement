@@ -1,7 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Home from './views/Home';
+import StudentHome from './views/StudentHome';
 import Header from './components/Header';
 import ProfessorHome from './views/ProfessorHome';
 import InsertProposal from './views/InsertProposal';
@@ -49,7 +49,7 @@ function App() {
 		<BrowserRouter>
 			<Header />
 			<Routes>
-				<Route path='/' element={<Home />} />
+				<Route path='/' element={<StudentHome />} />
 				<Route path='/professor' element={<ProfessorHome />} />
 				<Route
 					path='/proposals/add'
@@ -80,7 +80,7 @@ function App() {
 						/>
 					}
 				/>
-				<Route path='/*' element={<Home />} />
+				<Route path='/*' element={<StudentHome />} />
 			</Routes>
 		</BrowserRouter>
 	);
