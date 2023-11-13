@@ -2,6 +2,7 @@
 
 const sqlite = require('sqlite3');
 const crypto = require('crypto');
+const { Console } = require('console');
 
 
 const db = new sqlite.Database('thesis_management.db', (err) => {
@@ -84,6 +85,25 @@ const db = new sqlite.Database('thesis_management.db', (err) => {
                 title_degree: elem.TITLE_DEGREE
             }))
             resolve(cds)
+        }
+      });
+    });
+  };
+
+  exports.getGroupSupervisorAndCoSupervisor = (idThesis) => {
+    return new Promise((resolve, reject) => {
+      const sql = 'SELECT G.name as group_name, g.cod_group as cod_group FROM TEACHER TE JOIN CO_SUPERVISOR CS ON TE.EMAIL = CS.email join "GROUP" G ON G.cod_group = TE.cod_group WHERE  CS.THESIS=? UNION SELECT  G.name as group_name, g.cod_group as cod_group FROM TEACHER TE JOIN THESIS T ON T.SUPERVISOR = TE.ID join "GROUP" G ON G.cod_group = TE.cod_group WHERE T.id_thesis=?';
+      db.all(sql, [idThesis, idThesis], (err, rows) => {
+        if (err) { 
+            reject(err); 
+            return;
+        }
+        else {
+            const groups=rows.map((elem)=> ({
+                cod_group: elem.cod_group,
+                group_name: elem.group_name,
+            }))
+            resolve(groups)
         }
       });
     });

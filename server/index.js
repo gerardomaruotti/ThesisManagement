@@ -71,17 +71,30 @@ app.get('/api/thesis', async (req, res) => {
 
 //gestione degli inserimenti nelle varie tabelle secondarie (keyword etc..) 
 //GRUPPI --> aggiungo la tesi ai gruppi di cui fa parte il professore e tutti i co-supervisori che sono professori 
-app.post('/api/thesis/insert', async (req, res) => {
+app.post('/api/thesis/groups', async (req, res) => {
+	const thesisID = req.body.ID;
 	try {
 		//i need groups of supervisor and co-supervisor of the thesis
-		
-		
-		console.log(db.cd)
-		return res.status(200).json('Inserimento avvenuto con successo');
+		const groups = await db.getGroupSupervisorAndCoSupervisor(thesisID);
+		console.log(groups)
+		return res.status(200).json(groups);
 	} catch (err) {
 		return res.status(503).json({ error: 'Errore nell inserimento' });
 	}
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //ritorniamo le liste di campi necessari per la visualizzazione intera della thesi 
 app.get('/api/thesis/details', async (req, res) => {
