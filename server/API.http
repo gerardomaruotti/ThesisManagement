@@ -53,6 +53,13 @@ Content-Type: application/json
     "ID":1
 }
 
+#########
+GET http://localhost:3001/api/thesis/9 HTTP/1.1
+Contenty-Type: application/json
+
+{
+}
+
 
 #### insert of a thesis ####                                         
 POST http://localhost:3001/api/insert/thesis HTTP/1.1  
@@ -68,6 +75,7 @@ Content-Type: application/json
     "level":"MSc",
     "degree":"LM-53",
     "supervisor" : "d123457",
+    "types" : ["EXPERIMENTAL"],
     "co_supervisors" : [
         {"name":"Carlo", "surname":"Rafele", "email":"d123461@polito.it"},
         {"name":"Antonio", "surname":"Vetrò", "email":"d123463@polito.it"},
@@ -75,3 +83,5 @@ Content-Type: application/json
     ],
     "keywords":["AEREOSPACE", "SECURITY", "MUD"]
 }
+
+

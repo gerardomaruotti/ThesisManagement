@@ -244,6 +244,35 @@ const db = new sqlite.Database('thesis_management.db', (err) => {
     });
   };
 
+  exports.insertThesisStatus= (id) => {
+    return new Promise((resolve, reject) => {
+      const sql = 'INSERT INTO THESIS_STATUS (thesis, state) VALUES(?, ?)';
+      db.run(sql, [id, 1], function (err) {
+        if (err) {
+          console.log(err)
+          reject(err);
+          return;
+        }
+        resolve(this.lastID);
+      });
+    });
+  }
+
+  exports.insertType= (id,type) => {
+    return new Promise((resolve, reject) => {
+      const sql = 'INSERT INTO TYPE (thesis, type) VALUES(?, ?)';
+      db.run(sql, [id, type], function (err) {
+        if (err) {
+          console.log(err)
+          reject(err);
+          return;
+        }
+        resolve(this.lastID);
+      });
+    });
+  }
+
+
 
   exports.getThesis = (idThesis) => {
     return new Promise((resolve, reject) => {
@@ -254,7 +283,7 @@ const db = new sqlite.Database('thesis_management.db', (err) => {
                 return;
             }
             if (row == undefined) {
-                resolve({ error: 'Thesis not found.' });
+                reject({ error: 'Thesis not found.' });
             } else {
                 let thesis = { 
                   title: row.TITLE, 

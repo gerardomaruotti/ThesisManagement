@@ -105,6 +105,7 @@ app.post('/api/insert/thesis',  [
 	const exp_date = req.body.expiration_date;
 	const level = req.body.level;
 	const degree = req.body.degree;
+	const types=req.body.types;
 	const supervisor = req.body.supervisor;
 	const co_supervisors = req.body.co_supervisors;
 	const keywords = req.body.keywords;
@@ -121,19 +122,22 @@ app.post('/api/insert/thesis',  [
 
 		for (let i = 0; i<keywords.length; i++){
 			console.log(keywords[i])
-			const CoSupID = await db.insertKeyword(thesisId, keywords[i])
-			console.log(CoSupID);
+			const keywordID = await db.insertKeyword(thesisId, keywords[i])
+			console.log(keywordID);
 		}
 
-		return res.status(200).json();
+		for(let i=0;i<types.length;i++){
+			const typesId = await db.insertType(thesisId,types[i])
+			console.log(typesId);
+		}
+
+		const statusId= await db.insertThesisStatus(thesisId);
+		console.log(statusId)
+		return res.status(200).json(thesisId);
 	} catch (err) {
 		return res.status(503).json({ error: 'Errore nell inserimento' });
 	}
 });
-
-
-
-
 
 
 
@@ -146,7 +150,7 @@ app.get('/api/thesis/:id', async (req, res) => {
 	try {
 		const infoThesis = await db.getThesis(thesisID);
 		const titleDegree = await db.getTitleDegree(infoThesis.cds);
-		const supervisor = await db.getSupervisor(infoThesis.supervisor);
+		const supervisor = await db.getTeacher(infoThesis.supervisor);
 		const keywords = await db.getKeywordsbyId(thesisID);
 		const types = await db.getTypesbyId(thesisID);
 		const groups = await db.getGroupSupervisorAndCoSupervisor(thesisID);
