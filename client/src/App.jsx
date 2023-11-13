@@ -1,12 +1,13 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useAuth0 } from '@auth0/auth0-react';
 import StudentHome from './views/StudentHome';
 import Header from './components/Header';
 import ProfessorHome from './views/ProfessorHome';
 import InsertProposal from './views/InsertProposal';
-import { useEffect, useState } from 'react';
-import { useAuth0 } from '@auth0/auth0-react';
+import Proposal from './views/Proposal';
 
 function App() {
 	const { user, isAuthenticated, getAccessTokenSilently } = useAuth0();
@@ -50,6 +51,7 @@ function App() {
 			<Header />
 			<Routes>
 				<Route path='/' element={<StudentHome />} />
+				<Route path='/proposal/:id' element={<Proposal />} />
 				<Route path='/professor' element={<ProfessorHome />} />
 				<Route
 					path='/proposals/add'

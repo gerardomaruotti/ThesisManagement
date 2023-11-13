@@ -12,10 +12,10 @@ function ProfessorHome() {
 	return (
 		<Container>
 			<Row style={{ marginBottom: 25 }}>
-				<ProposalCard />
-				<ProposalCard />
-				<ProposalCard />
-				<ProposalCard />
+				<ProposalCard isProfessor={1} />
+				<ProposalCard isProfessor={1} />
+				<ProposalCard isProfessor={1} />
+				<ProposalCard isProfessor={1} />
 			</Row>
 			<Button variant='primary' className='insert-proposal' style={{ borderRadius: 50 }} onClick={() => navigate('/proposals/add')}>
 				<i className='bi bi-plus' style={{ fontSize: '1.5rem' }}></i>
