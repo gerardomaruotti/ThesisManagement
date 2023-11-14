@@ -87,8 +87,37 @@ describe('GET Types', () => {
 });
 
 describe('GET Teachers', () => {
-    test('dummy test', async () => {
+    test('should return an empty list when retrieving a list of teachers', async () => {
+        const teach = [];
 
+        db.getTeachers.mockResolvedValueOnce(teach);
+        const res = await request(app).get('/api/teachers');
+
+        expect(db.getTeachers).toHaveBeenCalledTimes(1);
+        expect(res.status).toBe(200);
+        expect(res.body).toEqual([]);
+    });
+
+    test('should return a non-empty list when retrieving a list of teachers', async () => {
+        const teach = ["Example1", "Example2"];
+
+        db.getTeachers.mockResolvedValueOnce(teach);
+        const res = await request(app).get('/api/teachers');
+
+        expect(db.getTeachers).toHaveBeenCalledTimes(1);
+        expect(res.status).toBe(200);
+        expect(res.body).not.toHaveLength(0);
+        expect(res.body).toEqual(teach);
+    });
+
+    test('should return a 503 error when an error occurs', async () => {
+        db.getTeachers.mockRejectedValueOnce(new Error('Internal server error'));
+        const res = await request(app).get('/api/teachers');
+    
+        expect(db.getTeachers).toHaveBeenCalledTimes(1);
+        expect(res.status).toBe(503);
+        expect(res.body).toEqual("getTeachers error");
+    
     });
 });
 
