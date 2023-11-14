@@ -158,9 +158,46 @@ describe('GET Theses', () => {
 });
 
 describe('GET Groups', () => {
-    test('dummy test', async () => {
+    test('should return a non-empty list when retrieving a list of groups', async () => {
+        const groups = ["Example1", "Example2"];
 
+        db.getGroupSupervisorAndCoSupervisor.mockResolvedValueOnce(groups);
+        const res = await request(app).get('/api/thesis/1/groups');
+
+        expect(db.getGroupSupervisorAndCoSupervisor).toHaveBeenCalledTimes(1);
+        expect(res.status).toBe(200);
+        expect(res.body).not.toHaveLength(0);
+        expect(res.body).toEqual(groups);
     });
+
+    test('should return a 503 error when an error occurs', async () => {
+        db.getGroupSupervisorAndCoSupervisor.mockRejectedValueOnce(new Error('Internal server error'));
+        const res = await request(app).get('/api/thesis/1/groups');
+    
+        expect(db.getGroupSupervisorAndCoSupervisor).toHaveBeenCalledTimes(1);
+        expect(res.status).toBe(503);
+        expect(res.body).toEqual({ error: 'Errore nella restituzione dei gruppi' });
+    
+      });
+
+      test('should return a 400 error when the id parameter is not a number', async () => {
+        
+        const res = await request(app).get('/api/thesis/Nan/groups');
+    
+        expect(db.getGroupSupervisorAndCoSupervisor).toHaveBeenCalledTimes(0);
+        expect(res.status).toBe(400);
+        expect(res.body).toEqual({ error: 'Invalid thesis ID.' });
+    
+      });
+
+      test('should return a 400 error when the id parameter is a number less than or equal to zero', async () => {
+        const res = await request(app).get('/api/thesis/0/groups');
+    
+        expect(db.getGroupSupervisorAndCoSupervisor).toHaveBeenCalledTimes(0);
+        expect(res.status).toBe(400);
+        expect(res.body).toEqual({ error: 'Invalid thesis ID.' });
+    
+      });
 });
 
 describe('Insert Thesis', () => {
