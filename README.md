@@ -23,7 +23,7 @@
   - response body content: a list of groups identified with a code and a name.
 - POST `/api/insert/thesis`
   - request body content: an object including all the data necessary to insert a new thesis: a title, a description, required knowledge, notes, expiration date, the level, related degree, a list of co-supervisors, a list of types and a list of keywords.
-  - response body: the identifier of the thesis created.
+  - response body content: the identifier of the thesis created.
 - GET `/api/thesis/:id`
   - request parameters: thesis identifier
   - response body content: an object including all the data related to a thesis: a title, a description, required knowledge, notes, expiration date, the level, related degree, the supervisor and a list of co-supervisors, the list of groups to which the supervisors belong, a list of related keywords and a list of related types.
@@ -48,7 +48,7 @@
 | ------- | -----------------  | --------------------- | ----------- | -------- |
 | d123456 | d123456@polito.it  |    Marco Torchiano    |    DAUIN    | d123456  |
 | d123457 | d123457@polito.it  | Anna Filomena Carbone |    DISAT    | d123457  |
-| d123458 | d123458@polito.it  |    Lorenzo Casalin    |    DIMEAS   | d123458  |
+| d123458 | d123458@polito.it  |    Lorenzo Casalino   |    DIMEAS   | d123458  |
 | d123459 | d123459@polito.it  |    Silvia Chiusano    |    DAUIN    | d123459  |
 | d111111 | d111111@polito.it  |    Marco Sangermano   |    DISAT    | d111111  |
 | d123461 | d123461@polito.it  |     Carlo Rafele      |    DIGEP    | d123461  |
