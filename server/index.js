@@ -82,17 +82,20 @@ app.get('/api/thesis', checkJwt, async (req, res) => {
 
 //gestione degli inserimenti nelle varie tabelle secondarie (keyword etc..) 
 //GRUPPI --> aggiungo la tesi ai gruppi di cui fa parte il professore e tutti i co-supervisori che sono professori 
-app.post('/api/thesis/groups',  [
-	check('ID').isInt(), //INT check
-  ],async (req, res) => {
-	const thesisID = req.body.ID;
+app.get('/api/thesis/:id/groups',async (req, res) => {
+	const thesisID = req.params.id;
+
+	if (isNaN(thesisID) || thesisID<=0) {
+        return res.status(400).json({ error: 'Invalid thesis ID.' });
+    }
+
 	try {
 		//i need groups of supervisor and co-supervisor of the thesis
 		const groups = await db.getGroupSupervisorAndCoSupervisor(thesisID);
 		console.log(groups)
 		return res.status(200).json(groups);
 	} catch (err) {
-		return res.status(503).json({ error: 'Errore nell inserimento' });
+		return res.status(503).json({ error: 'Errore nella restituzione dei gruppi' });
 	}
 });
 
