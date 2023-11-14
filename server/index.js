@@ -61,10 +61,19 @@ app.get('/api/thesis', checkJwt, async (req, res) => {
 		//searching for the role of the user authenticated 
 		let getRole = await db.getRole(user);
 		console.log(getRole)
+		if (getRole.role=="teacher"){
+			//if it is student we search for the thesis related to his COD_DEGREE
+			let thesis = await db.getThesisTeacher(getRole.id)
+			console.log(thesis)
+			res.status(200).json(thesis);
+		}else if (getRole.role == "student"){
+			let thesis = await db.getThesisStudent(getRole.id)
+			console.log(thesis)
+			res.status(200).json(thesis);
+		}
 		//if it is student we search for the thesis related to his COD_DEGREE
 		//if it is teacher we get the thesis in which he is supervisor
 
-		res.status(200).json({"result":"ok"});
 	} catch (err) {
 		res.status(500).end();
 	}
