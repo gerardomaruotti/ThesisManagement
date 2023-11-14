@@ -205,13 +205,27 @@ app.get('/api/thesis/:id', async (req, res) => {
 ////////////////////////////////////////////////////////////////////
 
 //API for the 3rd story --> Apply for proposal 
-app.post('/api/proposal/insert', async (req, res) => {
+app.post('/api/thesis/:id/proposal', async (req, res) => {
 	try {
-		//const helpDesk = await db.insertHelpDesk(serviceId, counterList);
+
+		let user = req.auth.payload.sub;
+		let thesisId=req.params.id;
+		let userRole = await db.getRole(user);
+		await db.getThesis(thesisId);
+		const state = await db.checkThesisActive(thesisId);
+
+		if(state == "1" && userRole.role == "student"){
+			const propId=await db.insertProposal(userRole.id,thesisId);
+		} else{
+			return res.status(500).json({ error: 'Tesi non attiva o utente non autorizzato' });
+		}
+		
 		return res.status(200).json('Inserimento avvenuto con successo');
+
 	} catch (err) {
-		return res.status(503).json({ error: 'Errore nell inserimento' });
+		return res.status(503).json({ error: 'Errore nell inserimento della proposta di tesi' });
 	}
 });
+
 
 module.exports = { app, port, checkJwt };  
