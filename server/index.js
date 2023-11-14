@@ -10,8 +10,8 @@ app.use(express.json());
 
 
 const checkJwt = auth({
-  audience: 'https://dev-1v67v8wnwnvivonl.us.auth0.com/api/v2/',
-  issuerBaseURL: `https://dev-1v67v8wnwnvivonl.us.auth0.com/`,
+  audience: 'https://thesismanagement.eu.auth0.com/api/v2/',
+  issuerBaseURL: `https://thesismanagement.eu.auth0.com/`,
 });
 
 const corsOptions = {
@@ -55,14 +55,16 @@ app.get("/api/cds", (req,res)=>{
 
 
 //return all thesis of the department of the student/professor 
-app.get('/api/thesis', async (req, res) => {
-	//usare req.params == null per verificare se ci sono i filtri 
+app.get('/api/thesis', checkJwt, async (req, res) => {
 	try {
-		//const counters = await db.listOfCounter();
+		let user = req.auth.payload.sub;
+		//searching for the role of the user authenticated 
+		let getRole = await db.getRole(user);
+		console.log(getRole)
+		//if it is student we search for the thesis related to his COD_DEGREE
+		//if it is teacher we get the thesis in which he is supervisor
 
-    //gestione dei filtri interna 
-    //separare i casi con filtro e senza filtro 
-		res.status(200).json(/*counters*/);
+		res.status(200).json({"result":"ok"});
 	} catch (err) {
 		res.status(500).end();
 	}

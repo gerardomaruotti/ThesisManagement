@@ -202,6 +202,37 @@ const db = new sqlite.Database('thesis_management.db', (err) => {
     });
   };
 
+  exports.getRole = (auth0) => {
+    return new Promise((resolve, reject) => {
+      const sql = 'SELECT * FROM STUD_AUTH0 WHERE ID_AUTH0=? ';
+      db.get(sql, [auth0], (err, elem) => {
+        if (err) { 
+            reject(err); 
+            return;
+        }
+        else {
+            if (elem != undefined)
+              resolve({"role":"student", "id":elem.ID})
+            else{
+              const sql2 = 'SELECT * FROM TEACHER_AUTH0 WHERE ID_AUTH0=? ';
+              db.get(sql2, [auth0], (err, elem) => {
+                if (err) { 
+                    reject(err); 
+                    return;
+                }
+                else {
+                  if (elem.ID != undefined)
+                    resolve({"role":"teacher", "id":elem.ID})
+                  else
+                    resolve({})//non ritorna nulla se non è autenticato, ma qua non entra
+                }
+              });
+            }
+          }
+        });
+    });
+  }
+
   exports.insertThesis = (title,description,req_know,notes,exp_date,level,degree,supervisor) => {
     return new Promise((resolve, reject) => {
       const sql = 'INSERT INTO thesis (title, description, required_knowledge, notes, expiration_date, level, degree, supervisor) VALUES(?, ?, ?, ?, ?, ?, ?, ?)';
