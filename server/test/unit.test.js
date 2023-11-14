@@ -52,8 +52,37 @@ describe('GET Keywords', () => {
 });
 
 describe('GET Types', () => {
-    test('dummy test', async () => {
+    test('should return an empty list when retrieving a list of types', async () => {
+        const ty = [];
 
+        db.getTypes.mockResolvedValueOnce(ty);
+        const res = await request(app).get('/api/types');
+
+        expect(db.getTypes).toHaveBeenCalledTimes(1);
+        expect(res.status).toBe(200);
+        expect(res.body).toEqual([]);
+    });
+
+    test('should return a non-empty list when retrieving a list of types', async () => {
+        const ty = ["Example1", "Example2"];
+
+        db.getTypes.mockResolvedValueOnce(ty);
+        const res = await request(app).get('/api/types');
+
+        expect(db.getTypes).toHaveBeenCalledTimes(1);
+        expect(res.status).toBe(200);
+        expect(res.body).not.toHaveLength(0);
+        expect(res.body).toEqual(ty);
+    });
+
+    test('should return a 503 error when an error occurs', async () => {
+        db.getTypes.mockRejectedValueOnce(new Error('Internal server error'));
+        const res = await request(app).get('/api/types');
+    
+        expect(db.getTypes).toHaveBeenCalledTimes(1);
+        expect(res.status).toBe(503);
+        expect(res.body).toEqual("getTypes error");
+    
     });
 });
 
