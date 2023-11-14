@@ -235,7 +235,7 @@ const db = new sqlite.Database('thesis_management.db', (err) => {
 
   exports.getThesisTeacher=(ID)=>{
     return new Promise((resolve, reject) => {
-      const sql = 'SELECT T.ID_THESIS as ID, T.TITLE AS title, T.NOTES as notes, T.DESCRIPTION AS description , T.REQUIRED_KNOWLEDGE AS req_know, TE.NAME AS sup_name, TE.SURNAME AS sup_surname FROM THESIS T JOIN TEACHER TE ON T.SUPERVISOR == TE.ID WHERE TE.ID = ?';
+      const sql = 'SELECT DISTINCT T.ID_THESIS as ID, T.TITLE AS title, T.NOTES as notes, T.DESCRIPTION AS description , T.REQUIRED_KNOWLEDGE AS req_know, TE.NAME AS sup_name, TE.SURNAME AS sup_surname FROM THESIS T JOIN TEACHER TE ON T.SUPERVISOR == TE.ID WHERE TE.ID = ?';
       db.all(sql, [ID], (err, rows) => {
         if (err) { 
             reject(err); 
@@ -250,7 +250,8 @@ const db = new sqlite.Database('thesis_management.db', (err) => {
               req_know: elem.req_know,
               sup_name: elem.sup_name,
               sup_surname: elem.sup_surname,
-              notes : elem.notes
+              notes : elem.notes,
+              keywords:[]
             }))
             resolve(thesis)
           }else{
@@ -263,7 +264,7 @@ const db = new sqlite.Database('thesis_management.db', (err) => {
 
   exports.getThesisStudent=(ID)=>{
     return new Promise((resolve, reject) => {
-      const sql = 'SELECT T.ID_THESIS as ID, T.TITLE AS title, T.NOTES as notes, T.DESCRIPTION AS description , T.REQUIRED_KNOWLEDGE AS req_know, TE.NAME AS sup_name, TE.SURNAME AS sup_surname FROM THESIS T JOIN STUDENT S ON S.COD_DEGREE == T.DEGREE JOIN TEACHER TE ON T.SUPERVISOR == TE.ID WHERE S.ID = ?';
+      const sql = 'SELECT DISTINCT T.ID_THESIS as ID, T.TITLE AS title, T.NOTES as notes, T.DESCRIPTION AS description , T.REQUIRED_KNOWLEDGE AS req_know, TE.NAME AS sup_name, TE.SURNAME AS sup_surname FROM THESIS T JOIN STUDENT S ON S.COD_DEGREE == T.DEGREE JOIN TEACHER TE ON T.SUPERVISOR == TE.ID WHERE S.ID = ?';
       db.all(sql, [ID], (err, rows) => {
         if (err) { 
             reject(err); 
@@ -279,8 +280,10 @@ const db = new sqlite.Database('thesis_management.db', (err) => {
               req_know: elem.req_know,
               sup_name: elem.sup_name,
               sup_surname: elem.sup_surname,
-              notes : elem.notes
+              notes : elem.notes,
+              keywords:[]
             }))
+
             resolve(thesis)
           }else{
             resolve([])
