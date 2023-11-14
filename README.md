@@ -1,4 +1,4 @@
-# SE2 - Office Queue Management
+# SE2 - Thesis Managment
 # Server side
 
 ## API Server
