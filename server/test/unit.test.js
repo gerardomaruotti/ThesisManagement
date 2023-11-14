@@ -3,14 +3,9 @@ const { app, checkJwt } = require('../index.js');
 const db = require('../db');
 
 jest.mock('../db');
-/*jest.mock("../index.js", () => {
-  const originalModule = jest.requireActual("../index.js");
-  return {
-    
-    ...originalModule,
-    checkJwt: jest.fn(),
-  };
-});*/ // mock the middleware ?
+jest.mock('express-oauth2-jwt-bearer', () => ({
+    auth: jest.fn(() => (_, __, next) => next()),
+  })); 
 
 beforeEach(() => {
     jest.clearAllMocks();
@@ -122,9 +117,38 @@ describe('GET Teachers', () => {
 });
 
 describe('GET Cds', () => {
-    test('dummy test', async () => {
+    test('should return an empty list when retrieving a list of cds', async () => {
+        const cds = [];
 
+        db.getCdS.mockResolvedValueOnce(cds);
+        const res = await request(app).get('/api/cds');
+
+        expect(db.getCdS).toHaveBeenCalledTimes(1);
+        expect(res.status).toBe(200);
+        expect(res.body).toEqual([]);
     });
+
+    test('should return a non-empty list when retrieving a list of cds', async () => {
+        const cds = ["Example1", "Example2"];
+
+        db.getCdS.mockResolvedValueOnce(cds);
+        const res = await request(app).get('/api/cds');
+
+        expect(db.getCdS).toHaveBeenCalledTimes(1);
+        expect(res.status).toBe(200);
+        expect(res.body).not.toHaveLength(0);
+        expect(res.body).toEqual(cds);
+    });
+
+    test('should return a 503 error when an error occurs', async () => {
+        db.getCdS.mockRejectedValueOnce(new Error('Internal server error'));
+        const res = await request(app).get('/api/cds');
+    
+        expect(db.getCdS).toHaveBeenCalledTimes(1);
+        expect(res.status).toBe(503);
+        expect(res.body).toEqual("getCds error");
+    
+      });
 });
 
 describe('GET Theses', () => {
