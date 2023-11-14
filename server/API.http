@@ -51,11 +51,10 @@ Content-Type: application/json
 
  
 ##### get the list of groups correlated to a thesis (by supervisor and co supervisor) ####                             
-POST http://localhost:3001/api/thesis/groups HTTP/1.1
+GET http://localhost:3001/api/thesis/5/groups HTTP/1.1
 Content-Type: application/json
  
 {
-    "ID":1
 }
 
 #########
