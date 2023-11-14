@@ -34,6 +34,41 @@ function getAllKeywords() {
     });
 }
 
+
+function getAllThesis(accessToken) {
+    // call  /api/keywords
+    return new Promise((resolve, reject) => {
+        fetch(URL + '/thesis', {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            })
+            .then((response) => {
+                if (response.ok) {
+                    response
+                        .json()
+                        .then((thesis) => resolve(thesis))
+                        .catch(() => {
+                            reject({ error: 'Cannot parse server response.' });
+                        });
+                } else {
+                    // analyze the cause of error
+                    response
+                        .json()
+                        .then((message) => {
+                            reject(message);
+                        }) // error message in the response body
+                        .catch(() => {
+                            reject({ error: 'Cannot parse server response.' });
+                        });
+                }
+            })
+            .catch(() => {
+                reject({ error: 'Cannot communicate with the server.' });
+            }); // connection errors
+    });
+}
+
 function getAllTypes() {
     // call  /api/types
     return new Promise((resolve, reject) => {
@@ -125,6 +160,6 @@ function getAllCds() {
 }
 
 const API = {
-    getAllKeywords, getAllTypes, getAllSupervisors, getAllCds
+    getAllKeywords, getAllTypes, getAllSupervisors, getAllCds, getAllThesis 
 };
 export default API;

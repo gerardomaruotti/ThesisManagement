@@ -8,6 +8,7 @@ import Header from './components/Header';
 import ProfessorHome from './views/ProfessorHome';
 import InsertProposal from './views/InsertProposal';
 import Proposal from './views/Proposal';
+import API from './API.jsx'
 
 function App() {
 	const { user, isAuthenticated, getAccessTokenSilently, isLoading, loginWithRedirect } = useAuth0();
@@ -47,6 +48,10 @@ function App() {
 					},
 				});
 				console.log('User access token: ' + accessToken);
+
+				//test per get thesis autenticata
+				API.getAllThesis(accessToken);
+
 			} catch (e) {
 				console.log(e.message);
 			}
