@@ -221,7 +221,7 @@ const db = new sqlite.Database('thesis_management.db', (err) => {
                     return;
                 }
                 else {
-                  if (elem.ID != undefined)
+                  if (elem != undefined)
                     resolve({"role":"teacher", "id":elem.ID})
                   else
                     resolve({})//non ritorna nulla se non è autenticato, ma qua non entra
@@ -235,22 +235,27 @@ const db = new sqlite.Database('thesis_management.db', (err) => {
 
   exports.getThesisTeacher=(ID)=>{
     return new Promise((resolve, reject) => {
-      const sql = 'SELECT T.ID_THESIS as ID, T.TITLE AS title, T.DESCRIPTION AS description , T.REQUIRED_KNOWLEDGE AS req_know, TE.NAME AS sup_name, TE.SURNAME AS sup_surname FROM THESIS T JOIN TEACHER TE ON T.SUPERVISOR == TE.ID WHERE TE.ID = ?';
+      const sql = 'SELECT T.ID_THESIS as ID, T.TITLE AS title, T.NOTES as notes, T.DESCRIPTION AS description , T.REQUIRED_KNOWLEDGE AS req_know, TE.NAME AS sup_name, TE.SURNAME AS sup_surname FROM THESIS T JOIN TEACHER TE ON T.SUPERVISOR == TE.ID WHERE TE.ID = ?';
       db.all(sql, [ID], (err, rows) => {
         if (err) { 
             reject(err); 
             return;
         }
         else {
-          const thesis=rows.map((elem)=> ({
-            ID: elem.ID,
-            title: elem.title,
-            description: elem.description,
-            req_know: elem.req_know,
-            sup_name: elem.sup_name,
-            sup_surname: elem.sup_surname,
-          }))
-          resolve(thesis)
+          if (rows.length > 0 ){
+            const thesis=rows.map((elem)=> ({
+              ID: elem.ID,
+              title: elem.title,
+              description: elem.description,
+              req_know: elem.req_know,
+              sup_name: elem.sup_name,
+              sup_surname: elem.sup_surname,
+              notes : elem.notes
+            }))
+            resolve(thesis)
+          }else{
+            resolve([])
+          }
         }
       });
     });
@@ -258,7 +263,7 @@ const db = new sqlite.Database('thesis_management.db', (err) => {
 
   exports.getThesisStudent=(ID)=>{
     return new Promise((resolve, reject) => {
-      const sql = 'SELECT T.ID_THESIS as ID, T.TITLE AS title, T.DESCRIPTION AS description , T.REQUIRED_KNOWLEDGE AS req_know, TE.NAME AS sup_name, TE.SURNAME AS sup_surname FROM THESIS T JOIN STUDENT S ON S.COD_DEGREE == T.DEGREE JOIN TEACHER TE ON T.SUPERVISOR == TE.ID WHERE S.ID = ?';
+      const sql = 'SELECT T.ID_THESIS as ID, T.TITLE AS title, T.NOTES as notes, T.DESCRIPTION AS description , T.REQUIRED_KNOWLEDGE AS req_know, TE.NAME AS sup_name, TE.SURNAME AS sup_surname FROM THESIS T JOIN STUDENT S ON S.COD_DEGREE == T.DEGREE JOIN TEACHER TE ON T.SUPERVISOR == TE.ID WHERE S.ID = ?';
       db.all(sql, [ID], (err, rows) => {
         if (err) { 
             reject(err); 
@@ -266,15 +271,20 @@ const db = new sqlite.Database('thesis_management.db', (err) => {
         }
         else {
           console.log(rows)
-          const thesis=rows.map((elem)=> ({
-            ID: elem.ID,
-            title: elem.title,
-            description: elem.description,
-            req_know: elem.req_know,
-            sup_name: elem.sup_name,
-            sup_surname: elem.sup_surname,
-          }))
-          resolve(thesis)
+          if (rows.length>0){
+            const thesis=rows.map((elem)=> ({
+              ID: elem.ID,
+              title: elem.title,
+              description: elem.description,
+              req_know: elem.req_know,
+              sup_name: elem.sup_name,
+              sup_surname: elem.sup_surname,
+              notes : elem.notes
+            }))
+            resolve(thesis)
+          }else{
+            resolve([])
+          }
         }
       });
     });
