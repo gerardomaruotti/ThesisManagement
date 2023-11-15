@@ -268,6 +268,42 @@ describe('GET Thesis', () => {
 });
 
 describe('GET Groups', () => {
+    test('should return a empty list when retrieving a list of groups', async () => {
+        const groups = [];
+
+        db.getGroups.mockResolvedValueOnce(groups);
+        const res = await request(app).get('/api/groups');
+
+        expect(db.getGroups).toHaveBeenCalledTimes(1);
+        expect(res.status).toBe(200);
+        expect(res.body).toHaveLength(0);
+        expect(res.body).toEqual([]);
+    });
+
+    test('should return a non-empty list when retrieving a list of groups', async () => {
+        const groups = ["Example1", "Example2"];
+
+        db.getGroups.mockResolvedValueOnce(groups);
+        const res = await request(app).get('/api/groups');
+
+        expect(db.getGroups).toHaveBeenCalledTimes(1);
+        expect(res.status).toBe(200);
+        expect(res.body).not.toHaveLength(0);
+        expect(res.body).toEqual(groups);
+    });
+
+    test('should return a 503 error when an error occurs', async () => {
+        db.getGroups.mockRejectedValueOnce(new Error('Internal server error'));
+        const res = await request(app).get('/api/groups');
+    
+        expect(db.getGroups).toHaveBeenCalledTimes(1);
+        expect(res.status).toBe(503);
+        expect(res.body).toEqual("getGroups error");
+    
+      });
+});
+
+describe('GET Supervisors Groups', () => {
     test('should return a non-empty list when retrieving a list of groups', async () => {
         const groups = ["Example1", "Example2"];
 
