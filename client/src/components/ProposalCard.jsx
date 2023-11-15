@@ -39,8 +39,8 @@ function ProposalCard(props) {
 							key={index}
 							className='badge'
 							style={{
-								backgroundColor: colors[index % 3].backgroundColor,
-								color: colors[index % 3].color,
+								backgroundColor: colors[index % 6].backgroundColor,
+								color: colors[index % 6].color,
 								padding: '0.5em 1.2em',
 								borderRadius: '0.25rem',
 								marginRight: 10,
