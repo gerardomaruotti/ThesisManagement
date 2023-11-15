@@ -52,10 +52,39 @@ app.get("/api/cds", (req,res)=>{
 //METODI API
 //fare metodo gestione autenticazione --> che ritorna ID matricla e chekka auth0
 
-
-
+/*check della funzione senza autenticazione per la tesi dello studente filtrato
 //return all thesis of the department of the student/professor 
-app.get('/api/thesis', checkJwt, async (req, res) => {
+app.post('/api/thesis/filter', async (req, res) => {
+	try {
+		if (req.body.filters == null){
+			let thesis = await db.getThesisStudent(getRole.id)
+			for (let i=0; i<thesis.length; i++){
+				let keywords = await db.getKeywordsbyId(thesis[i].ID)
+				thesis[i].keywords = keywords;
+			}
+				console.log(thesis);
+				res.status(200).json(thesis);
+		}else{
+				let thesis = await db.getThesisStudentFiltered('s313373', req.body.filters)
+				for (let i=0; i<thesis.length; i++){
+					let keywords = await db.getKeywordsbyId(thesis[i].ID)
+					thesis[i].keywords = keywords;
+				}
+				console.log(thesis);
+				res.status(200).json(thesis);
+			}
+		}
+		//if it is student we search for the thesis related to his COD_DEGREE
+		//if it is teacher we get the thesis in which he is supervisor
+
+	catch (err) {
+		res.status(500).end();
+	}
+});
+*/
+
+
+app.post('/api/thesis', checkJwt, async (req, res) => {
 	try {
 		//let user = req.auth.payload.sub;
 		//searching for the role of the user authenticated 
@@ -74,13 +103,23 @@ app.get('/api/thesis', checkJwt, async (req, res) => {
 
 			
 		}else if (getRole.role == "student"){
-			let thesis = await db.getThesisStudent(getRole.id)
-			for (let i=0; i<thesis.length; i++){
-				let keywords = await db.getKeywordsbyId(thesis[i].ID)
-				thesis[i].keywords = keywords;
+			if (req.body.filters == null){
+				let thesis = await db.getThesisStudent(getRole.id)
+				for (let i=0; i<thesis.length; i++){
+					let keywords = await db.getKeywordsbyId(thesis[i].ID)
+					thesis[i].keywords = keywords;
+				}
+				console.log(thesis);
+				res.status(200).json(thesis);
+			}else{
+				let thesis = await db.getThesisStudentFiltered(getRole.id, req.body.filters)
+				for (let i=0; i<thesis.length; i++){
+					let keywords = await db.getKeywordsbyId(thesis[i].ID)
+					thesis[i].keywords = keywords;
+				}
+				console.log(thesis);
+				res.status(200).json(thesis);
 			}
-			console.log(thesis);
-			res.status(200).json(thesis);
 		}
 		//if it is student we search for the thesis related to his COD_DEGREE
 		//if it is teacher we get the thesis in which he is supervisor
