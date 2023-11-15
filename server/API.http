@@ -78,7 +78,6 @@ Content-Type: application/json
     "expiration_date":"20/12/2023",
     "level":"MSc",
     "degree":"LM-53",
-    "supervisor" : "d123457",
     "types" : ["EXPERIMENTAL"],
     "co_supervisors" : [
         {"name":"Carlo", "surname":"Rafele", "email":"d123461@polito.it"},

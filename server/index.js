@@ -111,18 +111,17 @@ app.get('/api/thesis/:id/groups',async (req, res) => {
 });
 
 app.post('/api/insert/thesis',  [
-		check('title').isString(),
-		check('description').isString(),
-		check('required_knowledge').isString(), 
-		check('notes').isString(), 
-		check('expiration_date').isString(),
-		check('level').isString(), 
-		check('degree').isString(), 
-		check('supervisor').isString(), 
+		check('title').isLength({min: 1}),
+		check('description').isLength({min: 1}),
+		check('required_knowledge').isLength({min: 1}),
+		check('notes').isLength({min: 1}),
+		check('expiration_date').isLength({min: 1}),
+		check('level').isLength({min: 1}),
+		check('degree').isLength({min: 1}),
 		check('co-supervisors').isArray(), 
 		check('keywords').isArray()
 
-  	],async (req, res) => {
+  	], checkJwt, async (req, res) => {
 	const title = req.body.title;
 	const description = req.body.description;
 	const req_know = req.body.required_knowledge;
@@ -131,34 +130,40 @@ app.post('/api/insert/thesis',  [
 	const level = req.body.level;
 	const degree = req.body.degree;
 	const types=req.body.types;
-	const supervisor = req.body.supervisor;
 	const co_supervisors = req.body.co_supervisors;
 	const keywords = req.body.keywords;
 	
 	try {
 		//i need groups of supervisor and co-supervisor of the thesis
-		const thesisId = await db.insertThesis(title,description,req_know,notes,exp_date,level,degree,supervisor);
+		const userRole=await db.getRole(req.auth);
+		if(userRole.role=="teacher"){
+			const supervisor=userRole.id;
+			const thesisId = await db.insertThesis(title, description, req_know, notes, exp_date, level, degree, supervisor);
+
+			for (let i = 0; i < co_supervisors.length; i++) {
+				console.log(co_supervisors[i])
+				const CoSupID = await db.insertCoSupervisor(thesisId, co_supervisors[i].name, co_supervisors[i].surname, co_supervisors[i].email)
+				console.log(CoSupID);
+			}
+
+			for (let i = 0; i < keywords.length; i++) {
+				console.log(keywords[i])
+				const keywordID = await db.insertKeyword(thesisId, keywords[i])
+				console.log(keywordID);
+			}
+
+			for (let i = 0; i < types.length; i++) {
+				const typesId = await db.insertType(thesisId, types[i])
+				console.log(typesId);
+			}
+
+			const statusId = await db.insertThesisStatus(thesisId);
+			console.log(statusId)
+			return res.status(200).json(thesisId);
+		} else{
+			return res.status(401).json("Unauthorized user")
+		}
 		
-		for (let i = 0; i<co_supervisors.length; i++){
-			console.log(co_supervisors[i])
-			const CoSupID = await db.insertCoSupervisor(thesisId, co_supervisors[i].name,co_supervisors[i].surname,co_supervisors[i].email)
-			console.log(CoSupID);
-		}
-
-		for (let i = 0; i<keywords.length; i++){
-			console.log(keywords[i])
-			const keywordID = await db.insertKeyword(thesisId, keywords[i])
-			console.log(keywordID);
-		}
-
-		for(let i=0;i<types.length;i++){
-			const typesId = await db.insertType(thesisId,types[i])
-			console.log(typesId);
-		}
-
-		const statusId= await db.insertThesisStatus(thesisId);
-		console.log(statusId)
-		return res.status(200).json(thesisId);
 	} catch (err) {
 		return res.status(503).json({ error: 'Errore nell inserimento' });
 	}
@@ -168,10 +173,10 @@ app.post('/api/insert/thesis',  [
 
 
 //ritorniamo le liste di campi necessari per la visualizzazione intera della thesi 
-app.get('/api/thesis/:id', async (req, res) => {
+app.get('/api/thesis/:id', checkJwt,async (req, res) => {
 	//fare il check se l'utente può effettivamente vedere la tesi, tramite access token controllo corso di laurea dell'utente se studente
 	const thesisID = req.params.id;
-
+	
 	if (isNaN(thesisID) || thesisID<=0) {
         return res.status(400).json({ error: 'Invalid thesis ID.' });
     }
@@ -209,7 +214,7 @@ app.get('/api/thesis/:id', async (req, res) => {
 ////////////////////////////////////////////////////////////////////
 
 //API for the 3rd story --> Apply for proposal 
-app.post('/api/thesis/:id/proposal', async (req, res) => {
+app.post('/api/thesis/:id/proposal', checkJwt, async (req, res) => {
 	try {
 
 		//let user = req.auth.payload.sub;
