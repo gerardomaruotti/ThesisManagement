@@ -158,6 +158,67 @@ function getAllCds() {
 	});
 }
 
+function getAllGroups() {
+	// call  /api/groups
+	return new Promise((resolve, reject) => {
+		fetch(URL + '/groups')
+			.then((response) => {
+				if (response.ok) {
+					response
+						.json()
+						.then((groups) => resolve(groups))
+						.catch(() => {
+							reject({ error: 'Cannot parse server response.' });
+						});
+				} else {
+					// analyze the cause of error
+					response
+						.json()
+						.then((message) => {
+							reject(message);
+						}) // error message in the response body
+						.catch(() => {
+							reject({ error: 'Cannot parse server response.' });
+						});
+				}
+			})
+			.catch(() => {
+				reject({ error: 'Cannot communicate with the server.' });
+			}); // connection errors
+	});
+}
+
+function getThesisByID(id) {
+	// call  /api/thesis/<id>
+	return new Promise((resolve, reject) => {
+		fetch(URL + `/thesis/${id}`)
+			.then((response) => {
+				if (response.ok) {
+					response
+						.json()
+						.then((thesis) => resolve(thesis))
+						.catch(() => {
+							reject({ error: 'Cannot parse server response.' });
+						});
+				} else {
+					// analyze the cause of error
+					response
+						.json()
+						.then((message) => {
+							reject(message);
+						}) // error message in the response body
+						.catch(() => {
+							reject({ error: 'Cannot parse server response.' });
+						});
+				}
+			})
+			.catch(() => {
+				reject({ error: 'Cannot communicate with the server.' });
+			}); // connection errors
+	});
+}
+
+
 function insertThesis(thesis) {
 	return new Promise((resolve, reject) => {
 		fetch(URL + '/insert/thesis', {
@@ -201,5 +262,7 @@ const API = {
 	getAllCds,
 	getAllThesis,
 	insertThesis,
+	getAllGroups,
+	getThesisByID
 };
 export default API;

@@ -11,6 +11,7 @@ function FiltersModal(props) {
     const [types, setTypes] = useState([]);
     const [supervisors, setSupervisors] = useState([]);
     const [expirationDate, setExpirationDate] = useState('all');
+    const [groups, setGroups] = useState([]);
 
     useEffect(() => {
         API.getAllKeywords()
@@ -26,6 +27,11 @@ function FiltersModal(props) {
         API.getAllSupervisors()
             .then((supervisors) => {
                 setSupervisors(supervisors.map((supervisor) => { return { value: supervisor.email, label: supervisor.name + " " + supervisor.surname } }));
+            })
+            .catch((err) => handleError(err));
+        API.getAllGroups()
+            .then((groups) => {
+                setGroups(groups.map((group) => { return { value: group.cod_group, label: group.name } }));
             })
             .catch((err) => handleError(err));
     }, []);
@@ -65,7 +71,7 @@ function FiltersModal(props) {
                                 </Form.Group>
                                 <Form.Group className='mb-3' controlId='formGroups'>
                                     <Form.Label>Groups</Form.Label>
-                                    <Select isMulti options={[]} styles={colorStyles} />
+                                    <Select isMulti options={groups} styles={colorStyles} />
                                 </Form.Group>
                             </Col>
                             <Col md={6}>

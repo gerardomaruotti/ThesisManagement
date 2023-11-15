@@ -24,6 +24,8 @@ function App() {
 	const [type, setType] = useState([]);
 	const [expirationDate, setExpirationDate] = useState('');
 	// const [userMetadata, setUserMetadata] = useState(null);
+	const [thesis, setThesis] = useState([]);
+
 
 	function handleError(err) {
 		console.log(err);
@@ -50,7 +52,13 @@ function App() {
 				console.log('User access token: ' + accessToken);
 
 				//test per get thesis autenticata
-				API.getAllThesis(accessToken);
+				API.getAllThesis(accessToken)
+					.then((thesis) => {
+						setThesis(thesis);
+						console.log("thesis:");
+						console.log(thesis);
+					})
+					.catch((err) => handleError(err));
 			} catch (e) {
 				console.log(e.message);
 			}
@@ -64,9 +72,9 @@ function App() {
 		<BrowserRouter>
 			<Header />
 			<Routes>
-				<Route path='/' element={<StudentHome />} />
+				<Route path='/' element={<StudentHome thesis={thesis} />} />
 				<Route path='/proposal/:id' element={<Proposal />} />
-				<Route path='/professor' element={<ProfessorHome />} />
+				<Route path='/professor' element={<ProfessorHome thesis={thesis} />} />
 				<Route
 					path='/proposals/add'
 					element={

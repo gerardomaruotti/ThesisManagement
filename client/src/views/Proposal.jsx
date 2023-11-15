@@ -2,10 +2,25 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Row, Col, Card, Image, Button, Container } from 'react-bootstrap';
 import { Color } from '../constants/colors.js';
 import Avatar from '../assets/avatar.svg';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import API from '../API.jsx';
 
 function Proposal(props) {
 	const navigate = useNavigate();
+	const [thesis, setThesis] = useState({});
+	const { id } = useParams();
+
+	useEffect(() => {
+		API.getThesisByID(id)
+			.then((thesis) => {
+				setThesis(thesis);
+				console.log(thesis);
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	}, []);
 	return (
 		<Container style={{ marginTop: 25 }}>
 			<Row>
@@ -144,44 +159,33 @@ function Proposal(props) {
 								</Button>
 							</Col>
 							<Col md={10}>
-								<div style={{ fontWeight: 'bold', fontSize: 30 }}>ARMADA: A Framework for Automatic Hardware Design Debugging and Repair</div>
+								<div style={{ fontWeight: 'bold', fontSize: 30 }}>{thesis.title}</div>
 							</Col>
 						</Row>
 						<Row>
 							<Col md={12}>
 								<div style={{ fontWeight: 'bold', fontSize: 15, marginTop: 15, color: '#E6782B' }}> Description </div>
 								<div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}>
-									<p>
-										In recent years, there has been an exponential growth in the size and complexity of System-on-Chip (SoC) designs targeting different specialized applications. The cost of an undetected bug in these systems is much higher than in traditional processor systems, as it may imply the loss of property or life. The problem is further exacerbated by the ever-shrinking time-to-market and ever-increasing design complexity and demand to churn out billions of hardware devices. Despite decades of research in simulation and formal methods for debugging and verifying pre-silicon register transfer level (RTL) design, RTL debugging is still one of the most time-consuming and resource-intensive processes in the contemporary hardware design cycle. Current industrial practice primarily uses regression techniques and what-if analysis for debugging. However, such methods are extremely time-consuming and often rely on deep insights from human experts. On the other hand, academic researchers have proposed automated debugging techniques using data-driven statistical analysis, SAT, and BDD. However, such methods often suffer from scalability issues, do not provide human-comprehensible explanations of failure root causes, and do not automatically create code patches to fix buggy designs. This project will address this critical problem by creating ARMADA, a new foundational infrastructure, and a comprehensive tool suite for pre-silicon RTL debugging. A critical insight is that recent advances in state-of-the-art deep learning models, such as Transformer, Large Language Models (LLMs), have enormous potential to root cause and localize, explain root causes that are human understandable, and generate code patches to debug the RTL designs. We propose integrating this insight in ARMADA to create a novel, scalable, and effective pre-silicon debugging and repairing framework.
-									</p>
-									<p>Intellectual Merit</p>
-									<p>The project will develop a unified foundational infrastructure and comprehensive suite of tools to enable streamlined pre-silicon RTL debugging and repairing of realistic SoCs.</p>
-									<p>(1) It will develop novel technologies for characterizing and classifying design failure traces for effective debugging and root cause analysis.</p>
-									<p>(2) It will create a framework for automatically localizing suspicious design components and design source codes.</p>
-									<p>(3) It will develop a framework to generate human-understandable explanations of design failures at different abstractions in natural language.</p>
-									<p>(4) It will develop novel technologies to automatically generate fixes, i.e., code patches to repair suspicious design components. The proposed approaches will be demonstrated on complex, realistic, industry-scale SoC designs.</p>
+									{thesis.description}
 								</div>
 							</Col>
 						</Row>
-						<Row>
-							<Col md={12}>
-								<div style={{ fontWeight: 'bold', fontSize: 15, marginTop: 15, color: '#E6782B' }}> Required Knowledge </div>
-								<div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}>• Advanced programming skills</div>
-								<div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}>• basics of data analytics</div>
-								<div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}>• computer architectures</div>
-								<div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}>• testing and verification of hardware devices</div>
-							</Col>
-						</Row>
-						<Row>
-							<Col md={12}>
-								<div style={{ fontWeight: 'bold', fontSize: 15, marginTop: 15, color: '#E6782B' }}> Notes </div>
-								<div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}>
-									The thesis is expected to be carried out under the tutelage of Prof. Debjit Pal at the University of Illinois at Chicago. Visa
-									paperwork will be handled by the University of Chicago offices. All other expenses will be borne by the student. In case of
-									particular impediments, the thesis can be developed at Politecnico.
-								</div>
-							</Col>
-						</Row>
+						{thesis.requiredKnowledge == '' ? null :
+							<Row>
+								<Col md={12}>
+									{thesis.requiredKnowledge}
+								</Col>
+							</Row>
+						}
+						{thesis.notes == '' ? null :
+							<Row>
+								<Col md={12}>
+									<div style={{ fontWeight: 'bold', fontSize: 15, marginTop: 15, color: '#E6782B' }}> Notes </div>
+									<div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}>
+										{thesis.notes}
+									</div>
+								</Col>
+							</Row>}
 					</Card>
 				</Col>
 			</Row>

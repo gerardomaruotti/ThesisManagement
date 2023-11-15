@@ -6,7 +6,7 @@ import ProposalCard from '../components/ProposalCard.jsx';
 import FiltersModal from '../components/FiltersModal.jsx';
 import { useState } from 'react';
 
-function StudentHome() {
+function StudentHome(props) {
     const [filtersShow, setFiltersShow] = useState(false);
 
     return (
@@ -55,10 +55,8 @@ function StudentHome() {
             />
             <Container>
                 <Row style={{ marginBottom: 25 }}>
-                    <ProposalCard />
-                    <ProposalCard />
-                    <ProposalCard />
-                    <ProposalCard />
+                    {props.thesis != [] ? props.thesis.map((thesis, index) => (
+                        <ProposalCard key={thesis.ID} thesis={thesis} />)) : null}
                 </Row>
             </Container>
         </ >

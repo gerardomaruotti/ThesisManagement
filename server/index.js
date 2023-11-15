@@ -10,8 +10,8 @@ app.use(express.json());
 
 
 const checkJwt = auth({
-  audience: 'https://thesismanagement.eu.auth0.com/api/v2/',
-  issuerBaseURL: `https://thesismanagement.eu.auth0.com/`,
+	audience: 'https://thesismanagement.eu.auth0.com/api/v2/',
+	issuerBaseURL: `https://thesismanagement.eu.auth0.com/`,
 });
 
 const corsOptions = {
@@ -22,38 +22,38 @@ app.use(cors(corsOptions));
 
 
 
-app.get("/api/keywords", (req,res) => {
+app.get("/api/keywords", (req, res) => {
 	db.getKeywords()
-	.then(keywords=>res.status(200).json(keywords))
-	.catch((err)=> {console.log(err); res.status(503).json("getKeywords error")})
+		.then(keywords => res.status(200).json(keywords))
+		.catch((err) => { console.log(err); res.status(503).json("getKeywords error") })
 });
 
 
-app.get("/api/types", (req,res) => {
+app.get("/api/types", (req, res) => {
 	db.getTypes()
-	.then(types => res.status(200).json(types))
-	.catch((err)=>{console.log(err); res.status(503).json("getTypes error")})
+		.then(types => res.status(200).json(types))
+		.catch((err) => { console.log(err); res.status(503).json("getTypes error") })
 })
 
 
 
-app.get("/api/teachers", (req,res)=>{
+app.get("/api/teachers", (req, res) => {
 	db.getTeachers()
-	.then(teachers=> res.status(200).json(teachers))
-	.catch((err)=>{console.log(err); res.status(503).json("getTeachers error")})
+		.then(teachers => res.status(200).json(teachers))
+		.catch((err) => { console.log(err); res.status(503).json("getTeachers error") })
 })
 
-app.get("/api/groups", (req,res)=>{
+app.get("/api/groups", (req, res) => {
 	db.getGroups()
-	.then(groups=> res.status(200).json(groups))
-	.catch((err)=>{console.log(err); res.status(503).json("getGroups error")})
+		.then(groups => res.status(200).json(groups))
+		.catch((err) => { console.log(err); res.status(503).json("getGroups error") })
 })
 
 
-app.get("/api/cds", (req,res)=>{
+app.get("/api/cds", (req, res) => {
 	db.getCdS()
-	.then(cds=>res.status(200).json(cds))
-	.catch((err)=>{console.log(err); res.status(503).json("getCds error")})
+		.then(cds => res.status(200).json(cds))
+		.catch((err) => { console.log(err); res.status(503).json("getCds error") })
 })
 //METODI API
 //fare metodo gestione autenticazione --> che ritorna ID matricla e chekka auth0
@@ -67,23 +67,25 @@ app.get('/api/thesis', checkJwt, async (req, res) => {
 		//searching for the role of the user authenticated 
 		let getRole = await db.getRole(req.auth);
 		console.log(getRole)
-		if (getRole.role=="teacher"){
+		if (getRole.role == "teacher") {
 			//if it is student we search for the thesis related to his COD_DEGREE
 			let thesis = await db.getThesisTeacher(getRole.id)
-			
-			for (let i=0; i<thesis.length; i++){
+
+			for (let i = 0; i < thesis.length; i++) {
 				let keywords = await db.getKeywordsbyId(thesis[i].ID)
 				thesis[i].keywords = keywords;
 			}
 			console.log(thesis);
 			res.status(200).json(thesis);
 
-			
-		}else if (getRole.role == "student"){
+
+		} else if (getRole.role == "student") {
 			let thesis = await db.getThesisStudent(getRole.id)
-			for (let i=0; i<thesis.length; i++){
+			for (let i = 0; i < thesis.length; i++) {
 				let keywords = await db.getKeywordsbyId(thesis[i].ID)
 				thesis[i].keywords = keywords;
+				let types = await db.getTypesbyId(thesis[i].ID)
+				thesis[i].types = types;
 			}
 			console.log(thesis);
 			res.status(200).json(thesis);
@@ -99,12 +101,12 @@ app.get('/api/thesis', checkJwt, async (req, res) => {
 
 //gestione degli inserimenti nelle varie tabelle secondarie (keyword etc..) 
 //GRUPPI --> aggiungo la tesi ai gruppi di cui fa parte il professore e tutti i co-supervisori che sono professori 
-app.get('/api/thesis/:id/groups',async (req, res) => {
+app.get('/api/thesis/:id/groups', async (req, res) => {
 	const thesisID = req.params.id;
 
-	if (isNaN(thesisID) || thesisID<=0) {
-        return res.status(400).json({ error: 'Invalid thesis ID.' });
-    }
+	if (isNaN(thesisID) || thesisID <= 0) {
+		return res.status(400).json({ error: 'Invalid thesis ID.' });
+	}
 
 	try {
 		//i need groups of supervisor and co-supervisor of the thesis
@@ -116,18 +118,18 @@ app.get('/api/thesis/:id/groups',async (req, res) => {
 	}
 });
 
-app.post('/api/insert/thesis',  [
-		check('title').isLength({min: 1}),
-		check('description').isLength({min: 1}),
-		check('required_knowledge').isLength({min: 1}),
-		check('notes').isLength({min: 1}),
-		check('expiration_date').isLength({min: 1}),
-		check('level').isLength({min: 1}),
-		check('degree').isLength({min: 1}),
-		check('co-supervisors').isArray(), 
-		check('keywords').isArray()
+app.post('/api/insert/thesis', [
+	check('title').isLength({ min: 1 }),
+	check('description').isLength({ min: 1 }),
+	check('required_knowledge').isLength({ min: 1 }),
+	check('notes').isLength({ min: 1 }),
+	check('expiration_date').isLength({ min: 1 }),
+	check('level').isLength({ min: 1 }),
+	check('degree').isLength({ min: 1 }),
+	check('co-supervisors').isArray(),
+	check('keywords').isArray()
 
-  	], checkJwt, async (req, res) => {
+], checkJwt, async (req, res) => {
 	const title = req.body.title;
 	const description = req.body.description;
 	const req_know = req.body.required_knowledge;
@@ -135,15 +137,15 @@ app.post('/api/insert/thesis',  [
 	const exp_date = req.body.expiration_date;
 	const level = req.body.level;
 	const degree = req.body.degree;
-	const types=req.body.types;
+	const types = req.body.types;
 	const co_supervisors = req.body.co_supervisors;
 	const keywords = req.body.keywords;
-	
+
 	try {
 		//i need groups of supervisor and co-supervisor of the thesis
-		const userRole=await db.getRole(req.auth);
-		if(userRole.role=="teacher"){
-			const supervisor=userRole.id;
+		const userRole = await db.getRole(req.auth);
+		if (userRole.role == "teacher") {
+			const supervisor = userRole.id;
 			const thesisId = await db.insertThesis(title, description, req_know, notes, exp_date, level, degree, supervisor);
 
 			for (let i = 0; i < co_supervisors.length; i++) {
@@ -166,10 +168,10 @@ app.post('/api/insert/thesis',  [
 			const statusId = await db.insertThesisStatus(thesisId);
 			console.log(statusId)
 			return res.status(200).json(thesisId);
-		} else{
+		} else {
 			return res.status(401).json({ error: 'Unauthorized user' })
 		}
-		
+
 	} catch (err) {
 		return res.status(503).json({ error: 'Errore nell inserimento' });
 	}
@@ -179,13 +181,13 @@ app.post('/api/insert/thesis',  [
 
 
 //ritorniamo le liste di campi necessari per la visualizzazione intera della thesi 
-app.get('/api/thesis/:id', checkJwt,async (req, res) => {
+app.get('/api/thesis/:id', checkJwt, async (req, res) => {
 	//fare il check se l'utente può effettivamente vedere la tesi, tramite access token controllo corso di laurea dell'utente se studente
 	const thesisID = req.params.id;
-	
-	if (isNaN(thesisID) || thesisID<=0) {
-        return res.status(400).json({ error: 'Invalid thesis ID.' });
-    }
+
+	if (isNaN(thesisID) || thesisID <= 0) {
+		return res.status(400).json({ error: 'Invalid thesis ID.' });
+	}
 
 	try {
 		const infoThesis = await db.getThesis(thesisID);
@@ -224,25 +226,25 @@ app.post('/api/thesis/:id/proposal', checkJwt, async (req, res) => {
 	try {
 
 		//let user = req.auth.payload.sub;
-		let thesisId=req.params.id;
-		if (isNaN(thesisId) || thesisId<=0) {
+		let thesisId = req.params.id;
+		if (isNaN(thesisId) || thesisId <= 0) {
 			return res.status(400).json({ error: 'Invalid thesis ID.' });
 		}
-		
+
 		let userRole = await db.getRole(req.auth);
 		await db.getThesis(thesisId);
 		const state = await db.checkThesisActive(thesisId);
 
-		if(state != "1"){
+		if (state != "1") {
 			return res.status(400).json({ error: 'Thesis not active' });
 		}
 
-		if(userRole.role == "student"){
-			const propId=await db.insertProposal(userRole.id,thesisId);
-		} else{
+		if (userRole.role == "student") {
+			const propId = await db.insertProposal(userRole.id, thesisId);
+		} else {
 			return res.status(401).json({ error: 'Unauthorized user' });
 		}
-		
+
 		return res.status(200).json('Inserimento avvenuto con successo');
 
 	} catch (err) {
