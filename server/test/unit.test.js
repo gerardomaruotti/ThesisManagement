@@ -216,18 +216,44 @@ describe('Insert Thesis', () => {
             keywords: ["keyword1", "keyword2"]
         };
 
+        db.getRole.mockResolvedValueOnce({role: "teacher", id: "1"});
         db.insertThesis.mockResolvedValueOnce(1);
         db.insertCoSupervisor.mockResolvedValueOnce(1);
         db.insertKeyword.mockResolvedValueOnce(1);
         db.insertType.mockResolvedValueOnce(1);
         const res = await request(app).post('/api/insert/thesis').send(thesis);
 
+        expect(db.getRole).toHaveBeenCalledTimes(1);
         expect(db.insertThesis).toHaveBeenCalledTimes(1);
         expect(db.insertCoSupervisor).toHaveBeenCalledTimes(2);
         expect(db.insertKeyword).toHaveBeenCalledTimes(2);
         expect(db.insertType).toHaveBeenCalledTimes(2);
         expect(res.status).toBe(200);
         expect(res.body).toEqual(1);
+    });
+
+    test('should return a 401 error when user is unauthorized', async () => {
+        const thesis = {
+            title: "title",
+            description: "description",
+            required_knowledge: "required_knowledge",
+            notes: "notes",
+            expiration_date: "expiration_date",
+            level: "level",
+            degree: "degree",
+            types: ["type1", "type2"],
+            supervisor: "supervisor",
+            co_supervisors: [{name: "name1", surname: "surname1", email: "email1"}, {name: "name2", surname: "surname2", email: "email2"}],
+            keywords: ["keyword1", "keyword2"]
+        };
+
+        db.getRole.mockResolvedValueOnce({role: "example", id: "1"});
+        const res = await request(app).post('/api/insert/thesis').send(thesis);
+    
+        expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(res.status).toBe(401);
+        expect(res.body).toEqual({ error: 'Unauthorized user' });
+    
     });
 
     test('should return a 503 error when an error occurs while inserting new thesis in db', async () => {
@@ -245,9 +271,11 @@ describe('Insert Thesis', () => {
             keywords: ["keyword1", "keyword2"]
         };
 
+        db.getRole.mockResolvedValueOnce({role: "teacher", id: "1"});
         db.insertThesis.mockRejectedValueOnce(new Error('Internal server error'));
         const res = await request(app).post('/api/insert/thesis').send(thesis);
     
+        expect(db.getRole).toHaveBeenCalledTimes(1);
         expect(db.insertThesis).toHaveBeenCalledTimes(1);
         expect(res.status).toBe(503);
         expect(res.body).toEqual({ error: 'Errore nell inserimento' });
@@ -269,10 +297,12 @@ describe('Insert Thesis', () => {
             keywords: ["keyword1", "keyword2"]
         };
 
+        db.getRole.mockResolvedValueOnce({role: "teacher", id: "1"});
         db.insertThesis.mockResolvedValueOnce(1);
         db.insertCoSupervisor.mockRejectedValueOnce(new Error('Internal server error'));
         const res = await request(app).post('/api/insert/thesis').send(thesis);
     
+        expect(db.getRole).toHaveBeenCalledTimes(1);
         expect(db.insertThesis).toHaveBeenCalledTimes(1);
         expect(db.insertCoSupervisor).toHaveBeenCalledTimes(1);
         expect(res.status).toBe(503);
@@ -295,11 +325,13 @@ describe('Insert Thesis', () => {
             keywords: ["keyword1", "keyword2"]
         };
 
+        db.getRole.mockResolvedValueOnce({role: "teacher", id: "1"});
         db.insertThesis.mockResolvedValueOnce(1);
         db.insertCoSupervisor.mockResolvedValueOnce(1);
         db.insertKeyword.mockRejectedValueOnce(new Error('Internal server error'));
         const res = await request(app).post('/api/insert/thesis').send(thesis);
     
+        expect(db.getRole).toHaveBeenCalledTimes(1);
         expect(db.insertThesis).toHaveBeenCalledTimes(1);
         expect(db.insertCoSupervisor).toHaveBeenCalledTimes(2);
         expect(db.insertKeyword).toHaveBeenCalledTimes(1);
@@ -323,12 +355,14 @@ describe('Insert Thesis', () => {
             keywords: ["keyword1", "keyword2"]
         };
 
+        db.getRole.mockResolvedValueOnce({role: "teacher", id: "1"});
         db.insertThesis.mockResolvedValueOnce(1);
         db.insertCoSupervisor.mockResolvedValueOnce(1);
         db.insertKeyword.mockResolvedValueOnce(1);
         db.insertType.mockRejectedValueOnce(new Error('Internal server error'));
         const res = await request(app).post('/api/insert/thesis').send(thesis);
     
+        expect(db.getRole).toHaveBeenCalledTimes(1);
         expect(db.insertThesis).toHaveBeenCalledTimes(1);
         expect(db.insertCoSupervisor).toHaveBeenCalledTimes(2);
         expect(db.insertKeyword).toHaveBeenCalledTimes(2);
@@ -352,6 +386,7 @@ describe('Insert Thesis', () => {
             keywords: ["keyword1", "keyword2"]
         };
 
+        db.getRole.mockResolvedValueOnce({role: "teacher", id: "1"});
         db.insertThesis.mockResolvedValueOnce(1);
         db.insertCoSupervisor.mockResolvedValueOnce(1);
         db.insertKeyword.mockResolvedValueOnce(1);
@@ -359,6 +394,7 @@ describe('Insert Thesis', () => {
         db.insertThesisStatus.mockRejectedValueOnce(new Error('Internal server error'));
         const res = await request(app).post('/api/insert/thesis').send(thesis);
     
+        expect(db.getRole).toHaveBeenCalledTimes(1);
         expect(db.insertThesis).toHaveBeenCalledTimes(1);
         expect(db.insertCoSupervisor).toHaveBeenCalledTimes(2);
         expect(db.insertKeyword).toHaveBeenCalledTimes(2);
