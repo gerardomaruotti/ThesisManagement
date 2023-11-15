@@ -152,8 +152,118 @@ describe('GET Cds', () => {
 });
 
 describe('GET Thesis', () => {
-    test('dummy test', async () => {
+    test('should get all thesis of the departement of the professor', async () => {
+        const user = {
+            role: "teacher",
+            id: "1"
+        }
 
+        const thesis = [
+            {
+                title: "title1",
+                description: "description1",
+                requiredKnowledge: "required_knowledge1",
+                notes: "notes1",
+                expirationDate: "expiration_date1",
+                level: "level1",
+                cds: "cds1",
+                supervisor: "supervisor1",
+                keywords: ["keyword1", "keyword2"],
+                types: ["type1", "type2"],
+                groups: ["group1", "group2"],
+                coSupervisors: [{name: "name1", surname: "surname1", email: "email1"}, {name: "name2", surname: "surname2", email: "email2"}],
+            },
+            {
+                title: "title2",
+                description: "description2",
+                requiredKnowledge: "required_knowledge2",
+                notes: "notes2",
+                expirationDate: "expiration_date2",
+                level: "level2",
+                cds: "cds2",
+                supervisor: "supervisor2",
+                keywords: ["keyword1", "keyword2"],
+                types: ["type1", "type2"],
+                groups: ["group1", "group2"],
+                coSupervisors: [{name: "name1", surname: "surname1", email: "email1"}, {name: "name2", surname: "surname2", email: "email2"}],
+            }
+        ];
+
+        db.getRole.mockResolvedValueOnce(user);
+        db.getThesisTeacher.mockResolvedValueOnce(thesis);
+        db.getKeywordsbyId.mockResolvedValueOnce(["keyword1", "keyword2"]);
+        const res = await request(app).get('/api/thesis');
+
+        expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.getThesisTeacher).toHaveBeenCalledTimes(1);
+        expect(db.getThesisTeacher).toHaveBeenCalledWith(user.id);
+        expect(db.getKeywordsbyId).toHaveBeenCalledTimes(2);
+        expect(res.status).toBe(200);
+        expect(res.body).toEqual(thesis);
+    });
+
+    test('should get all thesis of the departement of the student', async () => {
+        const user = {
+            role: "student",
+            id: "1"
+        }
+
+        const thesis = [
+            {
+                title: "title1",
+                description: "description1",
+                requiredKnowledge: "required_knowledge1",
+                notes: "notes1",
+                expirationDate: "expiration_date1",
+                level: "level1",
+                cds: "cds1",
+                supervisor: "supervisor1",
+                keywords: ["keyword1", "keyword2"],
+                types: ["type1", "type2"],
+                groups: ["group1", "group2"],
+                coSupervisors: [{name: "name1", surname: "surname1", email: "email1"}, {name: "name2", surname: "surname2", email: "email2"}],
+            },
+            {
+                title: "title2",
+                description: "description2",
+                requiredKnowledge: "required_knowledge2",
+                notes: "notes2",
+                expirationDate: "expiration_date2",
+                level: "level2",
+                cds: "cds2",
+                supervisor: "supervisor2",
+                keywords: ["keyword1", "keyword2"],
+                types: ["type1", "type2"],
+                groups: ["group1", "group2"],
+                coSupervisors: [{name: "name1", surname: "surname1", email: "email1"}, {name: "name2", surname: "surname2", email: "email2"}],
+            }
+        ];
+
+        db.getRole.mockResolvedValueOnce(user);
+        db.getThesisStudent.mockResolvedValueOnce(thesis);
+        db.getKeywordsbyId.mockResolvedValueOnce(["keyword1", "keyword2"]);
+        db.getTypesbyId.mockResolvedValueOnce(["type1", "type2"]);
+        const res = await request(app).get('/api/thesis');
+
+        expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.getThesisStudent).toHaveBeenCalledTimes(1);
+        expect(db.getThesisStudent).toHaveBeenCalledWith(user.id);
+        expect(db.getKeywordsbyId).toHaveBeenCalledTimes(2);
+        expect(db.getTypesbyId).toHaveBeenCalledTimes(2);
+        expect(res.status).toBe(200);
+        expect(res.body).toEqual(thesis);
+    });
+
+    test('should return a 500 error if error occurs', async () => {
+        db.getRole.mockRejectedValueOnce(new Error('Internal server error'));
+        const res = await request(app).get('/api/thesis');
+
+        expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.getThesisStudent).toHaveBeenCalledTimes(0);
+        expect(db.getThesisTeacher).toHaveBeenCalledTimes(0);
+        expect(db.getKeywordsbyId).toHaveBeenCalledTimes(0);
+        expect(db.getTypesbyId).toHaveBeenCalledTimes(0);
+        expect(res.status).toBe(500);
     });
 });
 
