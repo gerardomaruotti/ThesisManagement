@@ -151,7 +151,7 @@ describe('GET Cds', () => {
       });
 });
 
-describe('GET Theses', () => {
+describe('GET Thesis', () => {
     test('dummy test', async () => {
 
     });
@@ -201,14 +201,327 @@ describe('GET Groups', () => {
 });
 
 describe('Insert Thesis', () => {
-    test('dummy test', async () => {
+    test('should insert a new thesis correctly', async () => {
+        const thesis = {
+            title: "title",
+            description: "description",
+            required_knowledge: "required_knowledge",
+            notes: "notes",
+            expiration_date: "expiration_date",
+            level: "level",
+            degree: "degree",
+            types: ["type1", "type2"],
+            supervisor: "supervisor",
+            co_supervisors: [{name: "name1", surname: "surname1", email: "email1"}, {name: "name2", surname: "surname2", email: "email2"}],
+            keywords: ["keyword1", "keyword2"]
+        };
 
+        db.insertThesis.mockResolvedValueOnce(1);
+        db.insertCoSupervisor.mockResolvedValueOnce(1);
+        db.insertKeyword.mockResolvedValueOnce(1);
+        db.insertType.mockResolvedValueOnce(1);
+        const res = await request(app).post('/api/insert/thesis').send(thesis);
+
+        expect(db.insertThesis).toHaveBeenCalledTimes(1);
+        expect(db.insertCoSupervisor).toHaveBeenCalledTimes(2);
+        expect(db.insertKeyword).toHaveBeenCalledTimes(2);
+        expect(db.insertType).toHaveBeenCalledTimes(2);
+        expect(res.status).toBe(200);
+        expect(res.body).toEqual(1);
+    });
+
+    test('should return a 503 error when an error occurs while inserting new thesis in db', async () => {
+        const thesis = {
+            title: "title",
+            description: "description",
+            required_knowledge: "required_knowledge",
+            notes: "notes",
+            expiration_date: "expiration_date",
+            level: "level",
+            degree: "degree",
+            types: ["type1", "type2"],
+            supervisor: "supervisor",
+            co_supervisors: [{name: "name1", surname: "surname1", email: "email1"}, {name: "name2", surname: "surname2", email: "email2"}],
+            keywords: ["keyword1", "keyword2"]
+        };
+
+        db.insertThesis.mockRejectedValueOnce(new Error('Internal server error'));
+        const res = await request(app).post('/api/insert/thesis').send(thesis);
+    
+        expect(db.insertThesis).toHaveBeenCalledTimes(1);
+        expect(res.status).toBe(503);
+        expect(res.body).toEqual({ error: 'Errore nell inserimento' });
+    
+    });
+
+    test('should return a 503 error when an error occurs while inserting new co supervisor in db', async () => {
+        const thesis = {
+            title: "title",
+            description: "description",
+            required_knowledge: "required_knowledge",
+            notes: "notes",
+            expiration_date: "expiration_date",
+            level: "level",
+            degree: "degree",
+            types: ["type1", "type2"],
+            supervisor: "supervisor",
+            co_supervisors: [{name: "name1", surname: "surname1", email: "email1"}, {name: "name2", surname: "surname2", email: "email2"}],
+            keywords: ["keyword1", "keyword2"]
+        };
+
+        db.insertThesis.mockResolvedValueOnce(1);
+        db.insertCoSupervisor.mockRejectedValueOnce(new Error('Internal server error'));
+        const res = await request(app).post('/api/insert/thesis').send(thesis);
+    
+        expect(db.insertThesis).toHaveBeenCalledTimes(1);
+        expect(db.insertCoSupervisor).toHaveBeenCalledTimes(1);
+        expect(res.status).toBe(503);
+        expect(res.body).toEqual({ error: 'Errore nell inserimento' });
+    
+    });
+
+    test('should return a 503 error when an error occurs while inserting new keyword in db', async () => {
+        const thesis = {
+            title: "title",
+            description: "description",
+            required_knowledge: "required_knowledge",
+            notes: "notes",
+            expiration_date: "expiration_date",
+            level: "level",
+            degree: "degree",
+            types: ["type1", "type2"],
+            supervisor: "supervisor",
+            co_supervisors: [{name: "name1", surname: "surname1", email: "email1"}, {name: "name2", surname: "surname2", email: "email2"}],
+            keywords: ["keyword1", "keyword2"]
+        };
+
+        db.insertThesis.mockResolvedValueOnce(1);
+        db.insertCoSupervisor.mockResolvedValueOnce(1);
+        db.insertKeyword.mockRejectedValueOnce(new Error('Internal server error'));
+        const res = await request(app).post('/api/insert/thesis').send(thesis);
+    
+        expect(db.insertThesis).toHaveBeenCalledTimes(1);
+        expect(db.insertCoSupervisor).toHaveBeenCalledTimes(2);
+        expect(db.insertKeyword).toHaveBeenCalledTimes(1);
+        expect(res.status).toBe(503);
+        expect(res.body).toEqual({ error: 'Errore nell inserimento' });
+    
+    });
+
+    test('should return a 503 error when an error occurs while inserting new type in db', async () => {
+        const thesis = {
+            title: "title",
+            description: "description",
+            required_knowledge: "required_knowledge",
+            notes: "notes",
+            expiration_date: "expiration_date",
+            level: "level",
+            degree: "degree",
+            types: ["type1", "type2"],
+            supervisor: "supervisor",
+            co_supervisors: [{name: "name1", surname: "surname1", email: "email1"}, {name: "name2", surname: "surname2", email: "email2"}],
+            keywords: ["keyword1", "keyword2"]
+        };
+
+        db.insertThesis.mockResolvedValueOnce(1);
+        db.insertCoSupervisor.mockResolvedValueOnce(1);
+        db.insertKeyword.mockResolvedValueOnce(1);
+        db.insertType.mockRejectedValueOnce(new Error('Internal server error'));
+        const res = await request(app).post('/api/insert/thesis').send(thesis);
+    
+        expect(db.insertThesis).toHaveBeenCalledTimes(1);
+        expect(db.insertCoSupervisor).toHaveBeenCalledTimes(2);
+        expect(db.insertKeyword).toHaveBeenCalledTimes(2);
+        expect(db.insertType).toHaveBeenCalledTimes(1);
+        expect(res.status).toBe(503);
+        expect(res.body).toEqual({ error: 'Errore nell inserimento' });
+    });
+
+    test('should return a 503 error when an error occurs while inserting thesis status in db', async () => {
+        const thesis = {
+            title: "title",
+            description: "description",
+            required_knowledge: "required_knowledge",
+            notes: "notes",
+            expiration_date: "expiration_date",
+            level: "level",
+            degree: "degree",
+            types: ["type1", "type2"],
+            supervisor: "supervisor",
+            co_supervisors: [{name: "name1", surname: "surname1", email: "email1"}, {name: "name2", surname: "surname2", email: "email2"}],
+            keywords: ["keyword1", "keyword2"]
+        };
+
+        db.insertThesis.mockResolvedValueOnce(1);
+        db.insertCoSupervisor.mockResolvedValueOnce(1);
+        db.insertKeyword.mockResolvedValueOnce(1);
+        db.insertType.mockResolvedValueOnce(1);
+        db.insertThesisStatus.mockRejectedValueOnce(new Error('Internal server error'));
+        const res = await request(app).post('/api/insert/thesis').send(thesis);
+    
+        expect(db.insertThesis).toHaveBeenCalledTimes(1);
+        expect(db.insertCoSupervisor).toHaveBeenCalledTimes(2);
+        expect(db.insertKeyword).toHaveBeenCalledTimes(2);
+        expect(db.insertType).toHaveBeenCalledTimes(2);
+        expect(db.insertThesisStatus).toHaveBeenCalledTimes(1);
+        expect(res.status).toBe(503);
+        expect(res.body).toEqual({ error: 'Errore nell inserimento' });
     });
 });
 
 describe('GET Thesis by ID', () => {
-    test('dummy test', async () => {
+    test('should get the thesis by id', async () => {
+        const thesis = {
+            title: "title",
+            description: "description",
+            requiredKnowledge: "required_knowledge",
+            notes: "notes",
+            expirationDate: "expiration_date",
+            level: "level",
+            cds: "cds",
+            supervisor: "supervisor",
+            keywords: ["keyword1", "keyword2"],
+            types: ["type1", "type2"],
+            groups: ["group1", "group2"],
+            coSupervisors: [{name: "name1", surname: "surname1", email: "email1"}, {name: "name2", surname: "surname2", email: "email2"}],
+        };
 
+        const keywords = ["keyword1", "keyword2"];
+        const types = ["type1", "type2"];
+        const groups = ["group1", "group2"];
+        const co_supervisors = [{name: "name1", surname: "surname1", email: "email1"}, {name: "name2", surname: "surname2", email: "email2"}];
+
+        db.getThesis.mockResolvedValueOnce(thesis);
+        db.getTitleDegree.mockResolvedValueOnce("cds");
+        db.getTeacher.mockResolvedValueOnce("supervisor");
+        db.getKeywordsbyId.mockResolvedValueOnce(keywords);
+        db.getTypesbyId.mockResolvedValueOnce(types);
+        db.getGroupSupervisorAndCoSupervisor.mockResolvedValueOnce(groups);
+        db.getCoSupervisors.mockResolvedValueOnce(co_supervisors);
+        const res = await request(app).get('/api/thesis/1');
+
+        expect(db.getThesis).toHaveBeenCalledTimes(1);
+        expect(db.getTitleDegree).toHaveBeenCalledTimes(1);
+        expect(db.getTeacher).toHaveBeenCalledTimes(1);
+        expect(db.getKeywordsbyId).toHaveBeenCalledTimes(1);
+        expect(db.getTypesbyId).toHaveBeenCalledTimes(1);
+        expect(db.getGroupSupervisorAndCoSupervisor).toHaveBeenCalledTimes(1);
+        expect(db.getCoSupervisors).toHaveBeenCalledTimes(1);
+        expect(res.status).toBe(200);
+        expect(res.body).toEqual(thesis);
+    });
+
+    test('should return a 400 error for invalid id', async () => {
+        const res = await request(app).get('/api/thesis/0');
+
+        expect(db.getThesis).toHaveBeenCalledTimes(0);
+        expect(res.status).toBe(400);
+        expect(res.body).toEqual({ error: 'Invalid thesis ID.' });
+    });
+
+    test('should return a 500 if error occurs in getThesis', async () => {
+        db.getThesis.mockRejectedValueOnce(new Error('Internal server error'));
+        const res = await request(app).get('/api/thesis/1');
+
+        expect(db.getThesis).toHaveBeenCalledTimes(1);
+        expect(res.status).toBe(500);
+        expect(res.body).toEqual({ error: 'Errore visualizzazione tesi' });
+    });
+
+    test('should return a 500 if error occurs in getTitleDegree', async () => {
+        db.getThesis.mockResolvedValueOnce({});
+        db.getTitleDegree.mockRejectedValueOnce(new Error('Internal server error'));
+        const res = await request(app).get('/api/thesis/1');
+
+        expect(db.getThesis).toHaveBeenCalledTimes(1);
+        expect(db.getTitleDegree).toHaveBeenCalledTimes(1);
+        expect(res.status).toBe(500);
+        expect(res.body).toEqual({ error: 'Errore visualizzazione tesi' });
+    });
+
+    test('should return a 500 if error occurs in getTeacher', async () => {
+        db.getThesis.mockResolvedValueOnce({});
+        db.getTitleDegree.mockResolvedValueOnce({});
+        db.getTeacher.mockRejectedValueOnce(new Error('Internal server error'));
+        const res = await request(app).get('/api/thesis/1');
+
+        expect(db.getThesis).toHaveBeenCalledTimes(1);
+        expect(db.getTitleDegree).toHaveBeenCalledTimes(1);
+        expect(db.getTeacher).toHaveBeenCalledTimes(1);
+        expect(res.status).toBe(500);
+        expect(res.body).toEqual({ error: 'Errore visualizzazione tesi' });
+    });
+
+    test('should return a 500 if error occurs in getKeywordsbyId', async () => {
+        db.getThesis.mockResolvedValueOnce({});
+        db.getTitleDegree.mockResolvedValueOnce({});
+        db.getTeacher.mockResolvedValueOnce({});
+        db.getKeywordsbyId.mockRejectedValueOnce(new Error('Internal server error'));
+        const res = await request(app).get('/api/thesis/1');
+
+        expect(db.getThesis).toHaveBeenCalledTimes(1);
+        expect(db.getTitleDegree).toHaveBeenCalledTimes(1);
+        expect(db.getTeacher).toHaveBeenCalledTimes(1);
+        expect(db.getKeywordsbyId).toHaveBeenCalledTimes(1);
+        expect(res.status).toBe(500);
+        expect(res.body).toEqual({ error: 'Errore visualizzazione tesi' });
+    });
+    
+    test('should return a 500 if error occurs in getTypesbyId', async () => {
+        db.getThesis.mockResolvedValueOnce({});
+        db.getTitleDegree.mockResolvedValueOnce({});
+        db.getTeacher.mockResolvedValueOnce({});
+        db.getKeywordsbyId.mockResolvedValueOnce({});
+        db.getTypesbyId.mockRejectedValueOnce(new Error('Internal server error'));
+        const res = await request(app).get('/api/thesis/1');
+
+        expect(db.getThesis).toHaveBeenCalledTimes(1);
+        expect(db.getTitleDegree).toHaveBeenCalledTimes(1);
+        expect(db.getTeacher).toHaveBeenCalledTimes(1);
+        expect(db.getKeywordsbyId).toHaveBeenCalledTimes(1);
+        expect(db.getTypesbyId).toHaveBeenCalledTimes(1);
+        expect(res.status).toBe(500);
+        expect(res.body).toEqual({ error: 'Errore visualizzazione tesi' });
+    });
+
+    test('should return a 500 if error occurs in getGroupSupervisorAndCoSupervisor', async () => {
+        db.getThesis.mockResolvedValueOnce({});
+        db.getTitleDegree.mockResolvedValueOnce({});
+        db.getTeacher.mockResolvedValueOnce({});
+        db.getKeywordsbyId.mockResolvedValueOnce({});
+        db.getTypesbyId.mockResolvedValueOnce({});
+        db.getGroupSupervisorAndCoSupervisor.mockRejectedValueOnce(new Error('Internal server error'));
+        const res = await request(app).get('/api/thesis/1');
+
+        expect(db.getThesis).toHaveBeenCalledTimes(1);
+        expect(db.getTitleDegree).toHaveBeenCalledTimes(1);
+        expect(db.getTeacher).toHaveBeenCalledTimes(1);
+        expect(db.getKeywordsbyId).toHaveBeenCalledTimes(1);
+        expect(db.getTypesbyId).toHaveBeenCalledTimes(1);
+        expect(db.getGroupSupervisorAndCoSupervisor).toHaveBeenCalledTimes(1);
+        expect(res.status).toBe(500);
+        expect(res.body).toEqual({ error: 'Errore visualizzazione tesi' });
+    });
+
+    test('should return a 500 if error occurs in getCoSupervisors', async () => {
+        db.getThesis.mockResolvedValueOnce({});
+        db.getTitleDegree.mockResolvedValueOnce({});
+        db.getTeacher.mockResolvedValueOnce({});
+        db.getKeywordsbyId.mockResolvedValueOnce({});
+        db.getTypesbyId.mockResolvedValueOnce({});
+        db.getGroupSupervisorAndCoSupervisor.mockResolvedValueOnce({});
+        db.getCoSupervisors.mockRejectedValueOnce(new Error('Internal server error'));
+        const res = await request(app).get('/api/thesis/1');
+
+        expect(db.getThesis).toHaveBeenCalledTimes(1);
+        expect(db.getTitleDegree).toHaveBeenCalledTimes(1);
+        expect(db.getTeacher).toHaveBeenCalledTimes(1);
+        expect(db.getKeywordsbyId).toHaveBeenCalledTimes(1);
+        expect(db.getTypesbyId).toHaveBeenCalledTimes(1);
+        expect(db.getGroupSupervisorAndCoSupervisor).toHaveBeenCalledTimes(1);
+        expect(db.getCoSupervisors).toHaveBeenCalledTimes(1);
+        expect(res.status).toBe(500);
+        expect(res.body).toEqual({ error: 'Errore visualizzazione tesi' });
     });
 });
 

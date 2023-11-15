@@ -172,6 +172,10 @@ app.get('/api/thesis/:id', async (req, res) => {
 	//fare il check se l'utente può effettivamente vedere la tesi, tramite access token controllo corso di laurea dell'utente se studente
 	const thesisID = req.params.id;
 
+	if (isNaN(thesisID) || thesisID<=0) {
+        return res.status(400).json({ error: 'Invalid thesis ID.' });
+    }
+
 	try {
 		const infoThesis = await db.getThesis(thesisID);
 		const titleDegree = await db.getTitleDegree(infoThesis.cds);
@@ -205,13 +209,31 @@ app.get('/api/thesis/:id', async (req, res) => {
 ////////////////////////////////////////////////////////////////////
 
 //API for the 3rd story --> Apply for proposal 
-app.post('/api/proposal/insert', async (req, res) => {
+app.post('/api/thesis/:id/proposal', async (req, res) => {
 	try {
-		//const helpDesk = await db.insertHelpDesk(serviceId, counterList);
+
+		let user = req.auth.payload.sub;
+		let thesisId=req.params.id;
+		let userRole = await db.getRole(user);
+		await db.getThesis(thesisId);
+		const state = await db.checkThesisActive(thesisId);
+
+		if(state != "1"){
+			return res.status(400).json({ error: 'Tesi non attiva' });
+		}
+
+		if(userRole.role == "student"){
+			const propId=await db.insertProposal(userRole.id,thesisId);
+		} else{
+			return res.status(401).json({ error: 'Utente non autorizzato' });
+		}
+		
 		return res.status(200).json('Inserimento avvenuto con successo');
+
 	} catch (err) {
-		return res.status(503).json({ error: 'Errore nell inserimento' });
+		return res.status(503).json({ error: 'Errore nell inserimento della proposta di tesi' });
 	}
 });
+
 
 module.exports = { app, port, checkJwt };  

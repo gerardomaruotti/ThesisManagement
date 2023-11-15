@@ -391,3 +391,35 @@ const db = new sqlite.Database('thesis_management.db', (err) => {
         });
     });
 };
+
+exports.checkThesisActive = (idThesis) => {
+  return new Promise((resolve, reject) => {
+      const sql = 'SELECT STATE FROM THESIS_STATUS WHERE THESIS=?';
+      db.get(sql, [idThesis], (err, row) => {
+          if (err) {
+              reject(err);
+              return;
+          }
+          if (row == undefined) {
+              reject({ error: 'Thesis not found.' });
+          } else {
+               resolve(row.STATE);
+          }
+      });
+  });
+};
+
+
+exports.insertProposal = (userId,idThesis) => {
+  return new Promise((resolve, reject) => {
+      const sql = 'INSERT INTO THESIS_PROPOSAL (student, thesis, state) VALUES(?, ?, ?)';
+      db.run(sql, [userId, idThesis, 0], function(err){
+          if (err) {
+              console.log(err)
+              reject(err);
+              return;
+          }
+              resolve(this.lastID);
+      });
+  });
+}
