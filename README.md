@@ -12,6 +12,9 @@
 - GET `/api/teachers`
   - request parameters: none
   - response body content: list of teachers identified with name, surname and email.
+- GET `/api/groups`
+  - request parameters: none
+  - response body content: list of groups identified with code of the group and the related name.
 - GET `/api/cds`
   - request parameters: none
   - response body content: list of cds identified with the code of the degree and the related title.
@@ -27,6 +30,10 @@
 - GET `/api/thesis/:id`
   - request parameters: thesis identifier
   - response body content: an object including all the data related to a thesis: a title, a description, required knowledge, notes, expiration date, the level, related degree, the supervisor and a list of co-supervisors, the list of groups to which the supervisors belong, a list of related keywords and a list of related types.
+- POST `/api/thesis/:id/proposal`
+  - request parameters: thesis identifier
+  - request body content: none.
+  - response body content: successful message.  
 
 ## Database Main Tables
 
