@@ -526,7 +526,110 @@ describe('GET Thesis by ID', () => {
 });
 
 describe('Apply for Proposal', () => {
-    test('dummy test', async () => {
+    test('should insert manage an apply for a proposal', async () => {
+        const user = {
+            role: "student",
+            id: "1"
+        }
 
+        db.getRole.mockResolvedValueOnce(user);
+        db.getThesis.mockResolvedValueOnce();
+        db.checkThesisActive.mockResolvedValueOnce(1);
+        db.insertProposal.mockResolvedValueOnce();
+
+        const res = await request(app).post('/api/thesis/5/proposal');
+
+        expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.getThesis).toHaveBeenCalledTimes(1);
+        expect(db.getThesis).toHaveBeenCalledWith("5");
+        expect(db.checkThesisActive).toHaveBeenCalledTimes(1);
+        expect(db.checkThesisActive).toHaveBeenCalledWith("5");
+        expect(db.insertProposal).toHaveBeenCalledTimes(1);
+        expect(db.insertProposal).toHaveBeenCalledWith(user.id, "5");
+        expect(res.status).toBe(200);
+        expect(res.body).toEqual('Inserimento avvenuto con successo');
     });
+
+    test('should return a 400 error when the id parameter identifies a thesis not active', async () => {
+        const user = {
+            role: "student",
+            id: "1"
+        }
+
+        db.getRole.mockResolvedValueOnce(user);
+        db.getThesis.mockResolvedValueOnce();
+        db.checkThesisActive.mockResolvedValueOnce(0);
+
+        const res = await request(app).post('/api/thesis/5/proposal');
+
+        expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.getThesis).toHaveBeenCalledTimes(1);
+        expect(db.getThesis).toHaveBeenCalledWith("5");
+        expect(db.checkThesisActive).toHaveBeenCalledTimes(1);
+        expect(db.checkThesisActive).toHaveBeenCalledWith("5");
+        expect(db.insertProposal).toHaveBeenCalledTimes(0);
+        expect(res.status).toBe(400);
+        expect(res.body).toEqual({ error: 'Thesis not active' });
+    });
+
+    test('should return a 400 error when the id parameter identifies a thesis not active', async () => {
+        const user = {
+            role: "not_student",
+            id: "1"
+        }
+
+        db.getRole.mockResolvedValueOnce(user);
+        db.getThesis.mockResolvedValueOnce();
+        db.checkThesisActive.mockResolvedValueOnce(1);
+
+        const res = await request(app).post('/api/thesis/5/proposal');
+
+        expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.getThesis).toHaveBeenCalledTimes(1);
+        expect(db.getThesis).toHaveBeenCalledWith("5");
+        expect(db.checkThesisActive).toHaveBeenCalledTimes(1);
+        expect(db.checkThesisActive).toHaveBeenCalledWith("5");
+        expect(db.insertProposal).toHaveBeenCalledTimes(0);
+        expect(res.status).toBe(401);
+        expect(res.body).toEqual({ error: 'Unauthorized user' });
+    });
+
+    test('should return a 500 if error occurs', async () => {
+        db.getRole.mockRejectedValueOnce(new Error('Internal server error'));
+
+        const res = await request(app).post('/api/thesis/5/proposal');
+
+        expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.getThesis).toHaveBeenCalledTimes(0);
+        expect(db.checkThesisActive).toHaveBeenCalledTimes(0);
+        expect(db.insertProposal).toHaveBeenCalledTimes(0);
+        expect(res.status).toBe(503);
+        expect(res.body).toEqual({ error: 'Errore nell inserimento della proposta di tesi' });
+    });
+
+    test('should return a 400 error when the id parameter is not a number', async () => {
+        
+        const res = await request(app).post('/api/thesis/Nan/proposal');
+    
+        expect(db.getRole).toHaveBeenCalledTimes(0);
+        expect(db.getThesis).toHaveBeenCalledTimes(0);
+        expect(db.checkThesisActive).toHaveBeenCalledTimes(0);
+        expect(db.insertProposal).toHaveBeenCalledTimes(0);
+        expect(res.status).toBe(400);
+        expect(res.body).toEqual({ error: 'Invalid thesis ID.' });
+    
+      });
+
+      test('should return a 400 error when the id parameter is a number less than or equal to zero', async () => {
+        
+        const res = await request(app).post('/api/thesis/0/proposal');
+    
+        expect(db.getRole).toHaveBeenCalledTimes(0);
+        expect(db.getThesis).toHaveBeenCalledTimes(0);
+        expect(db.checkThesisActive).toHaveBeenCalledTimes(0);
+        expect(db.insertProposal).toHaveBeenCalledTimes(0);
+        expect(res.status).toBe(400);
+        expect(res.body).toEqual({ error: 'Invalid thesis ID.' });
+    
+      });
 });
