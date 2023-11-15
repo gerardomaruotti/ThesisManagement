@@ -172,6 +172,10 @@ app.get('/api/thesis/:id', async (req, res) => {
 	//fare il check se l'utente può effettivamente vedere la tesi, tramite access token controllo corso di laurea dell'utente se studente
 	const thesisID = req.params.id;
 
+	if (isNaN(thesisID) || thesisID<=0) {
+        return res.status(400).json({ error: 'Invalid thesis ID.' });
+    }
+
 	try {
 		const infoThesis = await db.getThesis(thesisID);
 		const titleDegree = await db.getTitleDegree(infoThesis.cds);
