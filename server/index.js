@@ -28,6 +28,12 @@ app.get("/api/keywords", (req, res) => {
 		.catch((err) => { console.log(err); res.status(503).json("getKeywords error") })
 });
 
+app.get("/api/user",checkJwt, (req, res) => {
+	db.getUserInfo(req.auth)
+		.then(userInfo => res.status(200).json(userInfo))
+		.catch((err) => { console.log(err); res.status(503).json("getKeywords error") })
+});
+
 
 app.get("/api/types", (req, res) => {
 	db.getTypes()

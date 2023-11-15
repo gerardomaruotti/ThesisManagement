@@ -30,6 +30,30 @@ exports.getKeywords = () => {
   });
 };
 
+
+exports.getUserInfo = (auth0) => {
+  return new Promise((resolve, reject) => {
+    const sql = 'SELECT DISTINCT S.ID as id_user, S.NAME as name, S.SURNAME as surname, S.EMAIL as email FROM STUDENT S JOIN STUD_AUTH0 SA ON SA.ID == S.ID WHERE S.ID = ?';
+    db.get(sql, [auth0.payload.sub], (err, row) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      else {
+        let student = {
+          "id": row.id_user,
+          "name":row.name,
+          "surname":row.surname,
+          "email":row.email
+        }
+        resolve(student);
+      }
+    });
+  });
+};
+
+
+
 exports.getKeywordsbyId = (idThesis) => {
   return new Promise((resolve, reject) => {
     const sql = 'SELECT keyword FROM KEYWORD WHERE THESIS=?';
