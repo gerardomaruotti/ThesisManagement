@@ -36,13 +36,17 @@
 GET http://localhost:3001/api/keywords HTTP/1.1
 Content-Type: application/json
 
-##### get per le keywords nell'inserimento di una tesi
+##### get per le keywords nell'inserimento di una tesi 
 GET http://localhost:3001/api/types HTTP/1.1
 Content-Type: application/json
 
 ##### get per le keywords nell'inserimento di una tesi
 GET http://localhost:3001/api/teachers HTTP/1.1
 Content-Type: application/json
+
+####groups   
+GET http://localhost:3001/api/groups HTTP/1.1
+Content-Type: application/json 
 
 ##### get per le keywords nell'inserimento di una tesi
 GET http://localhost:3001/api/cds HTTP/1.1

@@ -111,10 +111,11 @@ const db = new sqlite.Database('thesis_management.db', (err) => {
 
   exports.getGroups = () => {
     return new Promise((resolve, reject) => {
-      const sql = 'SELECT DISTINCT COD_GROUP,NAME FROM GROUP';
-      db.all(sql, [], (err, rows) => {
+      const sql = 'SELECT * FROM "GROUP" ';
+      db.all(sql, (err, rows) => {
         if (err) { 
             reject(err); 
+            console.log(err)
             return;
         }
         else {
@@ -122,7 +123,7 @@ const db = new sqlite.Database('thesis_management.db', (err) => {
                 cod_group: elem.COD_GROUP,
                 name: elem.NAME,
             }));
-
+            console.log(groups)
             resolve(groups)
         }
       });
