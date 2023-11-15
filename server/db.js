@@ -215,7 +215,7 @@ const db = new sqlite.Database('thesis_management.db', (err) => {
               resolve({"role":"student", "id":elem.ID})
             else{
               const sql2 = 'SELECT * FROM TEACHER_AUTH0 WHERE ID_AUTH0=? ';
-              db.get(sql2, [auth0], (err, elem) => {
+              db.get(sql2, [auth0.payload.sub], (err, elem) => {
                 if (err) { 
                     reject(err); 
                     return;
