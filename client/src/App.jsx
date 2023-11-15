@@ -23,10 +23,11 @@ function App() {
 	const [cds, setCds] = useState('');
 	const [type, setType] = useState([]);
 	const [expirationDate, setExpirationDate] = useState('');
-	// const [userMetadata, setUserMetadata] = useState(null);
+	const [userData, setUserData] = useState(null);
 	const [thesis, setThesis] = useState([]);
 	const [accessToken, setAccessToken] = useState(null);
-
+	const [dirty, setDirty] = useState(false);
+	const [isProfessor, setIsProfessor] = useState(false);
 
 	function handleError(err) {
 		console.log(err);
@@ -39,11 +40,8 @@ function App() {
 	// }, [isLoading, isAuthenticated, loginWithRedirect]);
 
 	useEffect(() => {
-		console.log('User is authenticated: ' + isAuthenticated);
-		console.log(user);
 		const getUserMetadata = async () => {
 			try {
-				console.log("Getting user's access token");
 				const accessToken = await getAccessTokenSilently({
 					authorizationParams: {
 						audience: `https://thesismanagement.eu.auth0.com/api/v2/`,
@@ -51,13 +49,25 @@ function App() {
 					},
 				});
 				setAccessToken(accessToken);
-				console.log('User access token: ' + accessToken);
+				API.getUser(accessToken)
+					.then((user) => {
+						setUserData(user);
+						//check if user id starts with s
 
-				//test per get thesis autenticata
+						if (user.sub[0] === 's') {
+							setIsProfessor(false);
+							console.log('student');
+						} else {
+							setIsProfessor(true);
+							console.log('professor');
+						}
+					})
+					.catch((err) => setIsProfessor(true));
+
 				API.getAllThesis(accessToken)
 					.then((thesis) => {
 						setThesis(thesis);
-						console.log("thesis:");
+						console.log('thesis:');
 						console.log(thesis);
 					})
 					.catch((err) => handleError(err));
@@ -67,14 +77,15 @@ function App() {
 		};
 		if (isAuthenticated) {
 			getUserMetadata();
+			setDirty(false);
 		}
-	}, [isAuthenticated, getAccessTokenSilently, user?.sub]);
+	}, [isAuthenticated, getAccessTokenSilently, user?.sub, dirty]);
 
 	return (
 		<BrowserRouter>
 			<Header />
 			<Routes>
-				<Route path='/' element={<StudentHome thesis={thesis} />} />
+				<Route path='/' element={<StudentHome isProfessor={isProfessor} thesis={thesis} />} />
 				<Route path='/proposal/:id' element={<Proposal accessToken={accessToken} />} />
 				<Route path='/professor' element={<ProfessorHome thesis={thesis} />} />
 				<Route
@@ -103,6 +114,8 @@ function App() {
 							setType={setType}
 							expirationDate={expirationDate}
 							setExpirationDate={setExpirationDate}
+							accessToken={accessToken}
+							setDirty={setDirty}
 						/>
 					}
 				/>

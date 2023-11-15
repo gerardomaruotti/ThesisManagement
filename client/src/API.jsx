@@ -222,14 +222,13 @@ function getThesisByID(id, accessToken) {
 	});
 }
 
-
-function insertThesis(thesis) {
+function insertThesis(accessToken, thesis) {
 	return new Promise((resolve, reject) => {
 		fetch(URL + '/insert/thesis', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
-				// Authorization: `Bearer ${accessToken}`,
+				Authorization: `Bearer ${accessToken}`,
 			},
 			body: JSON.stringify(thesis),
 		})
@@ -259,6 +258,36 @@ function insertThesis(thesis) {
 	});
 }
 
+function getUser(accessToken) {
+	return new Promise((resolve, reject) => {
+		fetch(URL + '/user', {
+			headers: {
+				Authorization: `Bearer ${accessToken}`,
+			},
+		})
+			.then((response) => {
+				if (response.ok) {
+					response
+						.json()
+						.then((user) => resolve(user))
+						.catch(() => {
+							reject({ error: 'Cannot parse server response.' });
+						});
+				} else {
+					response
+						.json()
+						.then((message) => {
+							reject(message);
+						})
+						.catch(() => {
+							reject({ error: 'Cannot parse server response.' });
+						});
+				}
+			})
+			.catch(() => reject({ error: 'Cannot communicate with the server.' }));
+	});
+}
+
 const API = {
 	getAllKeywords,
 	getAllTypes,
@@ -267,6 +296,7 @@ const API = {
 	getAllThesis,
 	insertThesis,
 	getAllGroups,
-	getThesisByID
+	getThesisByID,
+	getUser,
 };
 export default API;

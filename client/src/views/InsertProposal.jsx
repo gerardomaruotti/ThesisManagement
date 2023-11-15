@@ -42,6 +42,7 @@ function InsertProposal(props) {
 		setType,
 		expirationDate,
 		setExpirationDate,
+		accessToken,
 	} = props;
 
 	const levels = [
@@ -137,15 +138,14 @@ function InsertProposal(props) {
 			level: selectedLevel.value,
 			degree: selectedCds.value,
 			types: typesValues,
-			supervisor: 'd111111',
 			co_supervisors: formattedCoSupervisors,
 			keywords: keywordsValues,
 		};
-		console.log(thesis);
-		API.insertThesis(thesis).then((thesis) => {
-			const thesisId = thesis;
-			navigate('/proposal/' + thesisId);
+
+		API.insertThesis(accessToken, thesis).then((thesisID) => {
+			navigate('/proposal/' + thesisID);
 		});
+		props.setDirty(true);
 	}
 
 	return (
@@ -176,7 +176,7 @@ function InsertProposal(props) {
 						</Form.Group>
 						<Form.Group className='mb-3' controlId='formExpirationDate'>
 							<Form.Label>Expiration date</Form.Label>
-							<Form.Control type='date' onChange={(event) => setExpirationDate(event.target.value)} />
+							<Form.Control type='date' required onChange={(event) => setExpirationDate(event.target.value)} />
 						</Form.Group>
 						<Form.Group className='mb-3' controlId='formKeywords'>
 							<Form.Label>Keywords</Form.Label>
