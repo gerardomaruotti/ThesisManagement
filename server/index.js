@@ -56,24 +56,100 @@ app.get("/api/cds", (req,res)=>{
 //return all thesis of the department of the student/professor 
 app.post('/api/thesis/filter', async (req, res) => {
 	try {
-		if (req.body.filters == null){
-			let thesis = await db.getThesisStudent(getRole.id)
-			for (let i=0; i<thesis.length; i++){
-				let keywords = await db.getKeywordsbyId(thesis[i].ID)
-				thesis[i].keywords = keywords;
-			}
-				console.log(thesis);
-				res.status(200).json(thesis);
-		}else{
-				let thesis = await db.getThesisStudentFiltered('s313373', req.body.filters)
-				for (let i=0; i<thesis.length; i++){
-					let keywords = await db.getKeywordsbyId(thesis[i].ID)
-					thesis[i].keywords = keywords;
-				}
-				console.log(thesis);
-				res.status(200).json(thesis);
-			}
+		let thesis = await db.getThesisStudent('s313373')
+		for (let i=0; i<thesis.length; i++){
+			let keywords = await db.getKeywordsbyId(thesis[i].ID)
+			thesis[i].keywords = keywords;
 		}
+		if(req.body.filters == null){
+			console.log(thesis);
+			res.status(200).json(thesis);
+		}else{
+			
+			let keyword = req.body.filters.keyword;
+			let type = req.body.filters.type;
+			let cosupervisor = req.body.filters.cosupervisor;
+			let supervisor = req.body.filters.supervisor;
+			let groups = req.body.filters.group;
+			let exp_date = req.body.filters.exp_date;
+				
+			for (let i=0; i<thesis.length; i++){
+				let removed = false;
+				let keywords = await db.getKeywordsbyId(thesis[i].ID)
+				let allTypesOfThesis = await db.getTypesbyId(thesis[i].ID);
+				let cosupervisors = await db.getCoSupervisors(thesis[i].ID);
+				let allGroups = await db.getGroupSupervisorAndCoSupervisor(thesis[i].ID);
+				let expirationDate = await db.getThesis(thesis[i].ID);
+				if(keyword.length > 0){
+					let count=0;
+					keyword.forEach(t => {
+						if (keywords.includes(t)){
+							count++;
+						}
+					});
+						if (count !== keyword.length-1){
+							thesis.splice(thesis[i], 1);
+							removed = true;
+						}
+					}
+				if(type.length > 0 && !removed){
+					let count=0;
+					type.forEach(t => {
+						if (allTypesOfThesis.includes(t)){
+							count++;
+						}
+					});
+						if (count !== type.length-1){
+							thesis.splice(thesis[i], 1);
+							removed = true;
+						}
+				}
+				if(cosupervisor.length > 0 && !removed){
+					let count=0;
+					cosupervisor.forEach(c => {
+						if (cosupervisors.includes(c)){
+							count++;
+						}
+					});
+					if (count == 0){
+						thesis.splice(thesis[i], 1);
+						removed = true;
+					}
+				}
+				if(groups.length > 0 && !removed){
+					let count=0;
+					groups.forEach(g => {
+						if (allGroups.includes(g)){
+							count++;
+						}
+					});
+					if (count == 0){
+						thesis.splice(thesis[i], 1);
+						removed = true;
+					}
+				}
+								
+				if (supervisor.length>0 && !removed){
+					if (thesis[i].supervisor != supervisor[0]){
+						thesis.splice(thesis[i], 1);
+						removed = true;
+					}
+				}
+				console.log("Non filtrata");
+				thesis.forEach(t => console.log(t.ID));
+				if(exp_date.length>0 && !removed){
+					if (expirationDate >exp_date[0]){
+						thesis.splice(thesis[i], 1);
+					}
+				}
+				console.log("Filtrata");
+				thesis.forEach(t => console.log(t.ID));
+			}
+			console.log(thesis);
+			res.status(200).json(thesis);	
+		}
+				
+	}
 		//if it is student we search for the thesis related to his COD_DEGREE
 		//if it is teacher we get the thesis in which he is supervisor
 
@@ -103,28 +179,105 @@ app.post('/api/thesis', checkJwt, async (req, res) => {
 
 			
 		}else if (getRole.role == "student"){
-			if (req.body.filters == null){
-				let thesis = await db.getThesisStudent(getRole.id)
-				for (let i=0; i<thesis.length; i++){
-					let keywords = await db.getKeywordsbyId(thesis[i].ID)
-					thesis[i].keywords = keywords;
-				}
+			let thesis = await db.getThesisStudent(getRole.id)
+			for (let i=0; i<thesis.length; i++){
+				let keywords = await db.getKeywordsbyId(thesis[i].ID)
+				thesis[i].keywords = keywords;
+			}
+			if(req.body.filters == null){
 				console.log(thesis);
 				res.status(200).json(thesis);
 			}else{
-				let thesis = await db.getThesisStudentFiltered(getRole.id, req.body.filters)
+				
+				let keyword = req.body.filters.keyword;
+				let type = req.body.filters.type;
+				let cosupervisor = req.body.filters.cosupervisor;
+				let supervisor = req.body.filters.supervisor;
+				let groups = req.body.filters.group;
+				let exp_date = req.body.filters.exp_date;
+						
 				for (let i=0; i<thesis.length; i++){
+					let removed = false;
 					let keywords = await db.getKeywordsbyId(thesis[i].ID)
-					thesis[i].keywords = keywords;
+					let allTypesOfThesis = await db.getTypesbyId(thesis[i].ID);
+					let cosupervisors = await db.getCoSupervisors(thesis[i].ID);
+					let allGroups = await db.getGroupSupervisorAndCoSupervisor(thesis[i].ID);
+					let expirationDate = await db.getThesis(thesis[i].ID);
+					console.log("Non filtrata");
+					thesis.forEach(t => console.log(t.ID));
+					if(keyword.length > 0){
+						let count=0;
+						keyword.forEach(t => {
+							if (keywords.includes(t)){
+								count++;
+							}
+						});
+						if (count !== keyword.length-1){
+							thesis.splice(thesis[i], 1);
+							removed = true;
+						}
+					}
+					if(type.length > 0 && !removed){
+						let count=0;
+						type.forEach(t => {
+							if (allTypesOfThesis.includes(t)){
+								count++;
+							}
+						});
+						if (count !== type.length-1){
+							thesis.splice(thesis[i], 1);
+							removed = true;
+						}
+					}
+					if(cosupervisor.length > 0 && !removed){
+						let count=0;
+						cosupervisor.forEach(c => {
+							if (cosupervisors.includes(c)){
+								count++;
+							}
+						});
+						if (count == 0){
+							thesis.splice(thesis[i], 1);
+							removed = true;
+						}
+					}
+					if(groups.length > 0 && !removed){
+						let count=0;
+						groups.forEach(g => {
+							if (allGroups.includes(g)){
+								count++;
+							}
+						});
+						if (count == 0){
+							thesis.splice(thesis[i], 1);
+							removed = true;
+						}
+					}
+										
+					if (supervisor.length>0 && !removed){
+						if (thesis[i].supervisor != supervisor[0]){
+							thesis.splice(thesis[i], 1);
+							removed = true;
+						}
+					}
+					if(exp_date.length>0 && !removed){
+						if (expirationDate >exp_date[0]){
+							thesis.splice(thesis[i], 1);
+						}
+					}
+					console.log("Filtrata");
+					thesis.forEach(t => console.log(t.ID));
 				}
 				console.log(thesis);
-				res.status(200).json(thesis);
+				res.status(200).json(thesis);	
 			}
+						
 		}
+	
 		//if it is student we search for the thesis related to his COD_DEGREE
 		//if it is teacher we get the thesis in which he is supervisor
 
-	} catch (err) {
+	}catch (err) {
 		res.status(500).end();
 	}
 });
