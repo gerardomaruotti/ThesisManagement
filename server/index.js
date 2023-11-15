@@ -214,10 +214,14 @@ app.post('/api/thesis/:id/proposal', async (req, res) => {
 		await db.getThesis(thesisId);
 		const state = await db.checkThesisActive(thesisId);
 
-		if(state == "1" && userRole.role == "student"){
+		if(state != "1"){
+			return res.status(400).json({ error: 'Tesi non attiva' });
+		}
+
+		if(userRole.role == "student"){
 			const propId=await db.insertProposal(userRole.id,thesisId);
 		} else{
-			return res.status(500).json({ error: 'Tesi non attiva o utente non autorizzato' });
+			return res.status(401).json({ error: 'Utente non autorizzato' });
 		}
 		
 		return res.status(200).json('Inserimento avvenuto con successo');
