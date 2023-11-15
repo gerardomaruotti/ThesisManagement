@@ -172,7 +172,7 @@ function insertThesis(thesis) {
 				if (response.ok) {
 					response
 						.json()
-						// .then((thesis) => resolve(thesis))
+						.then((thesis) => resolve(thesis))
 						.catch(() => {
 							reject({ error: 'Cannot parse server response.' });
 						});

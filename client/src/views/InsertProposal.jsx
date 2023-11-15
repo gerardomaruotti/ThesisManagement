@@ -116,32 +116,10 @@ function InsertProposal(props) {
 	}
 
 	function handleSubmit(event) {
-		// event.preventDefault();
-		// if (!isAuthenticated) {
-		// 	// alert('You must be logged in to insert a proposal.');
-		// 	setError(true);
-		// 	return;
-		// } else {
-		// 	API.insertThesis();
-		// }
-
+		event.preventDefault();
 		const typesValues = selectedTypes.map((type) => type.value);
 		const keywordsValues = selectedKeywords.map((keyword) => keyword.value);
-
-		event.preventDefault();
-		// console.log(title);
-		// console.log(description);
-		// console.log(requiredKnowledge);
-		// console.log(notes);
-		// // console.log(expirationDate);
-		// console.log(typesValues);
-		// console.log(keywordsValues);
-		// console.log(selectedLevel.value);
-		// console.log(selectedCds.value);
-		// // console.log('selectedCoSupervisors: ');
-		// // console.log(selectedCoSupervisors);
-		// //For each value in selectedCoSupervisors, get the original object from staticCosupervisors and get all the values
-		const formattedDate = dayjs(expirationDate).format('DD-MM-YYYY');
+		const formattedDate = dayjs(expirationDate).format('DD/MM/YYYY');
 		const formattedCoSupervisors = selectedCoSupervisors.map((selectedCoSupervisor) => {
 			return {
 				email: selectedCoSupervisor.email,
@@ -149,8 +127,7 @@ function InsertProposal(props) {
 				surname: selectedCoSupervisor.surname,
 			};
 		});
-		// console.log(formattedDate);
-		// console.log(formattedCoSupervisors);
+
 		const thesis = {
 			title: title,
 			description: description,
@@ -158,26 +135,17 @@ function InsertProposal(props) {
 			notes: notes,
 			expiration_date: formattedDate,
 			level: selectedLevel.value,
-			cds: selectedCds.value,
-			type: typesValues,
-			professor: 'd111111',
+			degree: selectedCds.value,
+			types: typesValues,
+			supervisor: 'd111111',
 			co_supervisors: formattedCoSupervisors,
 			keywords: keywordsValues,
 		};
 		console.log(thesis);
-		API.insertThesis(
-			title,
-			description,
-			requiredKnowledge,
-			notes,
-			formattedDate,
-			selectedLevel.value,
-			selectedCds.value,
-			selectedTypes,
-			'd111111',
-			formattedCoSupervisors,
-			selectedKeywords
-		);
+		API.insertThesis(thesis).then((thesis) => {
+			const thesisId = thesis;
+			navigate('/proposal/' + thesisId);
+		});
 	}
 
 	return (
