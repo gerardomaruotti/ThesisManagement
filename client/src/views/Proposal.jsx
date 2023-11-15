@@ -12,7 +12,7 @@ function Proposal(props) {
 	const { id } = useParams();
 
 	useEffect(() => {
-		API.getThesisByID(id)
+		API.getThesisByID(id, props.accessToken)
 			.then((thesis) => {
 				setThesis(thesis);
 				console.log(thesis);
@@ -31,16 +31,19 @@ function Proposal(props) {
 								<div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}> Supervisor </div>
 								<div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}>
 									<Image style={{ height: 38, width: 38 }} src={Avatar} roundedCircle />
-									<span style={{ marginLeft: 15, color: 'rgba(0, 0, 0, 0.8)' }}>Stefano Quer</span>
+									<span style={{ marginLeft: 15, color: 'rgba(0, 0, 0, 0.8)' }}>{thesis.supervisor.name + " " + thesis.supervisor.surname}</span>
 								</div>
 							</Col>
 							<Col md={12}>
 								<div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}> Co-Supervisors </div>
-								<div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}>
-									<Image style={{ height: 38, width: 38 }} src={Avatar} roundedCircle />
-									<span style={{ marginLeft: 15, color: 'rgba(0, 0, 0, 0.8)' }}>Debjit Pal</span>
-									<Image style={{ height: 38, width: 38, marginLeft: 15 }} src={Avatar} roundedCircle />
-									<span style={{ marginLeft: 15, color: 'rgba(0, 0, 0, 0.8)' }}>Marco Rossi</span>
+								<div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }} >
+									{thesis.coSupervisors.map((coSupervisor) => (
+										<>
+											<Image style={{ height: 38, width: 38 }} src={Avatar} roundedCircle />
+											<span style={{ marginLeft: 15, color: 'rgba(0, 0, 0, 0.8)' }}>{coSupervisor.name + " " + coSupervisor.surname}</span>
+										</>
+									))}
+
 								</div>
 							</Col>
 							<Col md={12}>
@@ -96,7 +99,7 @@ function Proposal(props) {
 									>
 										<i className="bi bi-calendar3" style={{ fontSize: '16px' }}></i>
 									</span>
-									<span style={{ marginLeft: 8, color: 'rgba(0, 0, 0, 0.5)' }}>31/03/2024</span>
+									<span style={{ marginLeft: 8, color: 'rgba(0, 0, 0, 0.5)' }}>{thesis.expirationDate}</span>
 								</div>
 							</Col>
 							<Col md={12}>
@@ -173,6 +176,7 @@ function Proposal(props) {
 						{thesis.requiredKnowledge == '' ? null :
 							<Row>
 								<Col md={12}>
+									<div style={{ fontWeight: 'bold', fontSize: 15, marginTop: 15, color: '#E6782B' }}> Required Knowledge </div>
 									{thesis.requiredKnowledge}
 								</Col>
 							</Row>

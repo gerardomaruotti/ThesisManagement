@@ -25,6 +25,7 @@ function App() {
 	const [expirationDate, setExpirationDate] = useState('');
 	// const [userMetadata, setUserMetadata] = useState(null);
 	const [thesis, setThesis] = useState([]);
+	const [accessToken, setAccessToken] = useState(null);
 
 
 	function handleError(err) {
@@ -49,6 +50,7 @@ function App() {
 						scope: 'read:current_user',
 					},
 				});
+				setAccessToken(accessToken);
 				console.log('User access token: ' + accessToken);
 
 				//test per get thesis autenticata
@@ -73,7 +75,7 @@ function App() {
 			<Header />
 			<Routes>
 				<Route path='/' element={<StudentHome thesis={thesis} />} />
-				<Route path='/proposal/:id' element={<Proposal />} />
+				<Route path='/proposal/:id' element={<Proposal accessToken={accessToken} />} />
 				<Route path='/professor' element={<ProfessorHome thesis={thesis} />} />
 				<Route
 					path='/proposals/add'

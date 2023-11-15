@@ -188,10 +188,14 @@ function getAllGroups() {
 	});
 }
 
-function getThesisByID(id) {
+function getThesisByID(id, accessToken) {
 	// call  /api/thesis/<id>
 	return new Promise((resolve, reject) => {
-		fetch(URL + `/thesis/${id}`)
+		fetch(URL + `/thesis/${id}`, {
+			headers: {
+				Authorization: `Bearer ${accessToken}`,
+			},
+		})
 			.then((response) => {
 				if (response.ok) {
 					response

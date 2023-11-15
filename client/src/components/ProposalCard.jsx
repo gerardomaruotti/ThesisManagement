@@ -30,7 +30,7 @@ function ProposalCard(props) {
 
 	return (
 		<Col lg={6} sm={12} style={{ marginTop: 25 }}>
-			<Card style={{ padding: 20, cursor: 'pointer' }} className='custom-card' onClick={() => navigate('/proposal/1')}>
+			<Card style={{ padding: 20, cursor: 'pointer' }} className='custom-card' onClick={() => navigate('/proposal/' + props.thesis.ID)}>
 				<div style={{ fontWeight: 'medium', fontSize: 18 }}>{props.thesis.title}</div>
 
 				<div style={{ fontWeight: 'semi-bold', fontSize: 14, marginTop: 5 }}>
