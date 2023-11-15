@@ -201,8 +201,171 @@ describe('GET Groups', () => {
 });
 
 describe('Insert Thesis', () => {
-    test('dummy test', async () => {
+    test('should insert a new thesis correctly', async () => {
+        const thesis = {
+            title: "title",
+            description: "description",
+            required_knowledge: "required_knowledge",
+            notes: "notes",
+            expiration_date: "expiration_date",
+            level: "level",
+            degree: "degree",
+            types: ["type1", "type2"],
+            supervisor: "supervisor",
+            co_supervisors: [{name: "name1", surname: "surname1", email: "email1"}, {name: "name2", surname: "surname2", email: "email2"}],
+            keywords: ["keyword1", "keyword2"]
+        };
 
+        db.insertThesis.mockResolvedValueOnce(1);
+        db.insertCoSupervisor.mockResolvedValueOnce(1);
+        db.insertKeyword.mockResolvedValueOnce(1);
+        db.insertType.mockResolvedValueOnce(1);
+        const res = await request(app).post('/api/insert/thesis').send(thesis);
+
+        expect(db.insertThesis).toHaveBeenCalledTimes(1);
+        expect(db.insertCoSupervisor).toHaveBeenCalledTimes(2);
+        expect(db.insertKeyword).toHaveBeenCalledTimes(2);
+        expect(db.insertType).toHaveBeenCalledTimes(2);
+        expect(res.status).toBe(200);
+        expect(res.body).toEqual(1);
+    });
+
+    test('should return a 503 error when an error occurs while inserting new thesis in db', async () => {
+        const thesis = {
+            title: "title",
+            description: "description",
+            required_knowledge: "required_knowledge",
+            notes: "notes",
+            expiration_date: "expiration_date",
+            level: "level",
+            degree: "degree",
+            types: ["type1", "type2"],
+            supervisor: "supervisor",
+            co_supervisors: [{name: "name1", surname: "surname1", email: "email1"}, {name: "name2", surname: "surname2", email: "email2"}],
+            keywords: ["keyword1", "keyword2"]
+        };
+
+        db.insertThesis.mockRejectedValueOnce(new Error('Internal server error'));
+        const res = await request(app).post('/api/insert/thesis').send(thesis);
+    
+        expect(db.insertThesis).toHaveBeenCalledTimes(1);
+        expect(res.status).toBe(503);
+        expect(res.body).toEqual({ error: 'Errore nell inserimento' });
+    
+    });
+
+    test('should return a 503 error when an error occurs while inserting new co supervisor in db', async () => {
+        const thesis = {
+            title: "title",
+            description: "description",
+            required_knowledge: "required_knowledge",
+            notes: "notes",
+            expiration_date: "expiration_date",
+            level: "level",
+            degree: "degree",
+            types: ["type1", "type2"],
+            supervisor: "supervisor",
+            co_supervisors: [{name: "name1", surname: "surname1", email: "email1"}, {name: "name2", surname: "surname2", email: "email2"}],
+            keywords: ["keyword1", "keyword2"]
+        };
+
+        db.insertThesis.mockResolvedValueOnce(1);
+        db.insertCoSupervisor.mockRejectedValueOnce(new Error('Internal server error'));
+        const res = await request(app).post('/api/insert/thesis').send(thesis);
+    
+        expect(db.insertThesis).toHaveBeenCalledTimes(1);
+        expect(db.insertCoSupervisor).toHaveBeenCalledTimes(1);
+        expect(res.status).toBe(503);
+        expect(res.body).toEqual({ error: 'Errore nell inserimento' });
+    
+    });
+
+    test('should return a 503 error when an error occurs while inserting new keyword in db', async () => {
+        const thesis = {
+            title: "title",
+            description: "description",
+            required_knowledge: "required_knowledge",
+            notes: "notes",
+            expiration_date: "expiration_date",
+            level: "level",
+            degree: "degree",
+            types: ["type1", "type2"],
+            supervisor: "supervisor",
+            co_supervisors: [{name: "name1", surname: "surname1", email: "email1"}, {name: "name2", surname: "surname2", email: "email2"}],
+            keywords: ["keyword1", "keyword2"]
+        };
+
+        db.insertThesis.mockResolvedValueOnce(1);
+        db.insertCoSupervisor.mockResolvedValueOnce(1);
+        db.insertKeyword.mockRejectedValueOnce(new Error('Internal server error'));
+        const res = await request(app).post('/api/insert/thesis').send(thesis);
+    
+        expect(db.insertThesis).toHaveBeenCalledTimes(1);
+        expect(db.insertCoSupervisor).toHaveBeenCalledTimes(2);
+        expect(db.insertKeyword).toHaveBeenCalledTimes(1);
+        expect(res.status).toBe(503);
+        expect(res.body).toEqual({ error: 'Errore nell inserimento' });
+    
+    });
+
+    test('should return a 503 error when an error occurs while inserting new type in db', async () => {
+        const thesis = {
+            title: "title",
+            description: "description",
+            required_knowledge: "required_knowledge",
+            notes: "notes",
+            expiration_date: "expiration_date",
+            level: "level",
+            degree: "degree",
+            types: ["type1", "type2"],
+            supervisor: "supervisor",
+            co_supervisors: [{name: "name1", surname: "surname1", email: "email1"}, {name: "name2", surname: "surname2", email: "email2"}],
+            keywords: ["keyword1", "keyword2"]
+        };
+
+        db.insertThesis.mockResolvedValueOnce(1);
+        db.insertCoSupervisor.mockResolvedValueOnce(1);
+        db.insertKeyword.mockResolvedValueOnce(1);
+        db.insertType.mockRejectedValueOnce(new Error('Internal server error'));
+        const res = await request(app).post('/api/insert/thesis').send(thesis);
+    
+        expect(db.insertThesis).toHaveBeenCalledTimes(1);
+        expect(db.insertCoSupervisor).toHaveBeenCalledTimes(2);
+        expect(db.insertKeyword).toHaveBeenCalledTimes(2);
+        expect(db.insertType).toHaveBeenCalledTimes(1);
+        expect(res.status).toBe(503);
+        expect(res.body).toEqual({ error: 'Errore nell inserimento' });
+    });
+
+    test('should return a 503 error when an error occurs while inserting thesis status in db', async () => {
+        const thesis = {
+            title: "title",
+            description: "description",
+            required_knowledge: "required_knowledge",
+            notes: "notes",
+            expiration_date: "expiration_date",
+            level: "level",
+            degree: "degree",
+            types: ["type1", "type2"],
+            supervisor: "supervisor",
+            co_supervisors: [{name: "name1", surname: "surname1", email: "email1"}, {name: "name2", surname: "surname2", email: "email2"}],
+            keywords: ["keyword1", "keyword2"]
+        };
+
+        db.insertThesis.mockResolvedValueOnce(1);
+        db.insertCoSupervisor.mockResolvedValueOnce(1);
+        db.insertKeyword.mockResolvedValueOnce(1);
+        db.insertType.mockResolvedValueOnce(1);
+        db.insertThesisStatus.mockRejectedValueOnce(new Error('Internal server error'));
+        const res = await request(app).post('/api/insert/thesis').send(thesis);
+    
+        expect(db.insertThesis).toHaveBeenCalledTimes(1);
+        expect(db.insertCoSupervisor).toHaveBeenCalledTimes(2);
+        expect(db.insertKeyword).toHaveBeenCalledTimes(2);
+        expect(db.insertType).toHaveBeenCalledTimes(2);
+        expect(db.insertThesisStatus).toHaveBeenCalledTimes(1);
+        expect(res.status).toBe(503);
+        expect(res.body).toEqual({ error: 'Errore nell inserimento' });
     });
 });
 
