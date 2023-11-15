@@ -8,7 +8,7 @@ import Header from './components/Header';
 import ProfessorHome from './views/ProfessorHome';
 import InsertProposal from './views/InsertProposal';
 import Proposal from './views/Proposal';
-import API from './API.jsx'
+import API from './API.jsx';
 
 function App() {
 	const { user, isAuthenticated, getAccessTokenSilently, isLoading, loginWithRedirect } = useAuth0();
@@ -37,7 +37,7 @@ function App() {
 
 	useEffect(() => {
 		console.log('User is authenticated: ' + isAuthenticated);
-		console.log('User ID: ' + user?.sub);
+		console.log(user);
 		const getUserMetadata = async () => {
 			try {
 				console.log("Getting user's access token");
@@ -51,7 +51,6 @@ function App() {
 
 				//test per get thesis autenticata
 				API.getAllThesis(accessToken);
-
 			} catch (e) {
 				console.log(e.message);
 			}
