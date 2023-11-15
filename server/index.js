@@ -212,20 +212,24 @@ app.get('/api/thesis/:id', async (req, res) => {
 app.post('/api/thesis/:id/proposal', async (req, res) => {
 	try {
 
-		let user = req.auth.payload.sub;
+		//let user = req.auth.payload.sub;
 		let thesisId=req.params.id;
-		let userRole = await db.getRole(user);
+		if (isNaN(thesisId) || thesisId<=0) {
+			return res.status(400).json({ error: 'Invalid thesis ID.' });
+		}
+		
+		let userRole = await db.getRole(req.auth);
 		await db.getThesis(thesisId);
 		const state = await db.checkThesisActive(thesisId);
 
 		if(state != "1"){
-			return res.status(400).json({ error: 'Tesi non attiva' });
+			return res.status(400).json({ error: 'Thesis not active' });
 		}
 
 		if(userRole.role == "student"){
 			const propId=await db.insertProposal(userRole.id,thesisId);
 		} else{
-			return res.status(401).json({ error: 'Utente non autorizzato' });
+			return res.status(401).json({ error: 'Unauthorized user' });
 		}
 		
 		return res.status(200).json('Inserimento avvenuto con successo');
