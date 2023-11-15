@@ -57,9 +57,9 @@ app.get("/api/cds", (req,res)=>{
 //return all thesis of the department of the student/professor 
 app.get('/api/thesis', checkJwt, async (req, res) => {
 	try {
-		let user = req.auth.payload.sub;
+		//let user = req.auth.payload.sub;
 		//searching for the role of the user authenticated 
-		let getRole = await db.getRole(user);
+		let getRole = await db.getRole(req.auth);
 		console.log(getRole)
 		if (getRole.role=="teacher"){
 			//if it is student we search for the thesis related to his COD_DEGREE
