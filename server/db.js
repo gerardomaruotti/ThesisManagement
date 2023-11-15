@@ -90,7 +90,7 @@ const db = new sqlite.Database('thesis_management.db', (err) => {
   
   exports.getTeachers = () => {
     return new Promise((resolve, reject) => {
-      const sql = 'SELECT NAME,SURNAME, EMAIL FROM TEACHER';
+      const sql = 'SELECT DISTINCT NAME,SURNAME, EMAIL FROM TEACHER';
       db.all(sql, [], (err, rows) => {
         if (err) { 
             reject(err); 
@@ -104,6 +104,26 @@ const db = new sqlite.Database('thesis_management.db', (err) => {
             }));
 
             resolve(teachers)
+        }
+      });
+    });
+  };
+
+  exports.getGroups = () => {
+    return new Promise((resolve, reject) => {
+      const sql = 'SELECT DISTINCT COD_GROUP,NAME FROM GROUP';
+      db.all(sql, [], (err, rows) => {
+        if (err) { 
+            reject(err); 
+            return;
+        }
+        else {
+            const groups=rows.map((elem)=>({
+                cod_group: elem.COD_GROUP,
+                name: elem.NAME,
+            }));
+
+            resolve(groups)
         }
       });
     });

@@ -43,6 +43,12 @@ app.get("/api/teachers", (req,res)=>{
 	.catch((err)=>{console.log(err); res.status(503).json("getTeachers error")})
 })
 
+app.get("/api/groups", (req,res)=>{
+	db.getGroups()
+	.then(groups=> res.status(200).json(groups))
+	.catch((err)=>{console.log(err); res.status(503).json("getGroups error")})
+})
+
 
 app.get("/api/cds", (req,res)=>{
 	db.getCdS()
