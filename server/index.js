@@ -161,7 +161,7 @@ app.post('/api/insert/thesis',  [
 			console.log(statusId)
 			return res.status(200).json(thesisId);
 		} else{
-			return res.status(401).json("Unauthorized user")
+			return res.status(401).json({ error: 'Unauthorized user' })
 		}
 		
 	} catch (err) {
