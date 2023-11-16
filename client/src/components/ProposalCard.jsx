@@ -43,8 +43,13 @@ function ProposalCard(props) {
 
 	return (
 		<Col lg={6} sm={12} style={{ marginTop: 25 }}>
-			<Card style={{ padding: 20, cursor: 'pointer', minHeight: 300 }} className='custom-card' onClick={() => navigate('/proposal/' + props.thesis.ID)}>
-				<div style={{ fontWeight: 'medium', fontSize: 18 }}>{props.thesis.title}</div>
+			<Card style={{ padding: 20, cursor: 'pointer' }} className='custom-card' onClick={() => navigate('/proposal/' + props.thesis.ID)}>
+				<div style={{
+					fontWeight: 'medium', fontSize: 18, height: 55, display: '-webkit-box',
+					WebkitBoxOrient: 'vertical',
+					WebkitLineClamp: '2',
+					overflow: 'hidden'
+				}}>{props.thesis.title}</div>
 
 				<div style={{ fontWeight: 'semi-bold', fontSize: 14, marginTop: 5 }}>
 					{props.thesis.keywords.map((keyword, index) => (
@@ -64,7 +69,7 @@ function ProposalCard(props) {
 					))}
 				</div>
 
-				<Row style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}>
+				<Row style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15, height: 30 }}>
 					<Col lg={1} xs={1} style={{ display: 'flex', alignItems: 'center' }}>
 						<Image style={{ height: 35, width: 35 }} src={Avatar} roundedCircle />
 					</Col>
@@ -110,6 +115,7 @@ function ProposalCard(props) {
 					fontWeight: 'regular',
 					fontSize: 16,
 					marginTop: 20,
+					minHeight: 72,
 					color: 'rgba(0, 0, 0, 0.8)',
 					display: '-webkit-box',
 					WebkitBoxOrient: 'vertical',
