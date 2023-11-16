@@ -1,5 +1,5 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Container, Row, Col, Button, Form, InputGroup, Nav } from 'react-bootstrap';
+import { Container, Row, Col, Button, Form, InputGroup, Nav, Toast, ToastContainer } from 'react-bootstrap';
 import '../constants/custom-styles.scss';
 import { Color } from '../constants/colors.js';
 import ProposalCard from '../components/ProposalCard.jsx';
@@ -10,6 +10,8 @@ import { useNavigate } from 'react-router-dom';
 function StudentHome(props) {
 	const [filtersShow, setFiltersShow] = useState(false);
 	const navigate = useNavigate();
+	const [popup, setPopup] = useState(false);
+	const [msgAndColor, setMsgAndColor] = useState({ header: "", msg: "", color: "" });
 
 	useEffect(() => {
 		if (props.isProfessor) {
@@ -63,9 +65,19 @@ function StudentHome(props) {
 			<FiltersModal show={filtersShow} onHide={() => setFiltersShow(false)} />
 			<Container>
 				<Row style={{ marginBottom: 25 }}>
-					{props.thesis != [] ? props.thesis.map((thesis, index) => <ProposalCard key={thesis.ID} thesis={thesis} />) : null}
+					{props.thesis != [] ? props.thesis.map((thesis, index) => <ProposalCard key={thesis.ID} thesis={thesis} accessToken={props.accessToken} setPopup={setPopup} setMsgAndColor={setMsgAndColor} />) : null}
 				</Row>
 			</Container>
+
+			<ToastContainer style={{ position: 'fixed', top: 20, right: 20, zIndex: 10 }} className='p-3'>
+				<Toast bg={msgAndColor.color} onClose={() => setPopup(false)} show={popup} delay={5000} autohide>
+					<Toast.Header>
+						<strong className="me-auto">{msgAndColor.header}</strong>
+					</Toast.Header>
+					<Toast.Body>{msgAndColor.msg}</Toast.Body>
+				</Toast>
+			</ToastContainer>
+
 		</>
 	);
 }

@@ -3,6 +3,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import { Color } from '../constants/colors.js';
 import Avatar from '../assets/avatar.svg';
 import { useNavigate } from 'react-router-dom';
+import API from '../API.jsx';
 
 function ProposalCard(props) {
 	const navigate = useNavigate();
@@ -25,12 +26,24 @@ function ProposalCard(props) {
 		{
 			backgroundColor: 'rgba(89, 56, 80, 0.1)', color: 'rgb(89, 56, 80)'
 		}
-
 	];
+
+	function apply(event) {
+		API.ThesisApply(props.thesis.ID, props.accessToken)
+			.then(() => {
+				props.setMsgAndColor({ header: "Application successful", msg: "Successful application to the thesis " + props.thesis.title, color: "success" });
+				props.setPopup(true);
+			})
+			.catch(() => {
+				props.setMsgAndColor({ header: "Application failed", msg: "You have already sent an application for this thesis or you do not have authorization", color: "danger" });
+				props.setPopup(true)
+			});
+		event.stopPropagation();
+	}
 
 	return (
 		<Col lg={6} sm={12} style={{ marginTop: 25 }}>
-			<Card style={{ padding: 20, cursor: 'pointer' }} className='custom-card' onClick={() => navigate('/proposal/' + props.thesis.ID)}>
+			<Card style={{ padding: 20, cursor: 'pointer', minHeight: 300 }} className='custom-card' onClick={() => navigate('/proposal/' + props.thesis.ID)}>
 				<div style={{ fontWeight: 'medium', fontSize: 18 }}>{props.thesis.title}</div>
 
 				<div style={{ fontWeight: 'semi-bold', fontSize: 14, marginTop: 5 }}>
@@ -105,9 +118,9 @@ function ProposalCard(props) {
 				}}>
 					{props.thesis.description}
 				</div>
-				{props.isProfessor ?
+				{props.isProfessor != 1 ?
 					<div style={{ marginTop: 20, textAlign: 'center' }}>
-						<Button variant='primary' style={{ width: 130 }}>
+						<Button variant='primary' style={{ width: 130 }} onClick={apply} >
 							Apply
 						</Button>
 					</div> : null}
