@@ -22,7 +22,8 @@
   - request parameters: none
   - response body content: list of cds identified with the code of the degree and the related title.
 - GET `/api/thesis`
-  - request parameters: none 
+  - request parameters: none
+  - request body content: an object that may containing filters: a list of keywords, a list of types, a supervisor, a list of co-supervisors, a list of groups and an expiration date. 
   - response body content: list of thesis identified with an identifier, a title, a description, required knowledge, notes, expiration date, the level, related degree, a list containing the related types and a list containing the related keywords.
 - GET `/api/thesis/:id/groups`
   - request parameters: thesis identifier
