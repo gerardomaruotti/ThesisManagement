@@ -151,9 +151,9 @@ Content-Type: application/json
         "type" : ["EXPERIMENTAL"], 
         "keyword" : ["ALGORITHM FAIRNESS", "SYNTHETIC DATA"],
         "cosupervisor" : ["d123463@polito.it"],
-        "supervisor" : ["d123456"],
+        "supervisor" : "d123456",
         "group" :["GR-16"],
-        "exp_date" : ["10/12/2023"]
+        "exp_date" : "10/12/2023"
     }
 }
 
