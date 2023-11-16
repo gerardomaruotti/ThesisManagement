@@ -119,6 +119,7 @@ exports.getTeachers = () => {
 	});
 };
 
+<<<<<<< HEAD
 exports.getGroups = () => {
 	return new Promise((resolve, reject) => {
 		const sql = 'SELECT * FROM "GROUP" ';
@@ -151,6 +152,91 @@ exports.getTeacher = (codSupervisor) => {
 					name: row.NAME,
 					surname: row.SURNAME,
 				};
+=======
+  exports.getCoSupervisorsEmail = (idThesis) => {
+    return new Promise((resolve, reject) => {
+      const sql = 'SELECT EMAIL FROM CO_SUPERVISOR WHERE THESIS=?';
+      db.all(sql, [idThesis], (err, rows) => {
+        if (err) { 
+            reject(err); 
+            return;
+        }
+        else {
+          let coSupervisors=[];
+          rows.forEach((elem)=>(
+            coSupervisors.push(elem.EMAIL)
+          ));
+
+          resolve(coSupervisors)
+        }
+      });
+    });
+  };
+
+  exports.getCdS = () => {
+    return new Promise((resolve, reject) => {
+      const sql = 'SELECT * FROM DEGREE';
+      db.all(sql, [], (err, rows) => {
+        if (err) { 
+            reject(err); 
+            return;
+        }
+        else {
+            const cds=rows.map((elem)=> ({
+                cod_degree: elem.COD_DEGREE,
+                title_degree: elem.TITLE_DEGREE
+            }))
+            resolve(cds)
+        }
+      });
+    });
+  };
+
+  exports.getThesisExpDate = (ID) => {
+    return new Promise((resolve, reject) => {
+      const sql = 'SELECT EXPIRATION_DATE FROM THESIS WHERE ID_THESIS=? ';
+      db.get(sql, [ID], (err, row) => {
+        if (err) { 
+            reject(err); 
+            return;
+        }
+        else {
+            resolve(row.EXPIRATION_DATE)
+        }
+      });
+    });
+  };
+
+  exports.getThesisSupervisor = (ID) => {
+    return new Promise((resolve, reject) => {
+      const sql = 'SELECT SUPERVISOR FROM THESIS WHERE ID_THESIS=? ';
+      db.get(sql, [ID], (err, row) => {
+        if (err) { 
+            reject(err); 
+            return;
+        }
+        else {
+            resolve(row.SUPERVISOR)
+        }
+      });
+    });
+  };
+
+  exports.getTitleDegree = (codDegree) =>{
+    return new Promise((resolve, reject) => {
+      const sql = 'SELECT TITLE_DEGREE FROM DEGREE WHERE COD_DEGREE=?';
+      db.get(sql, [codDegree], (err, row) => {
+        if (err) { 
+            reject(err); 
+            return;
+        }
+        else {
+            resolve(row.TITLE_DEGREE)
+        }
+      });
+    });
+  }
+>>>>>>> iss#30
 
 				resolve(teacher);
 			}
@@ -158,6 +244,7 @@ exports.getTeacher = (codSupervisor) => {
 	});
 };
 
+<<<<<<< HEAD
 exports.getCoSupervisors = (idThesis) => {
 	return new Promise((resolve, reject) => {
 		const sql = 'SELECT NAME, SURNAME FROM CO_SUPERVISOR WHERE THESIS=?';
@@ -170,6 +257,57 @@ exports.getCoSupervisors = (idThesis) => {
 					name: elem.NAME,
 					surname: elem.SURNAME,
 				}));
+=======
+  exports.getGroup = (idThesis) => {
+    return new Promise((resolve, reject) => {
+      const sql = 'SELECT G.cod_group as cod_group FROM TEACHER TE JOIN CO_SUPERVISOR CS ON TE.EMAIL = CS.email join "GROUP" G ON G.cod_group = TE.cod_group WHERE  CS.THESIS=? UNION SELECT  G.cod_group as cod_group FROM TEACHER TE JOIN THESIS T ON T.SUPERVISOR = TE.ID join "GROUP" G ON G.cod_group = TE.cod_group WHERE T.id_thesis=?';
+      db.all(sql, [idThesis, idThesis], (err, rows) => {
+        if (err) { 
+            reject(err); 
+            return;
+        }
+        else {
+            let groups=[];
+            rows.forEach((elem)=> (
+                groups.push(elem.cod_group)
+            ))
+            resolve(groups)
+        }
+      });
+    });
+  };
+
+  exports.getRole = (auth0) => {
+    return new Promise((resolve, reject) => {
+      const sql = 'SELECT * FROM STUD_AUTH0 WHERE ID_AUTH0=? ';
+      db.get(sql, [auth0.payload.sub], (err, elem) => {
+        if (err) { 
+            reject(err); 
+            return;
+        }
+        else {
+            if (elem != undefined)
+              resolve({"role":"student", "id":elem.ID})
+            else{
+              const sql2 = 'SELECT * FROM TEACHER_AUTH0 WHERE ID_AUTH0=? ';
+              db.get(sql2, [auth0], (err, elem) => {
+                if (err) { 
+                    reject(err); 
+                    return;
+                }
+                else {
+                  if (elem != undefined)
+                    resolve({"role":"teacher", "id":elem.ID})
+                  else
+                    resolve({})//non ritorna nulla se non è autenticato, ma qua non entra
+                }
+              });
+            }
+          }
+        });
+    });
+  }
+>>>>>>> iss#30
 
 				resolve(coSupervisors);
 			}
@@ -195,6 +333,7 @@ exports.getCdS = () => {
 	});
 };
 
+<<<<<<< HEAD
 exports.getTitleDegree = (codDegree) => {
 	return new Promise((resolve, reject) => {
 		const sql = 'SELECT TITLE_DEGREE FROM DEGREE WHERE COD_DEGREE=?';
@@ -208,6 +347,46 @@ exports.getTitleDegree = (codDegree) => {
 		});
 	});
 };
+=======
+            resolve(thesis)
+          }else{
+            resolve([])
+          }
+        }
+      });
+    });
+  }
+  exports.getThesisStudentFiltered=(ID, filters)=>{
+    return new Promise((resolve, reject) => {
+      const sql = 'SELECT DISTINCT T.ID_THESIS as ID, T.TITLE AS title, T.NOTES as notes, T.DESCRIPTION AS description , T.REQUIRED_KNOWLEDGE AS req_know, TE.NAME AS sup_name, TE.SURNAME AS sup_surname FROM THESIS T JOIN STUDENT S ON S.COD_DEGREE == T.DEGREE JOIN TEACHER TE ON T.SUPERVISOR == TE.ID JOIN TYPE TY ON T.ID_THESIS == TY.THESIS JOIN KEYWORD K ON T.ID_THESIS == K.THESIS JOIN CO_SUPERVISOR CS ON T.ID_THESIS == CS.THESIS WHERE S.ID = ? AND (TY.TYPE IN (?) OR ? IS NULL) AND (K.KEYWORD IN (?) OR ? IS NULL) AND (CS.EMAIL IN (?) OR ? IS NULL) AND (T.SUPERVISOR IN (?) OR ? IS NULL) AND (TE.COD_GROUP IN (?) OR ?  IS NULL) AND (T.EXPIRATION_DATE < ? OR ? IS NULL)';
+      db.all(sql, [ID, filters.type, filters.type, filters.keyword, filters.keyword, filters.cosupervisor, filters.cosupervisor, filters.supervisor, filters.supervisor, filters.group, filters.group, filters.exp_date, filters.exp_date], (err, rows) => {
+        if (err) { 
+            reject(err); 
+            return;
+        }
+        else {
+          console.log(rows)
+          if (rows.length>0){
+            const thesis=rows.map((elem)=> ({
+              ID: elem.ID,
+              title: elem.title,
+              description: elem.description,
+              req_know: elem.req_know,
+              sup_name: elem.sup_name,
+              sup_surname: elem.sup_surname,
+              notes : elem.notes,
+              keywords:[]
+            }))
+
+            resolve(thesis)
+          }else{
+            resolve([])
+          }
+        }
+      });
+    });
+  }
+>>>>>>> iss#30
 
 exports.getGroupSupervisorAndCoSupervisor = (idThesis) => {
 	return new Promise((resolve, reject) => {

@@ -75,7 +75,9 @@ app.get('/api/cds', (req, res) => {
 //METODI API
 //fare metodo gestione autenticazione --> che ritorna ID matricla e chekka auth0
 
-//return all thesis of the department of the student/professor
+
+
+//return all thesis of the department of the student/professor 
 app.get('/api/thesis', checkJwt, async (req, res) => {
 	try {
 		//let user = req.auth.payload.sub;
@@ -102,11 +104,103 @@ app.get('/api/thesis', checkJwt, async (req, res) => {
 				let types = await db.getTypesbyId(thesis[i].ID);
 				thesis[i].types = types;
 			}
-			console.log(thesis);
-			res.status(200).json(thesis);
+			if(req.body.filters == null){
+				console.log(thesis);
+				res.status(200).json(thesis);
+			}else{
+				let validThesis = [];
+				let keyword = req.body.filters.keyword;
+				let type = req.body.filters.type;
+				let cosupervisor = req.body.filters.cosupervisor;
+				let supervisor = req.body.filters.supervisor;
+				let groups = req.body.filters.group;
+				let exp_date = req.body.filters.exp_date;
+	
+				//console.log("Non filtrata");
+				//thesis.forEach(t => console.log(t.ID));
+				for (let i=0; i<thesis.length; i++){
+					let valid = true;
+					let keywords = await db.getKeywordsbyId(thesis[i].ID)
+					let allTypesOfThesis = await db.getTypesbyId(thesis[i].ID);
+					let cosupervisors = await db.getCoSupervisorsEmail(thesis[i].ID);
+					let sup = await db.getThesisSupervisor(thesis[i].ID);
+					let allGroups = await db.getGroup(thesis[i].ID);
+					let expirationDate = await db.getThesisExpDate(thesis[i].ID);
+					
+					if(keyword.length > 0){
+						let count=0;
+						keyword.forEach(t => {
+							if (keywords.includes(t)){
+								count++;
+							}
+						});
+						if (count !== keyword.length){
+							valid = false;
+						}
+					}
+					if(type.length > 0 && valid){
+						let count=0;
+						type.forEach(t => {
+							if (allTypesOfThesis.includes(t)){
+								count++;
+							}
+						});
+							if (count !== type.length){
+								valid = false;
+							}
+					}
+					if(cosupervisor.length > 0 && valid){
+						let count=0;
+						cosupervisor.forEach(c => {
+							if (cosupervisors.includes(c)){
+								count++;
+							}
+						});
+						if (count !== cosupervisor.length){
+							valid = false;
+						}
+					}
+					if(groups.length > 0 && valid){
+						let count=0;
+						groups.forEach(g => {
+							if (allGroups.includes(g)){
+								count++;
+							}
+						});
+						if (count !== groups.length){
+							valid = false;
+						}
+					}
+									
+					if (supervisor.length>0 && valid){
+						if (sup != supervisor){
+							valid = false;
+						}
+					}
+					if(exp_date.length>0 && valid){
+						let param = exp_date.split("/");
+						let exp_date_tmp = new Date(param[2]+"-"+ param[1] +"-"+param[0]);
+						let param2 = expirationDate.split("/");
+						let expirationDate_tmp = new Date(param2[2]+"-"+ param2[1] +"-"+param2[0]);
+	
+						if (exp_date_tmp < expirationDate_tmp){
+							valid = false;
+						}
+					}
+	
+					if (valid){ validThesis.push(thesis[i]);}
+					//console.log("Filtrata");
+					//thesis.forEach(t => console.log(t.ID));
+				}
+				console.log(validThesis);
+				res.status(200).json(validThesis);	
+			}
+						
 		}
+	
 		//if it is student we search for the thesis related to his COD_DEGREE
 		//if it is teacher we get the thesis in which he is supervisor
+
 	} catch (err) {
 		res.status(500).end();
 	}
