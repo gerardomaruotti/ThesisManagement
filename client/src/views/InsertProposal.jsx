@@ -204,7 +204,7 @@ function InsertProposal(props) {
 					</Col>
 				</Row>
 				<Container style={{ textAlign: 'center', marginTop: 10 }}>
-					<Button variant='secondary' className='form-button' style={{ color: 'white' }} type='cancel' onClick={() => navigate('/professor')}>
+					<Button variant='secondary' className='form-button' style={{ color: 'white' }} type='cancel' onClick={() => navigate('/')}>
 						Cancel
 					</Button>
 					<Button variant='primary' className='form-button' type='submit'>
