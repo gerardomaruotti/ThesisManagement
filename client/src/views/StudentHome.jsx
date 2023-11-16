@@ -14,6 +14,24 @@ function StudentHome(props) {
 	const navigate = useNavigate();
 	const [popup, setPopup] = useState(false);
 	const [msgAndColor, setMsgAndColor] = useState({ header: "", msg: "", color: "" });
+	const [search, setSearch] = useState('');
+	const [filteredThesis, setFilteredThesis] = useState(props.thesis);
+
+	function handleSearch(e) {
+		setSearch(e.target.value);
+		console.log(search);
+		let filtered = props.thesis.filter((thesis) => {
+			return (thesis.title.toLowerCase().includes(search.toLowerCase()) ||
+				thesis.description.toLowerCase().includes(search.toLowerCase()) ||
+				thesis.notes.toLowerCase().includes(search.toLowerCase()) ||
+				thesis.req_know.toLowerCase().includes(search.toLowerCase()))
+		});
+		setFilteredThesis(filtered);
+	}
+
+	useEffect(() => {
+		setFilteredThesis(props.thesis)
+	}, [props.thesis]);
 
 	useEffect(() => {
 		if (!isAuthenticated && !isLoading) {
@@ -34,7 +52,7 @@ function StudentHome(props) {
 					<Row style={{ paddingTop: 25 }}>
 						<Col lg={{ span: 4, offset: 4 }} md={12}>
 							<InputGroup>
-								<Form.Control placeholder='Search' style={{ borderTopLeftRadius: 50, borderBottomLeftRadius: 50, borderColor: Color.primary }} />
+								<Form.Control placeholder='Search' style={{ borderTopLeftRadius: 50, borderBottomLeftRadius: 50, borderColor: Color.primary }} value={search} onChange={handleSearch} />
 								<Button variant='outline-primary' style={{ borderTopRightRadius: 50, borderBottomRightRadius: 50 }}>
 									<i className='bi bi-search'></i>
 								</Button>
@@ -73,7 +91,8 @@ function StudentHome(props) {
 			<FiltersModal show={filtersShow} onHide={() => setFiltersShow(false)} />
 			<Container>
 				<Row style={{ marginBottom: 25 }}>
-					{props.thesis != [] ? props.thesis.map((thesis, index) => <ProposalCard key={thesis.ID} thesis={thesis} accessToken={props.accessToken} setPopup={setPopup} setMsgAndColor={setMsgAndColor} />) : null}
+					{console.log(filteredThesis)}
+					{filteredThesis != [] ? filteredThesis.map((thesis, index) => <ProposalCard key={thesis.ID} thesis={thesis} accessToken={props.accessToken} setPopup={setPopup} setMsgAndColor={setMsgAndColor} />) : null}
 				</Row>
 			</Container>
 

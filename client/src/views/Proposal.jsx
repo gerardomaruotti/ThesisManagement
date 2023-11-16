@@ -120,7 +120,7 @@ function Proposal(props) {
 											</div>
 										</Col>
 									) : null}
-									{thesis.types.length > 1 ? (
+									{thesis.types.length > 0 ? (
 										<Col md={12}>
 											<div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}> Types </div>
 											<div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}>
