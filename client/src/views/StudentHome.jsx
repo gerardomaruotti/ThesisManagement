@@ -40,6 +40,7 @@ function StudentHome(props) {
 					thesis.description.toLowerCase().includes(search.toLowerCase()) ||
 					thesis.notes.toLowerCase().includes(search.toLowerCase()) ||
 					thesis.req_know.toLowerCase().includes(search.toLowerCase())
+					// || thesis.keywords.filter((keyword) => keyword.toLowerCase().includes(search.toLowerCase()).length > 0)
 				);
 			});
 			setFilteredThesis(filtered);
@@ -123,12 +124,12 @@ function StudentHome(props) {
 								</Nav.Item>
 							</Nav>
 						</Col>
-						<Col sm={3}>
+						{/* <Col sm={3}>
 							<Button variant='primary' style={{ borderRadius: 50, float: 'right', width: 115 }} onClick={() => setFiltersShow(true)}>
 								<span style={{ marginRight: 12 }}>Filters</span>
 								<i className='bi bi-filter-circle'></i>
 							</Button>
-						</Col>
+						</Col> */}
 					</Row>
 				</Container>
 			</div>
