@@ -70,8 +70,8 @@ TEMPLATE FOR RETROSPECTIVE (Team 18)
 
 - Hours per task average, standard deviation (estimate and actual)
 <br><br> - Story #0: 
-<br>Hours per task average (estimate) = 1h 45m
-<br>Hours per task average (actual) = 2h 30m
+<br>Hours per task average (estimate) = 1h 23m
+<br>Hours per task average (actual) = 1h 27m
 <br>Standard deviation (estimate) = 0.63h
 <br>Standard deviation (actual) = 1.2h
 <br><br> - Story #1: 
