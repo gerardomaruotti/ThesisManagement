@@ -34,13 +34,14 @@ function getAllKeywords() {
 	});
 }
 
-function getAllThesis(accessToken) {
+function getAllThesis(accessToken, filters) {
 	// call  /api/keywords
 	return new Promise((resolve, reject) => {
 		fetch(URL + '/thesis', {
 			headers: {
 				Authorization: `Bearer ${accessToken}`,
 			},
+			body: JSON.stringify(filters),
 		})
 			.then((response) => {
 				if (response.ok) {
@@ -291,7 +292,6 @@ function ThesisApply(id, accessToken) {
 			}); // connection errors
 	});
 }
-
 
 function getUser(accessToken) {
 	return new Promise((resolve, reject) => {

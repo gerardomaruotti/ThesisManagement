@@ -13,7 +13,7 @@ function StudentHome(props) {
 	const [filtersShow, setFiltersShow] = useState(false);
 	const navigate = useNavigate();
 	const [popup, setPopup] = useState(false);
-	const [msgAndColor, setMsgAndColor] = useState({ header: "", msg: "", color: "" });
+	const [msgAndColor, setMsgAndColor] = useState({ header: '', msg: '', color: '' });
 	const [search, setSearch] = useState('');
 	const [filteredThesis, setFilteredThesis] = useState(props.thesis);
 	const [rapidFilter, setRapidFilter] = useState('all');
@@ -21,11 +21,9 @@ function StudentHome(props) {
 	function handleRapidFilters(filter) {
 		if (filter === 'all') {
 			setRapidFilter('all');
-		}
-		else if (filter === 'company') {
+		} else if (filter === 'company') {
 			setRapidFilter('company');
-		}
-		else if (filter === 'abroad') {
+		} else if (filter === 'abroad') {
 			setRapidFilter('abroad');
 		}
 	}
@@ -37,30 +35,34 @@ function StudentHome(props) {
 	useEffect(() => {
 		if (rapidFilter === 'all') {
 			let filtered = props.thesis.filter((thesis) => {
-				return (thesis.title.toLowerCase().includes(search.toLowerCase()) ||
+				return (
+					thesis.title.toLowerCase().includes(search.toLowerCase()) ||
 					thesis.description.toLowerCase().includes(search.toLowerCase()) ||
 					thesis.notes.toLowerCase().includes(search.toLowerCase()) ||
-					thesis.req_know.toLowerCase().includes(search.toLowerCase()))
+					thesis.req_know.toLowerCase().includes(search.toLowerCase())
+				);
 			});
 			setFilteredThesis(filtered);
-		}
-		else if (rapidFilter === 'company') {
+		} else if (rapidFilter === 'company') {
 			let filtered = props.thesis.filter((thesis) => {
-				return ((thesis.title.toLowerCase().includes(search.toLowerCase()) ||
-					thesis.description.toLowerCase().includes(search.toLowerCase()) ||
-					thesis.notes.toLowerCase().includes(search.toLowerCase()) ||
-					thesis.req_know.toLowerCase().includes(search.toLowerCase()))
-					&& thesis.types.filter((type) => type === 'IN COMPANY').length > 0)
+				return (
+					(thesis.title.toLowerCase().includes(search.toLowerCase()) ||
+						thesis.description.toLowerCase().includes(search.toLowerCase()) ||
+						thesis.notes.toLowerCase().includes(search.toLowerCase()) ||
+						thesis.req_know.toLowerCase().includes(search.toLowerCase())) &&
+					thesis.types.filter((type) => type === 'IN COMPANY').length > 0
+				);
 			});
 			setFilteredThesis(filtered);
-		}
-		else if (rapidFilter === 'abroad') {
+		} else if (rapidFilter === 'abroad') {
 			let filtered = props.thesis.filter((thesis) => {
-				return ((thesis.title.toLowerCase().includes(search.toLowerCase()) ||
-					thesis.description.toLowerCase().includes(search.toLowerCase()) ||
-					thesis.notes.toLowerCase().includes(search.toLowerCase()) ||
-					thesis.req_know.toLowerCase().includes(search.toLowerCase()))
-					&& thesis.types.filter((type) => type === 'ABROAD').length > 0)
+				return (
+					(thesis.title.toLowerCase().includes(search.toLowerCase()) ||
+						thesis.description.toLowerCase().includes(search.toLowerCase()) ||
+						thesis.notes.toLowerCase().includes(search.toLowerCase()) ||
+						thesis.req_know.toLowerCase().includes(search.toLowerCase())) &&
+					thesis.types.filter((type) => type === 'ABROAD').length > 0
+				);
 			});
 			setFilteredThesis(filtered);
 		}
@@ -89,7 +91,12 @@ function StudentHome(props) {
 					<Row style={{ paddingTop: 25 }}>
 						<Col lg={{ span: 4, offset: 4 }} md={12}>
 							<InputGroup>
-								<Form.Control placeholder='Search' style={{ borderTopLeftRadius: 50, borderBottomLeftRadius: 50, borderColor: Color.primary }} value={search} onChange={handleSearch} />
+								<Form.Control
+									placeholder='Search'
+									style={{ borderTopLeftRadius: 50, borderBottomLeftRadius: 50, borderColor: Color.primary }}
+									value={search}
+									onChange={handleSearch}
+								/>
 								<Button variant='outline-primary' style={{ borderTopRightRadius: 50, borderBottomRightRadius: 50 }}>
 									<i className='bi bi-search'></i>
 								</Button>
@@ -125,25 +132,36 @@ function StudentHome(props) {
 					</Row>
 				</Container>
 			</div>
-			<FiltersModal show={filtersShow} onHide={() => setFiltersShow(false)} />
+			<FiltersModal
+				show={filtersShow}
+				thesis={props.thesis}
+				setThesis={props.setThesis}
+				onHide={() => setFiltersShow(false)}
+				accessToken={props.accessToken}
+			/>
 			<Container>
 				<Row style={{ marginBottom: 25 }}>
 					{console.log(filteredThesis)}
-					{filteredThesis.length != 0 ? filteredThesis.map((thesis, index) => <ProposalCard key={thesis.ID} thesis={thesis} accessToken={props.accessToken} setPopup={setPopup} setMsgAndColor={setMsgAndColor} />)
-						:
-						<Col style={{ marginTop: 25 }}><p>No thesis to display</p></Col>}
+					{filteredThesis.length != 0 ? (
+						filteredThesis.map((thesis, index) => (
+							<ProposalCard key={thesis.ID} thesis={thesis} accessToken={props.accessToken} setPopup={setPopup} setMsgAndColor={setMsgAndColor} />
+						))
+					) : (
+						<Col style={{ marginTop: 25 }}>
+							<p>No thesis to display</p>
+						</Col>
+					)}
 				</Row>
 			</Container>
 
 			<ToastContainer style={{ position: 'fixed', top: 20, right: 20, zIndex: 10 }} className='p-3'>
 				<Toast bg={msgAndColor.color} onClose={() => setPopup(false)} show={popup} delay={5000} autohide>
 					<Toast.Header>
-						<strong className="me-auto">{msgAndColor.header}</strong>
+						<strong className='me-auto'>{msgAndColor.header}</strong>
 					</Toast.Header>
 					<Toast.Body>{msgAndColor.msg}</Toast.Body>
 				</Toast>
 			</ToastContainer>
-
 		</>
 	);
 }
