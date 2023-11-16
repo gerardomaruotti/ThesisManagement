@@ -54,6 +54,8 @@ app.get("/api/cds", (req,res)=>{
 
 //check della funzione senza autenticazione per la tesi dello studente filtrato
 //return all thesis of the department of the student/professor 
+
+/*
 app.post('/api/thesis/filter', async (req, res) => {
 	try {
 		let thesis = await db.getThesisStudent('s313373')
@@ -160,7 +162,7 @@ app.post('/api/thesis/filter', async (req, res) => {
 	catch (err) {
 		res.status(500).end();
 	}
-});
+});*7
 
 
 
