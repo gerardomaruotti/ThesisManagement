@@ -16,21 +16,58 @@ function StudentHome(props) {
 	const [msgAndColor, setMsgAndColor] = useState({ header: "", msg: "", color: "" });
 	const [search, setSearch] = useState('');
 	const [filteredThesis, setFilteredThesis] = useState(props.thesis);
+	const [rapidFilter, setRapidFilter] = useState('all');
+
+	function handleRapidFilters(filter) {
+		if (filter === 'all') {
+			setRapidFilter('all');
+		}
+		else if (filter === 'company') {
+			setRapidFilter('company');
+		}
+		else if (filter === 'abroad') {
+			setRapidFilter('abroad');
+		}
+	}
 
 	function handleSearch(e) {
 		setSearch(e.target.value);
-		console.log(search);
-		let filtered = props.thesis.filter((thesis) => {
-			return (thesis.title.toLowerCase().includes(search.toLowerCase()) ||
-				thesis.description.toLowerCase().includes(search.toLowerCase()) ||
-				thesis.notes.toLowerCase().includes(search.toLowerCase()) ||
-				thesis.req_know.toLowerCase().includes(search.toLowerCase()))
-		});
-		setFilteredThesis(filtered);
 	}
 
 	useEffect(() => {
-		setFilteredThesis(props.thesis)
+		if (rapidFilter === 'all') {
+			let filtered = props.thesis.filter((thesis) => {
+				return (thesis.title.toLowerCase().includes(search.toLowerCase()) ||
+					thesis.description.toLowerCase().includes(search.toLowerCase()) ||
+					thesis.notes.toLowerCase().includes(search.toLowerCase()) ||
+					thesis.req_know.toLowerCase().includes(search.toLowerCase()))
+			});
+			setFilteredThesis(filtered);
+		}
+		else if (rapidFilter === 'company') {
+			let filtered = props.thesis.filter((thesis) => {
+				return ((thesis.title.toLowerCase().includes(search.toLowerCase()) ||
+					thesis.description.toLowerCase().includes(search.toLowerCase()) ||
+					thesis.notes.toLowerCase().includes(search.toLowerCase()) ||
+					thesis.req_know.toLowerCase().includes(search.toLowerCase()))
+					&& thesis.types.filter((type) => type === 'IN COMPANY').length > 0)
+			});
+			setFilteredThesis(filtered);
+		}
+		else if (rapidFilter === 'abroad') {
+			let filtered = props.thesis.filter((thesis) => {
+				return ((thesis.title.toLowerCase().includes(search.toLowerCase()) ||
+					thesis.description.toLowerCase().includes(search.toLowerCase()) ||
+					thesis.notes.toLowerCase().includes(search.toLowerCase()) ||
+					thesis.req_know.toLowerCase().includes(search.toLowerCase()))
+					&& thesis.types.filter((type) => type === 'ABROAD').length > 0)
+			});
+			setFilteredThesis(filtered);
+		}
+	}, [rapidFilter, search]);
+
+	useEffect(() => {
+		setFilteredThesis(props.thesis);
 	}, [props.thesis]);
 
 	useEffect(() => {
@@ -63,17 +100,17 @@ function StudentHome(props) {
 						<Col sm={9}>
 							<Nav variant='pills' defaultActiveKey='all'>
 								<Nav.Item>
-									<Nav.Link eventKey='all' className='buttons-rapid-filter'>
+									<Nav.Link eventKey='all' className='buttons-rapid-filter' onClick={() => handleRapidFilters('all')}>
 										All
 									</Nav.Link>
 								</Nav.Item>
 								<Nav.Item>
-									<Nav.Link eventKey='inCompany' className='buttons-rapid-filter'>
+									<Nav.Link eventKey='inCompany' className='buttons-rapid-filter' onClick={() => handleRapidFilters('company')}>
 										In company
 									</Nav.Link>
 								</Nav.Item>
 								<Nav.Item>
-									<Nav.Link eventKey='abroad' className='buttons-rapid-filter'>
+									<Nav.Link eventKey='abroad' className='buttons-rapid-filter' onClick={() => handleRapidFilters('abroad')}>
 										Abroad
 									</Nav.Link>
 								</Nav.Item>
@@ -92,7 +129,9 @@ function StudentHome(props) {
 			<Container>
 				<Row style={{ marginBottom: 25 }}>
 					{console.log(filteredThesis)}
-					{filteredThesis != [] ? filteredThesis.map((thesis, index) => <ProposalCard key={thesis.ID} thesis={thesis} accessToken={props.accessToken} setPopup={setPopup} setMsgAndColor={setMsgAndColor} />) : null}
+					{filteredThesis.length != 0 ? filteredThesis.map((thesis, index) => <ProposalCard key={thesis.ID} thesis={thesis} accessToken={props.accessToken} setPopup={setPopup} setMsgAndColor={setMsgAndColor} />)
+						:
+						<Col style={{ marginTop: 25 }}><p>No thesis to display</p></Col>}
 				</Row>
 			</Container>
 
