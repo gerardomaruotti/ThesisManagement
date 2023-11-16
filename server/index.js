@@ -52,7 +52,7 @@ app.get("/api/cds", (req,res)=>{
 //METODI API
 //fare metodo gestione autenticazione --> che ritorna ID matricla e chekka auth0
 
-/*check della funzione senza autenticazione per la tesi dello studente filtrato
+/*check della funzione senza autenticazione per la tesi dello studente filtrato*/
 //return all thesis of the department of the student/professor 
 app.post('/api/thesis/filter', async (req, res) => {
 	try {
@@ -65,21 +65,24 @@ app.post('/api/thesis/filter', async (req, res) => {
 			console.log(thesis);
 			res.status(200).json(thesis);
 		}else{
-			
+			let validThesis = [];
 			let keyword = req.body.filters.keyword;
 			let type = req.body.filters.type;
 			let cosupervisor = req.body.filters.cosupervisor;
 			let supervisor = req.body.filters.supervisor;
 			let groups = req.body.filters.group;
 			let exp_date = req.body.filters.exp_date;
-				
+
+			//console.log("Non filtrata");
+			//thesis.forEach(t => console.log(t.ID));
 			for (let i=0; i<thesis.length; i++){
-				let removed = false;
+				let valid = true;
 				let keywords = await db.getKeywordsbyId(thesis[i].ID)
 				let allTypesOfThesis = await db.getTypesbyId(thesis[i].ID);
 				let cosupervisors = await db.getCoSupervisors(thesis[i].ID);
 				let allGroups = await db.getGroupSupervisorAndCoSupervisor(thesis[i].ID);
-				let expirationDate = await db.getThesis(thesis[i].ID);
+				let expirationDate = await db.getThesisExpDate(thesis[i].ID);
+				
 				if(keyword.length > 0){
 					let count=0;
 					keyword.forEach(t => {
@@ -87,66 +90,64 @@ app.post('/api/thesis/filter', async (req, res) => {
 							count++;
 						}
 					});
-						if (count !== keyword.length-1){
-							thesis.splice(thesis[i], 1);
-							removed = true;
-						}
+					if (count !== keyword.length){
+						valid = false;
 					}
-				if(type.length > 0 && !removed){
+				}
+				if(type.length > 0 && valid){
 					let count=0;
 					type.forEach(t => {
 						if (allTypesOfThesis.includes(t)){
 							count++;
 						}
 					});
-						if (count !== type.length-1){
-							thesis.splice(thesis[i], 1);
-							removed = true;
+						if (count !== type.length){
+							valid = false;
 						}
 				}
-				if(cosupervisor.length > 0 && !removed){
+				if(cosupervisor.length > 0 && valid){
 					let count=0;
 					cosupervisor.forEach(c => {
 						if (cosupervisors.includes(c)){
 							count++;
 						}
 					});
-					if (count == 0){
-						thesis.splice(thesis[i], 1);
-						removed = true;
+					if (count !== cosupervisor.length){
+						valid = false;
 					}
 				}
-				if(groups.length > 0 && !removed){
+				if(groups.length > 0 && valid){
 					let count=0;
 					groups.forEach(g => {
 						if (allGroups.includes(g)){
 							count++;
 						}
 					});
-					if (count == 0){
-						thesis.splice(thesis[i], 1);
-						removed = true;
+					if (count !== groups.length){
+						valid = false;
 					}
 				}
 								
-				if (supervisor.length>0 && !removed){
+				if (supervisor.length>0 && valid){
 					if (thesis[i].supervisor != supervisor[0]){
-						thesis.splice(thesis[i], 1);
-						removed = true;
+						valid = false;
 					}
 				}
-				console.log("Non filtrata");
-				thesis.forEach(t => console.log(t.ID));
-				if(exp_date.length>0 && !removed){
-					if (expirationDate >exp_date[0]){
-						thesis.splice(thesis[i], 1);
+				if(exp_date.length>0 && valid){
+					console.log(exp_date[0] )
+					console.log(expirationDate)
+					console.log(exp_date[0] < expirationDate)
+					if (exp_date[0] < expirationDate){
+						valid = false;
 					}
 				}
-				console.log("Filtrata");
-				thesis.forEach(t => console.log(t.ID));
+
+				if (valid){ validThesis.push(thesis[i]);}
+				//console.log("Filtrata");
+				//thesis.forEach(t => console.log(t.ID));
 			}
-			console.log(thesis);
-			res.status(200).json(thesis);	
+			console.log(validThesis);
+			res.status(200).json(validThesis);	
 		}
 				
 	}
@@ -157,7 +158,7 @@ app.post('/api/thesis/filter', async (req, res) => {
 		res.status(500).end();
 	}
 });
-*/
+
 
 
 app.post('/api/thesis', checkJwt, async (req, res) => {
@@ -188,7 +189,7 @@ app.post('/api/thesis', checkJwt, async (req, res) => {
 				console.log(thesis);
 				res.status(200).json(thesis);
 			}else{
-				
+				let validThesis = [];
 				let keyword = req.body.filters.keyword;
 				let type = req.body.filters.type;
 				let cosupervisor = req.body.filters.cosupervisor;
@@ -197,12 +198,13 @@ app.post('/api/thesis', checkJwt, async (req, res) => {
 				let exp_date = req.body.filters.exp_date;
 						
 				for (let i=0; i<thesis.length; i++){
-					let removed = false;
+					let valid = true;
 					let keywords = await db.getKeywordsbyId(thesis[i].ID)
 					let allTypesOfThesis = await db.getTypesbyId(thesis[i].ID);
 					let cosupervisors = await db.getCoSupervisors(thesis[i].ID);
 					let allGroups = await db.getGroupSupervisorAndCoSupervisor(thesis[i].ID);
-					let expirationDate = await db.getThesis(thesis[i].ID);
+					let expirationDate = await db.getThesisExpDate(thesis[i].ID);
+
 					console.log("Non filtrata");
 					thesis.forEach(t => console.log(t.ID));
 					if(keyword.length > 0){
@@ -212,64 +214,60 @@ app.post('/api/thesis', checkJwt, async (req, res) => {
 								count++;
 							}
 						});
-						if (count !== keyword.length-1){
-							thesis.splice(thesis[i], 1);
-							removed = true;
+						if (count !== keyword.length){
+							valid = false;
 						}
 					}
-					if(type.length > 0 && !removed){
+					if(type.length > 0 && valid){
 						let count=0;
 						type.forEach(t => {
 							if (allTypesOfThesis.includes(t)){
 								count++;
 							}
 						});
-						if (count !== type.length-1){
-							thesis.splice(thesis[i], 1);
-							removed = true;
+						if (count !== type.length){
+							valid = false;
 						}
 					}
-					if(cosupervisor.length > 0 && !removed){
+					if(cosupervisor.length > 0 && valid){
 						let count=0;
 						cosupervisor.forEach(c => {
 							if (cosupervisors.includes(c)){
 								count++;
 							}
 						});
-						if (count == 0){
-							thesis.splice(thesis[i], 1);
-							removed = true;
+						if (count !== cosupervisor.length){
+							valid = false;
 						}
 					}
-					if(groups.length > 0 && !removed){
+					if(groups.length > 0 && valid){
 						let count=0;
 						groups.forEach(g => {
 							if (allGroups.includes(g)){
 								count++;
 							}
 						});
-						if (count == 0){
-							thesis.splice(thesis[i], 1);
-							removed = true;
+						if (count !== groups.length){
+							valid = false;
 						}
 					}
 										
-					if (supervisor.length>0 && !removed){
+					if (supervisor.length>0 && valid){
 						if (thesis[i].supervisor != supervisor[0]){
-							thesis.splice(thesis[i], 1);
-							removed = true;
+							valid = false;
 						}
 					}
-					if(exp_date.length>0 && !removed){
-						if (expirationDate >exp_date[0]){
-							thesis.splice(thesis[i], 1);
+					if(exp_date.length>0 && valid){
+						if (exp_date[0] < expirationDate){
+							valid = false;
 						}
 					}
+					if (valid){ validThesis.push(thesis[i]);}
 					console.log("Filtrata");
-					thesis.forEach(t => console.log(t.ID));
+					validThesis.forEach(t => console.log(t.ID));
 				}
-				console.log(thesis);
-				res.status(200).json(thesis);	
+				console.log(validThesis);
+				res.status(200).json(validThesis);	
 			}
 						
 		}

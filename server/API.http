@@ -104,7 +104,7 @@ Content-Type: application/json
 {
     "filters":{
         "type" : ["EXPERIMENTAL"], 
-        "keyword" : [],
+        "keyword" : ["ALGORITHM FAIRNESS", "SYNTHETIC DATA"],
         "cosupervisor" : [],
         "supervisor" : [],
         "group" : [],

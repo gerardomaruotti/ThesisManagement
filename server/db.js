@@ -168,6 +168,21 @@ const db = new sqlite.Database('thesis_management.db', (err) => {
     });
   };
 
+  exports.getThesisExpDate = (ID) => {
+    return new Promise((resolve, reject) => {
+      const sql = 'SELECT EXPIRATION_DATE FROM THESIS WHERE ID_THESIS=? ';
+      db.get(sql, [ID], (err, row) => {
+        if (err) { 
+            reject(err); 
+            return;
+        }
+        else {
+            resolve(row.EXPIRATION_DATE)
+        }
+      });
+    });
+  };
+
   exports.getTitleDegree = (codDegree) =>{
     return new Promise((resolve, reject) => {
       const sql = 'SELECT TITLE_DEGREE FROM DEGREE WHERE COD_DEGREE=?';
