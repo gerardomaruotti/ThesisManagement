@@ -85,7 +85,7 @@ function FiltersModal(props) {
 	function handleFilters(event) {
 		event.preventDefault();
 		console.log(selectedSupervisor);
-		const formattedSupervisor = selectedSupervisor ? selectedSupervisor.value.split('@')[0] : '';
+		const formattedSupervisor = selectedSupervisor.map((supervisor) => supervisor.value);
 		const formattedCoSupervisors = selectedCoSupervisors.map((cosupervisor) => cosupervisor.value);
 		const formattedKeywords = selectedKeywords.map((keyword) => keyword.value);
 		const formattedTypes = selectedTypes.map((type) => type.value);
@@ -127,25 +127,25 @@ function FiltersModal(props) {
 							<Col md={6}>
 								<Form.Group className='mb-3' controlId='formCoSupervisors'>
 									<Form.Label>Supervisors</Form.Label>
-									<Select options={supervisors} styles={colorStyles} onChange={handleSupervisor} />
+									<Select isMulti options={supervisors} value={selectedSupervisor} styles={colorStyles} onChange={handleSupervisor} />
 								</Form.Group>
 								<Form.Group className='mb-3' controlId='formCoSupervisors'>
 									<Form.Label>Co-supervisors</Form.Label>
-									<Select isMulti options={supervisors} styles={colorStyles} onChange={handleCoSupervisors} />
+									<Select isMulti options={supervisors} value={selectedCoSupervisors} styles={colorStyles} onChange={handleCoSupervisors} />
 								</Form.Group>
 								<Form.Group className='mb-3' controlId='formKeywords'>
 									<Form.Label>Keywords</Form.Label>
-									<Select isMulti options={keywords} styles={colorStyles} onChange={handleKeywords} />
+									<Select isMulti options={keywords} value={selectedKeywords} styles={colorStyles} onChange={handleKeywords} />
 								</Form.Group>
 								<Form.Group className='mb-3' controlId='formGroups'>
 									<Form.Label>Groups</Form.Label>
-									<Select isMulti options={groups} styles={colorStyles} onChange={handleGroups} />
+									<Select isMulti options={groups} value={selectedGroups} styles={colorStyles} onChange={handleGroups} />
 								</Form.Group>
 							</Col>
 							<Col md={6}>
 								<Form.Group className='mb-3' controlId='formTypes'>
 									<Form.Label>Types</Form.Label>
-									<Select isMulti options={types} styles={colorStyles} onChange={handleTypes} />
+									<Select isMulti options={types} value={selectedTypes} styles={colorStyles} onChange={handleTypes} />
 								</Form.Group>
 								<Form.Label>Expiration date:</Form.Label>
 								<div className='mb-3'>
