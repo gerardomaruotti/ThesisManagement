@@ -99,41 +99,8 @@ function Proposal(props) {
 									{thesis.types.length > 1 ? (
 										<Col md={12}>
 											<div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}> Types </div>
-											{thesis.types.filter((type) => type == 'IN COMPANY').lengh > 0 ? (
-												<div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}>
-													<span
-														className='badge'
-														style={{
-															backgroundColor: 'rgba(230, 120, 43, 0.1)',
-															color: Color.secondary,
-															padding: '1em 1em',
-															borderRadius: '0.25rem',
-														}}
-													>
-														<i className='bi bi-building-check' style={{ fontSize: '16px' }}></i>
-													</span>
-													<span style={{ marginLeft: 8, marginRight: 24, color: 'rgba(0, 0, 0, 0.5)' }}>In Company</span>
-												</div>
-											) : null}
-											{thesis.types.filter((type) => type == 'ABROAD').lengh > 0 ? (
-												<div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}>
-													<span
-														className='badge'
-														style={{
-															backgroundColor: 'rgba(230, 120, 43, 0.1)',
-															color: Color.secondary,
-															padding: '1em 1em',
-															borderRadius: '0.25rem',
-														}}
-													>
-														<i className='bi bi-globe-americas' style={{ fontSize: '16px' }}></i>
-													</span>
-													<span style={{ marginLeft: 8, color: 'rgba(0, 0, 0, 0.5)' }}>Abroad</span>
-												</div>
-											) : null}
-											{thesis.types
-												.filter((type) => type != 'IN COMPANY' && type != 'ABROAD')
-												.map((type, index) => (
+											<div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}>
+												{thesis.types.map((type, index) => (
 													<div key={index} style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}>
 														<span
 															className='badge'
@@ -144,11 +111,18 @@ function Proposal(props) {
 																borderRadius: '0.25rem',
 															}}
 														>
-															<i className='bi bi-tag' style={{ fontSize: '16px' }}></i>
+															{type == 'IN COMPANY' ? (
+																<i className='bi bi-building-check' style={{ fontSize: '16px' }}></i>
+															) : type == 'ABROAD' ? (
+																<i className='bi bi-globe-americas' style={{ fontSize: '16px' }}></i>
+															) : (
+																<i className='bi bi-tag' style={{ fontSize: '16px' }}></i>
+															)}
 														</span>
 														<span style={{ marginLeft: 8, color: 'rgba(0, 0, 0, 0.5)' }}>{type}</span>
 													</div>
 												))}
+											</div>
 										</Col>
 									) : null}
 									<Col md={12}>
