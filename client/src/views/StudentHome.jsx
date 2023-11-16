@@ -4,16 +4,21 @@ import '../constants/custom-styles.scss';
 import { Color } from '../constants/colors.js';
 import ProposalCard from '../components/ProposalCard.jsx';
 import FiltersModal from '../components/FiltersModal.jsx';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 function StudentHome(props) {
 	const [filtersShow, setFiltersShow] = useState(false);
 	const navigate = useNavigate();
 
+	useEffect(() => {
+		if (props.isProfessor) {
+			navigate('/professor');
+		}
+	});
+
 	return (
 		<>
-			{props.isProfessor == true ? navigate('/professor') : null}
 			<div style={{ position: 'sticky', top: 0, zIndex: 2, backgroundColor: 'white', boxShadow: '0 4px 2px -2px rgba(0, 0, 0, 0.2)' }}>
 				<Container>
 					<Row style={{ paddingTop: 25 }}>

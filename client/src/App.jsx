@@ -33,11 +33,11 @@ function App() {
 		console.log(err);
 	}
 
-	// useEffect(() => {
-	// 	if (!isLoading && !isAuthenticated) {
-	// 		loginWithRedirect();
-	// 	}
-	// }, [isLoading, isAuthenticated, loginWithRedirect]);
+	useEffect(() => {
+		if (!isLoading && !isAuthenticated) {
+			loginWithRedirect();
+		}
+	}, [isLoading, isAuthenticated, loginWithRedirect]);
 
 	useEffect(() => {
 		const getUserMetadata = async () => {
@@ -52,23 +52,21 @@ function App() {
 				API.getUser(accessToken)
 					.then((user) => {
 						setUserData(user);
-						//check if user id starts with s
-
-						if (user.sub[0] === 's') {
+						if (user.role === 'student') {
 							setIsProfessor(false);
-							console.log('student');
-						} else {
+							// console.log('student');
+						} else if (user.role === 'teacher') {
 							setIsProfessor(true);
-							console.log('professor');
+							// console.log('professor');
 						}
 					})
-					.catch((err) => setIsProfessor(true));
+					.catch((err) => handleError(err));
 
 				API.getAllThesis(accessToken)
 					.then((thesis) => {
 						setThesis(thesis);
-						console.log('thesis:');
-						console.log(thesis);
+						// console.log('thesis:');
+						// console.log(thesis);
 					})
 					.catch((err) => handleError(err));
 			} catch (e) {

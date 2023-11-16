@@ -168,11 +168,11 @@ function InsertProposal(props) {
 						</Form.Group>
 						<Form.Group className='mb-3' controlId='formLevel'>
 							<Form.Label>Level</Form.Label>
-							<Select options={levels} styles={colorStyles} onChange={handleSelectedLevel} />
+							<Select options={levels} styles={colorStyles} required onChange={handleSelectedLevel} />
 						</Form.Group>
 						<Form.Group className='mb-3' controlId='formCds'>
 							<Form.Label>Cds</Form.Label>
-							<Select options={cds} styles={colorStyles} onChange={handleSelectedCds} />
+							<Select options={cds} styles={colorStyles} required onChange={handleSelectedCds} />
 						</Form.Group>
 						<Form.Group className='mb-3' controlId='formExpirationDate'>
 							<Form.Label>Expiration date</Form.Label>
