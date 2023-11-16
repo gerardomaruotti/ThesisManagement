@@ -7,6 +7,7 @@ import FiltersModal from '../components/FiltersModal.jsx';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth0 } from '@auth0/auth0-react';
+import API from '../API.jsx';
 
 function StudentHome(props) {
 	const { loginWithRedirect, isAuthenticated, isLoading } = useAuth0();
@@ -17,6 +18,7 @@ function StudentHome(props) {
 	const [search, setSearch] = useState('');
 	const [filteredThesis, setFilteredThesis] = useState(props.thesis);
 	const [rapidFilter, setRapidFilter] = useState('all');
+	const [activatedFilters, setActivatedFilters] = useState(false)
 
 	function handleRapidFilters(filter) {
 		if (filter === 'all') {
@@ -81,6 +83,17 @@ function StudentHome(props) {
 		}
 	}, [isAuthenticated, isLoading]);
 
+	function resetFilters() {
+		API.getAllThesis(props.accessToken)
+			.then((thesis) => {
+				props.setThesis(thesis);
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+		setActivatedFilters(false);
+	}
+
 	// useEffect(() => {
 	// 	if (props.isProfessor) {
 	// 		navigate('/professor');
@@ -107,7 +120,7 @@ function StudentHome(props) {
 						</Col>
 					</Row>
 					<Row style={{ marginTop: 25, paddingBottom: 20 }}>
-						<Col sm={9}>
+						<Col sm={8}>
 							<Nav variant='pills' defaultActiveKey='all'>
 								<Nav.Item>
 									<Nav.Link eventKey='all' className='buttons-rapid-filter' onClick={() => handleRapidFilters('all')}>
@@ -126,7 +139,12 @@ function StudentHome(props) {
 								</Nav.Item>
 							</Nav>
 						</Col>
-						<Col sm={3}>
+						<Col sm={2}>
+							{activatedFilters ? (
+								<Button variant="outline-secondary" style={{ borderRadius: 50, float: 'right', width: 150 }} onClick={resetFilters}>Reset filters</Button>
+							) : null}
+						</Col>
+						<Col sm={2}>
 							<Button variant='primary' style={{ borderRadius: 50, float: 'right', width: 115 }} onClick={() => setFiltersShow(true)}>
 								<span style={{ marginRight: 12 }}>Filters</span>
 								<i className='bi bi-filter-circle'></i>
@@ -141,10 +159,10 @@ function StudentHome(props) {
 				setThesis={props.setThesis}
 				onHide={() => setFiltersShow(false)}
 				accessToken={props.accessToken}
+				setActivatedFilters={setActivatedFilters}
 			/>
 			<Container>
 				<Row style={{ marginBottom: 25 }}>
-					{console.log(filteredThesis)}
 					{filteredThesis.length != 0 ? (
 						filteredThesis.map((thesis, index) => (
 							<ProposalCard key={thesis.ID} thesis={thesis} accessToken={props.accessToken} setPopup={setPopup} setMsgAndColor={setMsgAndColor} />

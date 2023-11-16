@@ -42,7 +42,7 @@ function FiltersModal(props) {
 			.then((supervisors) => {
 				setSupervisors(
 					supervisors.map((supervisor) => {
-						return { value: supervisor.email, label: supervisor.name + ' ' + supervisor.surname };
+						return { value: supervisor.ID, label: supervisor.name + ' ' + supervisor.surname };
 					})
 				);
 			})
@@ -82,22 +82,9 @@ function FiltersModal(props) {
 		setSelectedGroups(event);
 	}
 
-	function resetFilters(event) {
-		event.preventDefault();
-		props.onHide;
-		API.getAllThesis(props.accessToken)
-			.then((thesis) => {
-				props.setThesis(thesis);
-			})
-			.catch((err) => {
-				console.log(err);
-			});
-	}
-
 	function handleFilters(event) {
 		event.preventDefault();
-		props.onHide;
-
+		console.log(selectedSupervisor);
 		const formattedSupervisor = selectedSupervisor ? selectedSupervisor.value.split('@')[0] : '';
 		const formattedCoSupervisors = selectedCoSupervisors.map((cosupervisor) => cosupervisor.value);
 		const formattedKeywords = selectedKeywords.map((keyword) => keyword.value);
@@ -119,14 +106,17 @@ function FiltersModal(props) {
 		API.getAllThesis(props.accessToken, body)
 			.then((thesis) => {
 				props.setThesis(thesis);
+				console.log(thesis);
 			})
 			.catch((err) => {
 				console.log(err);
 			});
+		props.onHide();
+		props.setActivatedFilters(true);
 	}
 
 	return (
-		<Modal {...props} size='lg' aria-labelledby='contained-modal-title-vcenter' centered>
+		<Modal show={props.show} onHide={props.onHide} size='lg' aria-labelledby='contained-modal-title-vcenter' centered>
 			<Modal.Header closeButton>
 				<Modal.Title id='contained-modal-title-vcenter'>Filters of search</Modal.Title>
 			</Modal.Header>
@@ -198,9 +188,6 @@ function FiltersModal(props) {
 								</div>
 							</Col>
 						</Row>
-						<Button variant='secondary' type='submit' onClick={resetFilters}>
-							Reset filters
-						</Button>
 						<Button variant='primary' type='submit' onClick={handleFilters}>
 							Apply filters
 						</Button>
