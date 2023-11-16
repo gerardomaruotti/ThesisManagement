@@ -262,7 +262,7 @@ const db = new sqlite.Database('thesis_management.db', (err) => {
         }
         else {
             let groups=[];
-            rows.map((elem)=> (
+            rows.forEach((elem)=> (
                 groups.push(elem.cod_group)
             ))
             resolve(groups)
