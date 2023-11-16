@@ -258,6 +258,41 @@ function insertThesis(accessToken, thesis) {
 	});
 }
 
+function ThesisApply(id, accessToken) {
+	return new Promise((resolve, reject) => {
+		fetch(URL + `/thesis/${id}/proposal`, {
+			method: 'POST',
+			headers: {
+				Authorization: `Bearer ${accessToken}`,
+			},
+		})
+			.then((response) => {
+				if (response.ok) {
+					response
+						.json()
+						.then((message) => resolve(message))
+						.catch(() => {
+							reject({ error: 'Cannot parse server response.' });
+						});
+				} else {
+					// analyze the cause of error
+					response
+						.json()
+						.then((message) => {
+							reject(message);
+						}) // error message in the response body
+						.catch(() => {
+							reject({ error: 'Cannot parse server response.' });
+						});
+				}
+			})
+			.catch(() => {
+				reject({ error: 'Cannot communicate with the server.' });
+			}); // connection errors
+	});
+}
+
+
 function getUser(accessToken) {
 	return new Promise((resolve, reject) => {
 		fetch(URL + '/user', {
@@ -298,5 +333,6 @@ const API = {
 	getAllGroups,
 	getThesisByID,
 	getUser,
+	ThesisApply,
 };
 export default API;
