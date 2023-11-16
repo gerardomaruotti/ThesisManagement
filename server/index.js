@@ -134,10 +134,12 @@ app.post('/api/thesis/filter', async (req, res) => {
 					}
 				}
 				if(exp_date.length>0 && valid){
-					console.log(exp_date[0] )
-					console.log(expirationDate)
-					console.log(exp_date[0] < expirationDate)
-					if (exp_date[0] < expirationDate){
+					let param = exp_date[0].split("/");
+					let exp_date_tmp = new Date(param[2]+"-"+ param[1] +"-"+param[0]);
+					let param2 = expirationDate.split("/");
+					let expirationDate_tmp = new Date(param2[2]+"-"+ param2[1] +"-"+param2[0]);
+
+					if (exp_date_tmp < expirationDate_tmp){
 						valid = false;
 					}
 				}
@@ -258,7 +260,11 @@ app.post('/api/thesis', checkJwt, async (req, res) => {
 						}
 					}
 					if(exp_date.length>0 && valid){
-						if (exp_date[0] < expirationDate){
+						let param = exp_date[0].split("/");
+						let exp_date_tmp = new Date(param[2]+"-"+ param[1] +"-"+param[0]);
+						let param2 = expirationDate.split("/");
+						let expirationDate_tmp = new Date(param2[2]+"-"+ param2[1] +"-"+param2[0]);
+						if (exp_date_tmp < expirationDate_tmp){
 							valid = false;
 						}
 					}
