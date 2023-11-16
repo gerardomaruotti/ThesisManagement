@@ -117,22 +117,6 @@ Content-Type: application/json
 
 
 
-########### API TEST FILTER
-POST http://localhost:3001/api/thesis/filter HTTP/1.1  
-Content-Type: application/json
-
-{
-    "filters":{
-        "type" : ["EXPERIMENTAL"], 
-        "keyword" : ["ALGORITHM FAIRNESS", "SYNTHETIC DATA"],
-        "cosupervisor" : ["d123463@polito.it"],
-        "supervisor" : "d123456",
-        "group" :["GR-16"],
-        "exp_date" : "10/12/2023"
-    }
-}
-
-
 ########## prova senza autenticazione                              
 POST http://localhost:3001/api/thesis HTTP/1.1  
 Content-Type: application/json
