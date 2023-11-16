@@ -6,6 +6,9 @@
 - GET `/api/keywords`
   - request parameters: none
   - response body content: list of keywords.
+- GET `/api/user`
+  - request parameters: none
+  - response body content: an object including all the information of the authenticated user: unique identifier, name, surname and email.
 - GET `/api/types`
   - request parameters: none
   - response body content: list of types.
