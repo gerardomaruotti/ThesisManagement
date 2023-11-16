@@ -267,6 +267,34 @@ describe('GET Thesis', () => {
     });
 });
 
+describe('GET User Info', () => {
+    test('should return an object containing the info of the authenticated user', async () => {
+        const userInfo = {
+            id: 1,
+            name: "User1",
+            surname: "Example1",
+            email: "example@test.com"
+        };
+
+        db.getUserInfo.mockResolvedValueOnce(userInfo);
+        const res = await request(app).get('/api/user');
+
+        expect(db.getUserInfo).toHaveBeenCalledTimes(1);
+        expect(res.status).toBe(200);
+        expect(res.body).toEqual(userInfo);
+    });
+
+    test('should return a 503 error when an error occurs', async () => {
+        db.getUserInfo.mockRejectedValueOnce(new Error('Internal server error'));
+        const res = await request(app).get('/api/user');
+    
+        expect(db.getUserInfo).toHaveBeenCalledTimes(1);
+        expect(res.status).toBe(503);
+        expect(res.body).toEqual("error retrieving user info");
+    
+      });
+});
+
 describe('GET Groups', () => {
     test('should return a empty list when retrieving a list of groups', async () => {
         const groups = [];

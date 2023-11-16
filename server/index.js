@@ -31,7 +31,7 @@ app.get("/api/keywords", (req, res) => {
 app.get("/api/user",checkJwt, (req, res) => {
 	db.getUserInfo(req.auth)
 		.then(userInfo => res.status(200).json(userInfo))
-		.catch((err) => { console.log(err); res.status(503).json("getKeywords error") })
+		.catch((err) => { console.log(err); res.status(503).json("error retrieving user info") })
 });
 
 
