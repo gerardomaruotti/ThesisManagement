@@ -80,7 +80,7 @@ app.post('/api/thesis/filter', async (req, res) => {
 				let keywords = await db.getKeywordsbyId(thesis[i].ID)
 				let allTypesOfThesis = await db.getTypesbyId(thesis[i].ID);
 				let cosupervisors = await db.getCoSupervisors(thesis[i].ID);
-				let sup = await db.getSupervisor(thesis[i].ID);
+				let sup = await db.getThesisSupervisor(thesis[i].ID);
 				let allGroups = await db.getGroupSupervisorAndCoSupervisor(thesis[i].ID);
 				let expirationDate = await db.getThesisExpDate(thesis[i].ID);
 				
@@ -205,6 +205,7 @@ app.post('/api/thesis', checkJwt, async (req, res) => {
 					let keywords = await db.getKeywordsbyId(thesis[i].ID)
 					let allTypesOfThesis = await db.getTypesbyId(thesis[i].ID);
 					let cosupervisors = await db.getCoSupervisors(thesis[i].ID);
+					let sup = await db.getThesisSupervisor(thesis[i].ID);
 					let allGroups = await db.getGroupSupervisorAndCoSupervisor(thesis[i].ID);
 					let expirationDate = await db.getThesisExpDate(thesis[i].ID);
 
@@ -256,7 +257,7 @@ app.post('/api/thesis', checkJwt, async (req, res) => {
 					}
 										
 					if (supervisor.length>0 && valid){
-						if (thesis[i].supervisor != supervisor[0]){
+						if (sup != supervisor[0]){
 							valid = false;
 						}
 					}
