@@ -21,11 +21,11 @@ function StudentHome(props) {
 		}
 	}, [isAuthenticated, isLoading]);
 
-	useEffect(() => {
-		if (props.isProfessor) {
-			navigate('/professor');
-		}
-	});
+	// useEffect(() => {
+	// 	if (props.isProfessor) {
+	// 		navigate('/professor');
+	// 	}
+	// }, [props.isProfessor]);
 
 	return (
 		<>

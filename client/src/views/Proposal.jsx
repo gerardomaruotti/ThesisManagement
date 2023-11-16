@@ -211,9 +211,8 @@ function Proposal(props) {
 										<Button
 											variant='outline-primary'
 											style={{ borderRadius: 50, width: 75 }}
-											onClick={() => {
-												props.isProfessor ? navigate('/professor') : navigate('/');
-											}}
+											onClick={() => navigate('/')
+											}
 										>
 											<i className='bi bi-arrow-left'></i>
 										</Button>
@@ -248,7 +247,7 @@ function Proposal(props) {
 						</Col>
 					</Row>
 				)}
-			</Container>
+			</Container >
 
 			<ToastContainer style={{ position: 'fixed', top: 20, right: 20, zIndex: 10 }} className='p-3'>
 				<Toast bg={msgAndColor.color} onClose={() => setPopup(false)} show={popup} delay={5000} autohide>

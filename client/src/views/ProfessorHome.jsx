@@ -3,9 +3,18 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import { Button, Container, Row, Col } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import ProposalCard from '../components/ProposalCard';
+import { useAuth0 } from '@auth0/auth0-react';
+import { useEffect } from 'react';
 
 function ProfessorHome(props) {
 	const navigate = useNavigate();
+	const { loginWithRedirect, isAuthenticated, isLoading } = useAuth0();
+
+	useEffect(() => {
+		if (!isAuthenticated && !isLoading) {
+			loginWithRedirect();
+		}
+	}, [isAuthenticated, isLoading]);
 
 	return (
 		<Container>

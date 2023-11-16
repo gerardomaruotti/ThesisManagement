@@ -74,9 +74,9 @@ function App() {
 		<BrowserRouter>
 			<Header />
 			<Routes>
-				<Route path='/' element={<StudentHome isProfessor={isProfessor} thesis={thesis} accessToken={accessToken} />} />
+				<Route path='/' element={isProfessor ? <ProfessorHome thesis={thesis} /> : <StudentHome isProfessor={isProfessor} thesis={thesis} accessToken={accessToken} />} />
 				<Route path='/proposal/:id' element={<Proposal accessToken={accessToken} isProfessor={isProfessor} />} />
-				<Route path='/professor' element={<ProfessorHome thesis={thesis} />} />
+				{/* <Route path='/professor' element={<ProfessorHome thesis={thesis} />} /> */}
 				<Route
 					path='/proposals/add'
 					element={
