@@ -152,14 +152,18 @@ const db = new sqlite.Database('thesis_management.db', (err) => {
   exports.getCoSupervisorsEmail = (idThesis) => {
     return new Promise((resolve, reject) => {
       const sql = 'SELECT EMAIL FROM CO_SUPERVISOR WHERE THESIS=?';
-      db.all(sql, [idThesis], (err, row) => {
+      db.all(sql, [idThesis], (err, rows) => {
         if (err) { 
             reject(err); 
             return;
         }
         else {
-  
-            resolve(row.EMAIL)
+          let coSupervisors=[];
+          rows.forEach((elem)=>(
+            coSupervisors.push(elem.EMAIL)
+          ));
+
+          resolve(coSupervisors)
         }
       });
     });
@@ -242,6 +246,25 @@ const db = new sqlite.Database('thesis_management.db', (err) => {
                 cod_group: elem.cod_group,
                 group_name: elem.group_name,
             }))
+            resolve(groups)
+        }
+      });
+    });
+  };
+
+  exports.getGroup = (idThesis) => {
+    return new Promise((resolve, reject) => {
+      const sql = 'SELECT G.name as g.cod_group as cod_group FROM TEACHER TE JOIN CO_SUPERVISOR CS ON TE.EMAIL = CS.email join "GROUP" G ON G.cod_group = TE.cod_group WHERE  CS.THESIS=? UNION SELECT  G.name as group_name, g.cod_group as cod_group FROM TEACHER TE JOIN THESIS T ON T.SUPERVISOR = TE.ID join "GROUP" G ON G.cod_group = TE.cod_group WHERE T.id_thesis=?';
+      db.all(sql, [idThesis, idThesis], (err, rows) => {
+        if (err) { 
+            reject(err); 
+            return;
+        }
+        else {
+            let groups=[];
+            rows.map((elem)=> (
+                groups.push(elem.cod_group)
+            ))
             resolve(groups)
         }
       });

@@ -105,9 +105,9 @@ Content-Type: application/json
     "filters":{
         "type" : ["EXPERIMENTAL"], 
         "keyword" : ["ALGORITHM FAIRNESS", "SYNTHETIC DATA"],
-        "cosupervisor" : [],
+        "cosupervisor" : ["d123463@polito.it"],
         "supervisor" : [],
-        "group" : [],
+        "group" :[],
         "exp_date" : ["10/12/2023"]
     }
 }

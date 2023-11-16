@@ -81,7 +81,7 @@ app.post('/api/thesis/filter', async (req, res) => {
 				let allTypesOfThesis = await db.getTypesbyId(thesis[i].ID);
 				let cosupervisors = await db.getCoSupervisorsEmail(thesis[i].ID);
 				let sup = await db.getThesisSupervisor(thesis[i].ID);
-				let allGroups = await db.getGroupSupervisorAndCoSupervisor(thesis[i].ID);
+				let allGroups = await db.getGroup(thesis[i].ID);
 				let expirationDate = await db.getThesisExpDate(thesis[i].ID);
 				
 				if(keyword.length > 0){
