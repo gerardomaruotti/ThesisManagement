@@ -52,7 +52,7 @@ app.get("/api/cds", (req,res)=>{
 //METODI API
 //fare metodo gestione autenticazione --> che ritorna ID matricla e chekka auth0
 
-/*check della funzione senza autenticazione per la tesi dello studente filtrato
+//check della funzione senza autenticazione per la tesi dello studente filtrato
 //return all thesis of the department of the student/professor 
 app.post('/api/thesis/filter', async (req, res) => {
 	try {
@@ -130,12 +130,12 @@ app.post('/api/thesis/filter', async (req, res) => {
 				}
 								
 				if (supervisor.length>0 && valid){
-					if (sup != supervisor[0]){
+					if (sup != supervisor){
 						valid = false;
 					}
 				}
 				if(exp_date.length>0 && valid){
-					let param = exp_date[0].split("/");
+					let param = exp_date.split("/");
 					let exp_date_tmp = new Date(param[2]+"-"+ param[1] +"-"+param[0]);
 					let param2 = expirationDate.split("/");
 					let expirationDate_tmp = new Date(param2[2]+"-"+ param2[1] +"-"+param2[0]);
@@ -161,7 +161,7 @@ app.post('/api/thesis/filter', async (req, res) => {
 		res.status(500).end();
 	}
 });
-*/
+
 
 
 app.post('/api/thesis', checkJwt, async (req, res) => {
@@ -257,12 +257,12 @@ app.post('/api/thesis', checkJwt, async (req, res) => {
 					}
 									
 					if (supervisor.length>0 && valid){
-						if (sup != supervisor[0]){
+						if (sup != supervisor){
 							valid = false;
 						}
 					}
 					if(exp_date.length>0 && valid){
-						let param = exp_date[0].split("/");
+						let param = exp_date.split("/");
 						let exp_date_tmp = new Date(param[2]+"-"+ param[1] +"-"+param[0]);
 						let param2 = expirationDate.split("/");
 						let expirationDate_tmp = new Date(param2[2]+"-"+ param2[1] +"-"+param2[0]);
