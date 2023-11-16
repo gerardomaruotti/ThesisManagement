@@ -52,7 +52,7 @@ app.get("/api/cds", (req,res)=>{
 //METODI API
 //fare metodo gestione autenticazione --> che ritorna ID matricla e chekka auth0
 
-/*check della funzione senza autenticazione per la tesi dello studente filtrato*/
+/*check della funzione senza autenticazione per la tesi dello studente filtrato
 //return all thesis of the department of the student/professor 
 app.post('/api/thesis/filter', async (req, res) => {
 	try {
@@ -82,7 +82,6 @@ app.post('/api/thesis/filter', async (req, res) => {
 				let cosupervisors = await db.getCoSupervisorsEmail(thesis[i].ID);
 				let sup = await db.getThesisSupervisor(thesis[i].ID);
 				let allGroups = await db.getGroup(thesis[i].ID);
-				console.log(allGroups);
 				let expirationDate = await db.getThesisExpDate(thesis[i].ID);
 				
 				if(keyword.length > 0){
@@ -162,7 +161,7 @@ app.post('/api/thesis/filter', async (req, res) => {
 		res.status(500).end();
 	}
 });
-
+*/
 
 
 app.post('/api/thesis', checkJwt, async (req, res) => {
@@ -200,18 +199,18 @@ app.post('/api/thesis', checkJwt, async (req, res) => {
 				let supervisor = req.body.filters.supervisor;
 				let groups = req.body.filters.group;
 				let exp_date = req.body.filters.exp_date;
-						
+	
+				//console.log("Non filtrata");
+				//thesis.forEach(t => console.log(t.ID));
 				for (let i=0; i<thesis.length; i++){
 					let valid = true;
 					let keywords = await db.getKeywordsbyId(thesis[i].ID)
 					let allTypesOfThesis = await db.getTypesbyId(thesis[i].ID);
-					let cosupervisors = await db.getCoSupervisors(thesis[i].ID);
+					let cosupervisors = await db.getCoSupervisorsEmail(thesis[i].ID);
 					let sup = await db.getThesisSupervisor(thesis[i].ID);
-					let allGroups = await db.getGroupSupervisorAndCoSupervisor(thesis[i].ID);
+					let allGroups = await db.getGroup(thesis[i].ID);
 					let expirationDate = await db.getThesisExpDate(thesis[i].ID);
-
-					console.log("Non filtrata");
-					thesis.forEach(t => console.log(t.ID));
+					
 					if(keyword.length > 0){
 						let count=0;
 						keyword.forEach(t => {
@@ -230,9 +229,9 @@ app.post('/api/thesis', checkJwt, async (req, res) => {
 								count++;
 							}
 						});
-						if (count !== type.length){
-							valid = false;
-						}
+							if (count !== type.length){
+								valid = false;
+							}
 					}
 					if(cosupervisor.length > 0 && valid){
 						let count=0;
@@ -256,7 +255,7 @@ app.post('/api/thesis', checkJwt, async (req, res) => {
 							valid = false;
 						}
 					}
-										
+									
 					if (supervisor.length>0 && valid){
 						if (sup != supervisor[0]){
 							valid = false;
@@ -267,13 +266,15 @@ app.post('/api/thesis', checkJwt, async (req, res) => {
 						let exp_date_tmp = new Date(param[2]+"-"+ param[1] +"-"+param[0]);
 						let param2 = expirationDate.split("/");
 						let expirationDate_tmp = new Date(param2[2]+"-"+ param2[1] +"-"+param2[0]);
+	
 						if (exp_date_tmp < expirationDate_tmp){
 							valid = false;
 						}
 					}
+	
 					if (valid){ validThesis.push(thesis[i]);}
-					console.log("Filtrata");
-					validThesis.forEach(t => console.log(t.ID));
+					//console.log("Filtrata");
+					//thesis.forEach(t => console.log(t.ID));
 				}
 				console.log(validThesis);
 				res.status(200).json(validThesis);	
