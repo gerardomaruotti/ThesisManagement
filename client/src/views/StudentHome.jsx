@@ -39,8 +39,8 @@ function StudentHome(props) {
 					thesis.title.toLowerCase().includes(search.toLowerCase()) ||
 					thesis.description.toLowerCase().includes(search.toLowerCase()) ||
 					thesis.notes.toLowerCase().includes(search.toLowerCase()) ||
-					thesis.req_know.toLowerCase().includes(search.toLowerCase())
-					// || thesis.keywords.filter((keyword) => keyword.toLowerCase().includes(search.toLowerCase()).length > 0)
+					thesis.req_know.toLowerCase().includes(search.toLowerCase()) ||
+					thesis.keywords.filter((keyword) => keyword.toLowerCase().includes(search.toLowerCase())).length > 0
 				);
 			});
 			setFilteredThesis(filtered);
@@ -50,7 +50,8 @@ function StudentHome(props) {
 					(thesis.title.toLowerCase().includes(search.toLowerCase()) ||
 						thesis.description.toLowerCase().includes(search.toLowerCase()) ||
 						thesis.notes.toLowerCase().includes(search.toLowerCase()) ||
-						thesis.req_know.toLowerCase().includes(search.toLowerCase())) &&
+						thesis.req_know.toLowerCase().includes(search.toLowerCase()) ||
+						thesis.keywords.filter((keyword) => keyword.toLowerCase().includes(search.toLowerCase())).length > 0) &&
 					thesis.types.filter((type) => type === 'IN COMPANY').length > 0
 				);
 			});
@@ -61,7 +62,8 @@ function StudentHome(props) {
 					(thesis.title.toLowerCase().includes(search.toLowerCase()) ||
 						thesis.description.toLowerCase().includes(search.toLowerCase()) ||
 						thesis.notes.toLowerCase().includes(search.toLowerCase()) ||
-						thesis.req_know.toLowerCase().includes(search.toLowerCase())) &&
+						thesis.req_know.toLowerCase().includes(search.toLowerCase()) ||
+						thesis.keywords.filter((keyword) => keyword.toLowerCase().includes(search.toLowerCase())).length > 0) &&
 					thesis.types.filter((type) => type === 'ABROAD').length > 0
 				);
 			});
