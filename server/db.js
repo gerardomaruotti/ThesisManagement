@@ -203,6 +203,26 @@ const db = new sqlite.Database('thesis_management.db', (err) => {
     });
   };
 
+  exports.getGroups = () => {
+    return new Promise((resolve, reject) => {
+        const sql = 'SELECT * FROM "GROUP" ';
+        db.all(sql, (err, rows) => {
+            if (err) {
+                reject(err);
+                console.log(err);
+                return;
+            } else {
+                const groups = rows.map((elem) => ({
+                    cod_group: elem.COD_GROUP,
+                    name: elem.NAME,
+                }));
+                console.log(groups);
+                resolve(groups);
+            }
+        });
+    });
+};
+
   exports.getThesisSupervisor = (ID) => {
     return new Promise((resolve, reject) => {
       const sql = 'SELECT SUPERVISOR FROM THESIS WHERE ID_THESIS=? ';
@@ -284,7 +304,7 @@ const db = new sqlite.Database('thesis_management.db', (err) => {
               resolve({"role":"student", "id":elem.ID})
             else{
               const sql2 = 'SELECT * FROM TEACHER_AUTH0 WHERE ID_AUTH0=? ';
-              db.get(sql2, [auth0], (err, elem) => {
+              db.get(sql2, [auth0.payload.sub], (err, elem) => {
                 if (err) { 
                     reject(err); 
                     return;
