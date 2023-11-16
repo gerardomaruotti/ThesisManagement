@@ -149,6 +149,22 @@ const db = new sqlite.Database('thesis_management.db', (err) => {
     });
   };
 
+  exports.getCoSupervisorsEmail = (idThesis) => {
+    return new Promise((resolve, reject) => {
+      const sql = 'SELECT EMAIL FROM CO_SUPERVISOR WHERE THESIS=?';
+      db.all(sql, [idThesis], (err, row) => {
+        if (err) { 
+            reject(err); 
+            return;
+        }
+        else {
+  
+            resolve(row.EMAIL)
+        }
+      });
+    });
+  };
+
   exports.getCdS = () => {
     return new Promise((resolve, reject) => {
       const sql = 'SELECT * FROM DEGREE';
