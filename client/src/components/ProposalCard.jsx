@@ -51,7 +51,15 @@ function ProposalCard(props) {
 					overflow: 'hidden'
 				}}>{props.thesis.title}</div>
 
-				<div style={{ fontWeight: 'semi-bold', fontSize: 14, marginTop: 5 }}>
+				<div className="hide-scrollbar" style={{
+					fontWeight: 'semi-bold',
+					fontSize: 14,
+					marginTop: 5,
+					overflowX: 'auto',
+					whiteSpace: 'nowrap',
+					scrollbarWidth: 'none', /* For Firefox */
+					msOverflowStyle: 'none', /* For Internet Explorer and Edge */
+				}}>
 					{props.thesis.keywords.map((keyword, index) => (
 						<span
 							key={index}
@@ -76,7 +84,8 @@ function ProposalCard(props) {
 					<Col lg={5} xs={5} style={{ display: 'flex', alignItems: 'center' }}>
 						<span style={{ color: 'rgba(0, 0, 0, 0.8)' }}>{props.thesis.sup_name + " " + props.thesis.sup_surname}</span>
 					</Col>
-					{props.thesis.types.filter((type) => type == 'IN COMPANY').length > 0 ?
+					{console.log(props.thesis)}
+					{props.thesis.types.filter((type) => type == "IN COMPANY").length > 0 ?
 						<>
 							<Col lg={1} xs={1} style={{ display: 'flex', alignItems: 'center', float: 'right' }}>
 								<span

@@ -68,7 +68,7 @@ function Proposal(props) {
 
 	return (
 		<>
-			<Container style={{ marginTop: 25 }}>
+			<Container style={{ marginTop: 25, marginBottom: 25 }}>
 				{thesis == null ? null : (
 					<Row>
 						<Col md={4}>
@@ -86,12 +86,36 @@ function Proposal(props) {
 											<div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}> Co-Supervisors </div>
 											<div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}>
 												{thesis.coSupervisors.map((coSupervisor, index) => (
-													<div key={index} style={{ display: 'flex', alignItems: 'center', marginBottom: 15 }}>
+													<div key={index} style={{ display: 'flex', alignItems: 'center', marginBottom: 10 }}>
 														<Image style={{ height: 38, width: 38 }} src={Avatar} roundedCircle />
 														<span style={{ marginLeft: 15, color: 'rgba(0, 0, 0, 0.8)', marginRight: 15 }}>
 															{coSupervisor.name + ' ' + coSupervisor.surname}
 														</span>
 													</div>
+												))}
+											</div>
+										</Col>
+									) : null}
+
+									{thesis.keywords.length > 0 ? (
+										<Col md={12}>
+											<div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}> Keywords </div>
+											<div style={{ fontWeight: 'semi-bold', fontSize: 14, marginTop: 15 }}>
+												{thesis.keywords.map((keyword, index) => (
+													<span
+														key={index}
+														className='badge'
+														style={{
+															backgroundColor: colors[index % 6].backgroundColor,
+															color: colors[index % 6].color,
+															padding: '0.5em 1.2em',
+															borderRadius: '0.25rem',
+															marginRight: 10,
+															marginBottom: 10,
+														}}
+													>
+														{keyword}
+													</span>
 												))}
 											</div>
 										</Col>
@@ -170,28 +194,6 @@ function Proposal(props) {
 											<span style={{ marginLeft: 8, color: 'rgba(0, 0, 0, 0.5)' }}>{thesis.expirationDate}</span>
 										</div>
 									</Col>
-									{thesis.keywords.length > 0 ? (
-										<Col md={12}>
-											<div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}> Keywords </div>
-											<div style={{ fontWeight: 'semi-bold', fontSize: 14, marginTop: 15 }}>
-												{thesis.keywords.map((keyword, index) => (
-													<span
-														key={index}
-														className='badge'
-														style={{
-															backgroundColor: colors[index % 6].backgroundColor,
-															color: colors[index % 6].color,
-															padding: '0.5em 1.2em',
-															borderRadius: '0.25rem',
-															marginRight: 10,
-														}}
-													>
-														{keyword}
-													</span>
-												))}
-											</div>
-										</Col>
-									) : null}
 									{props.isProfessor ? null : (
 										<Col md={12} className='d-flex justify-content-center'>
 											<div style={{ marginTop: 20, textAlign: 'center' }}>

@@ -89,6 +89,8 @@ app.get('/api/thesis', checkJwt, async (req, res) => {
 			for (let i = 0; i < thesis.length; i++) {
 				let keywords = await db.getKeywordsbyId(thesis[i].ID);
 				thesis[i].keywords = keywords;
+				let types = await db.getTypesbyId(thesis[i].ID);
+				thesis[i].types = types;
 			}
 			console.log(thesis);
 			res.status(200).json(thesis);

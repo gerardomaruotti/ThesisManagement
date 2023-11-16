@@ -9,6 +9,8 @@ h1 {
 	font-weight: 700;
 }
 
+
+
 /* Student home */
 .buttons-rapid-filter {
 	border: 1px solid #001e38 !important;
@@ -26,6 +28,10 @@ h1 {
 	transition: box-shadow 0.3s;
 }
 
+.hide-scrollbar::-webkit-scrollbar {
+	display: none;
+}
+
 .custom-card:hover {
 	box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
 }
@@ -38,7 +44,7 @@ h1 {
 
 /* Professor Home */
 .insert-proposal {
-	position: absolute;
+	position: fixed;
 	bottom: 20px;
 	right: 20px;
 }
