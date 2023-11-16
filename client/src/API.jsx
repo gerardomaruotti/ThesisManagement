@@ -38,7 +38,9 @@ function getAllThesis(accessToken, filters) {
 	// call  /api/keywords
 	return new Promise((resolve, reject) => {
 		fetch(URL + '/thesis', {
+			method: 'POST',
 			headers: {
+				'Content-Type': 'application/json',
 				Authorization: `Bearer ${accessToken}`,
 			},
 			body: JSON.stringify(filters),

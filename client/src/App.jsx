@@ -55,6 +55,7 @@ function App() {
 					})
 					.catch((err) => handleError(err));
 
+
 				API.getAllThesis(accessToken)
 					.then((thesis) => {
 						setThesis(thesis);
