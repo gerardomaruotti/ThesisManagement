@@ -183,6 +183,21 @@ const db = new sqlite.Database('thesis_management.db', (err) => {
     });
   };
 
+  exports.getThesisSupervisor = (ID) => {
+    return new Promise((resolve, reject) => {
+      const sql = 'SELECT SUPERVISOR FROM THESIS WHERE ID_THESIS=? ';
+      db.get(sql, [ID], (err, row) => {
+        if (err) { 
+            reject(err); 
+            return;
+        }
+        else {
+            resolve(row.SUPERVISOR)
+        }
+      });
+    });
+  };
+
   exports.getTitleDegree = (codDegree) =>{
     return new Promise((resolve, reject) => {
       const sql = 'SELECT TITLE_DEGREE FROM DEGREE WHERE COD_DEGREE=?';
