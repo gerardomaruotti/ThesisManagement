@@ -192,6 +192,7 @@ describe('GET Thesis', () => {
         db.getRole.mockResolvedValueOnce(user);
         db.getThesisTeacher.mockResolvedValueOnce(thesis);
         db.getKeywordsbyId.mockResolvedValueOnce(["keyword1", "keyword2"]);
+        db.getTypesbyId.mockResolvedValueOnce(["type1", "type2"]);
         const res = await request(app).get('/api/thesis');
 
         expect(db.getRole).toHaveBeenCalledTimes(1);
@@ -252,6 +253,80 @@ describe('GET Thesis', () => {
         expect(db.getTypesbyId).toHaveBeenCalledTimes(2);
         expect(res.status).toBe(200);
         expect(res.body).toEqual(thesis);
+    });
+
+    test('should get all thesis of the departement of the student with filters', async () => {
+        const user = {
+            role: "student",
+            id: "1"
+        }
+
+        const body = {
+            filters : {
+                keyword: ["keyword1"],
+                type: ["type1"],
+                cosupervisor: {name: "name1", surname: "surname1", email: "email1"},
+                supervisor: "supervisor2",
+                group: ["group1", "group2"],
+                exp_date: "19/03/2025"
+            }
+        }
+
+        const thesis = [
+            {
+                id: 1,
+                title: "title1",
+                description: "description1",
+                requiredKnowledge: "required_knowledge1",
+                notes: "notes1",
+                expirationDate: "12/04/2024",
+                level: "level1",
+                cds: "cds1",
+                supervisor: "supervisor1",
+                keywords: ["keyword1", "keyword2"],
+                types: ["type1", "type2"],
+                groups: ["group1", "group2"],
+                coSupervisors: [{name: "name1", surname: "surname1", email: "email1"}, {name: "name2", surname: "surname2", email: "email2"}],
+            },
+            {
+                id: 2,
+                title: "title2",
+                description: "description2",
+                requiredKnowledge: "required_knowledge2",
+                notes: "notes2",
+                expirationDate: "12/06/2024",
+                level: "level2",
+                cds: "cds2",
+                supervisor: "supervisor2",
+                keywords: ["keyword1", "keyword2"],
+                types: ["type1", "type2"],
+                groups: ["group1", "group2"],
+                coSupervisors: [{name: "name1", surname: "surname1", email: "email1"}, {name: "name2", surname: "surname2", email: "email2"}],
+            }
+        ];
+
+        db.getRole.mockResolvedValueOnce(user);
+        db.getThesisStudent.mockResolvedValueOnce(thesis);
+        db.getKeywordsbyId.mockResolvedValue(["keyword1", "keyword2"]);
+        db.getTypesbyId.mockResolvedValue(["type1", "type2"]);
+        db.getCoSupervisorsEmail.mockResolvedValue(["email1, email2"]);
+        db.getThesisSupervisor.mockResolvedValueOnce("supervisor1");
+        db.getThesisSupervisor.mockResolvedValueOnce("supervisor2");
+        db.getGroup.mockResolvedValue(["group1", "group2"]);
+        db.getThesisExpDate.mockResolvedValue("12/06/2024");
+        const res = await request(app).get('/api/thesis').send(body);
+
+        expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.getThesisStudent).toHaveBeenCalledTimes(1);
+        expect(db.getThesisStudent).toHaveBeenCalledWith(user.id);
+        expect(db.getKeywordsbyId).toHaveBeenCalledTimes(4);
+        expect(db.getTypesbyId).toHaveBeenCalledTimes(4);
+        expect(db.getThesisSupervisor).toHaveBeenCalledTimes(2);
+        expect(db.getCoSupervisorsEmail).toHaveBeenCalledTimes(2);
+        expect(db.getGroup).toHaveBeenCalledTimes(2);
+        expect(db.getThesisExpDate).toHaveBeenCalledTimes(2);
+        expect(res.status).toBe(200);
+        expect(res.body).toEqual([thesis[1]]);
     });
 
     test('should return a 500 error if error occurs', async () => {
