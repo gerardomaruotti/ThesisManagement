@@ -150,10 +150,6 @@ function InsertProposal(props) {
 
 	return (
 		<Container>
-			{/* <Alert variant='danger' style={{ marginTop: 20 }} dismissible show={error}>
-				<Alert.Heading>Error!</Alert.Heading>
-				<p>You must be logged in to insert a proposal.</p>
-			</Alert> */}
 			<Form style={{ padding: 20, margin: 20 }} onSubmit={handleSubmit}>
 				<Row>
 					<Col md={4}>
@@ -164,7 +160,6 @@ function InsertProposal(props) {
 						<Form.Group className='mb-3' controlId='formType'>
 							<Form.Label>Type</Form.Label>
 							<CreatableSelect isClearable isMulti options={type} styles={colorStyles} onChange={handleselectedTypess} />
-							{/* <Select isMulti options={[]} /> */}
 						</Form.Group>
 						<Form.Group className='mb-3' controlId='formLevel'>
 							<Form.Label>Level</Form.Label>
@@ -181,11 +176,7 @@ function InsertProposal(props) {
 						<Form.Group className='mb-3' controlId='formKeywords'>
 							<Form.Label>Keywords</Form.Label>
 							<CreatableSelect isClearable isMulti options={keywords} styles={colorStyles} onChange={handleSelectedKeywords} />
-							{/* <Select isMulti options={[]} /> */}
 						</Form.Group>
-						{/* <Button variant='secondary' className='form-button' type='reset'>
-								Reset
-							</Button> */}
 					</Col>
 					<Col md={8}>
 						<Form.Group className='mb-3' controlId='formTitle'>

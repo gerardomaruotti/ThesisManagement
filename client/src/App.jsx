@@ -8,10 +8,11 @@ import Header from './components/Header';
 import ProfessorHome from './views/ProfessorHome';
 import InsertProposal from './views/InsertProposal';
 import Proposal from './views/Proposal';
+import NotFound from './views/NotFound.jsx';
 import API from './API.jsx';
 
 function App() {
-	const { user, isAuthenticated, getAccessTokenSilently, isLoading, loginWithRedirect } = useAuth0();
+	const { user, isAuthenticated, getAccessTokenSilently } = useAuth0();
 	const [title, setTitle] = useState('');
 	const [requiredKnowledge, setRequiredKnowledge] = useState('');
 	const [description, setDescription] = useState('');
@@ -34,12 +35,6 @@ function App() {
 	}
 
 	useEffect(() => {
-		if (!isLoading && !isAuthenticated) {
-			loginWithRedirect();
-		}
-	}, [isLoading, isAuthenticated, loginWithRedirect]);
-
-	useEffect(() => {
 		const getUserMetadata = async () => {
 			try {
 				const accessToken = await getAccessTokenSilently({
@@ -54,10 +49,8 @@ function App() {
 						setUserData(user);
 						if (user.role === 'student') {
 							setIsProfessor(false);
-							// console.log('student');
 						} else if (user.role === 'teacher') {
 							setIsProfessor(true);
-							// console.log('professor');
 						}
 					})
 					.catch((err) => handleError(err));
@@ -65,8 +58,6 @@ function App() {
 				API.getAllThesis(accessToken)
 					.then((thesis) => {
 						setThesis(thesis);
-						// console.log('thesis:');
-						// console.log(thesis);
 					})
 					.catch((err) => handleError(err));
 			} catch (e) {
@@ -117,7 +108,7 @@ function App() {
 						/>
 					}
 				/>
-				<Route path='/*' element={<StudentHome />} />
+				<Route path='/*' element={<NotFound />} />
 			</Routes>
 		</BrowserRouter>
 	);

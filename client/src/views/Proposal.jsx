@@ -79,7 +79,31 @@ function Proposal(props) {
 								{thesis.types.length > 1 ? (
 									<Col md={12}>
 										<div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}> Types </div>
-										{thesis.types.filter((type) => type == 'IN COMPANY').lengh > 0 ? (
+										<div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}>
+											{thesis.types.map((type, index) => (
+												<div key={index} style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}>
+													<span
+														className='badge'
+														style={{
+															backgroundColor: 'rgba(230, 120, 43, 0.1)',
+															color: Color.secondary,
+															padding: '1em 1em',
+															borderRadius: '0.25rem',
+														}}
+													>
+														{type == 'IN COMPANY' ? (
+															<i className='bi bi-building-check' style={{ fontSize: '16px' }}></i>
+														) : type == 'ABROAD' ? (
+															<i className='bi bi-globe-americas' style={{ fontSize: '16px' }}></i>
+														) : (
+															<i className='bi bi-tag' style={{ fontSize: '16px' }}></i>
+														)}
+													</span>
+													<span style={{ marginLeft: 8, color: 'rgba(0, 0, 0, 0.5)' }}>{type}</span>
+												</div>
+											))}
+										</div>
+										{/* {thesis.types.filter((type) => type == 'IN COMPANY').lengh > 0 ? (
 											<div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}>
 												<span
 													className='badge'
@@ -103,22 +127,27 @@ function Proposal(props) {
 										) : null}
 										{thesis.types
 											.filter((type) => type != 'IN COMPANY' && type != 'ABROAD')
-											.map((type, index) => (
-												<div key={index} style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}>
-													<span
-														className='badge'
-														style={{
-															backgroundColor: 'rgba(230, 120, 43, 0.1)',
-															color: Color.secondary,
-															padding: '1em 1em',
-															borderRadius: '0.25rem',
-														}}
-													>
-														<i className='bi bi-tag' style={{ fontSize: '16px' }}></i>
-													</span>
-													<span style={{ marginLeft: 8, color: 'rgba(0, 0, 0, 0.5)' }}>{type}</span>
-												</div>
-											))}
+											.map(
+												(type, index) => (
+													console.log('type: ' + type),
+													(
+														<div key={index} style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}>
+															<span
+																className='badge'
+																style={{
+																	backgroundColor: 'rgba(230, 120, 43, 0.1)',
+																	color: Color.secondary,
+																	padding: '1em 1em',
+																	borderRadius: '0.25rem',
+																}}
+															>
+																<i className='bi bi-tag' style={{ fontSize: '16px' }}></i>
+															</span>
+															<span style={{ marginLeft: 8, color: 'rgba(0, 0, 0, 0.5)' }}>{type}</span>
+														</div>
+													)
+												)
+											)} */}
 									</Col>
 								) : null}
 								<Col md={12}>
@@ -130,7 +159,8 @@ function Proposal(props) {
 										>
 											<i className='bi bi-mortarboard-fill' style={{ fontSize: '16px' }}></i>
 										</span>
-										<span style={{ marginLeft: 8, color: 'rgba(0, 0, 0, 0.5)' }}>{thesis.level + ' ' + thesis.cds}</span>
+										{/* <span style={{ marginLeft: 8, color: 'rgba(0, 0, 0, 0.5)' }}>{thesis.level + ' ' + thesis.cds}</span> */}
+										<span style={{ marginLeft: 8, color: 'rgba(0, 0, 0, 0.5)' }}>{thesis.cds}</span>
 									</div>
 								</Col>
 								{thesis.groups.length > 0 ? (
@@ -164,7 +194,7 @@ function Proposal(props) {
 								{thesis.keywords.length > 0 ? (
 									<Col md={12}>
 										<div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}> Keywords </div>
-										<div style={{ fontWeight: 'semi-bold', fontSize: 14, marginTop: 15 }}>
+										<div style={{ fontWeight: 'semi-bold', fontSize: 14, marginTop: 5 }}>
 											{thesis.keywords.map((keyword, index) => (
 												<span
 													key={index}
@@ -175,6 +205,7 @@ function Proposal(props) {
 														padding: '0.5em 1.2em',
 														borderRadius: '0.25rem',
 														marginRight: 10,
+														marginTop: 5,
 													}}
 												>
 													{keyword}

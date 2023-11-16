@@ -6,10 +6,18 @@ import ProposalCard from '../components/ProposalCard.jsx';
 import FiltersModal from '../components/FiltersModal.jsx';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth0 } from '@auth0/auth0-react';
 
 function StudentHome(props) {
+	const { loginWithRedirect, isAuthenticated, isLoading } = useAuth0();
 	const [filtersShow, setFiltersShow] = useState(false);
 	const navigate = useNavigate();
+
+	useEffect(() => {
+		if (!isAuthenticated && !isLoading) {
+			loginWithRedirect();
+		}
+	}, [isAuthenticated, isLoading]);
 
 	useEffect(() => {
 		if (props.isProfessor) {
