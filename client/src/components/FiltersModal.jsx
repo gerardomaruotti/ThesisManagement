@@ -58,6 +58,17 @@ function FiltersModal(props) {
 			.catch((err) => handleError(err));
 	}, []);
 
+	useEffect(() => {
+		if (props.activatedFilters == false) {
+			setSelectedSupervisor('');
+			setSelectedCoSupervisors([]);
+			setSelectedKeywords([]);
+			setSelectedTypes([]);
+			setSelectedGroups([]);
+			setSelectedExpirationDate('all');
+		}
+	}, [props.activatedFilters]);
+
 	function handleExpirationDate(event) {
 		setExpirationDate(event.target.value);
 	}
