@@ -178,12 +178,6 @@ app.post('/api/thesis', checkJwt, async (req, res) => {
 						}
 					}
 									
-					if (supervisor.length>0 && valid){
-						if (sup != supervisor){
-							valid = false;
-						}else
-							totFilters++;
-					}
 					if(supervisor.length>0 && valid){
 						let count=0;
 						if(supervisor.includes(sup)){
@@ -202,6 +196,8 @@ app.post('/api/thesis', checkJwt, async (req, res) => {
 	
 						if (exp_date_tmp < expirationDate_tmp){
 							valid = false;
+						}else{
+							totFilters++;
 						}
 					}
 					thesis[i].count = totFilters;
