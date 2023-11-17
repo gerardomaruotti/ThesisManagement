@@ -78,12 +78,13 @@ app.get('/api/cds', (req, res) => {
 
 
 //return all thesis of the department of the student/professor 
-app.get('/api/thesis', checkJwt, async (req, res) => {
+app.post('/api/thesis', checkJwt, async (req, res) => {
 	try {
+		console.log(req.auth)
 		//let user = req.auth.payload.sub;
 		//searching for the role of the user authenticated
 		let getRole = await db.getRole(req.auth);
-		console.log(getRole);
+		console.log("\n\n\nGET ROLE\n\n\n" + getRole);
 		if (getRole.role == 'teacher') {
 			//if it is student we search for the thesis related to his COD_DEGREE
 			let thesis = await db.getThesisTeacher(getRole.id);
@@ -120,6 +121,7 @@ app.get('/api/thesis', checkJwt, async (req, res) => {
 				//thesis.forEach(t => console.log(t.ID));
 				for (let i=0; i<thesis.length; i++){
 					let valid = true;
+					let totFilters = 0;
 					let keywords = await db.getKeywordsbyId(thesis[i].ID)
 					let allTypesOfThesis = await db.getTypesbyId(thesis[i].ID);
 					let cosupervisors = await db.getCoSupervisorsEmail(thesis[i].ID);
@@ -134,7 +136,8 @@ app.get('/api/thesis', checkJwt, async (req, res) => {
 								count++;
 							}
 						});
-						if (count !== keyword.length){
+						totFilters += count;
+						if (count <= 0){
 							valid = false;
 						}
 					}
@@ -145,7 +148,8 @@ app.get('/api/thesis', checkJwt, async (req, res) => {
 								count++;
 							}
 						});
-							if (count !== type.length){
+						totFilters += count;
+							if (count <= 0){
 								valid = false;
 							}
 					}
@@ -156,7 +160,8 @@ app.get('/api/thesis', checkJwt, async (req, res) => {
 								count++;
 							}
 						});
-						if (count !== cosupervisor.length){
+						totFilters += count;
+						if (count <= 0){
 							valid = false;
 						}
 					}
@@ -167,17 +172,23 @@ app.get('/api/thesis', checkJwt, async (req, res) => {
 								count++;
 							}
 						});
-						if (count !== groups.length){
+						totFilters += count;
+						if (count <= 0){
 							valid = false;
 						}
 					}
 									
-					if (supervisor.length>0 && valid){
-						if (sup != supervisor){
+					if(supervisor.length>0 && valid){
+						let count=0;
+						if(supervisor.includes(sup)){
+							count++;
+						}
+						totFilters += count;
+						if (count <= 0){
 							valid = false;
 						}
 					}
-					if(exp_date.length>0 && valid){
+					if(exp_date !== undefined && valid){
 						let param = exp_date.split("/");
 						let exp_date_tmp = new Date(param[2]+"-"+ param[1] +"-"+param[0]);
 						let param2 = expirationDate.split("/");
@@ -185,9 +196,11 @@ app.get('/api/thesis', checkJwt, async (req, res) => {
 	
 						if (exp_date_tmp < expirationDate_tmp){
 							valid = false;
+						}else{
+							totFilters++;
 						}
 					}
-	
+					thesis[i].count = totFilters;
 					if (valid){ validThesis.push(thesis[i]);}
 					//console.log("Filtrata");
 					//thesis.forEach(t => console.log(t.ID));

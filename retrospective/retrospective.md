@@ -57,7 +57,7 @@ TEMPLATE FOR RETROSPECTIVE (Team 18)
 |    | #10 get keywords | --- | 30m | 0h |
 |    | #11 frontend implementation thesis details | --- | 2h | 1h |
 |    | #12 front end link to api | --- | 1h 30m | 30m |
-| #2 Ticket request      |   6      |    5    |     6h 40m      |      4h 35m        |
+| #2 Apply for proposal      |   6      |    5    |     6h 40m      |      4h 35m        |
 |    | #0 e2e test | --- | 1h | 0h |
 |    | #1 unit test | --- | 30m | 30m |
 |    | #2 front end link to api | --- | 1h | 0h |
@@ -70,8 +70,8 @@ TEMPLATE FOR RETROSPECTIVE (Team 18)
 
 - Hours per task average, standard deviation (estimate and actual)
 <br><br> - Story #0: 
-<br>Hours per task average (estimate) = 1h 45m
-<br>Hours per task average (actual) = 2h 30m
+<br>Hours per task average (estimate) = 1h 23m
+<br>Hours per task average (actual) = 1h 27m
 <br>Standard deviation (estimate) = 0.63h
 <br>Standard deviation (actual) = 1.2h
 <br><br> - Story #1: 
