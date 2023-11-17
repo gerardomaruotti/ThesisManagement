@@ -42,7 +42,7 @@ function FiltersModal(props) {
 			.then((supervisors) => {
 				setSupervisors(
 					supervisors.map((supervisor) => {
-						return { value: supervisor.email, label: supervisor.name + ' ' + supervisor.surname };
+						return { value: supervisor.ID, label: supervisor.name + ' ' + supervisor.surname };
 					})
 				);
 			})
@@ -82,23 +82,10 @@ function FiltersModal(props) {
 		setSelectedGroups(event);
 	}
 
-	function resetFilters(event) {
-		event.preventDefault();
-		props.onHide;
-		API.getAllThesis(props.accessToken)
-			.then((thesis) => {
-				props.setThesis(thesis);
-			})
-			.catch((err) => {
-				console.log(err);
-			});
-	}
-
 	function handleFilters(event) {
 		event.preventDefault();
-		props.onHide;
-
-		const formattedSupervisor = selectedSupervisor ? selectedSupervisor.value.split('@')[0] : '';
+		console.log(selectedSupervisor);
+		const formattedSupervisor = selectedSupervisor.map((supervisor) => supervisor.value);
 		const formattedCoSupervisors = selectedCoSupervisors.map((cosupervisor) => cosupervisor.value);
 		const formattedKeywords = selectedKeywords.map((keyword) => keyword.value);
 		const formattedTypes = selectedTypes.map((type) => type.value);
@@ -119,14 +106,17 @@ function FiltersModal(props) {
 		API.getAllThesis(props.accessToken, body)
 			.then((thesis) => {
 				props.setThesis(thesis);
+				console.log(thesis);
 			})
 			.catch((err) => {
 				console.log(err);
 			});
+		props.onHide();
+		props.setActivatedFilters(true);
 	}
 
 	return (
-		<Modal {...props} size='lg' aria-labelledby='contained-modal-title-vcenter' centered>
+		<Modal show={props.show} onHide={props.onHide} size='lg' aria-labelledby='contained-modal-title-vcenter' centered>
 			<Modal.Header closeButton>
 				<Modal.Title id='contained-modal-title-vcenter'>Filters of search</Modal.Title>
 			</Modal.Header>
@@ -137,25 +127,25 @@ function FiltersModal(props) {
 							<Col md={6}>
 								<Form.Group className='mb-3' controlId='formCoSupervisors'>
 									<Form.Label>Supervisors</Form.Label>
-									<Select options={supervisors} styles={colorStyles} onChange={handleSupervisor} />
+									<Select isMulti options={supervisors} value={selectedSupervisor} styles={colorStyles} onChange={handleSupervisor} />
 								</Form.Group>
 								<Form.Group className='mb-3' controlId='formCoSupervisors'>
 									<Form.Label>Co-supervisors</Form.Label>
-									<Select isMulti options={supervisors} styles={colorStyles} onChange={handleCoSupervisors} />
+									<Select isMulti options={supervisors} value={selectedCoSupervisors} styles={colorStyles} onChange={handleCoSupervisors} />
 								</Form.Group>
 								<Form.Group className='mb-3' controlId='formKeywords'>
 									<Form.Label>Keywords</Form.Label>
-									<Select isMulti options={keywords} styles={colorStyles} onChange={handleKeywords} />
+									<Select isMulti options={keywords} value={selectedKeywords} styles={colorStyles} onChange={handleKeywords} />
 								</Form.Group>
 								<Form.Group className='mb-3' controlId='formGroups'>
 									<Form.Label>Groups</Form.Label>
-									<Select isMulti options={groups} styles={colorStyles} onChange={handleGroups} />
+									<Select isMulti options={groups} value={selectedGroups} styles={colorStyles} onChange={handleGroups} />
 								</Form.Group>
 							</Col>
 							<Col md={6}>
 								<Form.Group className='mb-3' controlId='formTypes'>
 									<Form.Label>Types</Form.Label>
-									<Select isMulti options={types} styles={colorStyles} onChange={handleTypes} />
+									<Select isMulti options={types} value={selectedTypes} styles={colorStyles} onChange={handleTypes} />
 								</Form.Group>
 								<Form.Label>Expiration date:</Form.Label>
 								<div className='mb-3'>
@@ -198,9 +188,6 @@ function FiltersModal(props) {
 								</div>
 							</Col>
 						</Row>
-						<Button variant='secondary' type='submit' onClick={resetFilters}>
-							Reset filters
-						</Button>
 						<Button variant='primary' type='submit' onClick={handleFilters}>
 							Apply filters
 						</Button>
