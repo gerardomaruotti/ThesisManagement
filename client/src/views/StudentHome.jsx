@@ -159,6 +159,7 @@ function StudentHome(props) {
 				setThesis={props.setThesis}
 				onHide={() => setFiltersShow(false)}
 				accessToken={props.accessToken}
+				activatedFilters={activatedFilters}
 				setActivatedFilters={setActivatedFilters}
 			/>
 			<Container>
