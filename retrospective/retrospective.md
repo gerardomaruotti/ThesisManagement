@@ -57,7 +57,7 @@ TEMPLATE FOR RETROSPECTIVE (Team 18)
 |    | #10 get keywords | --- | 30m | 0h |
 |    | #11 frontend implementation thesis details | --- | 2h | 1h |
 |    | #12 front end link to api | --- | 1h 30m | 30m |
-| #2 Ticket request      |   6      |    5    |     6h 40m      |      4h 35m        |
+| #2 Apply for proposal      |   6      |    5    |     6h 40m      |      4h 35m        |
 |    | #0 e2e test | --- | 1h | 0h |
 |    | #1 unit test | --- | 30m | 30m |
 |    | #2 front end link to api | --- | 1h | 0h |
