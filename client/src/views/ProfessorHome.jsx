@@ -19,7 +19,7 @@ function ProfessorHome(props) {
 	return (
 		<Container>
 			<Row style={{ marginBottom: 25 }}>
-				{props.thesis != [] ? props.thesis.map((thesis, index) => <ProposalCard key={thesis.ID} isProfessor={1} thesis={thesis} colorsKeywords={props.colorsKeywords} />) : null}
+				{props.thesis != [] ? props.thesis.map((thesis, index) => <ProposalCard key={thesis.ID} isProfessor={1} thesis={thesis} />) : null}
 			</Row>
 			<Button variant='primary' className='insert-proposal' style={{ borderRadius: 50 }} onClick={() => navigate('/proposals/add')}>
 				<i className='bi bi-plus' style={{ fontSize: '1.5rem' }}></i>

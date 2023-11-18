@@ -184,7 +184,7 @@ function StudentHome(props) {
 								accessToken={props.accessToken}
 								setPopup={setPopup}
 								setMsgAndColor={setMsgAndColor}
-								colorsKeywords={props.colorsKeywords} />
+							/>
 						))
 					) : (
 						<Col style={{ marginTop: 25 }}>

@@ -4,29 +4,10 @@ import { Color } from '../constants/colors.js';
 import Avatar from '../assets/avatar.svg';
 import { useNavigate } from 'react-router-dom';
 import API from '../API.jsx';
+import randomcolor from 'randomcolor';
 
 function ProposalCard(props) {
 	const navigate = useNavigate();
-	const colors = [
-		{
-			backgroundColor: 'rgba(246, 191, 84, 0.1)', color: 'rgb(246, 191, 84)'
-		},
-		{
-			backgroundColor: 'rgba(0, 79, 72, 0.1)', color: 'rgb(0, 79, 72)'
-		},
-		{
-			backgroundColor: 'rgba(147, 115, 159, 0.1)', color: 'rgb(147, 115, 159)'
-		},
-		{
-			backgroundColor: 'rgba(136, 205, 212, 0.1)', color: 'rgb(136, 205, 212)'
-		},
-		{
-			backgroundColor: 'rgba(238, 164, 155, 0.1)', color: 'rgb(238, 164, 155)'
-		},
-		{
-			backgroundColor: 'rgba(89, 56, 80, 0.1)', color: 'rgb(89, 56, 80)'
-		}
-	];
 
 	function apply(event) {
 		API.ThesisApply(props.thesis.ID, props.accessToken)
@@ -65,8 +46,8 @@ function ProposalCard(props) {
 							key={index}
 							className='badge'
 							style={{
-								backgroundColor: props.colorsKeywords[keyword] ? props.colorsKeywords[keyword].replace(/1(?=\))/, '0.1') : colors[index % 6].backgroundColor,
-								color: props.colorsKeywords[keyword] ? props.colorsKeywords[keyword] : colors[index % 6].color,
+								backgroundColor: randomcolor({ seed: keyword, luminosity: 'bright', format: 'rgba', alpha: 1 }).replace(/1(?=\))/, '0.1'),
+								color: randomcolor({ seed: keyword, luminosity: 'bright', format: 'rgba', alpha: 1 }),
 								padding: '0.5em 1.2em',
 								borderRadius: '0.25rem',
 								marginRight: 10,

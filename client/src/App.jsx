@@ -31,8 +31,6 @@ function App() {
 	const [dirty, setDirty] = useState(false);
 	const [isProfessor, setIsProfessor] = useState(false);
 
-	const [colorsKeywords, setColorsKeywords] = useState({});
-
 	// Filters
 	const [activatedFilters, setActivatedFilters] = useState(false);
 	const [selectedSupervisor, setSelectedSupervisor] = useState([]);
@@ -83,18 +81,6 @@ function App() {
 		}
 	}, [isAuthenticated, getAccessTokenSilently, user?.sub, dirty]);
 
-	useEffect(() => {
-		thesis.forEach((thesis) => {
-			thesis.keywords.forEach((keyword) => {
-				if (!colorsKeywords[keyword]) {
-					setColorsKeywords(prevColors => ({
-						...prevColors,
-						[keyword]: randomcolor({ seed: keyword, luminosity: 'bright', format: 'rgba', alpha: 1 }),
-					}));
-				}
-			});
-		});
-	}, [thesis]);
 	return (
 		<BrowserRouter>
 			<Header />
@@ -104,8 +90,7 @@ function App() {
 					element={
 						isProfessor ? (
 							<ProfessorHome
-								thesis={thesis}
-								colorsKeywords={colorsKeywords} />
+								thesis={thesis} />
 						) : (
 							<StudentHome
 								isProfessor={isProfessor}
@@ -126,12 +111,11 @@ function App() {
 								setSelectedGroups={setSelectedGroups}
 								expirationDate={expirationDate2}
 								setExpirationDate={setExpirationDate2}
-								colorsKeywords={colorsKeywords}
 							/>
 						)
 					}
 				/>
-				<Route path='/proposal/:id' element={<Proposal accessToken={accessToken} isProfessor={isProfessor} colorsKeywords={colorsKeywords} />} />
+				<Route path='/proposal/:id' element={<Proposal accessToken={accessToken} isProfessor={isProfessor} />} />
 				<Route
 					path='/proposals/add'
 					element={
