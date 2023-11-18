@@ -54,7 +54,6 @@ function App() {
 					},
 				});
 				setAccessToken(accessToken);
-				console.log(accessToken);
 				API.getUser(accessToken)
 					.then((user) => {
 						setUserData(user);

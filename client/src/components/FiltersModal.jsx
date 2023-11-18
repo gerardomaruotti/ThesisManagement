@@ -10,6 +10,7 @@ function FiltersModal(props) {
 	const [keywords, setKeywords] = useState([]);
 	const [types, setTypes] = useState([]);
 	const [supervisors, setSupervisors] = useState([]);
+	const [coSupervisors, setCoSupervisors] = useState([]);
 	const [groups, setGroups] = useState([]);
 
 	useEffect(() => {
@@ -39,6 +40,11 @@ function FiltersModal(props) {
 				setSupervisors(
 					supervisors.map((supervisor) => {
 						return { value: supervisor.ID, label: supervisor.name + ' ' + supervisor.surname };
+					})
+				);
+				setCoSupervisors(
+					supervisors.map((supervisor) => {
+						return { value: supervisor.email, label: supervisor.name + ' ' + supervisor.surname };
 					})
 				);
 			})
@@ -149,7 +155,7 @@ function FiltersModal(props) {
 								</Form.Group>
 								<Form.Group className='mb-3' controlId='formCoSupervisors'>
 									<Form.Label>Co-supervisors</Form.Label>
-									<Select isMulti options={supervisors} value={props.selectedCoSupervisors} styles={colorStyles} onChange={handleCoSupervisors} />
+									<Select isMulti options={coSupervisors} value={props.selectedCoSupervisors} styles={colorStyles} onChange={handleCoSupervisors} />
 								</Form.Group>
 								<Form.Group className='mb-3' controlId='formKeywords'>
 									<Form.Label>Keywords</Form.Label>

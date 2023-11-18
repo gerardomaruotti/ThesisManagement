@@ -19,7 +19,6 @@ function Proposal(props) {
 			API.getThesisByID(id, props.accessToken)
 				.then((thesis) => {
 					setThesis(thesis);
-					// console.log(thesis);
 				})
 				.catch((err) => {
 					console.log(err);
@@ -58,7 +57,7 @@ function Proposal(props) {
 											<span style={{ marginLeft: 15, color: 'rgba(0, 0, 0, 0.8)' }}>{thesis.supervisor.name + ' ' + thesis.supervisor.surname}</span>
 										</div>
 									</Col>
-									{thesis.coSupervisors.length > 1 ? (
+									{thesis.coSupervisors.length > 0 ? (
 										<Col md={12}>
 											<div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}> Co-Supervisors </div>
 											<div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}>
