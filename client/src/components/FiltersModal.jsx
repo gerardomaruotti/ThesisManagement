@@ -10,14 +10,7 @@ function FiltersModal(props) {
 	const [keywords, setKeywords] = useState([]);
 	const [types, setTypes] = useState([]);
 	const [supervisors, setSupervisors] = useState([]);
-	const [expirationDate, setExpirationDate] = useState('all');
 	const [groups, setGroups] = useState([]);
-	const [selectedSupervisor, setSelectedSupervisor] = useState('');
-	const [selectedCoSupervisors, setSelectedCoSupervisors] = useState([]);
-	const [selectedKeywords, setSelectedKeywords] = useState([]);
-	const [selectedTypes, setSelectedTypes] = useState([]);
-	const [selectedGroups, setSelectedGroups] = useState([]);
-	const [selectedExpirationDate, setSelectedExpirationDate] = useState('all');
 
 	useEffect(() => {
 		API.getAllKeywords()
@@ -60,48 +53,60 @@ function FiltersModal(props) {
 
 	useEffect(() => {
 		if (props.activatedFilters == false) {
-			setSelectedSupervisor('');
-			setSelectedCoSupervisors([]);
-			setSelectedKeywords([]);
-			setSelectedTypes([]);
-			setSelectedGroups([]);
-			setSelectedExpirationDate('all');
+			props.setSelectedSupervisor([]);
+			props.setSelectedCoSupervisors([]);
+			props.setSelectedKeywords([]);
+			props.setSelectedTypes([]);
+			props.setSelectedGroups([]);
+			props.setExpirationDate('all');
 		}
 	}, [props.activatedFilters]);
 
 	function handleExpirationDate(event) {
-		setExpirationDate(event.target.value);
+		props.setExpirationDate(event.target.value);
 	}
 
 	function handleSupervisor(event) {
-		setSelectedSupervisor(event);
+		props.setSelectedSupervisor(event);
 	}
 
 	function handleCoSupervisors(event) {
-		setSelectedCoSupervisors(event);
+		props.setSelectedCoSupervisors(event);
 	}
 
 	function handleKeywords(event) {
-		setSelectedKeywords(event);
+		props.setSelectedKeywords(event);
 	}
 
 	function handleTypes(event) {
-		setSelectedTypes(event);
+		props.setSelectedTypes(event);
 	}
 
 	function handleGroups(event) {
-		setSelectedGroups(event);
+		props.setSelectedGroups(event);
 	}
 
 	function handleFilters(event) {
 		event.preventDefault();
-		console.log(selectedSupervisor);
-		const formattedSupervisor = selectedSupervisor.map((supervisor) => supervisor.value);
-		const formattedCoSupervisors = selectedCoSupervisors.map((cosupervisor) => cosupervisor.value);
-		const formattedKeywords = selectedKeywords.map((keyword) => keyword.value);
-		const formattedTypes = selectedTypes.map((type) => type.value);
-		const formattedGroups = selectedGroups.map((group) => group.value);
 
+		const formattedSupervisor = props.selectedSupervisor.map((supervisor) => supervisor.value);
+		const formattedCoSupervisors = props.selectedCoSupervisors.map((cosupervisor) => cosupervisor.value);
+		const formattedKeywords = props.selectedKeywords.map((keyword) => keyword.value);
+		const formattedTypes = props.selectedTypes.map((type) => type.value);
+		const formattedGroups = props.selectedGroups.map((group) => group.value);
+		let today = dayjs();
+		if (props.expirationDate === 'all') {
+			today = undefined;
+		}
+		else if (props.expirationDate === 'thisWeek') {
+			today = today.add(1, 'week');
+		}
+		else if (props.expirationDate === 'thisMonth') {
+			today = today.add(1, 'month');
+		}
+		else if (props.expirationDate === 'thisYear') {
+			today = today.add(1, 'year');
+		}
 		let body = {
 			filters: {
 				supervisor: formattedSupervisor,
@@ -109,21 +114,20 @@ function FiltersModal(props) {
 				keyword: formattedKeywords,
 				type: formattedTypes,
 				group: formattedGroups,
-				exp_date: selectedExpirationDate,
+				exp_date: today ? today.format('DD/MM/YYYY') : undefined,
 			},
 		};
-		console.log(body);
 
 		API.getAllThesis(props.accessToken, body)
 			.then((thesis) => {
 				props.setThesis(thesis);
-				console.log(thesis);
 			})
 			.catch((err) => {
 				console.log(err);
 			});
 		props.onHide();
 		props.setActivatedFilters(true);
+
 	}
 
 	return (
@@ -138,25 +142,25 @@ function FiltersModal(props) {
 							<Col md={6}>
 								<Form.Group className='mb-3' controlId='formCoSupervisors'>
 									<Form.Label>Supervisors</Form.Label>
-									<Select isMulti options={supervisors} value={selectedSupervisor} styles={colorStyles} onChange={handleSupervisor} />
+									<Select isMulti options={supervisors} value={props.selectedSupervisor} styles={colorStyles} onChange={handleSupervisor} />
 								</Form.Group>
 								<Form.Group className='mb-3' controlId='formCoSupervisors'>
 									<Form.Label>Co-supervisors</Form.Label>
-									<Select isMulti options={supervisors} value={selectedCoSupervisors} styles={colorStyles} onChange={handleCoSupervisors} />
+									<Select isMulti options={supervisors} value={props.selectedCoSupervisors} styles={colorStyles} onChange={handleCoSupervisors} />
 								</Form.Group>
 								<Form.Group className='mb-3' controlId='formKeywords'>
 									<Form.Label>Keywords</Form.Label>
-									<Select isMulti options={keywords} value={selectedKeywords} styles={colorStyles} onChange={handleKeywords} />
+									<Select isMulti options={keywords} value={props.selectedKeywords} styles={colorStyles} onChange={handleKeywords} />
 								</Form.Group>
 								<Form.Group className='mb-3' controlId='formGroups'>
 									<Form.Label>Groups</Form.Label>
-									<Select isMulti options={groups} value={selectedGroups} styles={colorStyles} onChange={handleGroups} />
+									<Select isMulti options={groups} value={props.selectedGroups} styles={colorStyles} onChange={handleGroups} />
 								</Form.Group>
 							</Col>
 							<Col md={6}>
 								<Form.Group className='mb-3' controlId='formTypes'>
 									<Form.Label>Types</Form.Label>
-									<Select isMulti options={types} value={selectedTypes} styles={colorStyles} onChange={handleTypes} />
+									<Select isMulti options={types} value={props.selectedTypes} styles={colorStyles} onChange={handleTypes} />
 								</Form.Group>
 								<Form.Label>Expiration date:</Form.Label>
 								<div className='mb-3'>
@@ -165,7 +169,7 @@ function FiltersModal(props) {
 										name='expirationDate'
 										type='radio'
 										value='all'
-										checked={expirationDate === 'all'}
+										checked={props.expirationDate === 'all'}
 										onChange={handleExpirationDate}
 										id='all'
 									/>
@@ -174,7 +178,7 @@ function FiltersModal(props) {
 										name='expirationDate'
 										type='radio'
 										value='thisWeek'
-										checked={expirationDate === 'thisWeek'}
+										checked={props.expirationDate === 'thisWeek'}
 										onChange={handleExpirationDate}
 										id='thisWeek'
 									/>
@@ -183,7 +187,7 @@ function FiltersModal(props) {
 										name='expirationDate'
 										type='radio'
 										value='thisMonth'
-										checked={expirationDate === 'thisMonth'}
+										checked={props.expirationDate === 'thisMonth'}
 										onChange={handleExpirationDate}
 										id='thisMonth'
 									/>
@@ -192,7 +196,7 @@ function FiltersModal(props) {
 										name='expirationDate'
 										type='radio'
 										value='thisYear'
-										checked={expirationDate === 'thisYear'}
+										checked={props.expirationDate === 'thisYear'}
 										onChange={handleExpirationDate}
 										id='thisYear'
 									/>

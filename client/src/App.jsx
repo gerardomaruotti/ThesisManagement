@@ -30,6 +30,16 @@ function App() {
 	const [dirty, setDirty] = useState(false);
 	const [isProfessor, setIsProfessor] = useState(false);
 
+	// Filters
+	const [activatedFilters, setActivatedFilters] = useState(false);
+	const [selectedSupervisor, setSelectedSupervisor] = useState([]);
+	const [selectedCoSupervisors, setSelectedCoSupervisors] = useState([]);
+	const [selectedKeywords, setSelectedKeywords] = useState([]);
+	const [selectedTypes, setSelectedTypes] = useState([]);
+	const [selectedGroups, setSelectedGroups] = useState([]);
+	const [expirationDate2, setExpirationDate2] = useState('all');
+
+
 	function handleError(err) {
 		console.log(err);
 	}
@@ -54,7 +64,6 @@ function App() {
 						}
 					})
 					.catch((err) => handleError(err));
-
 
 				API.getAllThesis(accessToken)
 					.then((thesis) => {
@@ -81,7 +90,26 @@ function App() {
 						isProfessor ? (
 							<ProfessorHome thesis={thesis} />
 						) : (
-							<StudentHome isProfessor={isProfessor} thesis={thesis} setThesis={setThesis} accessToken={accessToken} />
+							<StudentHome
+								isProfessor={isProfessor}
+								thesis={thesis}
+								setThesis={setThesis}
+								accessToken={accessToken}
+								activatedFilters={activatedFilters}
+								setActivatedFilters={setActivatedFilters}
+								selectedSupervisor={selectedSupervisor}
+								setSelectedSupervisor={setSelectedSupervisor}
+								selectedCoSupervisors={selectedCoSupervisors}
+								setSelectedCoSupervisors={setSelectedCoSupervisors}
+								selectedKeywords={selectedKeywords}
+								setSelectedKeywords={setSelectedKeywords}
+								selectedTypes={selectedTypes}
+								setSelectedTypes={setSelectedTypes}
+								selectedGroups={selectedGroups}
+								setSelectedGroups={setSelectedGroups}
+								expirationDate={expirationDate2}
+								setExpirationDate={setExpirationDate2}
+							/>
 						)
 					}
 				/>

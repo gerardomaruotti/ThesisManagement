@@ -18,7 +18,6 @@ function StudentHome(props) {
 	const [search, setSearch] = useState('');
 	const [filteredThesis, setFilteredThesis] = useState(props.thesis);
 	const [rapidFilter, setRapidFilter] = useState('all');
-	const [activatedFilters, setActivatedFilters] = useState(false)
 
 	function handleRapidFilters(filter) {
 		if (filter === 'all') {
@@ -91,7 +90,8 @@ function StudentHome(props) {
 			.catch((err) => {
 				console.log(err);
 			});
-		setActivatedFilters(false);
+		props.setActivatedFilters(false);
+		setRapidFilter('all');
 	}
 
 	// useEffect(() => {
@@ -121,14 +121,14 @@ function StudentHome(props) {
 					</Row>
 					<Row style={{ marginTop: 25, paddingBottom: 20 }}>
 						<Col sm={8}>
-							<Nav variant='pills' defaultActiveKey='all'>
+							<Nav variant='pills' activeKey={rapidFilter}>
 								<Nav.Item>
 									<Nav.Link eventKey='all' className='buttons-rapid-filter' onClick={() => handleRapidFilters('all')}>
 										All
 									</Nav.Link>
 								</Nav.Item>
 								<Nav.Item>
-									<Nav.Link eventKey='inCompany' className='buttons-rapid-filter' onClick={() => handleRapidFilters('company')}>
+									<Nav.Link eventKey='company' className='buttons-rapid-filter' onClick={() => handleRapidFilters('company')}>
 										In company
 									</Nav.Link>
 								</Nav.Item>
@@ -140,7 +140,7 @@ function StudentHome(props) {
 							</Nav>
 						</Col>
 						<Col sm={2}>
-							{activatedFilters ? (
+							{props.activatedFilters ? (
 								<Button variant="outline-secondary" style={{ borderRadius: 50, float: 'right', width: 150 }} onClick={resetFilters}>Reset filters</Button>
 							) : null}
 						</Col>
@@ -159,13 +159,25 @@ function StudentHome(props) {
 				setThesis={props.setThesis}
 				onHide={() => setFiltersShow(false)}
 				accessToken={props.accessToken}
-				activatedFilters={activatedFilters}
-				setActivatedFilters={setActivatedFilters}
+				activatedFilters={props.activatedFilters}
+				setActivatedFilters={props.setActivatedFilters}
+				selectedSupervisor={props.selectedSupervisor}
+				setSelectedSupervisor={props.setSelectedSupervisor}
+				selectedCoSupervisors={props.selectedCoSupervisors}
+				setSelectedCoSupervisors={props.setSelectedCoSupervisors}
+				selectedKeywords={props.selectedKeywords}
+				setSelectedKeywords={props.setSelectedKeywords}
+				selectedTypes={props.selectedTypes}
+				setSelectedTypes={props.setSelectedTypes}
+				selectedGroups={props.selectedGroups}
+				setSelectedGroups={props.setSelectedGroups}
+				expirationDate={props.expirationDate}
+				setExpirationDate={props.setExpirationDate}
 			/>
 			<Container>
 				<Row style={{ marginBottom: 25 }}>
 					{filteredThesis.length != 0 ? (
-						filteredThesis.map((thesis, index) => (
+						filteredThesis.sort((a, b) => b.count - a.count).map((thesis, index) => (
 							<ProposalCard key={thesis.ID} thesis={thesis} accessToken={props.accessToken} setPopup={setPopup} setMsgAndColor={setMsgAndColor} />
 						))
 					) : (
