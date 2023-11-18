@@ -210,14 +210,12 @@ exports.getGroups = () => {
     db.all(sql, (err, rows) => {
       if (err) {
         reject(err);
-        console.log(err);
         return;
       } else {
         const groups = rows.map((elem) => ({
           cod_group: elem.COD_GROUP,
           name: elem.NAME,
         }));
-        console.log(groups);
         resolve(groups);
       }
     });
@@ -362,7 +360,6 @@ exports.getThesisStudent = (ID) => {
         return;
       }
       else {
-        console.log(rows)
         if (rows.length > 0) {
           const thesis = rows.map((elem) => ({
             ID: elem.ID,
@@ -391,7 +388,6 @@ exports.insertThesis = (title, description, req_know, notes, exp_date, level, de
     const sql = 'INSERT INTO thesis (title, description, required_knowledge, notes, expiration_date, level, degree, supervisor) VALUES(?, ?, ?, ?, ?, ?, ?, ?)';
     db.run(sql, [title, description, req_know, notes, exp_date, level, degree, supervisor], function (err) {
       if (err) {
-        console.log(err)
         reject(err);
         return;
       }
@@ -405,7 +401,6 @@ exports.insertCoSupervisor = (id, name, surname, email) => {
     const sql = 'INSERT INTO co_supervisor (thesis, name, surname, email) VALUES(?, ?, ?, ?)';
     db.run(sql, [id, name, surname, email], function (err) {
       if (err) {
-        console.log(err)
         reject(err);
         return;
       }
@@ -419,7 +414,6 @@ exports.insertKeyword = (id, keyword) => {
     const sql = 'INSERT INTO keyword (thesis, keyword) VALUES(?, ?)';
     db.run(sql, [id, keyword], function (err) {
       if (err) {
-        console.log(err)
         reject(err);
         return;
       }
@@ -433,7 +427,6 @@ exports.insertThesisStatus = (id) => {
     const sql = 'INSERT INTO THESIS_STATUS (thesis, state) VALUES(?, ?)';
     db.run(sql, [id, 1], function (err) {
       if (err) {
-        console.log(err)
         reject(err);
         return;
       }
@@ -447,7 +440,6 @@ exports.insertType = (id, type) => {
     const sql = 'INSERT INTO TYPE (thesis, type) VALUES(?, ?)';
     db.run(sql, [id, type], function (err) {
       if (err) {
-        console.log(err)
         reject(err);
         return;
       }
@@ -508,7 +500,6 @@ exports.insertProposal = (userId, idThesis) => {
     const sql = 'INSERT INTO THESIS_PROPOSAL (student, thesis, state) VALUES(?, ?, ?)';
     db.run(sql, [userId, idThesis, 0], function (err) {
       if (err) {
-        console.log(err)
         reject(err);
         return;
       }
