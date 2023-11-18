@@ -23,7 +23,6 @@ app.get('/api/keywords',  checkJwt, (req, res) => {
 	db.getKeywords()
 		.then((keywords) => res.status(200).json(keywords))
 		.catch((err) => {
-			console.log(err);
 			res.status(503).json('getKeywords error');
 		});
 });
@@ -32,7 +31,6 @@ app.get('/api/user', checkJwt, (req, res) => {
 	db.getRole(req.auth)
 		.then((userInfo) => res.status(200).json(userInfo))
 		.catch((err) => {
-			console.log(err);
 			res.status(503).json('error retrieving user info');
 		});
 });
@@ -41,7 +39,6 @@ app.get('/api/types', checkJwt, (req, res) => {
 	db.getTypes()
 		.then((types) => res.status(200).json(types))
 		.catch((err) => {
-			console.log(err);
 			res.status(503).json('getTypes error');
 		});
 });
@@ -50,7 +47,6 @@ app.get('/api/teachers', checkJwt, (req, res) => {
 	db.getTeachers()
 		.then((teachers) => res.status(200).json(teachers))
 		.catch((err) => {
-			console.log(err);
 			res.status(503).json('getTeachers error');
 		});
 });
@@ -59,7 +55,6 @@ app.get('/api/groups', checkJwt, (req, res) => {
 	db.getGroups()
 		.then((groups) => res.status(200).json(groups))
 		.catch((err) => {
-			console.log(err);
 			res.status(503).json('getGroups error');
 		});
 });
@@ -68,7 +63,6 @@ app.get('/api/cds', checkJwt, (req, res) => {
 	db.getCdS()
 		.then((cds) => res.status(200).json(cds))
 		.catch((err) => {
-			console.log(err);
 			res.status(503).json('getCds error');
 		});
 });
@@ -80,11 +74,8 @@ app.get('/api/cds', checkJwt, (req, res) => {
 //return all thesis of the department of the student/professor 
 app.post('/api/thesis', checkJwt, async (req, res) => {
 	try {
-		console.log(req.auth)
-		//let user = req.auth.payload.sub;
 		//searching for the role of the user authenticated
 		let getRole = await db.getRole(req.auth);
-		console.log("\n\n\nGET ROLE\n\n\n" + getRole);
 		if (getRole.role == 'teacher') {
 			//if it is student we search for the thesis related to his COD_DEGREE
 			let thesis = await db.getThesisTeacher(getRole.id);
@@ -95,7 +86,6 @@ app.post('/api/thesis', checkJwt, async (req, res) => {
 				let types = await db.getTypesbyId(thesis[i].ID);
 				thesis[i].types = types;
 			}
-			console.log(thesis);
 			res.status(200).json(thesis);
 		} else if (getRole.role == 'student') {
 			let thesis = await db.getThesisStudent(getRole.id);
@@ -106,7 +96,6 @@ app.post('/api/thesis', checkJwt, async (req, res) => {
 				thesis[i].types = types;
 			}
 			if(req.body.filters == null){
-				console.log(thesis);
 				res.status(200).json(thesis);
 			}else{
 				let validThesis = [];
@@ -116,9 +105,7 @@ app.post('/api/thesis', checkJwt, async (req, res) => {
 				let supervisor = req.body.filters.supervisor;
 				let groups = req.body.filters.group;
 				let exp_date = req.body.filters.exp_date;
-	
-				//console.log("Non filtrata");
-				//thesis.forEach(t => console.log(t.ID));
+
 				for (let i=0; i<thesis.length; i++){
 					let valid = true;
 					let totFilters = 0;
@@ -202,10 +189,7 @@ app.post('/api/thesis', checkJwt, async (req, res) => {
 					}
 					thesis[i].count = totFilters;
 					if (valid){ validThesis.push(thesis[i]);}
-					//console.log("Filtrata");
-					//thesis.forEach(t => console.log(t.ID));
 				}
-				console.log(validThesis);
 				res.status(200).json(validThesis);	
 			}
 						
@@ -231,7 +215,6 @@ app.get('/api/thesis/:id/groups', checkJwt, async (req, res) => {
 	try {
 		//i need groups of supervisor and co-supervisor of the thesis
 		const groups = await db.getGroupSupervisorAndCoSupervisor(thesisID);
-		console.log(groups);
 		return res.status(200).json(groups);
 	} catch (err) {
 		return res.status(503).json({ error: 'Errore nella restituzione dei gruppi' });
@@ -272,24 +255,18 @@ app.post(
 				const thesisId = await db.insertThesis(title, description, req_know, notes, exp_date, level, degree, supervisor);
 
 				for (let i = 0; i < co_supervisors.length; i++) {
-					console.log(co_supervisors[i]);
 					const CoSupID = await db.insertCoSupervisor(thesisId, co_supervisors[i].name, co_supervisors[i].surname, co_supervisors[i].email);
-					console.log(CoSupID);
 				}
 
 				for (let i = 0; i < keywords.length; i++) {
-					console.log(keywords[i]);
 					const keywordID = await db.insertKeyword(thesisId, keywords[i]);
-					console.log(keywordID);
 				}
 
 				for (let i = 0; i < types.length; i++) {
 					const typesId = await db.insertType(thesisId, types[i]);
-					console.log(typesId);
 				}
 
 				const statusId = await db.insertThesisStatus(thesisId);
-				console.log(statusId);
 				return res.status(200).json(thesisId);
 			} else {
 				return res.status(401).json({ error: 'Unauthorized user' });
