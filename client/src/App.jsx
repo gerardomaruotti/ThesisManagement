@@ -10,10 +10,9 @@ import InsertProposal from './views/InsertProposal';
 import Proposal from './views/Proposal';
 import NotFound from './views/NotFound.jsx';
 import API from './API.jsx';
-import randomcolor from 'randomcolor';
 
 function App() {
-	const { user, isAuthenticated, getAccessTokenSilently } = useAuth0();
+	const { user, isAuthenticated, getAccessTokenSilently, loginWithRedirect } = useAuth0();
 	const [title, setTitle] = useState('');
 	const [requiredKnowledge, setRequiredKnowledge] = useState('');
 	const [description, setDescription] = useState('');
@@ -55,6 +54,7 @@ function App() {
 					},
 				});
 				setAccessToken(accessToken);
+				console.log(accessToken);
 				API.getUser(accessToken)
 					.then((user) => {
 						setUserData(user);

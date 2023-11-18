@@ -15,15 +15,17 @@ function Proposal(props) {
 	const { id } = useParams();
 
 	useEffect(() => {
-		API.getThesisByID(id, props.accessToken)
-			.then((thesis) => {
-				setThesis(thesis);
-				// console.log(thesis);
-			})
-			.catch((err) => {
-				console.log(err);
-			});
-	}, []);
+		if (props.accessToken != null) {
+			API.getThesisByID(id, props.accessToken)
+				.then((thesis) => {
+					setThesis(thesis);
+					// console.log(thesis);
+				})
+				.catch((err) => {
+					console.log(err);
+				});
+		}
+	}, [props.accessToken]);
 
 	function apply() {
 		API.ThesisApply(id, props.accessToken)

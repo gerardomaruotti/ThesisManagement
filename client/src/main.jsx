@@ -13,7 +13,9 @@ root.render(
 			redirect_uri: window.location.origin,
 			audience: 'https://thesismanagement.eu.auth0.com/api/v2/',
 			scope: 'read:current_user update:current_user_metadata',
+
 		}}
+		cacheLocation="localstorage"
 	>
 		<App />
 	</Auth0Provider>

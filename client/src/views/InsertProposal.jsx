@@ -51,7 +51,7 @@ function InsertProposal(props) {
 	];
 
 	useEffect(() => {
-		API.getAllKeywords()
+		API.getAllKeywords(accessToken)
 			.then((keywords) => {
 				setKeywords(
 					keywords.map((keyword) => {
@@ -60,7 +60,7 @@ function InsertProposal(props) {
 				);
 			})
 			.catch((err) => handleError(err));
-		API.getAllTypes()
+		API.getAllTypes(accessToken)
 			.then((types) => {
 				setType(
 					types.map((type) => {
@@ -69,7 +69,7 @@ function InsertProposal(props) {
 				);
 			})
 			.catch((err) => handleError(err));
-		API.getAllSupervisors()
+		API.getAllSupervisors(accessToken)
 			.then((cosupervisors) => {
 				staticCosupervisors = cosupervisors;
 				setCoSupervisors(
@@ -85,7 +85,7 @@ function InsertProposal(props) {
 				);
 			})
 			.catch((err) => handleError(err));
-		API.getAllCds()
+		API.getAllCds(accessToken)
 			.then((cds) => {
 				setCds(
 					cds.map((cds) => {

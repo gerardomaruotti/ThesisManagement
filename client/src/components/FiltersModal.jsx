@@ -13,7 +13,10 @@ function FiltersModal(props) {
 	const [groups, setGroups] = useState([]);
 
 	useEffect(() => {
-		API.getAllKeywords()
+		if (props.accessToken == null) {
+			return;
+		}
+		API.getAllKeywords(props.accessToken)
 			.then((keywords) => {
 				setKeywords(
 					keywords.map((keyword) => {
@@ -21,8 +24,8 @@ function FiltersModal(props) {
 					})
 				);
 			})
-			.catch((err) => handleError(err));
-		API.getAllTypes()
+			.catch((err) => console.log(err));
+		API.getAllTypes(props.accessToken)
 			.then((types) => {
 				setTypes(
 					types.map((type) => {
@@ -30,8 +33,8 @@ function FiltersModal(props) {
 					})
 				);
 			})
-			.catch((err) => handleError(err));
-		API.getAllSupervisors()
+			.catch((err) => console.log(err));
+		API.getAllSupervisors(props.accessToken)
 			.then((supervisors) => {
 				setSupervisors(
 					supervisors.map((supervisor) => {
@@ -39,8 +42,8 @@ function FiltersModal(props) {
 					})
 				);
 			})
-			.catch((err) => handleError(err));
-		API.getAllGroups()
+			.catch((err) => console.log(err));
+		API.getAllGroups(props.accessToken)
 			.then((groups) => {
 				setGroups(
 					groups.map((group) => {
@@ -48,8 +51,8 @@ function FiltersModal(props) {
 					})
 				);
 			})
-			.catch((err) => handleError(err));
-	}, []);
+			.catch((err) => console.log(err));
+	}, [props.accessToken]);
 
 	useEffect(() => {
 		if (props.activatedFilters == false) {

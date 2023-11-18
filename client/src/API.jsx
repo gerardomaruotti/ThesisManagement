@@ -4,10 +4,14 @@
 
 const URL = 'http://localhost:3001/api';
 
-function getAllKeywords() {
+function getAllKeywords(accessToken) {
 	// call  /api/keywords
 	return new Promise((resolve, reject) => {
-		fetch(URL + '/keywords')
+		fetch(URL + '/keywords', {
+			headers: {
+				Authorization: `Bearer ${accessToken}`,
+			},
+		})
 			.then((response) => {
 				if (response.ok) {
 					response
@@ -71,10 +75,14 @@ function getAllThesis(accessToken, filters) {
 	});
 }
 
-function getAllTypes() {
+function getAllTypes(accessToken) {
 	// call  /api/types
 	return new Promise((resolve, reject) => {
-		fetch(URL + '/types')
+		fetch(URL + '/types', {
+			headers: {
+				Authorization: `Bearer ${accessToken}`,
+			},
+		})
 			.then((response) => {
 				if (response.ok) {
 					response
@@ -101,10 +109,14 @@ function getAllTypes() {
 	});
 }
 
-function getAllSupervisors() {
+function getAllSupervisors(accessToken) {
 	// call  /api/teachers
 	return new Promise((resolve, reject) => {
-		fetch(URL + '/teachers')
+		fetch(URL + '/teachers', {
+			headers: {
+				Authorization: `Bearer ${accessToken}`,
+			},
+		})
 			.then((response) => {
 				if (response.ok) {
 					response
@@ -131,10 +143,14 @@ function getAllSupervisors() {
 	});
 }
 
-function getAllCds() {
+function getAllCds(accessToken) {
 	// call  /api/teachers
 	return new Promise((resolve, reject) => {
-		fetch(URL + '/cds')
+		fetch(URL + '/cds', {
+			headers: {
+				Authorization: `Bearer ${accessToken}`,
+			},
+		})
 			.then((response) => {
 				if (response.ok) {
 					response
@@ -161,10 +177,14 @@ function getAllCds() {
 	});
 }
 
-function getAllGroups() {
+function getAllGroups(accessToken) {
 	// call  /api/groups
 	return new Promise((resolve, reject) => {
-		fetch(URL + '/groups')
+		fetch(URL + '/groups', {
+			headers: {
+				Authorization: `Bearer ${accessToken}`,
+			},
+		})
 			.then((response) => {
 				if (response.ok) {
 					response
