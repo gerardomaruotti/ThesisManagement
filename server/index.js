@@ -19,7 +19,7 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
-app.get('/api/keywords', (req, res) => {
+app.get('/api/keywords',  checkJwt, (req, res) => {
 	db.getKeywords()
 		.then((keywords) => res.status(200).json(keywords))
 		.catch((err) => {
@@ -37,7 +37,7 @@ app.get('/api/user', checkJwt, (req, res) => {
 		});
 });
 
-app.get('/api/types', (req, res) => {
+app.get('/api/types', checkJwt, (req, res) => {
 	db.getTypes()
 		.then((types) => res.status(200).json(types))
 		.catch((err) => {
@@ -46,7 +46,7 @@ app.get('/api/types', (req, res) => {
 		});
 });
 
-app.get('/api/teachers', (req, res) => {
+app.get('/api/teachers', checkJwt, (req, res) => {
 	db.getTeachers()
 		.then((teachers) => res.status(200).json(teachers))
 		.catch((err) => {
@@ -55,7 +55,7 @@ app.get('/api/teachers', (req, res) => {
 		});
 });
 
-app.get('/api/groups', (req, res) => {
+app.get('/api/groups', checkJwt, (req, res) => {
 	db.getGroups()
 		.then((groups) => res.status(200).json(groups))
 		.catch((err) => {
@@ -64,7 +64,7 @@ app.get('/api/groups', (req, res) => {
 		});
 });
 
-app.get('/api/cds', (req, res) => {
+app.get('/api/cds', checkJwt, (req, res) => {
 	db.getCdS()
 		.then((cds) => res.status(200).json(cds))
 		.catch((err) => {
@@ -221,7 +221,7 @@ app.post('/api/thesis', checkJwt, async (req, res) => {
 
 //gestione degli inserimenti nelle varie tabelle secondarie (keyword etc..)
 //GRUPPI --> aggiungo la tesi ai gruppi di cui fa parte il professore e tutti i co-supervisori che sono professori
-app.get('/api/thesis/:id/groups', async (req, res) => {
+app.get('/api/thesis/:id/groups', checkJwt, async (req, res) => {
 	const thesisID = req.params.id;
 
 	if (isNaN(thesisID) || thesisID <= 0) {
