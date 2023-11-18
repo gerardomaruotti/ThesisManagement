@@ -106,8 +106,8 @@ function Proposal(props) {
 														key={index}
 														className='badge'
 														style={{
-															backgroundColor: colors[index % 6].backgroundColor,
-															color: colors[index % 6].color,
+															backgroundColor: props.colorsKeywords[keyword] ? props.colorsKeywords[keyword].replace(/1(?=\))/, '0.1') : colors[index % 6].backgroundColor,
+															color: props.colorsKeywords[keyword] ? props.colorsKeywords[keyword] : colors[index % 6].color,
 															padding: '0.5em 1.2em',
 															borderRadius: '0.25rem',
 															marginRight: 10,

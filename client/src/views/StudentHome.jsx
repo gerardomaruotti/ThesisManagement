@@ -178,7 +178,13 @@ function StudentHome(props) {
 				<Row style={{ marginBottom: 25 }}>
 					{filteredThesis.length != 0 ? (
 						filteredThesis.sort((a, b) => b.count - a.count).map((thesis, index) => (
-							<ProposalCard key={thesis.ID} thesis={thesis} accessToken={props.accessToken} setPopup={setPopup} setMsgAndColor={setMsgAndColor} />
+							<ProposalCard
+								key={thesis.ID}
+								thesis={thesis}
+								accessToken={props.accessToken}
+								setPopup={setPopup}
+								setMsgAndColor={setMsgAndColor}
+								colorsKeywords={props.colorsKeywords} />
 						))
 					) : (
 						<Col style={{ marginTop: 25 }}>
