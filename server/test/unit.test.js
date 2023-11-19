@@ -193,7 +193,7 @@ describe('GET Thesis', () => {
         db.getThesisTeacher.mockResolvedValueOnce(thesis);
         db.getKeywordsbyId.mockResolvedValueOnce(["keyword1", "keyword2"]);
         db.getTypesbyId.mockResolvedValueOnce(["type1", "type2"]);
-        const res = await request(app).get('/api/thesis');
+        const res = await request(app).post('/api/thesis');
 
         expect(db.getRole).toHaveBeenCalledTimes(1);
         expect(db.getThesisTeacher).toHaveBeenCalledTimes(1);
@@ -244,7 +244,7 @@ describe('GET Thesis', () => {
         db.getThesisStudent.mockResolvedValueOnce(thesis);
         db.getKeywordsbyId.mockResolvedValueOnce(["keyword1", "keyword2"]);
         db.getTypesbyId.mockResolvedValueOnce(["type1", "type2"]);
-        const res = await request(app).get('/api/thesis');
+        const res = await request(app).post('/api/thesis');
 
         expect(db.getRole).toHaveBeenCalledTimes(1);
         expect(db.getThesisStudent).toHaveBeenCalledTimes(1);
@@ -314,7 +314,7 @@ describe('GET Thesis', () => {
         db.getThesisSupervisor.mockResolvedValueOnce("supervisor2");
         db.getGroup.mockResolvedValue(["group1", "group2"]);
         db.getThesisExpDate.mockResolvedValue("12/06/2024");
-        const res = await request(app).get('/api/thesis').send(body);
+        const res = await request(app).post('/api/thesis').send(body);
 
         expect(db.getRole).toHaveBeenCalledTimes(1);
         expect(db.getThesisStudent).toHaveBeenCalledTimes(1);
@@ -331,7 +331,7 @@ describe('GET Thesis', () => {
 
     test('should return a 500 error if error occurs', async () => {
         db.getRole.mockRejectedValueOnce(new Error('Internal server error'));
-        const res = await request(app).get('/api/thesis');
+        const res = await request(app).post('/api/thesis');
 
         expect(db.getRole).toHaveBeenCalledTimes(1);
         expect(db.getThesisStudent).toHaveBeenCalledTimes(0);
