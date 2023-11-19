@@ -1,0 +1,18 @@
+version: "3.9"
+
+services:
+  server:
+    build: 
+      context: ./server
+      dockerfile: server.Dockerfile
+    volumes:
+      - ./server:/server
+    ports:
+      - "3001:3001"
+      
+  test:
+    build:
+      context: ./server
+      dockerfile: test.Dockerfile
+    depends_on:
+      - server
