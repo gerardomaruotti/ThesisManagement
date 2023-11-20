@@ -89,4 +89,4 @@ Before starting the process described below, download [Docker Desktop](https://w
 - `server-1` is the container that holds the node.js application
 - to test changes in the code directly on Docker, all the images present in the container on `Docker Desktop` must be stopped before executing `docker compose build` and `docker compose -p thesismanagement up` again
 - the two commands must be launched together in this exact order after code changes, or the images will not be built with the new code
-- ensure that ports xxxx and 3001 are free before executing `docker compose -p thesismanagement up` with `docker ps`
+- ensure that ports 5173 and 3001 are free before executing `docker compose -p thesismanagement up` with `docker ps`
