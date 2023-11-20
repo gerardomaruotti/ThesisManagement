@@ -76,6 +76,7 @@ app.post('/api/thesis', checkJwt, async (req, res) => {
 	try {
 		//searching for the role of the user authenticated
 		let getRole = await db.getRole(req.auth);
+	
 		if (getRole.role == 'teacher') {
 			//if it is student we search for the thesis related to his COD_DEGREE
 			let thesis = await db.getThesisTeacher(getRole.id);

@@ -292,7 +292,7 @@ exports.getGroup = (idThesis) => {
 
 exports.getRole = (auth0) => {
   return new Promise((resolve, reject) => {
-    const sql = 'SELECT * FROM STUD_AUTH0 WHERE ID_AUTH0=? ';
+    const sql = 'SELECT S.ID AS ID, S.NAME AS NAME, S.SURNAME AS SURNAME, S.EMAIL AS EMAIL FROM STUD_AUTH0 SA JOIN STUDENT S ON S.ID == SA.ID  WHERE ID_AUTH0=? ';
     db.get(sql, [auth0.payload.sub], (err, elem) => {
       if (err) {
         reject(err);
@@ -300,9 +300,9 @@ exports.getRole = (auth0) => {
       }
       else {
         if (elem != undefined)
-          resolve({ "role": "student", "id": elem.ID })
+          resolve({ "role": "student", "id": elem.ID, "name":elem.NAME, "surname": elem.SURNAME, "email": elem.EMAIL})
         else {
-          const sql2 = 'SELECT * FROM TEACHER_AUTH0 WHERE ID_AUTH0=? ';
+          const sql2 = 'SELECT T.ID AS ID, T.NAME AS NAME, T.SURNAME AS SURNAME, T.EMAIL AS EMAIL FROM TEACHER T JOIN TEACHER_AUTH0 TA ON T.ID == TA.ID WHERE ID_AUTH0=? ';
           db.get(sql2, [auth0.payload.sub], (err, elem) => {
             if (err) {
               reject(err);
@@ -310,7 +310,7 @@ exports.getRole = (auth0) => {
             }
             else {
               if (elem != undefined)
-                resolve({ "role": "teacher", "id": elem.ID })
+                resolve({ "role": "teacher", "id": elem.ID , "name":elem.NAME, "surname": elem.SURNAME, "email": elem.EMAIL})
               else
                 resolve({})//non ritorna nulla se non è autenticato, ma qua non entra
             }
