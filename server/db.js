@@ -507,3 +507,53 @@ exports.insertProposal = (userId, idThesis) => {
     });
   });
 }
+
+exports.getTeacherApplications = (teacherId) => {
+  return new Promise((resolve, reject) => {
+    const sql = 'SELECT ID_THESIS,TITLE,EXPIRATION_DATE,LEVEL, DEGREE, STUDENT FROM THESIS T, TEACHER TE, THESIS_PROPOSAL TP WHERE T.SUPERVISOR=TE.ID AND T.ID_THESIS=TP.THESIS AND TE.ID=? AND TP.STATE = 0';
+    db.all(sql, [teacherId], (err,rows) => {
+      if (err) {
+        reject(err);
+        return;
+      } else{
+        const applications=rows.map((elem)=>({
+          id: elem.ID_THESIS,
+          title: elem.TITLE,
+          expirationDate: elem.EXPIRATION_DATE,
+          level: elem.LEVEL,
+          degree: elem.DEGREE,
+          student: elem.STUDENT
+        }));
+
+        resolve(applications)
+      }
+      
+    });
+  });
+}
+
+
+exports.getStudentApplications = (studentId) => {
+  return new Promise((resolve, reject) => {
+    const sql = 'SELECT ID_THESIS,TITLE,EXPIRATION_DATE,LEVEL, DEGREE, SUPERVISOR, STATE FROM THESIS T, STUDENT S, THESIS_PROPOSAL TP WHERE TP.STUDENT=S.ID AND T.ID_THESIS=TP.THESIS AND S.ID=?';
+    db.all(sql, [studentId], (err,rows) => {
+      if (err) {
+        reject(err);
+        return;
+      } else{
+        const applications=rows.map((elem)=>({
+          id: elem.ID_THESIS,
+          title: elem.TITLE,
+          expirationDate: elem.EXPIRATION_DATE,
+          level: elem.LEVEL,
+          degree: elem.DEGREE,
+          supervisor: elem.SUPERVISOR,
+          state: elem.STATE
+        }));
+
+        resolve(applications)
+      }
+      
+    });
+  });
+}

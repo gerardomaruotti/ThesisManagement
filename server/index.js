@@ -347,4 +347,28 @@ app.post('/api/thesis/:id/proposal', checkJwt, async (req, res) => {
 	}
 });
 
+
+app.get('/api/thesis/applications/browse', checkJwt, async(req,res)=> {
+
+	try{
+		const userRole=await db.getRole(req.auth);
+		if(userRole.role == "teacher"){
+			const applications=await db.getTeacherApplications(userRole.id);
+			return res.status(200).json(applications);
+		} else{
+			if(userRole.role == "student"){
+				const applications=await db.getStudentApplications(userRole.id);
+				return res.status(200).json(applications)
+			}
+		}
+
+		return res.status(401).json("Unauthorized")
+	} catch(err){
+		res.status(503).json({error: "GetApplications error"})
+	}
+
+
+
+})
+
 module.exports = { app, port, checkJwt };
