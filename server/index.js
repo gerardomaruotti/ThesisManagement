@@ -362,7 +362,7 @@ app.get('/api/thesis/applications/browse', checkJwt, async(req,res)=> {
 			}
 		}
 
-		return res.status(401).json("Unauthorized")
+		return res.status(401).json({ error: 'Unauthorized user' })
 	} catch(err){
 		res.status(503).json({error: "GetApplications error"})
 	}

@@ -916,3 +916,105 @@ describe('Apply for Proposal', () => {
     
       });
 });
+
+describe('GET Theacher and Student Application', () => {
+    test('should get the applications by teacher', async () => {
+        const user = {
+            role: "teacher",
+            id: "1"
+        }
+        const applications = [
+            {
+                id: 1,
+                title: "title1",
+                expirationDate: "12/04/2024",
+                level: "level1",
+                degree: "degree1",
+                student: "student1",
+            },
+            {
+                id: 2,
+                title: "title2",
+                expirationDate: "12/06/2024",
+                level: "level2",
+                degree: "degree2",
+                student: "student2",
+            }
+        ];
+
+        db.getRole.mockResolvedValueOnce(user);
+        db.getTeacherApplications.mockResolvedValueOnce(applications);
+
+        const res = await request(app).get('/api/thesis/applications/browse');
+        expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.getTeacherApplications).toHaveBeenCalledTimes(1);
+        expect(db.getTeacherApplications).toHaveBeenCalledWith(user.id);
+        expect(res.status).toBe(200);
+        expect(res.body).toEqual(applications);
+
+    });
+
+    test('should get the applications by student', async () => {
+        const user = {
+            role: "student",
+            id: "1"
+        }
+        const applications = [
+            {
+                id: 1,
+                title: "title1",
+                expirationDate: "12/04/2024",
+                level: "level1",
+                degree: "degree1",
+                supervisor: "supervisor1",
+                state: 1,
+            },
+            {
+                id: 2,
+                title: "title2",
+                expirationDate: "12/06/2024",
+                level: "level2",
+                degree: "degree2",
+                supervisor: "supervisor2",
+                state: 3,
+            }
+        ];
+
+        db.getRole.mockResolvedValueOnce(user);
+        db.getStudentApplications.mockResolvedValueOnce(applications);
+
+        const res = await request(app).get('/api/thesis/applications/browse');
+
+        expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.getStudentApplications).toHaveBeenCalledTimes(1);
+        expect(db.getStudentApplications).toHaveBeenCalledWith(user.id);
+        expect(res.status).toBe(200);
+        expect(res.body).toEqual(applications);
+
+    });
+
+    test('should return a 401 error when user is unauthorized', async () => {  
+        const user = {
+            role: "example",
+            id: "1"
+        }
+
+        db.getRole.mockResolvedValueOnce(user);
+        const res = await request(app).get('/api/thesis/applications/browse');
+    
+        expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(res.status).toBe(401);
+        expect(res.body).toEqual({ error: 'Unauthorized user' });
+    
+    });
+
+    test('should return a 503 error when an error occurs', async () => {
+        db.getRole.mockRejectedValueOnce(new Error('Internal server error'));
+        const res = await request(app).get('/api/thesis/applications/browse');
+    
+        expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(res.status).toBe(503);
+        expect(res.body).toEqual({ error: "GetApplications error" });
+    
+    });
+});
