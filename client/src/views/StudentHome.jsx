@@ -76,12 +76,6 @@ function StudentHome(props) {
 		setFilteredThesis(props.thesis);
 	}, [props.thesis]);
 
-	useEffect(() => {
-		if (!isAuthenticated && !isLoading) {
-			loginWithRedirect();
-		}
-	}, [isAuthenticated, isLoading]);
-
 	function resetFilters() {
 		API.getAllThesis(props.accessToken)
 			.then((thesis) => {
@@ -141,7 +135,9 @@ function StudentHome(props) {
 						</Col>
 						<Col sm={2}>
 							{props.activatedFilters ? (
-								<Button variant="outline-secondary" style={{ borderRadius: 50, float: 'right', width: 150 }} onClick={resetFilters}>Reset filters</Button>
+								<Button variant='outline-secondary' style={{ borderRadius: 50, float: 'right', width: 150 }} onClick={resetFilters}>
+									Reset filters
+								</Button>
 							) : null}
 						</Col>
 						<Col sm={2}>
@@ -177,15 +173,11 @@ function StudentHome(props) {
 			<Container>
 				<Row style={{ marginBottom: 25 }}>
 					{filteredThesis.length != 0 ? (
-						filteredThesis.sort((a, b) => b.count - a.count).map((thesis, index) => (
-							<ProposalCard
-								key={thesis.ID}
-								thesis={thesis}
-								accessToken={props.accessToken}
-								setPopup={setPopup}
-								setMsgAndColor={setMsgAndColor}
-							/>
-						))
+						filteredThesis
+							.sort((a, b) => b.count - a.count)
+							.map((thesis, index) => (
+								<ProposalCard key={thesis.ID} thesis={thesis} accessToken={props.accessToken} setPopup={setPopup} setMsgAndColor={setMsgAndColor} />
+							))
 					) : (
 						<Col style={{ marginTop: 25 }}>
 							<p>No thesis to display</p>

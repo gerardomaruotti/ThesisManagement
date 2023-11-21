@@ -10,9 +10,10 @@ import InsertProposal from './views/InsertProposal';
 import Proposal from './views/Proposal';
 import NotFound from './views/NotFound.jsx';
 import API from './API.jsx';
+import { useLoading } from './LoadingContext.jsx';
 
 function App() {
-	const { user, isAuthenticated, getAccessTokenSilently, loginWithRedirect } = useAuth0();
+	const { user, isAuthenticated, getAccessTokenSilently, isLoading, loginWithRedirect } = useAuth0();
 	const [title, setTitle] = useState('');
 	const [requiredKnowledge, setRequiredKnowledge] = useState('');
 	const [description, setDescription] = useState('');
@@ -29,6 +30,9 @@ function App() {
 	const [accessToken, setAccessToken] = useState(null);
 	const [dirty, setDirty] = useState(false);
 	const [isProfessor, setIsProfessor] = useState(false);
+	const [isStudent, setIsStudent] = useState(false);
+
+	const { loading, setLoading } = useLoading();
 
 	// Filters
 	const [activatedFilters, setActivatedFilters] = useState(false);
@@ -39,7 +43,6 @@ function App() {
 	const [selectedGroups, setSelectedGroups] = useState([]);
 	const [expirationDate2, setExpirationDate2] = useState('all');
 
-
 	function handleError(err) {
 		console.log(err);
 	}
@@ -47,6 +50,7 @@ function App() {
 	useEffect(() => {
 		const getUserMetadata = async () => {
 			try {
+				setLoading(true);
 				const accessToken = await getAccessTokenSilently({
 					authorizationParams: {
 						audience: `https://thesismanagement.eu.auth0.com/api/v2/`,
@@ -57,19 +61,22 @@ function App() {
 				API.getUser(accessToken)
 					.then((user) => {
 						setUserData(user);
+						// console.log(user);
 						if (user.role === 'student') {
 							setIsProfessor(false);
+							setIsStudent(true);
 						} else if (user.role === 'teacher') {
 							setIsProfessor(true);
+							setIsStudent(false);
 						}
 					})
 					.catch((err) => handleError(err));
-
 				API.getAllThesis(accessToken)
 					.then((thesis) => {
 						setThesis(thesis);
 					})
-					.catch((err) => handleError(err));
+					.catch((err) => handleError(err))
+					.finally(() => setLoading(false));
 			} catch (e) {
 				console.log(e.message);
 			}
@@ -78,76 +85,87 @@ function App() {
 			getUserMetadata();
 			setDirty(false);
 		}
-	}, [isAuthenticated, getAccessTokenSilently, user?.sub, dirty]);
+	}, [isAuthenticated, getAccessTokenSilently, user?.sub, dirty, setLoading]);
+
+	useEffect(() => {
+		if (!isAuthenticated && !isLoading) {
+			loginWithRedirect();
+		}
+	}, [isAuthenticated, isLoading]);
 
 	return (
 		<BrowserRouter>
 			<Header />
-			<Routes>
-				<Route
-					path='/'
-					element={
-						isProfessor ? (
-							<ProfessorHome
-								thesis={thesis} />
-						) : (
-							<StudentHome
-								isProfessor={isProfessor}
-								thesis={thesis}
-								setThesis={setThesis}
+			{loading ? (
+				<div />
+			) : (
+				<Routes>
+					<Route
+						path='/'
+						element={
+							isProfessor ? (
+								<ProfessorHome thesis={thesis} />
+							) : isStudent ? (
+								<StudentHome
+									isProfessor={isProfessor}
+									thesis={thesis}
+									setThesis={setThesis}
+									accessToken={accessToken}
+									activatedFilters={activatedFilters}
+									setActivatedFilters={setActivatedFilters}
+									selectedSupervisor={selectedSupervisor}
+									setSelectedSupervisor={setSelectedSupervisor}
+									selectedCoSupervisors={selectedCoSupervisors}
+									setSelectedCoSupervisors={setSelectedCoSupervisors}
+									selectedKeywords={selectedKeywords}
+									setSelectedKeywords={setSelectedKeywords}
+									selectedTypes={selectedTypes}
+									setSelectedTypes={setSelectedTypes}
+									selectedGroups={selectedGroups}
+									setSelectedGroups={setSelectedGroups}
+									expirationDate={expirationDate2}
+									setExpirationDate={setExpirationDate2}
+								/>
+							) : (
+								<div />
+							)
+						}
+					/>
+					<Route path='/proposal/:id' element={<Proposal accessToken={accessToken} isProfessor={isProfessor} />} />
+					<Route
+						path='/proposals/add'
+						element={
+							<InsertProposal
+								title={title}
+								setTitle={setTitle}
+								requiredKnowledge={requiredKnowledge}
+								setRequiredKnowledge={setRequiredKnowledge}
+								description={description}
+								setDescription={setDescription}
+								notes={notes}
+								setNotes={setNotes}
+								keywords={keywords}
+								setKeywords={setKeywords}
+								supervisor={supervisor}
+								setSupervisor={setSupervisor}
+								coSupervisors={coSupervisors}
+								setCoSupervisors={setCoSupervisors}
+								level={level}
+								setLevel={setLevel}
+								cds={cds}
+								setCds={setCds}
+								type={type}
+								setType={setType}
+								expirationDate={expirationDate}
+								setExpirationDate={setExpirationDate}
 								accessToken={accessToken}
-								activatedFilters={activatedFilters}
-								setActivatedFilters={setActivatedFilters}
-								selectedSupervisor={selectedSupervisor}
-								setSelectedSupervisor={setSelectedSupervisor}
-								selectedCoSupervisors={selectedCoSupervisors}
-								setSelectedCoSupervisors={setSelectedCoSupervisors}
-								selectedKeywords={selectedKeywords}
-								setSelectedKeywords={setSelectedKeywords}
-								selectedTypes={selectedTypes}
-								setSelectedTypes={setSelectedTypes}
-								selectedGroups={selectedGroups}
-								setSelectedGroups={setSelectedGroups}
-								expirationDate={expirationDate2}
-								setExpirationDate={setExpirationDate2}
+								setDirty={setDirty}
 							/>
-						)
-					}
-				/>
-				<Route path='/proposal/:id' element={<Proposal accessToken={accessToken} isProfessor={isProfessor} />} />
-				<Route
-					path='/proposals/add'
-					element={
-						<InsertProposal
-							title={title}
-							setTitle={setTitle}
-							requiredKnowledge={requiredKnowledge}
-							setRequiredKnowledge={setRequiredKnowledge}
-							description={description}
-							setDescription={setDescription}
-							notes={notes}
-							setNotes={setNotes}
-							keywords={keywords}
-							setKeywords={setKeywords}
-							supervisor={supervisor}
-							setSupervisor={setSupervisor}
-							coSupervisors={coSupervisors}
-							setCoSupervisors={setCoSupervisors}
-							level={level}
-							setLevel={setLevel}
-							cds={cds}
-							setCds={setCds}
-							type={type}
-							setType={setType}
-							expirationDate={expirationDate}
-							setExpirationDate={setExpirationDate}
-							accessToken={accessToken}
-							setDirty={setDirty}
-						/>
-					}
-				/>
-				<Route path='/*' element={<NotFound />} />
-			</Routes>
+						}
+					/>
+					<Route path='/*' element={<NotFound />} />
+				</Routes>
+			)}
 		</BrowserRouter>
 	);
 }
