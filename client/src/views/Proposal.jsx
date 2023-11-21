@@ -6,8 +6,10 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import API from '../API.jsx';
 import randomcolor from 'randomcolor';
+import { useLoading } from '../LoadingContext.jsx';
 
 function Proposal(props) {
+	const { setLoading } = useLoading();
 	const navigate = useNavigate();
 	const [thesis, setThesis] = useState(null);
 	const [popup, setPopup] = useState(false);
@@ -86,7 +88,10 @@ function Proposal(props) {
 														key={index}
 														className='badge'
 														style={{
-															backgroundColor: randomcolor({ seed: keyword, luminosity: 'bright', format: 'rgba', alpha: 1 }).replace(/1(?=\))/, '0.1'),
+															backgroundColor: randomcolor({ seed: keyword, luminosity: 'bright', format: 'rgba', alpha: 1 }).replace(
+																/1(?=\))/,
+																'0.1'
+															),
 															color: randomcolor({ seed: keyword, luminosity: 'bright', format: 'rgba', alpha: 1 }),
 															padding: '0.5em 1.2em',
 															borderRadius: '0.25rem',
@@ -237,7 +242,7 @@ function Proposal(props) {
 						</Col>
 					</Row>
 				)}
-			</Container >
+			</Container>
 
 			<Offcanvas show={showDetails} onHide={handleClose}>
 				<Offcanvas.Header closeButton>

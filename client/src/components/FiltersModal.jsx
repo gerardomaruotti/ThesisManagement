@@ -5,8 +5,10 @@ import { colorStyles } from '../constants/colors.js';
 import { useEffect, useState } from 'react';
 import API from '../API.jsx';
 import dayjs from 'dayjs';
+import { useLoading } from '../LoadingContext.jsx';
 
 function FiltersModal(props) {
+	const { loading, setLoading } = useLoading();
 	const [keywords, setKeywords] = useState([]);
 	const [types, setTypes] = useState([]);
 	const [supervisors, setSupervisors] = useState([]);
@@ -106,14 +108,11 @@ function FiltersModal(props) {
 		let today = dayjs();
 		if (props.expirationDate === 'all') {
 			today = undefined;
-		}
-		else if (props.expirationDate === 'thisWeek') {
+		} else if (props.expirationDate === 'thisWeek') {
 			today = today.add(1, 'week');
-		}
-		else if (props.expirationDate === 'thisMonth') {
+		} else if (props.expirationDate === 'thisMonth') {
 			today = today.add(1, 'month');
-		}
-		else if (props.expirationDate === 'thisYear') {
+		} else if (props.expirationDate === 'thisYear') {
 			today = today.add(1, 'year');
 		}
 		let body = {
@@ -127,16 +126,17 @@ function FiltersModal(props) {
 			},
 		};
 
+		setLoading(true);
 		API.getAllThesis(props.accessToken, body)
 			.then((thesis) => {
 				props.setThesis(thesis);
 			})
 			.catch((err) => {
 				console.log(err);
-			});
+			})
+			.finally(() => setLoading(false));
 		props.onHide();
 		props.setActivatedFilters(true);
-
 	}
 
 	return (
