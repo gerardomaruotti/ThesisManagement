@@ -9,6 +9,7 @@ import ProfessorHome from './views/ProfessorHome';
 import InsertProposal from './views/InsertProposal';
 import Proposal from './views/Proposal';
 import NotFound from './views/NotFound.jsx';
+import Loading from './components/Loading.jsx';
 import API from './API.jsx';
 import { useLoading } from './LoadingContext.jsx';
 
@@ -97,7 +98,7 @@ function App() {
 		<BrowserRouter>
 			<Header />
 			{loading ? (
-				<div />
+				<Loading />
 			) : (
 				<Routes>
 					<Route
@@ -126,9 +127,7 @@ function App() {
 									expirationDate={expirationDate2}
 									setExpirationDate={setExpirationDate2}
 								/>
-							) : (
-								<div />
-							)
+							) : null
 						}
 					/>
 					<Route path='/proposal/:id' element={<Proposal accessToken={accessToken} isProfessor={isProfessor} />} />

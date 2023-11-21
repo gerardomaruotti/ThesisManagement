@@ -7,10 +7,12 @@ import FiltersModal from '../components/FiltersModal.jsx';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth0 } from '@auth0/auth0-react';
+import { useLoading } from '../LoadingContext.jsx';
 import API from '../API.jsx';
 
 function StudentHome(props) {
 	const { loginWithRedirect, isAuthenticated, isLoading } = useAuth0();
+	const { loading, setLoading } = useLoading();
 	const [filtersShow, setFiltersShow] = useState(false);
 	const navigate = useNavigate();
 	const [popup, setPopup] = useState(false);
@@ -76,23 +78,27 @@ function StudentHome(props) {
 		setFilteredThesis(props.thesis);
 	}, [props.thesis]);
 
+	useEffect(() => {
+		if (!isAuthenticated && !isLoading) {
+			loginWithRedirect();
+		}
+	}, [isAuthenticated, isLoading]);
+
 	function resetFilters() {
+		setLoading(true);
 		API.getAllThesis(props.accessToken)
 			.then((thesis) => {
 				props.setThesis(thesis);
 			})
 			.catch((err) => {
 				console.log(err);
+			})
+			.finally(() => {
+				setLoading(false);
 			});
 		props.setActivatedFilters(false);
 		setRapidFilter('all');
 	}
-
-	// useEffect(() => {
-	// 	if (props.isProfessor) {
-	// 		navigate('/professor');
-	// 	}
-	// }, [props.isProfessor]);
 
 	return (
 		<>
