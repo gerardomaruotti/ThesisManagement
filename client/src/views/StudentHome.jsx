@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth0 } from '@auth0/auth0-react';
 import { useLoading } from '../LoadingContext.jsx';
 import API from '../API.jsx';
+import Loading from '../components/Loading.jsx';
 
 function StudentHome(props) {
 	const { loginWithRedirect, isAuthenticated, isLoading } = useAuth0();
@@ -100,7 +101,9 @@ function StudentHome(props) {
 		setRapidFilter('all');
 	}
 
-	return (
+	return loading ? (
+		<Loading />
+	) : (
 		<>
 			<div style={{ position: 'sticky', top: 0, zIndex: 2, backgroundColor: 'white', boxShadow: '0 4px 2px -2px rgba(0, 0, 0, 0.2)' }}>
 				<Container>

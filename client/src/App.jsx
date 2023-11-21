@@ -9,7 +9,6 @@ import ProfessorHome from './views/ProfessorHome';
 import InsertProposal from './views/InsertProposal';
 import Proposal from './views/Proposal';
 import NotFound from './views/NotFound.jsx';
-import Loading from './components/Loading.jsx';
 import API from './API.jsx';
 import { useLoading } from './LoadingContext.jsx';
 
@@ -33,7 +32,7 @@ function App() {
 	const [isProfessor, setIsProfessor] = useState(false);
 	const [isStudent, setIsStudent] = useState(false);
 
-	const { loading, setLoading } = useLoading();
+	const { setLoading } = useLoading();
 
 	// Filters
 	const [activatedFilters, setActivatedFilters] = useState(false);
@@ -97,74 +96,74 @@ function App() {
 	return (
 		<BrowserRouter>
 			<Header />
-			{loading ? (
+			{/* {loading ? (
 				<Loading />
-			) : (
-				<Routes>
-					<Route
-						path='/'
-						element={
-							isProfessor ? (
-								<ProfessorHome thesis={thesis} />
-							) : isStudent ? (
-								<StudentHome
-									isProfessor={isProfessor}
-									thesis={thesis}
-									setThesis={setThesis}
-									accessToken={accessToken}
-									activatedFilters={activatedFilters}
-									setActivatedFilters={setActivatedFilters}
-									selectedSupervisor={selectedSupervisor}
-									setSelectedSupervisor={setSelectedSupervisor}
-									selectedCoSupervisors={selectedCoSupervisors}
-									setSelectedCoSupervisors={setSelectedCoSupervisors}
-									selectedKeywords={selectedKeywords}
-									setSelectedKeywords={setSelectedKeywords}
-									selectedTypes={selectedTypes}
-									setSelectedTypes={setSelectedTypes}
-									selectedGroups={selectedGroups}
-									setSelectedGroups={setSelectedGroups}
-									expirationDate={expirationDate2}
-									setExpirationDate={setExpirationDate2}
-								/>
-							) : null
-						}
-					/>
-					<Route path='/proposal/:id' element={<Proposal accessToken={accessToken} isProfessor={isProfessor} />} />
-					<Route
-						path='/proposals/add'
-						element={
-							<InsertProposal
-								title={title}
-								setTitle={setTitle}
-								requiredKnowledge={requiredKnowledge}
-								setRequiredKnowledge={setRequiredKnowledge}
-								description={description}
-								setDescription={setDescription}
-								notes={notes}
-								setNotes={setNotes}
-								keywords={keywords}
-								setKeywords={setKeywords}
-								supervisor={supervisor}
-								setSupervisor={setSupervisor}
-								coSupervisors={coSupervisors}
-								setCoSupervisors={setCoSupervisors}
-								level={level}
-								setLevel={setLevel}
-								cds={cds}
-								setCds={setCds}
-								type={type}
-								setType={setType}
-								expirationDate={expirationDate}
-								setExpirationDate={setExpirationDate}
+			) : ( */}
+			<Routes>
+				<Route
+					path='/'
+					element={
+						isProfessor ? (
+							<ProfessorHome thesis={thesis} />
+						) : isStudent ? (
+							<StudentHome
+								isProfessor={isProfessor}
+								thesis={thesis}
+								setThesis={setThesis}
 								accessToken={accessToken}
-								setDirty={setDirty}
+								activatedFilters={activatedFilters}
+								setActivatedFilters={setActivatedFilters}
+								selectedSupervisor={selectedSupervisor}
+								setSelectedSupervisor={setSelectedSupervisor}
+								selectedCoSupervisors={selectedCoSupervisors}
+								setSelectedCoSupervisors={setSelectedCoSupervisors}
+								selectedKeywords={selectedKeywords}
+								setSelectedKeywords={setSelectedKeywords}
+								selectedTypes={selectedTypes}
+								setSelectedTypes={setSelectedTypes}
+								selectedGroups={selectedGroups}
+								setSelectedGroups={setSelectedGroups}
+								expirationDate={expirationDate2}
+								setExpirationDate={setExpirationDate2}
 							/>
-						}
-					/>
-					<Route path='/*' element={<NotFound />} />
-				</Routes>
-			)}
+						) : null
+					}
+				/>
+				<Route path='/proposal/:id' element={<Proposal accessToken={accessToken} isProfessor={isProfessor} />} />
+				<Route
+					path='/proposals/add'
+					element={
+						<InsertProposal
+							title={title}
+							setTitle={setTitle}
+							requiredKnowledge={requiredKnowledge}
+							setRequiredKnowledge={setRequiredKnowledge}
+							description={description}
+							setDescription={setDescription}
+							notes={notes}
+							setNotes={setNotes}
+							keywords={keywords}
+							setKeywords={setKeywords}
+							supervisor={supervisor}
+							setSupervisor={setSupervisor}
+							coSupervisors={coSupervisors}
+							setCoSupervisors={setCoSupervisors}
+							level={level}
+							setLevel={setLevel}
+							cds={cds}
+							setCds={setCds}
+							type={type}
+							setType={setType}
+							expirationDate={expirationDate}
+							setExpirationDate={setExpirationDate}
+							accessToken={accessToken}
+							setDirty={setDirty}
+						/>
+					}
+				/>
+				<Route path='/*' element={<NotFound />} />
+			</Routes>
+			{/* )} */}
 		</BrowserRouter>
 	);
 }

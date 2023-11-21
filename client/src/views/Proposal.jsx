@@ -7,9 +7,10 @@ import { useEffect, useState } from 'react';
 import API from '../API.jsx';
 import randomcolor from 'randomcolor';
 import { useLoading } from '../LoadingContext.jsx';
+import Loading from '../components/Loading.jsx';
 
 function Proposal(props) {
-	const { setLoading } = useLoading();
+	const { loading, setLoading } = useLoading();
 	const navigate = useNavigate();
 	const [thesis, setThesis] = useState(null);
 	const [popup, setPopup] = useState(false);
@@ -22,12 +23,16 @@ function Proposal(props) {
 
 	useEffect(() => {
 		if (props.accessToken != null) {
+			setLoading(true);
 			API.getThesisByID(id, props.accessToken)
 				.then((thesis) => {
 					setThesis(thesis);
 				})
 				.catch((err) => {
 					console.log(err);
+				})
+				.finally(() => {
+					setLoading(false);
 				});
 		}
 	}, [props.accessToken]);
@@ -48,12 +53,14 @@ function Proposal(props) {
 			});
 	}
 
-	return (
+	return loading ? (
+		<Loading />
+	) : (
 		<>
 			<Container style={{ marginTop: 25, marginBottom: 25 }}>
 				{thesis == null ? null : (
 					<Row>
-						<Col md={4} className="d-none d-md-flex">
+						<Col md={4} className='d-none d-md-flex'>
 							<Card style={{ padding: 20, paddingBottom: 30, position: 'sticky', top: 25 }} className='custom-card'>
 								<Row>
 									<Col md={12}>
@@ -195,12 +202,7 @@ function Proposal(props) {
 							<Card style={{ padding: 20 }} className='custom-card'>
 								<Row>
 									<Col className='d-flex align-items-center d-none d-md-flex'>
-										<Button
-											variant='outline-primary'
-											style={{ borderRadius: 50, width: 75 }}
-											onClick={() => navigate('/')
-											}
-										>
+										<Button variant='outline-primary' style={{ borderRadius: 50, width: 75 }} onClick={() => navigate('/')}>
 											<i className='bi bi-arrow-left'></i>
 										</Button>
 									</Col>
@@ -231,10 +233,7 @@ function Proposal(props) {
 									</Row>
 								)}
 								<Col className='d-md-none' style={{ textAlign: 'center', marginTop: 20 }}>
-									<Button
-										variant='primary'
-										onClick={handleShow}
-									>
+									<Button variant='primary' onClick={handleShow}>
 										Show more details
 									</Button>
 								</Col>
