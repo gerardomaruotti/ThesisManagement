@@ -80,7 +80,6 @@ app.post('/api/thesis', checkJwt, async (req, res) => {
 		if (getRole.role == 'teacher') {
 			//if it is student we search for the thesis related to his COD_DEGREE
 			let thesis = await db.getThesisTeacher(getRole.id);
-
 			for (let i = 0; i < thesis.length; i++) {
 				let keywords = await db.getKeywordsbyId(thesis[i].ID);
 				thesis[i].keywords = keywords;

@@ -323,7 +323,7 @@ exports.getRole = (auth0) => {
 
 exports.getThesisTeacher = (ID) => {
   return new Promise((resolve, reject) => {
-    const sql = 'SELECT DISTINCT T.ID_THESIS as ID, T.TITLE AS title, T.NOTES as notes, T.DESCRIPTION AS description , T.REQUIRED_KNOWLEDGE AS req_know, TE.NAME AS sup_name, TE.SURNAME AS sup_surname FROM THESIS T JOIN TEACHER TE ON T.SUPERVISOR == TE.ID WHERE TE.ID = ?';
+    const sql = 'SELECT DISTINCT T.ID_THESIS as ID, TS.STATE AS status,  T.TITLE AS title, T.NOTES as notes, T.DESCRIPTION AS description , T.REQUIRED_KNOWLEDGE AS req_know, TE.NAME AS sup_name, TE.SURNAME AS sup_surname FROM THESIS T JOIN TEACHER TE ON T.SUPERVISOR == TE.ID JOIN THESIS_STATUS TS ON TS.THESIS == T.ID_THESIS WHERE TE.ID = ? ';
     db.all(sql, [ID], (err, rows) => {
       if (err) {
         reject(err);
@@ -339,6 +339,7 @@ exports.getThesisTeacher = (ID) => {
             sup_name: elem.sup_name,
             sup_surname: elem.sup_surname,
             notes: elem.notes,
+            status : elem.status,
             count: 0,
             keywords: []
           }))
