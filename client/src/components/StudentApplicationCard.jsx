@@ -161,8 +161,8 @@ function StudentApplicationCard(props) {
 									<span
 										className='badge'
 										style={{
-											backgroundColor: 'rgba(230, 120, 43, 0.1)',
-											color: 'rgba(230, 120, 43)',
+											backgroundColor: 'rgba(89, 56, 80, 0.1)',
+											color: 'rgba(89, 56, 80)',
 											padding: '1em 1em',
 											borderRadius: '0.25rem',
 										}}
