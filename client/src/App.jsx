@@ -11,6 +11,7 @@ import Proposal from './views/Proposal';
 import NotFound from './views/NotFound.jsx';
 import API from './API.jsx';
 import { useLoading } from './LoadingContext.jsx';
+import Applications from './views/Applications';
 
 function App() {
 	const { user, isAuthenticated, getAccessTokenSilently, isLoading, loginWithRedirect } = useAuth0();
@@ -95,7 +96,7 @@ function App() {
 
 	return (
 		<BrowserRouter>
-			<Header />
+			<Header userData={userData} />
 			{/* {loading ? (
 				<Loading />
 			) : ( */}
@@ -133,34 +134,38 @@ function App() {
 				<Route
 					path='/proposals/add'
 					element={
-						<InsertProposal
-							title={title}
-							setTitle={setTitle}
-							requiredKnowledge={requiredKnowledge}
-							setRequiredKnowledge={setRequiredKnowledge}
-							description={description}
-							setDescription={setDescription}
-							notes={notes}
-							setNotes={setNotes}
-							keywords={keywords}
-							setKeywords={setKeywords}
-							supervisor={supervisor}
-							setSupervisor={setSupervisor}
-							coSupervisors={coSupervisors}
-							setCoSupervisors={setCoSupervisors}
-							level={level}
-							setLevel={setLevel}
-							cds={cds}
-							setCds={setCds}
-							type={type}
-							setType={setType}
-							expirationDate={expirationDate}
-							setExpirationDate={setExpirationDate}
-							accessToken={accessToken}
-							setDirty={setDirty}
-						/>
+						isProfessor ? (
+							<InsertProposal
+								title={title}
+								setTitle={setTitle}
+								requiredKnowledge={requiredKnowledge}
+								setRequiredKnowledge={setRequiredKnowledge}
+								description={description}
+								setDescription={setDescription}
+								notes={notes}
+								setNotes={setNotes}
+								keywords={keywords}
+								setKeywords={setKeywords}
+								supervisor={supervisor}
+								setSupervisor={setSupervisor}
+								coSupervisors={coSupervisors}
+								setCoSupervisors={setCoSupervisors}
+								level={level}
+								setLevel={setLevel}
+								cds={cds}
+								setCds={setCds}
+								type={type}
+								setType={setType}
+								expirationDate={expirationDate}
+								setExpirationDate={setExpirationDate}
+								accessToken={accessToken}
+								setDirty={setDirty}
+							/>
+						) : isStudent ? (<NotFound />) : null
 					}
 				/>
+				<Route path='/applications' element={<Applications />} />
+
 				<Route path='/*' element={<NotFound />} />
 			</Routes>
 			{/* )} */}

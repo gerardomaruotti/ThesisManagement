@@ -1,34 +1,99 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Navbar, Button } from 'react-bootstrap';
+import { Navbar, Button, Nav, Image, Dropdown, Container } from 'react-bootstrap';
 import { useAuth0 } from '@auth0/auth0-react';
 import logo_white from '../assets/logo_white.svg';
 import { Color } from '../constants/colors.js';
+import Avatar from '../assets/avatar.svg';
+import { useNavigate, useLocation } from 'react-router-dom';
+
+
 
 function Header(props) {
 	const { user, isAuthenticated, loginWithRedirect, logout } = useAuth0();
+	const navigate = useNavigate();
+	let location = useLocation();
+
+	function navElement() {
+		return (
+			<Nav activeKey={location.pathname}>
+				<Nav.Link eventKey="/" onClick={() => navigate('/')}>Proposals</Nav.Link>
+				<Nav.Link eventKey="/applications" onClick={() => navigate('/applications')}>Applications</Nav.Link>
+			</Nav>
+		)
+	}
+
+
 
 	return (
-		<Navbar collapseOnSelect expand='lg' style={{ backgroundColor: Color.primary }} variant='dark'>
-			<Navbar.Brand className='me-auto' style={{ paddingLeft: '20px' }}>
-				<img src={logo_white} alt='Logo' style={{ height: '40px' }} />
-				{/* Thesis Management */}
-			</Navbar.Brand>
-			<Navbar.Toggle aria-controls='responsive-navbar-nav' />
-			<Navbar.Collapse id='responsive-navbar-nav'>
-				<div className='d-flex justify-content-between align-items-center w-100' style={{ paddingRight: '20px' }}>
-					<div>{/* Empty div to push the name to the center */}</div>
-					{isAuthenticated ? (
-						<Button style={{ backgroundColor: Color.secondary, border: 0, width: 100, borderRadius: 50, color: 'white' }} size='sm' onClick={logout}>
-							<div className='headerButton'>LOGOUT</div>
-						</Button>
-					) : (
-						<Button style={{ width: 100, borderRadius: 50 }} variant='light' size='sm' onClick={loginWithRedirect}>
-							<div className='headerButton'>LOGIN</div>
-						</Button>
-					)}
-				</div>
-			</Navbar.Collapse>
-		</Navbar>
+		<>
+			<Navbar collapseOnSelect expand='md' style={{ backgroundColor: Color.primary }} variant='dark'>
+				<Container fluid>
+					<Navbar.Brand style={{ paddingLeft: '20px', paddingRight: 20 }} onClick={() => navigate('/')}>
+						<img src={logo_white} alt='Logo' style={{ height: '40px' }} />
+					</Navbar.Brand>
+
+					<Navbar.Collapse className="d-none d-md-flex">
+						{navElement()}
+					</Navbar.Collapse>
+					<Nav className="d-flex flex-row">
+						<Dropdown align='end'>
+							<Dropdown.Toggle variant="primary" id="dropdown-custom" style={{ height: 53 }}>
+								<i className="bi bi-bell" style={{ fontSize: '20px' }}></i>
+							</Dropdown.Toggle>
+
+							<Dropdown.Menu>
+								<Dropdown.Item>Notifica 1</Dropdown.Item>
+								<Dropdown.Item>Notifica 2</Dropdown.Item>
+								<Dropdown.Item>Notifica 3</Dropdown.Item>
+							</Dropdown.Menu>
+						</Dropdown>
+						<Dropdown align='end'>
+							<Dropdown.Toggle variant="primary" id="dropdown-custom">
+								<Container className="d-flex justify-content-between align-items-center">
+									<div style={{ marginRight: 15 }}>
+										<div style={{ fontSize: 15 }}>{props.userData ? props.userData.name + " " + props.userData.surname : null}</div>
+										<div style={{ color: 'rgba(255,255,255,0.5)', float: 'right', fontSize: 12 }}>{props.userData ? props.userData.id : null}</div>
+									</div>
+									<div className="text-center">
+										<Image style={{ height: 33, width: 33 }} src={Avatar} roundedCircle />
+									</div>
+								</Container>
+							</Dropdown.Toggle>
+
+							<Dropdown.Menu>
+								<Dropdown.Item>
+									<i className="bi bi-gear"></i>
+									<span style={{ marginLeft: 15 }}>Settings</span>
+								</Dropdown.Item>
+								<Dropdown.Item>
+									<i className="bi bi-clock-history"></i>
+									<span style={{ marginLeft: 15 }}>virtual clock</span>
+								</Dropdown.Item>
+								<Dropdown.Divider />
+								{isAuthenticated ?
+									<Dropdown.Item onClick={logout}>
+										<i className="bi bi-box-arrow-right"></i>
+										<span style={{ marginLeft: 15 }}>Logout</span>
+									</Dropdown.Item>
+									:
+									<Dropdown.Item onClick={loginWithRedirect}>
+										<i className="bi bi-box-arrow-left"></i>
+										<span style={{ marginLeft: 15 }}>Login</span>
+									</Dropdown.Item>
+								}
+							</Dropdown.Menu>
+						</Dropdown>
+						<Navbar.Toggle aria-controls='responsive-navbar-nav' />
+					</Nav>
+				</Container>
+				<Container className="d-md-none" style={{ display: 'content', textAlign: 'center' }}>
+					<Navbar.Collapse id="responsive-navbar-nav" className="d-md-none" >
+						{navElement()}
+					</Navbar.Collapse>
+				</Container>
+			</Navbar>
+
+		</>
 	);
 }
 

@@ -42,6 +42,11 @@ h1 {
 	font-weight: 600;
 }
 
+#dropdown-custom::after {
+	content: none;
+	/* Nasconde la freccia del dropdown */
+}
+
 /* Professor Home */
 .insert-proposal {
 	position: fixed;
