@@ -11,7 +11,7 @@ import Proposal from './views/Proposal';
 import NotFound from './views/NotFound.jsx';
 import API from './API.jsx';
 import { useLoading } from './LoadingContext.jsx';
-import Applications from './views/Applications';
+import StudentApplications from './views/StudentApplications.jsx';
 import toast, { Toaster } from 'react-hot-toast';
 
 function App() {
@@ -183,10 +183,12 @@ function App() {
 								accessToken={accessToken}
 								setDirty={setDirty}
 							/>
-						) : isStudent ? (<NotFound />) : null
+						) : isStudent ? (
+							<NotFound />
+						) : null
 					}
 				/>
-				<Route path='/applications' element={<Applications />} />
+				<Route path='/applications' element={<StudentApplications />} />
 
 				<Route path='/*' element={<NotFound />} />
 			</Routes>
