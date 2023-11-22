@@ -330,9 +330,16 @@ app.post('/api/thesis/:id/proposal', checkJwt, async (req, res) => {
 		let userRole = await db.getRole(req.auth);
 		await db.getThesis(thesisId);
 		const state = await db.checkThesisActive(thesisId);
+		let applications=await db.getStudentApplications(userRole.id)
+
+		applications=applications.filter((elem)=> (elem.state == '0' || elem.state == '1'))
 
 		if (state != '1') {
 			return res.status(400).json({ error: 'Thesis not active' });
+		}
+
+		if(applications.length > 0){
+			return res.status(400).json({error : 'Pending or accepted application already exists'})
 		}
 
 		if (userRole.role == 'student') {
