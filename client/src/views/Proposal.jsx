@@ -29,7 +29,7 @@ function Proposal(props) {
 					setThesis(thesis);
 				})
 				.catch((err) => {
-					console.log(err);
+					props.handleError(err);
 				})
 				.finally(() => {
 					setLoading(false);

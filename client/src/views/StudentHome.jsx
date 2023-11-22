@@ -92,7 +92,7 @@ function StudentHome(props) {
 				props.setThesis(thesis);
 			})
 			.catch((err) => {
-				console.log(err);
+				props.handleError(err);
 			})
 			.finally(() => {
 				setLoading(false);
@@ -178,6 +178,7 @@ function StudentHome(props) {
 				setSelectedGroups={props.setSelectedGroups}
 				expirationDate={props.expirationDate}
 				setExpirationDate={props.setExpirationDate}
+				handleError={props.handleError}
 			/>
 			<Container>
 				<Row style={{ marginBottom: 25 }}>
