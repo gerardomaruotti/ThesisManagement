@@ -13,6 +13,7 @@ import API from './API.jsx';
 import { useLoading } from './LoadingContext.jsx';
 import Applications from './views/Applications';
 import toast, { Toaster } from 'react-hot-toast';
+import ProfessorApplications from './views/ProfessorApplications.jsx';
 
 function App() {
 	const { user, isAuthenticated, getAccessTokenSilently, isLoading, loginWithRedirect } = useAuth0();
@@ -186,7 +187,12 @@ function App() {
 						) : isStudent ? (<NotFound />) : null
 					}
 				/>
-				<Route path='/applications' element={<Applications />} />
+				<Route path='/applications' element={
+					isProfessor ? (
+						<ProfessorApplications thesis={thesis} />
+					) : isStudent ?
+						(<Applications />)
+						: null} />
 
 				<Route path='/*' element={<NotFound />} />
 			</Routes>
