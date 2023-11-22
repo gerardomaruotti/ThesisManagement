@@ -27,7 +27,7 @@ function FiltersModal(props) {
 					})
 				);
 			})
-			.catch((err) => console.log(err));
+			.catch((err) => props.handleError(err));
 		API.getAllTypes(props.accessToken)
 			.then((types) => {
 				setTypes(
@@ -36,7 +36,7 @@ function FiltersModal(props) {
 					})
 				);
 			})
-			.catch((err) => console.log(err));
+			.catch((err) => props.handleError(err));
 		API.getAllSupervisors(props.accessToken)
 			.then((supervisors) => {
 				setSupervisors(
@@ -50,7 +50,7 @@ function FiltersModal(props) {
 					})
 				);
 			})
-			.catch((err) => console.log(err));
+			.catch((err) => props.handleError(err));
 		API.getAllGroups(props.accessToken)
 			.then((groups) => {
 				setGroups(
@@ -59,7 +59,7 @@ function FiltersModal(props) {
 					})
 				);
 			})
-			.catch((err) => console.log(err));
+			.catch((err) => props.handleError(err));
 	}, [props.accessToken]);
 
 	useEffect(() => {
@@ -132,7 +132,7 @@ function FiltersModal(props) {
 				props.setThesis(thesis);
 			})
 			.catch((err) => {
-				console.log(err);
+				props.handleError(err);
 			})
 			.finally(() => setLoading(false));
 		props.onHide();

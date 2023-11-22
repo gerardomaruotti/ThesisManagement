@@ -12,6 +12,7 @@ import NotFound from './views/NotFound.jsx';
 import API from './API.jsx';
 import { useLoading } from './LoadingContext.jsx';
 import Applications from './views/Applications';
+import toast, { Toaster } from 'react-hot-toast';
 
 function App() {
 	const { user, isAuthenticated, getAccessTokenSilently, isLoading, loginWithRedirect } = useAuth0();
@@ -45,7 +46,26 @@ function App() {
 	const [expirationDate2, setExpirationDate2] = useState('all');
 
 	function handleError(err) {
-		console.log(err);
+		toast.error(err.error, {
+			position: "bottom-center",
+			duration: 5000,
+			style: {
+				borderRadius: '10px',
+				background: 'rgba(255, 0, 0, 0.9)',
+				color: '#fff',
+			},
+		});
+	}
+
+	function userLoginToast() {
+		toast.success(userData ? ('Logged in as ' + userData.name + " " + userData.surname) : 'Logged in', {
+			position: "bottom-center",
+			style: {
+				borderRadius: '10px',
+				background: 'rgba(40, 199, 111, 0.9)',
+				color: '#fff',
+			},
+		});
 	}
 
 	useEffect(() => {
@@ -62,7 +82,6 @@ function App() {
 				API.getUser(accessToken)
 					.then((user) => {
 						setUserData(user);
-						// console.log(user);
 						if (user.role === 'student') {
 							setIsProfessor(false);
 							setIsStudent(true);
@@ -70,6 +89,7 @@ function App() {
 							setIsProfessor(true);
 							setIsStudent(false);
 						}
+						userLoginToast();
 					})
 					.catch((err) => handleError(err));
 				API.getAllThesis(accessToken)
@@ -79,7 +99,7 @@ function App() {
 					.catch((err) => handleError(err))
 					.finally(() => setLoading(false));
 			} catch (e) {
-				console.log(e.message);
+				handleError(e.message);
 			}
 		};
 		if (isAuthenticated) {
@@ -97,6 +117,7 @@ function App() {
 	return (
 		<BrowserRouter>
 			<Header userData={userData} />
+			<Toaster />
 			{/* {loading ? (
 				<Loading />
 			) : ( */}
@@ -126,11 +147,12 @@ function App() {
 								setSelectedGroups={setSelectedGroups}
 								expirationDate={expirationDate2}
 								setExpirationDate={setExpirationDate2}
+								handleError={handleError}
 							/>
 						) : null
 					}
 				/>
-				<Route path='/proposal/:id' element={<Proposal accessToken={accessToken} isProfessor={isProfessor} />} />
+				<Route path='/proposal/:id' element={<Proposal accessToken={accessToken} isProfessor={isProfessor} handleError={handleError} />} />
 				<Route
 					path='/proposals/add'
 					element={
