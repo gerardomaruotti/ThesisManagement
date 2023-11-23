@@ -345,6 +345,36 @@ function getUser(accessToken) {
 	});
 }
 
+function getApplications(accessToken) {
+	return new Promise((resolve, reject) => {
+		fetch(URL + '/thesis/applications/browse', {
+			headers: {
+				Authorization: `Bearer ${accessToken}`,
+			},
+		})
+			.then((response) => {
+				if (response.ok) {
+					response
+						.json()
+						.then((applications) => resolve(applications))
+						.catch(() => {
+							reject({ error: 'Cannot parse server response.' });
+						});
+				} else {
+					response
+						.json()
+						.then((message) => {
+							reject(message);
+						})
+						.catch(() => {
+							reject({ error: 'Cannot parse server response.' });
+						});
+				}
+			})
+			.catch(() => reject({ error: 'Cannot communicate with the server.' }));
+	});
+}
+
 const API = {
 	getAllKeywords,
 	getAllTypes,
@@ -356,5 +386,6 @@ const API = {
 	getThesisByID,
 	getUser,
 	ThesisApply,
+	getApplications
 };
 export default API;
