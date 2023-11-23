@@ -4,9 +4,25 @@ import '../constants/custom-styles.scss';
 import Loading from '../components/Loading.jsx';
 import { useLoading } from '../LoadingContext.jsx';
 import ProfessorApplicationCard from '../components/ProfessorApplicationCard.jsx';
+import { useEffect } from 'react';
+import API from '../API.jsx';
 
 function ProfessorApplications(props) {
     const { loading, setLoading } = useLoading();
+
+    useEffect(() => {
+        setLoading(true);
+        API.getApplications(props.accessToken)
+            .then((applications) => {
+                console.log(applications);
+                //props.setApplications(applications);
+                setLoading(false);
+            })
+            .catch((err) => {
+                console.log(err);
+                setLoading(false);
+            });
+    }, []);
 
     return loading ? (
         <Loading />
