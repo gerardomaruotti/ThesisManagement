@@ -47,7 +47,7 @@ function App() {
 
 	function handleError(err) {
 		toast.error(err.error, {
-			position: "bottom-center",
+			position: 'bottom-center',
 			duration: 5000,
 			style: {
 				borderRadius: '10px',
@@ -58,8 +58,8 @@ function App() {
 	}
 
 	function userLoginToast() {
-		toast.success(userData ? ('Logged in as ' + userData.name + " " + userData.surname) : 'Logged in', {
-			position: "bottom-center",
+		toast.success(userData ? 'Logged in as ' + userData.name + ' ' + userData.surname : 'Logged in', {
+			position: 'bottom-center',
 			style: {
 				borderRadius: '10px',
 				background: 'rgba(40, 199, 111, 0.9)',
@@ -118,9 +118,6 @@ function App() {
 		<BrowserRouter>
 			<Header userData={userData} />
 			<Toaster />
-			{/* {loading ? (
-				<Loading />
-			) : ( */}
 			<Routes>
 				<Route
 					path='/'
@@ -182,6 +179,7 @@ function App() {
 								setExpirationDate={setExpirationDate}
 								accessToken={accessToken}
 								setDirty={setDirty}
+								user={userData}
 							/>
 						) : isStudent ? (
 							<NotFound />
@@ -192,7 +190,6 @@ function App() {
 
 				<Route path='/*' element={<NotFound />} />
 			</Routes>
-			{/* )} */}
 		</BrowserRouter>
 	);
 }

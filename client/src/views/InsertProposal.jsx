@@ -12,14 +12,13 @@ import dayjs from 'dayjs';
 
 function InsertProposal(props) {
 	const navigate = useNavigate();
-	const { user, isAuthenticated, getAccessTokenSilently, isLoading } = useAuth0();
+	const { isAuthenticated, getAccessTokenSilently, isLoading } = useAuth0();
 	const [selectedKeywords, setSelectedKeywords] = useState([]);
 	const [selectedCoSupervisors, setSelectedCoSupervisors] = useState([]);
 	const [selectedTypes, setselectedTypes] = useState([]);
 	const [selectedLevel, setSelectedLevel] = useState('');
 	const [selectedCds, setSelectedCds] = useState('');
 	const [error, setError] = useState(false);
-	let staticCosupervisors = [];
 
 	const {
 		title,
@@ -34,8 +33,6 @@ function InsertProposal(props) {
 		setKeywords,
 		coSupervisors,
 		setCoSupervisors,
-		level,
-		setLevel,
 		cds,
 		setCds,
 		type,
@@ -43,6 +40,7 @@ function InsertProposal(props) {
 		expirationDate,
 		setExpirationDate,
 		accessToken,
+		user,
 	} = props;
 
 	const levels = [
@@ -51,6 +49,12 @@ function InsertProposal(props) {
 	];
 
 	useEffect(() => {
+		setCds([
+			{
+				value: '',
+				label: '',
+			},
+		]);
 		API.getAllKeywords(accessToken)
 			.then((keywords) => {
 				setKeywords(
@@ -71,26 +75,18 @@ function InsertProposal(props) {
 			.catch((err) => handleError(err));
 		API.getAllSupervisors(accessToken)
 			.then((cosupervisors) => {
-				staticCosupervisors = cosupervisors;
 				setCoSupervisors(
-					cosupervisors.map((cosupervisor) => {
-						return {
-							value: cosupervisor.email,
-							label: cosupervisor.name + ' ' + cosupervisor.surname,
-							email: cosupervisor.email,
-							name: cosupervisor.name,
-							surname: cosupervisor.surname,
-						};
-					})
-				);
-			})
-			.catch((err) => handleError(err));
-		API.getAllCds(accessToken)
-			.then((cds) => {
-				setCds(
-					cds.map((cds) => {
-						return { value: cds.cod_degree, label: cds.cod_degree + ' ' + cds.title_degree };
-					})
+					cosupervisors
+						.filter((cosupervisor) => cosupervisor.ID !== user.id)
+						.map((cosupervisor) => {
+							return {
+								value: cosupervisor.email,
+								label: cosupervisor.name + ' ' + cosupervisor.surname,
+								email: cosupervisor.email,
+								name: cosupervisor.name,
+								surname: cosupervisor.surname,
+							};
+						})
 				);
 			})
 			.catch((err) => handleError(err));
@@ -110,6 +106,26 @@ function InsertProposal(props) {
 
 	function handleSelectedLevel(selectedOption) {
 		setSelectedLevel(selectedOption);
+		if (selectedOption === null) {
+			setCds([]);
+			setSelectedLevel('');
+			setSelectedCds('');
+		} else {
+			API.getAllCds(accessToken)
+				.then((cds) => {
+					if (selectedOption.value === 'BSc') {
+						cds = cds.filter((cds) => cds.cod_degree.startsWith('L-8'));
+					} else if (selectedOption.value === 'MSc') {
+						cds = cds.filter((cds) => cds.cod_degree.startsWith('LM-'));
+					}
+					setCds(
+						cds.map((cds) => {
+							return { value: cds.cod_degree, label: cds.cod_degree + ' ' + cds.title_degree };
+						})
+					);
+				})
+				.catch((err) => handleError(err));
+		}
 	}
 
 	function handleSelectedCds(selectedOption) {
@@ -163,11 +179,19 @@ function InsertProposal(props) {
 						</Form.Group>
 						<Form.Group className='mb-3' controlId='formLevel'>
 							<Form.Label>Level</Form.Label>
-							<Select options={levels} styles={colorStyles} required onChange={handleSelectedLevel} />
+							<Select isClearable options={levels} styles={colorStyles} required onChange={handleSelectedLevel} />
 						</Form.Group>
 						<Form.Group className='mb-3' controlId='formCds'>
 							<Form.Label>Cds</Form.Label>
-							<Select options={cds} styles={colorStyles} required onChange={handleSelectedCds} />
+							<Select
+								options={cds}
+								styles={colorStyles}
+								required
+								onChange={handleSelectedCds}
+								isDisabled={selectedLevel === ''}
+								isClearable
+								placeholder={selectedLevel === '' ? 'Select a level first' : 'Select...'}
+							/>
 						</Form.Group>
 						<Form.Group className='mb-3' controlId='formExpirationDate'>
 							<Form.Label>Expiration date</Form.Label>
