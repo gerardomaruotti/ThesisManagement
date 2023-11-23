@@ -24,12 +24,12 @@ function ProfessorApplications(props) {
                                 </Nav.Item>
                                 <Nav.Item>
                                     <Nav.Link eventKey='company' className='buttons-rapid-filter'>
-                                        In company
+                                        Pending
                                     </Nav.Link>
                                 </Nav.Item>
                                 <Nav.Item>
                                     <Nav.Link eventKey='abroad' className='buttons-rapid-filter'>
-                                        Abroad
+                                        Assigned
                                     </Nav.Link>
                                 </Nav.Item>
                             </Nav>

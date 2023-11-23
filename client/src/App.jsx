@@ -14,6 +14,7 @@ import { useLoading } from './LoadingContext.jsx';
 import Applications from './views/Applications';
 import toast, { Toaster } from 'react-hot-toast';
 import ProfessorApplications from './views/ProfessorApplications.jsx';
+import ProfessorApplicationsThesis from './views/ProfessorApplicationsThesis.jsx';
 
 function App() {
 	const { user, isAuthenticated, getAccessTokenSilently, isLoading, loginWithRedirect } = useAuth0();
@@ -189,11 +190,11 @@ function App() {
 				/>
 				<Route path='/applications' element={
 					isProfessor ? (
-						<ProfessorApplications thesis={thesis} />
+						<ProfessorApplications accessToken={accessToken} handleError={handleError} isProfessor={isProfessor} />
 					) : isStudent ?
 						(<Applications />)
 						: null} />
-
+				<Route path='/applications/proposal/:id' element={<ProfessorApplicationsThesis accessToken={accessToken} handleError={handleError} isProfessor={isProfessor} />} />
 				<Route path='/*' element={<NotFound />} />
 			</Routes>
 			{/* )} */}

@@ -58,3 +58,22 @@ h1 {
 .form-button {
 	margin: 10px;
 }
+
+/* Professor ApplicationsThesis */
+.custom-badge-success {
+	background-color: rgba(40, 199, 111, 0.2) !important;
+	color: rgba(40, 199, 111, 1) !important;
+	border-radius: 20px !important;
+}
+
+.custom-badge-danger {
+	background-color: rgba(255, 99, 132, 0.2) !important;
+	color: rgba(255, 99, 132, 1) !important;
+	border-radius: 20px !important;
+}
+
+.custom-badge-warning {
+	background-color: rgba(255, 159, 64, 0.2) !important;
+	color: rgba(255, 159, 64, 1) !important;
+	border-radius: 20px !important;
+}

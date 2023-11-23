@@ -3,12 +3,14 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import { Color } from '../constants/colors.js';
 import Avatar from '../assets/avatar.svg';
 import randomcolor from 'randomcolor';
+import { useNavigate } from 'react-router-dom';
 
 function ProfessorApplicationCard(props) {
+    const navigate = useNavigate();
 
     return (
         <Col lg={6} sm={12} style={{ marginTop: 25 }}>
-            <Card style={{ padding: 20, cursor: 'pointer' }} className='custom-card'>
+            <Card style={{ padding: 20, cursor: 'pointer' }} className='custom-card' onClick={() => navigate('/applications/proposal/' + 5)}>
                 <div style={{
                     fontWeight: 'medium', fontSize: 18, height: 55, display: '-webkit-box',
                     WebkitBoxOrient: 'vertical',
