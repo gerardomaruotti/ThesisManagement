@@ -511,7 +511,7 @@ exports.insertProposal = (userId, idThesis) => {
 
 exports.getTeacherApplications = (teacherId) => {
   return new Promise((resolve, reject) => {
-    const sql = 'SELECT ID_THESIS,TITLE,EXPIRATION_DATE,LEVEL, DEGREE, STUDENT FROM THESIS T, TEACHER TE, THESIS_PROPOSAL TP WHERE T.SUPERVISOR=TE.ID AND T.ID_THESIS=TP.THESIS AND TE.ID=? AND TP.STATE = 0';
+    const sql = 'SELECT ID_THESIS,TITLE,EXPIRATION_DATE,LEVEL, DEGREE, STUDENT, S.NAME as NAME, S.SURNAME as SURNAME, S.EMAIL as EMAIL, STATE FROM THESIS T, TEACHER TE, THESIS_PROPOSAL TP, STUDENT S WHERE T.SUPERVISOR=TE.ID AND T.ID_THESIS=TP.THESIS AND TP.STUDENT=S.ID AND TE.ID=?';
     db.all(sql, [teacherId], (err,rows) => {
       if (err) {
         reject(err);
@@ -523,7 +523,11 @@ exports.getTeacherApplications = (teacherId) => {
           expirationDate: elem.EXPIRATION_DATE,
           level: elem.LEVEL,
           degree: elem.DEGREE,
-          student: elem.STUDENT
+          student: elem.STUDENT,
+          name: elem.NAME,
+          surname: elem.SURNAME,
+          email: elem.EMAIL,
+          state: elem.STATE
         }));
 
         resolve(applications)

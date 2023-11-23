@@ -71,7 +71,7 @@ function Proposal(props) {
 							<Card style={{ padding: 20 }} className='custom-card'>
 								<Row>
 									<Col className='d-flex align-items-center d-none d-md-flex'>
-										<Button variant='outline-primary' style={{ borderRadius: 50, width: 75 }} onClick={() => navigate('/')}>
+										<Button variant='outline-primary' style={{ borderRadius: 50, width: 75 }} onClick={() => navigate(-1)}>
 											<i className='bi bi-arrow-left'></i>
 										</Button>
 									</Col>
