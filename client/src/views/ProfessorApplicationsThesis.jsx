@@ -16,10 +16,37 @@ function ProfessorApplicationsThesis(props) {
     const [popup, setPopup] = useState(false);
     const [msgAndColor, setMsgAndColor] = useState({ header: '', msg: '', color: '' });
     const [showDetails, setShowDetails] = useState(false);
+    const [applicationsThesis, setApplicationsThesis] = useState([]);
+
     const { id } = useParams();
 
     const handleClose = () => setShowDetails(false);
     const handleShow = () => setShowDetails(true);
+
+    function unionForid(array) {
+        return array.reduce(function (acc, object) {
+            const key = object.id;
+            if (!acc[key]) {
+                acc[key] = [];
+            }
+            acc[key].push(object);
+            return acc;
+        }, {});
+    }
+
+    useEffect(() => {
+        setLoading(true);
+        API.getApplications(props.accessToken)
+            .then((app) => {
+                const appthesis = unionForid(app);
+                setApplicationsThesis(appthesis[id]);
+                setLoading(false);
+            })
+            .catch((err) => {
+                props.handleError(err);
+                setLoading(false);
+            });
+    }, []);
 
     useEffect(() => {
         if (props.accessToken != null) {
@@ -83,15 +110,25 @@ function ProfessorApplicationsThesis(props) {
                                         <div style={{ fontWeight: 'bold', fontSize: 20 }}> Status: </div>
                                     </Col>
                                     <Col lg={3} md={4}>
-                                        <div style={{ fontWeight: 'medium', fontSize: 15 }}>
-                                            <span
-                                                className='badge'
-                                                style={{ backgroundColor: 'rgba(164, 161, 141, 0.2)', color: 'rgba(164, 161, 141, 1)', padding: '1em 1em', borderRadius: '0.25rem' }}
-                                            >
-                                                <i className='bi bi-hourglass-split' style={{ fontSize: '16px' }}></i>
-                                            </span>
-                                            <span style={{ paddingLeft: 8, color: 'rgba(0, 0, 0, 0.5)' }}>Pending</span>
-                                        </div>
+                                        {applicationsThesis.filter((app) => app.state == 1).length > 0 ?
+                                            (<div style={{ fontWeight: 'medium', fontSize: 15 }}>
+                                                <span
+                                                    className='badge'
+                                                    style={{ backgroundColor: 'rgba(40, 199, 111, 0.2)', color: 'rgba(40, 199, 111, 1)', padding: '1em 1em', borderRadius: '0.25rem' }}
+                                                >
+                                                    <i className='bi bi-person-check' style={{ fontSize: '16px' }}></i>
+                                                </span>
+                                                <span style={{ paddingLeft: 8, color: 'rgba(0, 0, 0, 0.5)' }}>Assigned</span>
+                                            </div>) :
+                                            (<div style={{ fontWeight: 'medium', fontSize: 15 }}>
+                                                <span
+                                                    className='badge'
+                                                    style={{ backgroundColor: 'rgba(164, 161, 141, 0.2)', color: 'rgba(164, 161, 141, 1)', padding: '1em 1em', borderRadius: '0.25rem' }}
+                                                >
+                                                    <i className='bi bi-hourglass-split' style={{ fontSize: '16px' }}></i>
+                                                </span>
+                                                <span style={{ paddingLeft: 8, color: 'rgba(0, 0, 0, 0.5)' }}>Pending</span>
+                                            </div>)}
                                     </Col>
                                 </Row>
                                 <Row style={{ marginTop: 32 }}>
@@ -113,45 +150,29 @@ function ProfessorApplicationsThesis(props) {
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <tr>
-                                                    <td>s318927</td>
-                                                    <td>Andrea</td>
-                                                    <td>Scamporrino</td>
-                                                    <td>s318927@studenti.polito.it</td>
-                                                    <td><Button variant='light'><i className="bi bi-file-earmark-text"></i></Button></td>
-                                                    <td><span className='badge custom-badge-success'>Assigned</span></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>s318927</td>
-                                                    <td>Andrea</td>
-                                                    <td>Scamporrino</td>
-                                                    <td>s318927@studenti.polito.it</td>
-                                                    <td><Button variant='light'><i className="bi bi-file-earmark-text"></i></Button></td>
-                                                    <td><span className='badge custom-badge-danger'>Rejected</span></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>s318927</td>
-                                                    <td>Andrea</td>
-                                                    <td>Scamporrino</td>
-                                                    <td>s318927@studenti.polito.it</td>
-                                                    <td><Button variant='light'><i className="bi bi-file-earmark-text"></i></Button></td>
-                                                    <td><span className='badge custom-badge-warning'>Cancelled</span></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>s318927</td>
-                                                    <td>Andrea</td>
-                                                    <td>Scamporrino</td>
-                                                    <td>s318927@studenti.polito.it</td>
-                                                    <td><Button variant='light'><i className="bi bi-file-earmark-text"></i></Button></td>
-                                                    <td>
-                                                        <Button variant='outline-success' style={{ borderRadius: 100 }} size='sm'>
-                                                            <i className="bi bi-check2"></i>
-                                                        </Button>
-                                                        <Button variant='outline-danger' style={{ borderRadius: 100, marginLeft: 8 }} size='sm'>
-                                                            <i className="bi bi-x-lg"></i>
-                                                        </Button>
-                                                    </td>
-                                                </tr>
+                                                {applicationsThesis != [] ? applicationsThesis.map((app) => (
+                                                    <tr key={app.student}>
+                                                        <td>{app.student}</td>
+                                                        <td>{app.name}</td>
+                                                        <td>{app.surname}</td>
+                                                        <td>{app.email}</td>
+                                                        <td><Button variant='light'><i className="bi bi-file-earmark-text"></i></Button></td>
+                                                        <td>
+                                                            {app.state == 1 ? <span className='badge custom-badge-success'>Assigned</span> :
+                                                                app.state == 2 ? <span className='badge custom-badge-danger'>Rejected</span> :
+                                                                    app.state == 3 ? <span className='badge custom-badge-warning'>Cancelled</span> :
+                                                                        <div>
+                                                                            <Button variant='outline-success' style={{ borderRadius: 100 }} size='sm'>
+                                                                                <i className="bi bi-check2"></i>
+                                                                            </Button>
+                                                                            <Button variant='outline-danger' style={{ borderRadius: 100, marginLeft: 8 }} size='sm'>
+                                                                                <i className="bi bi-x-lg"></i>
+                                                                            </Button>
+                                                                        </div>
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                )) : null}
                                             </tbody>
                                         </Table>
                                     </Col>

@@ -192,7 +192,7 @@ function App() {
 					isProfessor ? (
 						<ProfessorApplications accessToken={accessToken} handleError={handleError} isProfessor={isProfessor} />
 					) : isStudent ?
-						(<Applications />)
+						(<StudentApplications />)
 						: null} />
 				<Route path='/applications/proposal/:id' element={<ProfessorApplicationsThesis accessToken={accessToken} handleError={handleError} isProfessor={isProfessor} />} />
 				<Route path='/*' element={<NotFound />} />
