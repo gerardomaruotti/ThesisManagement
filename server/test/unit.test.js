@@ -809,15 +809,18 @@ describe('GET Thesis by ID', () => {
 });
 
 describe('Apply for Proposal', () => {
-    test('should insert manage an apply for a proposal', async () => {
+    test('should insert an apply for a proposal', async () => {
         const user = {
             role: "student",
             id: "1"
         }
 
+        const props = [];
+
         db.getRole.mockResolvedValueOnce(user);
         db.getThesis.mockResolvedValueOnce();
         db.checkThesisActive.mockResolvedValueOnce(1);
+        db.getStudentApplications.mockResolvedValueOnce(props);
         db.insertProposal.mockResolvedValueOnce();
 
         const res = await request(app).post('/api/thesis/5/proposal');
@@ -827,6 +830,8 @@ describe('Apply for Proposal', () => {
         expect(db.getThesis).toHaveBeenCalledWith("5");
         expect(db.checkThesisActive).toHaveBeenCalledTimes(1);
         expect(db.checkThesisActive).toHaveBeenCalledWith("5");
+        expect(db.getStudentApplications).toHaveBeenCalledTimes(1);
+        expect(db.getStudentApplications).toHaveBeenCalledWith(user.id);
         expect(db.insertProposal).toHaveBeenCalledTimes(1);
         expect(db.insertProposal).toHaveBeenCalledWith(user.id, "5");
         expect(res.status).toBe(200);
@@ -842,6 +847,7 @@ describe('Apply for Proposal', () => {
         db.getRole.mockResolvedValueOnce(user);
         db.getThesis.mockResolvedValueOnce();
         db.checkThesisActive.mockResolvedValueOnce(0);
+        db.getStudentApplications.mockResolvedValueOnce([]);
 
         const res = await request(app).post('/api/thesis/5/proposal');
 
@@ -850,12 +856,13 @@ describe('Apply for Proposal', () => {
         expect(db.getThesis).toHaveBeenCalledWith("5");
         expect(db.checkThesisActive).toHaveBeenCalledTimes(1);
         expect(db.checkThesisActive).toHaveBeenCalledWith("5");
+        expect(db.getStudentApplications).toHaveBeenCalledTimes(1);
         expect(db.insertProposal).toHaveBeenCalledTimes(0);
         expect(res.status).toBe(400);
         expect(res.body).toEqual({ error: 'Thesis not active' });
     });
 
-    test('should return a 400 error when the id parameter identifies a thesis not active', async () => {
+    test('should return a 401 error when the user is not a student', async () => {
         const user = {
             role: "not_student",
             id: "1"
@@ -864,6 +871,7 @@ describe('Apply for Proposal', () => {
         db.getRole.mockResolvedValueOnce(user);
         db.getThesis.mockResolvedValueOnce();
         db.checkThesisActive.mockResolvedValueOnce(1);
+        db.getStudentApplications.mockResolvedValueOnce([])
 
         const res = await request(app).post('/api/thesis/5/proposal');
 
@@ -873,8 +881,67 @@ describe('Apply for Proposal', () => {
         expect(db.checkThesisActive).toHaveBeenCalledTimes(1);
         expect(db.checkThesisActive).toHaveBeenCalledWith("5");
         expect(db.insertProposal).toHaveBeenCalledTimes(0);
+        expect(db.getStudentApplications).toHaveBeenCalledTimes(1);
         expect(res.status).toBe(401);
         expect(res.body).toEqual({ error: 'Unauthorized user' });
+    });
+
+    test('should return a 400 error when the user already has a pending application', async () => {
+        const user = {
+            role: "not_student",
+            id: "1"
+        }
+
+        const props = [
+            { id: "1", state: "0"},
+            { id: "2", state: "2"},
+        ]
+
+        db.getRole.mockResolvedValueOnce(user);
+        db.getThesis.mockResolvedValueOnce();
+        db.checkThesisActive.mockResolvedValueOnce(1);
+        db.getStudentApplications.mockResolvedValueOnce(props);
+
+        const res = await request(app).post('/api/thesis/5/proposal');
+
+        expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.getThesis).toHaveBeenCalledTimes(1);
+        expect(db.getThesis).toHaveBeenCalledWith("5");
+        expect(db.checkThesisActive).toHaveBeenCalledTimes(1);
+        expect(db.checkThesisActive).toHaveBeenCalledWith("5");
+        expect(db.insertProposal).toHaveBeenCalledTimes(0);
+        expect(db.getStudentApplications).toHaveBeenCalledTimes(1);
+        expect(res.status).toBe(400);
+        expect(res.body).toEqual({error : 'Pending or accepted application already exists'});
+    });
+
+    test('should return a 400 error when the user already has an accepted applications', async () => {
+        const user = {
+            role: "not_student",
+            id: "1"
+        }
+
+        const props = [
+            { id: "1", state: "1"},
+            { id: "2", state: "2"},
+        ]
+
+        db.getRole.mockResolvedValueOnce(user);
+        db.getThesis.mockResolvedValueOnce();
+        db.checkThesisActive.mockResolvedValueOnce(1);
+        db.getStudentApplications.mockResolvedValueOnce(props);
+
+        const res = await request(app).post('/api/thesis/5/proposal');
+
+        expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.getThesis).toHaveBeenCalledTimes(1);
+        expect(db.getThesis).toHaveBeenCalledWith("5");
+        expect(db.checkThesisActive).toHaveBeenCalledTimes(1);
+        expect(db.checkThesisActive).toHaveBeenCalledWith("5");
+        expect(db.insertProposal).toHaveBeenCalledTimes(0);
+        expect(db.getStudentApplications).toHaveBeenCalledTimes(1);
+        expect(res.status).toBe(400);
+        expect(res.body).toEqual({error : 'Pending or accepted application already exists'});
     });
 
     test('should return a 500 if error occurs', async () => {
