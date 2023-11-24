@@ -73,9 +73,12 @@
 | ------- | --------------------------  | ------------------------ | ------- | -------- |
 | s319852 | s319852@studenti.polito.it  | Evelina Marija Bratuhina |  LM-32  | s319852  |
 | s313373 | s313373@studenti.polito.it  |      Fabio Mangani       |  LM-32  | s313373  |
-| s111111 | s111111@studenti.polito.it  |      Giacomo Cauda       |  LM-29  | s111111  |
+| s317977 | s317977@studenti.polito.it  |      Giacomo Cauda       |  LM-29  | s317977  |
 | s317642 | s317642@studenti.polito.it  |     Gerardo Maruotti     |  LM-20  | s317642  |
 | s317611 | s317611@studenti.polito.it  |      Edoardo Morello     |  LM-53  | s317611  |
+| s319854 | s319854@studenti.polito.it  |     Riccardo Simeone     |  LM-32  | s319854  |
+| s318927 | s315327@studenti.polito.it  |      Davide Vilella      |  LM-31  | s318927  |
+| s318927 | s318927@studenti.polito.it  |    Andrea Scamporrino    |  LM-33  | s318927  |
 
 ## Sequence for running the project on Docker
 
