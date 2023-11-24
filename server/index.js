@@ -365,6 +365,10 @@ app.get('/api/thesis/applications/browse', checkJwt, async(req,res)=> {
 		} else{
 			if(userRole.role == "student"){
 				const applications=await db.getStudentApplications(userRole.id);
+				for(let i=0;i<applications.length;i++){
+					applications[i].keywords=await db.getKeywordsbyId(applications[i].id);
+					applications[i].types=await db.getTypesbyId(applications[i].id)
+				}
 				return res.status(200).json(applications)
 			}
 		}
