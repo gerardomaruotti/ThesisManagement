@@ -540,7 +540,7 @@ exports.getTeacherApplications = (teacherId) => {
 
 exports.getStudentApplications = (studentId) => {
   return new Promise((resolve, reject) => {
-    const sql = 'SELECT ID_THESIS,TITLE,EXPIRATION_DATE,LEVEL, DEGREE, SUPERVISOR, T.NAME as NAME, T.SURNAME as SURNAME, STATE FROM THESIS T, STUDENT S, THESIS_PROPOSAL TP, TEACHER TE WHERE TP.STUDENT=S.ID AND T.ID_THESIS=TP.THESIS AND T.SUPERVISOR = TE.ID AND S.ID=?';
+    const sql = 'SELECT ID_THESIS,TITLE,EXPIRATION_DATE,LEVEL, DEGREE, SUPERVISOR, TE.NAME as NAME, TE.SURNAME as SURNAME, STATE FROM THESIS T, STUDENT S, THESIS_PROPOSAL TP, TEACHER TE WHERE TP.STUDENT=S.ID AND T.ID_THESIS=TP.THESIS AND T.SUPERVISOR = TE.ID AND S.ID=?';
     db.all(sql, [studentId], (err,rows) => {
       if (err) {
         reject(err);
