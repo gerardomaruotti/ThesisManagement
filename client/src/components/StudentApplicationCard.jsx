@@ -56,7 +56,7 @@ function StudentApplicationCard(props) {
 						<Image style={{ height: 35, width: 35 }} src={Avatar} roundedCircle />
 					</Col>
 					<Col lg={5} xs={5} style={{ display: 'flex', alignItems: 'center' }}>
-						<span style={{ color: 'rgba(0, 0, 0, 0.8)' }}>{props.application.sup_name + ' ' + props.application.sup_surname}</span>
+						<span style={{ color: 'rgba(0, 0, 0, 0.8)' }}>{props.application.name + ' ' + props.application.surname}</span>
 					</Col>
 					{props.application.types.filter((type) => type == 'IN COMPANY').length > 0 ? (
 						<>
