@@ -1,11 +1,8 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Row, Col, Card, Image, Button, Container, Toast, ToastContainer, Offcanvas } from 'react-bootstrap';
-
-
 import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import API from '../API.jsx';
-import randomcolor from 'randomcolor';
 import { useLoading } from '../LoadingContext.jsx';
 import Loading from '../components/Loading.jsx';
 import DetailsProposalLeftBar from '../components/DetailsProposalLeftBar.jsx';
@@ -53,7 +50,6 @@ function Proposal(props) {
 				setPopup(true);
 			});
 	}
-
 
 	return loading ? (
 		<Loading />

@@ -12,13 +12,11 @@ import dayjs from 'dayjs';
 
 function InsertProposal(props) {
 	const navigate = useNavigate();
-	const { isAuthenticated, getAccessTokenSilently, isLoading } = useAuth0();
 	const [selectedKeywords, setSelectedKeywords] = useState([]);
 	const [selectedCoSupervisors, setSelectedCoSupervisors] = useState([]);
 	const [selectedTypes, setselectedTypes] = useState([]);
 	const [selectedLevel, setSelectedLevel] = useState('');
 	const [selectedCds, setSelectedCds] = useState('');
-	const [error, setError] = useState(false);
 
 	const {
 		title,
