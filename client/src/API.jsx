@@ -283,7 +283,7 @@ function insertThesis(accessToken, thesis) {
 
 function ThesisApply(id, accessToken) {
 	return new Promise((resolve, reject) => {
-		fetch(URL + `/thesis/${id}/proposal`, {
+		fetch(URL + `/thesis/${id}/apply`, {
 			method: 'POST',
 			headers: {
 				Authorization: `Bearer ${accessToken}`,

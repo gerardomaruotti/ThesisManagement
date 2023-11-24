@@ -496,9 +496,9 @@ exports.checkThesisActive = (idThesis) => {
 };
 
 
-exports.insertProposal = (userId, idThesis) => {
+exports.insertApplication = (userId, idThesis) => {
   return new Promise((resolve, reject) => {
-    const sql = 'INSERT INTO THESIS_PROPOSAL (student, thesis, state) VALUES(?, ?, ?)';
+    const sql = 'INSERT INTO THESIS_APPLICATION (student, thesis, state) VALUES(?, ?, ?)';
     db.run(sql, [userId, idThesis, 0], function (err) {
       if (err) {
         reject(err);
@@ -511,7 +511,7 @@ exports.insertProposal = (userId, idThesis) => {
 
 exports.getTeacherApplications = (teacherId) => {
   return new Promise((resolve, reject) => {
-    const sql = 'SELECT ID_THESIS,TITLE,EXPIRATION_DATE,LEVEL, DEGREE, STUDENT, S.NAME as NAME, S.SURNAME as SURNAME, S.EMAIL as EMAIL, STATE FROM THESIS T, TEACHER TE, THESIS_PROPOSAL TP, STUDENT S WHERE T.SUPERVISOR=TE.ID AND T.ID_THESIS=TP.THESIS AND TP.STUDENT=S.ID AND TE.ID=?';
+    const sql = 'SELECT ID_THESIS,TITLE,EXPIRATION_DATE,LEVEL, DEGREE, STUDENT, S.NAME as NAME, S.SURNAME as SURNAME, S.EMAIL as EMAIL, STATE FROM THESIS T, TEACHER TE, THESIS_APPLICATION TA, STUDENT S WHERE T.SUPERVISOR=TE.ID AND T.ID_THESIS=TA.THESIS AND TA.STUDENT=S.ID AND TE.ID=?';
     db.all(sql, [teacherId], (err,rows) => {
       if (err) {
         reject(err);
@@ -540,7 +540,7 @@ exports.getTeacherApplications = (teacherId) => {
 
 exports.getStudentApplications = (studentId) => {
   return new Promise((resolve, reject) => {
-    const sql = 'SELECT ID_THESIS,TITLE,EXPIRATION_DATE,LEVEL, DEGREE, SUPERVISOR, TE.NAME as NAME, TE.SURNAME as SURNAME, STATE FROM THESIS T, STUDENT S, THESIS_PROPOSAL TP, TEACHER TE WHERE TP.STUDENT=S.ID AND T.ID_THESIS=TP.THESIS AND T.SUPERVISOR = TE.ID AND S.ID=?';
+    const sql = 'SELECT ID_THESIS,TITLE,EXPIRATION_DATE,LEVEL, DEGREE, SUPERVISOR, TE.NAME as NAME, TE.SURNAME as SURNAME, STATE FROM THESIS T, STUDENT S, THESIS_APPLICATION TA, TEACHER TE WHERE TA.STUDENT=S.ID AND T.ID_THESIS=TA.THESIS AND T.SUPERVISOR = TE.ID AND S.ID=?';
     db.all(sql, [studentId], (err,rows) => {
       if (err) {
         reject(err);
@@ -570,7 +570,7 @@ exports.getStudentApplications = (studentId) => {
 
 exports.checkExistenceApplication= (thesis, student)=> {
   return new Promise((resolve, reject) => {
-    const sql = 'SELECT * FROM THESIS_PROPOSAL WHERE STUDENT = ? AND THESIS = ?';
+    const sql = 'SELECT * FROM THESIS_APPLICATION WHERE STUDENT = ? AND THESIS = ?';
     db.get(sql, [student, thesis], (err, row) => {
       if (err) {
         reject(err);
@@ -597,7 +597,7 @@ exports.checkExistenceApplication= (thesis, student)=> {
 
 exports.acceptApplication = (thesis, student) => {
   return new Promise((resolve, reject) => {
-    const sql = 'UPDATE THESIS_PROPOSAL SET STATE = 1 WHERE THESIS = ? AND STUDENT = ?';
+    const sql = 'UPDATE THESIS_APPLICATION SET STATE = 1 WHERE THESIS = ? AND STUDENT = ?';
     db.run(sql, [thesis, student], function (err) {
       if (err) {
         reject(err);
@@ -612,7 +612,7 @@ exports.acceptApplication = (thesis, student) => {
 
 exports.cancelApplications = (thesis, student) => {
   return new Promise((resolve, reject) => {
-    const sql = 'UPDATE THESIS_PROPOSAL SET STATE = 3 WHERE THESIS = ? AND STUDENT != ? AND STATE == 0';
+    const sql = 'UPDATE THESIS_APPLICATION SET STATE = 3 WHERE THESIS = ? AND STUDENT != ? AND STATE == 0';
     db.run(sql, [thesis, student], function (err) {
       if (err) {
         reject(err);
@@ -627,7 +627,7 @@ exports.cancelApplications = (thesis, student) => {
 
 exports.rejectApplication = (thesis, student) => {
   return new Promise((resolve, reject) => {
-    const sql = 'UPDATE THESIS_PROPOSAL SET STATE = 2 WHERE THESIS = ? AND STUDENT = ?';
+    const sql = 'UPDATE THESIS_APPLICATION SET STATE = 2 WHERE THESIS = ? AND STUDENT = ?';
     db.run(sql, [thesis, student], function (err) {
       if (err) {
         reject(err);

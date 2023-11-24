@@ -319,7 +319,7 @@ app.get('/api/thesis/:id', checkJwt, async (req, res) => {
 ////////////////////////////////////////////////////////////////////
 
 //API for the 3rd story --> Apply for proposal
-app.post('/api/thesis/:id/proposal', checkJwt, async (req, res) => {
+app.post('/api/thesis/:id/apply', checkJwt, async (req, res) => {
 	try {
 		//let user = req.auth.payload.sub;
 		let thesisId = req.params.id;
@@ -343,7 +343,7 @@ app.post('/api/thesis/:id/proposal', checkJwt, async (req, res) => {
 		}
 
 		if (userRole.role == 'student') {
-			const propId = await db.insertProposal(userRole.id, thesisId);
+			const propId = await db.insertApplication(userRole.id, thesisId);
 		} else {
 			return res.status(401).json({ error: 'Unauthorized user' });
 		}
