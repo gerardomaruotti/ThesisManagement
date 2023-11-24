@@ -373,9 +373,76 @@ app.get('/api/thesis/applications/browse', checkJwt, async(req,res)=> {
 	} catch(err){
 		res.status(503).json({error: "GetApplications error"})
 	}
-
-
-
 })
+/*
+accettazione application
+id stud, id thesi --> input
+devo accettare quella dello stud, tutte le altre applicazioni di quella tesi sono messe in canceled 
+devo archiviare le tesi 
+
+rifiuto application
+id stud, id thesi --> input
+metto rejected l'application dello studente che ha richiesto l'application
+*/
+
+
+//API for the 3rd story --> Apply for proposal
+app.post('/api/accept/application', [
+	check('studentID').isString(),
+	check('thesisID').isInt(),
+	
+], async (req, res) => {
+	try {
+		//controllo tramite la getRole che il prof possa eseguire l'azione di accettare o rifiutare un application
+		let thesis = req.body.thesisID;
+		let student = req.body.studentID;
+
+		//check if exist the pair stud - application 
+		let getApplication = await db.checkExistenceApplication(thesis, student);
+		console.log(getApplication)
+		if (getApplication.available == 1 && getApplication.data.state == 0){
+			//The application exists
+			let acceptApplication = await db.acceptApplication(thesis, student);
+
+			//now i have to update all the others request for that thesis 
+			let cancelApplication = await db.cancelApplications(thesis, student);
+			return res.status(200).json('Applicazione accettata con successo');
+		}else{
+			return res.status(401).json({ error: 'Applicazione inesistente' })
+		}
+
+		
+	} catch (err) {
+		return res.status(503).json({ error: "Errore nell'accettazione di una tesi" });
+	}
+});
+
+app.post('/api/reject/application', [
+	check('studentID').isString(),
+	check('thesisID').isInt(),
+	
+], async (req, res) => {
+	try {
+		//controllo tramite la getRole che il prof possa eseguire l'azione di accettare o rifiutare un application
+		let thesis = req.body.thesisID;
+		let student = req.body.studentID;
+
+		//check if exist the pair stud - application 
+		let getApplication = await db.checkExistenceApplication(thesis, student);
+		if (getApplication.available == 1 && getApplication.data.state == 0){
+			//The application exists, now i reject it
+			let rejectApplication = await db.rejectApplication(thesis, student);
+			console.log(rejectApplication)
+			return res.status(200).json('Applicazione rifiutata con successo');
+		}else{
+			return res.status(401).json({ error: 'Applicazione inesistente' })
+		}
+		
+	} catch (err) {
+		return res.status(503).json({ error: "Errore nella reject di una tesi" });
+	}
+});
+
+
 
 module.exports = { app, port, checkJwt };

@@ -117,3 +117,21 @@ Content-Type: application/json
     }
 }
 
+
+###########API Accettazione di un application                   
+POST http://localhost:3001/api/accept/application HTTP/1.1   
+Content-Type: application/json
+
+{ 
+    "studentID":"s319852",
+    "thesisID":7
+}
+  
+###########API reject di un application 
+POST http://localhost:3001/api/reject/application HTTP/1.1   
+Content-Type: application/json
+
+{
+    "studentID":"s319852",
+    "thesisID":7
+}

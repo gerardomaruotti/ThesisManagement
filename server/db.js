@@ -562,3 +562,75 @@ exports.getStudentApplications = (studentId) => {
     });
   });
 }
+
+
+exports.checkExistenceApplication= (thesis, student)=> {
+  return new Promise((resolve, reject) => {
+    const sql = 'SELECT * FROM THESIS_PROPOSAL WHERE STUDENT = ? AND THESIS = ?';
+    db.get(sql, [student, thesis], (err, row) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      else {
+        if (row == undefined)
+          resolve({"available":0, data:""})
+        else{
+          let application = {
+            student: row.STUDENT,
+            thesis: row.THESIS,
+            state : row.STATE
+          };
+          resolve({"available":1, data:application})
+        }
+      }
+    });
+  });
+}
+
+
+
+
+exports.acceptApplication = (thesis, student) => {
+  return new Promise((resolve, reject) => {
+    const sql = 'UPDATE THESIS_PROPOSAL SET STATE = 1 WHERE THESIS = ? AND STUDENT = ?';
+    db.run(sql, [thesis, student], function (err) {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve(this.lastID);
+    });
+  });
+};
+
+
+
+exports.cancelApplications = (thesis, student) => {
+  return new Promise((resolve, reject) => {
+    const sql = 'UPDATE THESIS_PROPOSAL SET STATE = 3 WHERE THESIS = ? AND STUDENT != ?';
+    db.run(sql, [thesis, student], function (err) {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve(this.lastID);
+    });
+  });
+};
+
+
+
+exports.rejectApplication = (thesis, student) => {
+  return new Promise((resolve, reject) => {
+    const sql = 'UPDATE THESIS_PROPOSAL SET STATE = 2 WHERE THESIS = ? AND STUDENT = ?';
+    db.run(sql, [thesis, student], function (err) {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve(this.lastID);
+    });
+  });
+};
+
