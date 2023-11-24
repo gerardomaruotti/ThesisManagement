@@ -1,21 +1,35 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import App from '../App';
 import StudentApplicationCard from '../components/StudentApplicationCard';
-import { thesis } from '../models/thesis';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Container, Row } from 'react-bootstrap';
+import { useLoading } from '../LoadingContext';
+import Loading from '../components/Loading.jsx';
+import API from '../API.jsx';
 
+//Status: 0 pending, 1 accepted, 2 rejected, 3 canceled
 function StudentApplications(props) {
-	const navigate = useNavigate();
-	return (
+	const { loading, setLoading } = useLoading();
+	const [applications, setApplications] = useState([]);
+
+	useEffect(() => {
+		setLoading(true);
+		API.getApplications(props.accessToken)
+			.then((app) => {
+				setApplications(app);
+				setLoading(false);
+			})
+			.catch((err) => {
+				props.handleError(err);
+				setLoading(false);
+			});
+	}, []);
+
+	return loading ? (
+		<Loading />
+	) : (
 		<Container>
-			{/* <Row style={{ marginBottom: 25 }}>{props.thesis != [] ? props.thesis.map((thesis, index) => <StudentApplicationCard thesis={thesis} />) : null}</Row> */}
 			<Row style={{ marginBottom: 25 }}>
-				<StudentApplicationCard thesis={thesis} />
-				<StudentApplicationCard thesis={thesis} />
-				<StudentApplicationCard thesis={thesis} />
-				<StudentApplicationCard thesis={thesis} />
+				{applications != [] ? applications.map((application, index) => <StudentApplicationCard key={index} application={application} />) : null}
 			</Row>
 		</Container>
 	);

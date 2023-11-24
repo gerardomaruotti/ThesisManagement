@@ -188,13 +188,20 @@ function App() {
 						) : null
 					}
 				/>
-				<Route path='/applications' element={
-					isProfessor ? (
-						<ProfessorApplications accessToken={accessToken} handleError={handleError} isProfessor={isProfessor} />
-					) : isStudent ?
-						(<StudentApplications />)
-						: null} />
-				<Route path='/applications/proposal/:id' element={<ProfessorApplicationsThesis accessToken={accessToken} handleError={handleError} isProfessor={isProfessor} />} />
+				<Route
+					path='/applications'
+					element={
+						isProfessor ? (
+							<ProfessorApplications accessToken={accessToken} handleError={handleError} isProfessor={isProfessor} />
+						) : isStudent ? (
+							<StudentApplications accessToken={accessToken} handleError={handleError} />
+						) : null
+					}
+				/>
+				<Route
+					path='/applications/proposal/:id'
+					element={<ProfessorApplicationsThesis accessToken={accessToken} handleError={handleError} isProfessor={isProfessor} />}
+				/>
 				<Route path='/*' element={<NotFound />} />
 			</Routes>
 		</BrowserRouter>

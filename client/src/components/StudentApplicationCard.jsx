@@ -2,7 +2,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Row, Col, Card, Image, Button, Container } from 'react-bootstrap';
 import { Color } from '../constants/colors.js';
 import Avatar from '../assets/avatar.svg';
-import API from '../API.jsx';
 import randomcolor from 'randomcolor';
 import { useNavigate } from 'react-router-dom';
 
@@ -22,9 +21,8 @@ function StudentApplicationCard(props) {
 						overflow: 'hidden',
 					}}
 				>
-					{props.thesis.title}
+					{props.application.title}
 				</div>
-
 				<div
 					className='hide-scrollbar'
 					style={{
@@ -37,7 +35,7 @@ function StudentApplicationCard(props) {
 						msOverflowStyle: 'none' /* For Internet Explorer and Edge */,
 					}}
 				>
-					{props.thesis.keywords.map((keyword, index) => (
+					{props.application.keywords.map((keyword, index) => (
 						<span
 							key={index}
 							className='badge'
@@ -53,15 +51,14 @@ function StudentApplicationCard(props) {
 						</span>
 					))}
 				</div>
-
 				<Row style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15, height: 30 }}>
 					<Col lg={1} xs={1} style={{ display: 'flex', alignItems: 'center' }}>
 						<Image style={{ height: 35, width: 35 }} src={Avatar} roundedCircle />
 					</Col>
 					<Col lg={5} xs={5} style={{ display: 'flex', alignItems: 'center' }}>
-						<span style={{ color: 'rgba(0, 0, 0, 0.8)' }}>{props.thesis.sup_name + ' ' + props.thesis.sup_surname}</span>
+						<span style={{ color: 'rgba(0, 0, 0, 0.8)' }}>{props.application.sup_name + ' ' + props.application.sup_surname}</span>
 					</Col>
-					{props.thesis.types.filter((type) => type == 'IN COMPANY').length > 0 ? (
+					{props.application.types.filter((type) => type == 'IN COMPANY').length > 0 ? (
 						<>
 							<Col lg={1} xs={1} style={{ display: 'flex', alignItems: 'center', float: 'right' }}>
 								<span
@@ -76,7 +73,7 @@ function StudentApplicationCard(props) {
 							</Col>
 						</>
 					) : null}
-					{props.thesis.types.filter((type) => type == 'ABROAD').length > 0 ? (
+					{props.application.types.filter((type) => type == 'ABROAD').length > 0 ? (
 						<>
 							<Col lg={1} xs={1} style={{ display: 'flex', alignItems: 'center', float: 'right' }}>
 								<span
@@ -95,7 +92,7 @@ function StudentApplicationCard(props) {
 				</Row>
 				<Row>
 					<Col>
-						{props.thesis.status === 'Accepted' ? (
+						{props.application.status === 'Accepted' ? (
 							<div style={{ display: 'flex', alignItems: 'center', float: 'left', marginTop: 20 }}>
 								<Col style={{ display: 'flex', alignItems: 'center', float: 'left' }}>
 									<span
@@ -111,11 +108,11 @@ function StudentApplicationCard(props) {
 									</span>
 								</Col>
 								<Col style={{ display: 'flex', alignItems: 'left', float: 'left', marginLeft: 5 }}>
-									<span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>{props.thesis.status}</span>
+									<span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>{props.application.status}</span>
 								</Col>
 							</div>
 						) : null}
-						{props.thesis.status === 'Rejected' ? (
+						{props.application.status === 'Rejected' ? (
 							<div style={{ display: 'flex', alignItems: 'center', float: 'left', marginTop: 20 }}>
 								<Col style={{ display: 'flex', alignItems: 'center', float: 'left' }}>
 									<span
@@ -131,11 +128,11 @@ function StudentApplicationCard(props) {
 									</span>
 								</Col>
 								<Col style={{ display: 'flex', alignItems: 'left', float: 'left', marginLeft: 5 }}>
-									<span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>{props.thesis.status}</span>
+									<span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>{props.application.status}</span>
 								</Col>
 							</div>
 						) : null}
-						{props.thesis.status === 'Pending' ? (
+						{props.application.status === 'Pending' ? (
 							<div style={{ display: 'flex', alignItems: 'center', float: 'left', marginTop: 20 }}>
 								<Col style={{ display: 'flex', alignItems: 'center', float: 'left' }}>
 									<span
@@ -151,11 +148,11 @@ function StudentApplicationCard(props) {
 									</span>
 								</Col>
 								<Col style={{ display: 'flex', alignItems: 'left', float: 'left', marginLeft: 5 }}>
-									<span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>{props.thesis.status}</span>
+									<span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>{props.application.status}</span>
 								</Col>
 							</div>
 						) : null}
-						{props.thesis.status === 'Canceled' ? (
+						{props.application.status === 'Canceled' ? (
 							<div style={{ display: 'flex', alignItems: 'center', float: 'left', marginTop: 20 }}>
 								<Col style={{ display: 'flex', alignItems: 'center', float: 'left' }}>
 									<span
@@ -171,14 +168,14 @@ function StudentApplicationCard(props) {
 									</span>
 								</Col>
 								<Col style={{ display: 'flex', alignItems: 'left', float: 'left', marginLeft: 5 }}>
-									<span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>{props.thesis.status}</span>
+									<span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>{props.application.status}</span>
 								</Col>
 							</div>
 						) : null}
 					</Col>
 					<Col>
 						<div style={{ marginTop: 20, marginRight: 10, textAlign: 'right' }}>
-							<Button variant='primary' onClick={() => navigate('/proposal/' + props.thesis.ID)}>
+							<Button variant='primary' onClick={() => navigate('/proposal/' + props.application.id)}>
 								<i className='bi bi-arrow-right' style={{ fontSize: '16px' }}></i>
 							</Button>
 						</div>

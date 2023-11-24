@@ -6,23 +6,23 @@ import { Color } from '../constants/colors.js';
 import Avatar from '../assets/avatar.svg';
 import { useNavigate, useLocation } from 'react-router-dom';
 
-
-
 function Header(props) {
-	const { user, isAuthenticated, loginWithRedirect, logout } = useAuth0();
+	const { isAuthenticated, loginWithRedirect, logout } = useAuth0();
 	const navigate = useNavigate();
 	let location = useLocation();
 
 	function navElement() {
 		return (
 			<Nav activeKey={location.pathname}>
-				<Nav.Link eventKey="/" onClick={() => navigate('/')}>Proposals</Nav.Link>
-				<Nav.Link eventKey="/applications" onClick={() => navigate('/applications')}>Applications</Nav.Link>
+				<Nav.Link eventKey='/' onClick={() => navigate('/')}>
+					Proposals
+				</Nav.Link>
+				<Nav.Link eventKey='/applications' onClick={() => navigate('/applications')}>
+					Applications
+				</Nav.Link>
 			</Nav>
-		)
+		);
 	}
-
-
 
 	return (
 		<>
@@ -32,13 +32,11 @@ function Header(props) {
 						<img src={logo_white} alt='Logo' style={{ height: '40px' }} />
 					</Navbar.Brand>
 
-					<Navbar.Collapse className="d-none d-md-flex">
-						{navElement()}
-					</Navbar.Collapse>
-					<Nav className="d-flex flex-row">
+					<Navbar.Collapse className='d-none d-md-flex'>{navElement()}</Navbar.Collapse>
+					<Nav className='d-flex flex-row'>
 						<Dropdown align='end'>
-							<Dropdown.Toggle variant="primary" id="dropdown-custom" style={{ height: 53 }}>
-								<i className="bi bi-bell" style={{ fontSize: '20px' }}></i>
+							<Dropdown.Toggle variant='primary' id='dropdown-custom' style={{ height: 53 }}>
+								<i className='bi bi-bell' style={{ fontSize: '20px' }}></i>
 							</Dropdown.Toggle>
 
 							<Dropdown.Menu>
@@ -48,13 +46,13 @@ function Header(props) {
 							</Dropdown.Menu>
 						</Dropdown>
 						<Dropdown align='end'>
-							<Dropdown.Toggle variant="primary" id="dropdown-custom">
-								<Container className="d-flex justify-content-between align-items-center">
+							<Dropdown.Toggle variant='primary' id='dropdown-custom'>
+								<Container className='d-flex justify-content-between align-items-center'>
 									<div style={{ marginRight: 15 }}>
-										<div style={{ fontSize: 15 }}>{props.userData ? props.userData.name + " " + props.userData.surname : null}</div>
+										<div style={{ fontSize: 15 }}>{props.userData ? props.userData.name + ' ' + props.userData.surname : null}</div>
 										<div style={{ color: 'rgba(255,255,255,0.5)', float: 'right', fontSize: 12 }}>{props.userData ? props.userData.id : null}</div>
 									</div>
-									<div className="text-center">
+									<div className='text-center'>
 										<Image style={{ height: 33, width: 33 }} src={Avatar} roundedCircle />
 									</div>
 								</Container>
@@ -62,37 +60,36 @@ function Header(props) {
 
 							<Dropdown.Menu>
 								<Dropdown.Item>
-									<i className="bi bi-gear"></i>
+									<i className='bi bi-gear'></i>
 									<span style={{ marginLeft: 15 }}>Settings</span>
 								</Dropdown.Item>
 								<Dropdown.Item>
-									<i className="bi bi-clock-history"></i>
+									<i className='bi bi-clock-history'></i>
 									<span style={{ marginLeft: 15 }}>virtual clock</span>
 								</Dropdown.Item>
 								<Dropdown.Divider />
-								{isAuthenticated ?
+								{isAuthenticated ? (
 									<Dropdown.Item onClick={logout}>
-										<i className="bi bi-box-arrow-right"></i>
+										<i className='bi bi-box-arrow-right'></i>
 										<span style={{ marginLeft: 15 }}>Logout</span>
 									</Dropdown.Item>
-									:
+								) : (
 									<Dropdown.Item onClick={loginWithRedirect}>
-										<i className="bi bi-box-arrow-left"></i>
+										<i className='bi bi-box-arrow-left'></i>
 										<span style={{ marginLeft: 15 }}>Login</span>
 									</Dropdown.Item>
-								}
+								)}
 							</Dropdown.Menu>
 						</Dropdown>
 						<Navbar.Toggle aria-controls='responsive-navbar-nav' />
 					</Nav>
 				</Container>
-				<Container className="d-md-none" style={{ display: 'content', textAlign: 'center' }}>
-					<Navbar.Collapse id="responsive-navbar-nav" className="d-md-none" >
+				<Container className='d-md-none' style={{ display: 'content', textAlign: 'center' }}>
+					<Navbar.Collapse id='responsive-navbar-nav' className='d-md-none'>
 						{navElement()}
 					</Navbar.Collapse>
 				</Container>
 			</Navbar>
-
 		</>
 	);
 }
