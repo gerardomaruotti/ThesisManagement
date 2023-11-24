@@ -457,6 +457,66 @@ app.post('/api/reject/application', [
 	}
 });
 
+//thesis update
+app.put('/api/edit/thesis/:id',
+	[
+		check('title').isLength({ min: 1 }),
+		check('description').isLength({ min: 1 }),
+		check('required_knowledge').isLength({ min: 1 }),
+		check('notes').isLength({ min: 1 }),
+		check('expiration_date').isLength({ min: 1 }),
+		check('level').isLength({ min: 1 }),
+		check('degree').isLength({ min: 1 }),
+		check('co-supervisors').isArray(),
+		check('keywords').isArray(),
+	],
+	checkJwt,
+	async (req, res) => {
+		const thesisId= req.params.id;
 
+		const title = req.body.title;
+		const description = req.body.description;
+		const req_know = req.body.required_knowledge;
+		const notes = req.body.notes;
+		const exp_date = req.body.expiration_date;
+		const level = req.body.level;
+		const degree = req.body.degree;
+		const types = req.body.types;
+		const co_supervisors = req.body.co_supervisors;
+		const keywords = req.body.keywords;
+
+		try {
+			//i need groups of supervisor and co-supervisor of the thesis
+			const userRole = await db.getRole(req.auth);
+			if (userRole.role == 'teacher') {
+				const supervisor = userRole.id;
+				const checkApplications = await db.checkExistenceApllicationForThesis(thesisId);
+				if(checkApplications==1) return res.status(401).json({ error: 'The thesis has applications, cannot be modified' });
+
+				const deleteCosup = await db.deleteCoSupervisor(thesisId);
+				for (let i = 0; i < co_supervisors.length; i++) {
+					const CoSupID = await db.insertCoSupervisor(thesisId, co_supervisors[i].name, co_supervisors[i].surname, co_supervisors[i].email);
+				}
+
+				const deleteKeyword = await db.deleteKeyword(thesisId);
+				for (let i = 0; i < keywords.length; i++) {
+					const keywordID = await db.insertKeyword(thesisId, keywords[i]);
+				}
+
+				const deleteType = await db.deleteType(thesisId);
+				for (let i = 0; i < types.length; i++) {
+					const typesId = await db.insertType(thesisId, types[i]);
+				}
+
+				const id = await db.editThesis(thesisId, title, description, req_know, notes, exp_date, level, degree, supervisor);
+				return res.status(200).json(thesisId);
+			} else {
+				return res.status(401).json({ error: 'Unauthorized user' });
+			}
+		} catch (err) {
+			return res.status(503).json({ error: 'Errore nella modifica della tesi' });
+		}
+	}
+);
 
 module.exports = { app, port, checkJwt };
