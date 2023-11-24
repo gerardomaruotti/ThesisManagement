@@ -375,6 +375,78 @@ function getApplications(accessToken) {
 	});
 }
 
+function acceptApplication(parameters, accessToken) {
+	return new Promise((resolve, reject) => {
+		fetch(URL + '/accept/application', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${accessToken}`,
+			},
+			body: JSON.stringify(parameters),
+		})
+			.then((response) => {
+				if (response.ok) {
+					response
+						.json()
+						.then((message) => resolve(message))
+						.catch(() => {
+							reject({ error: 'Cannot parse server response.' });
+						});
+				} else {
+					// analyze the cause of error
+					response
+						.json()
+						.then((message) => {
+							reject(message);
+						}) // error message in the response body
+						.catch(() => {
+							reject({ error: 'Cannot parse server response.' });
+						});
+				}
+			})
+			.catch(() => {
+				reject({ error: 'Cannot communicate with the server.' });
+			}); // connection errors
+	});
+}
+
+function rejectApplication(parameters, accessToken) {
+	return new Promise((resolve, reject) => {
+		fetch(URL + '/reject/application', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${accessToken}`,
+			},
+			body: JSON.stringify(parameters),
+		})
+			.then((response) => {
+				if (response.ok) {
+					response
+						.json()
+						.then((message) => resolve(message))
+						.catch(() => {
+							reject({ error: 'Cannot parse server response.' });
+						});
+				} else {
+					// analyze the cause of error
+					response
+						.json()
+						.then((message) => {
+							reject(message);
+						}) // error message in the response body
+						.catch(() => {
+							reject({ error: 'Cannot parse server response.' });
+						});
+				}
+			})
+			.catch(() => {
+				reject({ error: 'Cannot communicate with the server.' });
+			}); // connection errors
+	});
+}
+
 const API = {
 	getAllKeywords,
 	getAllTypes,
@@ -386,6 +458,8 @@ const API = {
 	getThesisByID,
 	getUser,
 	ThesisApply,
-	getApplications
+	getApplications,
+	acceptApplication,
+	rejectApplication
 };
 export default API;

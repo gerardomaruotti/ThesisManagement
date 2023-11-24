@@ -1,5 +1,5 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Row, Col, Card, Table, Button, Container, Toast, ToastContainer, Offcanvas, Badge } from 'react-bootstrap';
+import { Row, Col, Card, Table, Button, Container, Toast, ToastContainer, Offcanvas, Badge, Modal } from 'react-bootstrap';
 
 
 import { useNavigate, useParams } from 'react-router-dom';
@@ -13,10 +13,11 @@ function ProfessorApplicationsThesis(props) {
     const { loading, setLoading } = useLoading();
     const navigate = useNavigate();
     const [thesis, setThesis] = useState(null);
-    const [popup, setPopup] = useState(false);
-    const [msgAndColor, setMsgAndColor] = useState({ header: '', msg: '', color: '' });
     const [showDetails, setShowDetails] = useState(false);
+    const [showModal, setShowModal] = useState(false);
     const [applicationsThesis, setApplicationsThesis] = useState([]);
+    const [msgModal, setMsgModal] = useState({});
+    const [dirty, setDirty] = useState(false);
 
     const { id } = useParams();
 
@@ -35,18 +36,21 @@ function ProfessorApplicationsThesis(props) {
     }
 
     useEffect(() => {
-        setLoading(true);
-        API.getApplications(props.accessToken)
-            .then((app) => {
-                const appthesis = unionForid(app);
-                setApplicationsThesis(appthesis[id]);
-                setLoading(false);
-            })
-            .catch((err) => {
-                props.handleError(err);
-                setLoading(false);
-            });
-    }, []);
+        if (props.accessToken != null) {
+            setLoading(true);
+            API.getApplications(props.accessToken)
+                .then((app) => {
+                    const appthesis = unionForid(app);
+                    setApplicationsThesis(appthesis[id]);
+                    setLoading(false);
+                    setDirty(false);
+                })
+                .catch((err) => {
+                    props.handleError(err);
+                    setLoading(false);
+                });
+        }
+    }, [dirty, props.accessToken]);
 
     useEffect(() => {
         if (props.accessToken != null) {
@@ -64,22 +68,39 @@ function ProfessorApplicationsThesis(props) {
         }
     }, [props.accessToken]);
 
-    function apply() {
-        API.ThesisApply(id, props.accessToken)
+    function acceptApplication(idStudent) {
+        const parameters = { thesisID: id, studentID: idStudent };
+        API.acceptApplication(parameters, props.accessToken)
             .then(() => {
-                setMsgAndColor({ header: 'Application successful', msg: 'Successful application to the thesis ' + thesis.title, color: 'success' });
-                setPopup(true);
+                setDirty(true);
             })
-            .catch(() => {
-                setMsgAndColor({
-                    header: 'Application failed',
-                    msg: 'You have already sent an application for this thesis or you do not have authorization',
-                    color: 'danger',
-                });
-                setPopup(true);
+            .catch((err) => {
+                props.handleError(err);
             });
     }
 
+    function rejectApplication(idStudent) {
+        const parameters = { thesisID: id, studentID: idStudent };
+        API.rejectApplication(parameters, props.accessToken)
+            .then(() => {
+                setDirty(true);
+            })
+            .catch((err) => {
+                props.handleError(err);
+            });
+    }
+
+    function assignOrReject() {
+        if (msgModal.accept) {
+            acceptApplication(msgModal.studentID);
+            props.handleSuccess('Application accepted');
+
+        } else {
+            rejectApplication(msgModal.studentID);
+            props.handleError('Application rejected');
+        }
+        setShowModal(false);
+    }
 
     return loading ? (
         <Loading />
@@ -90,7 +111,7 @@ function ProfessorApplicationsThesis(props) {
                     <Row>
                         <Col md={4} className='d-none d-md-flex'>
                             <Card style={{ padding: 20, paddingBottom: 30, position: 'sticky', top: 25 }} className='custom-card'>
-                                <DetailsProposalLeftBar thesis={thesis} apply={apply} isProfessor={props.isProfessor} />
+                                <DetailsProposalLeftBar thesis={thesis} isProfessor={props.isProfessor} />
                             </Card>
                         </Col>
                         <Col md={8} sm={12}>
@@ -162,10 +183,10 @@ function ProfessorApplicationsThesis(props) {
                                                                 app.state == 2 ? <span className='badge custom-badge-danger'>Rejected</span> :
                                                                     app.state == 3 ? <span className='badge custom-badge-warning'>Cancelled</span> :
                                                                         <div>
-                                                                            <Button variant='outline-success' style={{ borderRadius: 100 }} size='sm'>
+                                                                            <Button variant='outline-success' style={{ borderRadius: 100 }} size='sm' onClick={() => { setShowModal(true); setMsgModal({ accept: true, studentID: app.student }) }}>
                                                                                 <i className="bi bi-check2"></i>
                                                                             </Button>
-                                                                            <Button variant='outline-danger' style={{ borderRadius: 100, marginLeft: 8 }} size='sm'>
+                                                                            <Button variant='outline-danger' style={{ borderRadius: 100, marginLeft: 8 }} size='sm' onClick={() => { setShowModal(true); setMsgModal({ accept: false, studentID: app.student }) }}>
                                                                                 <i className="bi bi-x-lg"></i>
                                                                             </Button>
                                                                         </div>
@@ -193,18 +214,24 @@ function ProfessorApplicationsThesis(props) {
                     <Offcanvas.Title>Details</Offcanvas.Title>
                 </Offcanvas.Header>
                 <Offcanvas.Body>
-                    <DetailsProposalLeftBar thesis={thesis} apply={apply} isProfessor={props.isProfessor} />
+                    <DetailsProposalLeftBar thesis={thesis} isProfessor={props.isProfessor} />
                 </Offcanvas.Body>
             </Offcanvas>
 
-            <ToastContainer style={{ position: 'fixed', top: 20, right: 20, zIndex: 10 }} className='p-3'>
-                <Toast bg={msgAndColor.color} onClose={() => setPopup(false)} show={popup} delay={5000} autohide>
-                    <Toast.Header>
-                        <strong className='me-auto'>{msgAndColor.header}</strong>
-                    </Toast.Header>
-                    <Toast.Body>{msgAndColor.msg}</Toast.Body>
-                </Toast>
-            </ToastContainer>
+            <Modal show={showModal} onHide={() => setShowModal(false)} centered>
+                <Modal.Header closeButton>
+                    <Modal.Title>{msgModal.accept ? 'Accept application' : 'Reject Application'}</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>Are you sure you want to {msgModal.accept ? 'accept' : 'reject'} the application of student {msgModal.studentID}? {msgModal.accept ? 'The other application will be cancelled' : null} </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="outline-secondary" onClick={() => { setShowModal(false); }}>
+                        No
+                    </Button>
+                    <Button variant="outline-primary" onClick={assignOrReject}>
+                        Yes
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </>
     );
 }

@@ -48,7 +48,7 @@ function App() {
 	const [expirationDate2, setExpirationDate2] = useState('all');
 
 	function handleError(err) {
-		toast.error(err.error, {
+		toast.error(err.error ? err.error : err, {
 			position: 'bottom-center',
 			duration: 5000,
 			style: {
@@ -59,8 +59,8 @@ function App() {
 		});
 	}
 
-	function userLoginToast() {
-		toast.success(userData ? 'Logged in as ' + userData.name + ' ' + userData.surname : 'Logged in', {
+	function handleSuccess(msg) {
+		toast.success(msg, {
 			position: 'bottom-center',
 			style: {
 				borderRadius: '10px',
@@ -91,7 +91,7 @@ function App() {
 							setIsProfessor(true);
 							setIsStudent(false);
 						}
-						userLoginToast();
+						handleSuccess('Logged in successfully!');
 					})
 					.catch((err) => handleError(err));
 				API.getAllThesis(accessToken)
@@ -198,10 +198,8 @@ function App() {
 						) : null
 					}
 				/>
-				<Route
-					path='/applications/proposal/:id'
-					element={<ProfessorApplicationsThesis accessToken={accessToken} handleError={handleError} isProfessor={isProfessor} />}
-				/>
+				<Route path='/applications/proposal/:id' element={<ProfessorApplicationsThesis accessToken={accessToken} handleError={handleError} isProfessor={isProfessor} handleSuccess={handleSuccess} />} />
+
 				<Route path='/*' element={<NotFound />} />
 			</Routes>
 		</BrowserRouter>
