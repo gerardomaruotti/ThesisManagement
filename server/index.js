@@ -407,14 +407,15 @@ app.post('/api/accept/application', [
 		}
 		//check if exist the pair stud - application 
 		let getApplication = await db.checkExistenceApplication(thesis, student);
-		console.log(getApplication)
 		if (getApplication.available == 1 && getApplication.data.state == 0){
 			//The application exists
 			let acceptApplication = await db.acceptApplication(thesis, student);
 
 			//now i have to update all the others request for that thesis 
 			let cancelApplication = await db.cancelApplications(thesis, student);
-			return res.status(200).json('Applicazione accettata con successo');
+
+			let archived=await db.archiveThesis(thesis);
+			return res.status(200).json(acceptApplication);
 		}else{
 			return res.status(400).json({ error: 'Applicazione inesistente' })
 		}
@@ -446,8 +447,7 @@ app.post('/api/reject/application', [
 		if (getApplication.available == 1 && getApplication.data.state == 0){
 			//The application exists, now i reject it
 			let rejectApplication = await db.rejectApplication(thesis, student);
-			console.log(rejectApplication)
-			return res.status(200).json('Applicazione rifiutata con successo');
+			return res.status(200).json(rejectApplication);
 		}else{
 			return res.status(400).json({ error: 'Applicazione inesistente' })
 		}

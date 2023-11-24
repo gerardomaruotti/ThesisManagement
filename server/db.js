@@ -570,7 +570,7 @@ exports.getStudentApplications = (studentId) => {
 
 exports.checkExistenceApplication= (thesis, student)=> {
   return new Promise((resolve, reject) => {
-    const sql = 'SELECT * FROM THESIS_APPLICATION WHERE STUDENT = ? AND THESIS = ?';
+    const sql = 'SELECT * FROM THESIS_APPLICATION WHERE STUDENT = ? AND THESIS = ? AND STATE == 0';
     db.get(sql, [student, thesis], (err, row) => {
       if (err) {
         reject(err);
@@ -597,13 +597,13 @@ exports.checkExistenceApplication= (thesis, student)=> {
 
 exports.acceptApplication = (thesis, student) => {
   return new Promise((resolve, reject) => {
-    const sql = 'UPDATE THESIS_APPLICATION SET STATE = 1 WHERE THESIS = ? AND STUDENT = ?';
+    const sql = 'UPDATE THESIS_APPLICATION SET STATE = 1 WHERE THESIS = ? AND STUDENT = ? AND STATE = 0';
     db.run(sql, [thesis, student], function (err) {
       if (err) {
         reject(err);
         return;
       }
-      resolve(this.lastID);
+      resolve("Accepted");
     });
   });
 };
@@ -618,7 +618,7 @@ exports.cancelApplications = (thesis, student) => {
         reject(err);
         return;
       }
-      resolve(this.lastID);
+      resolve("Canceled");
     });
   });
 };
@@ -627,14 +627,28 @@ exports.cancelApplications = (thesis, student) => {
 
 exports.rejectApplication = (thesis, student) => {
   return new Promise((resolve, reject) => {
-    const sql = 'UPDATE THESIS_APPLICATION SET STATE = 2 WHERE THESIS = ? AND STUDENT = ?';
+    const sql = 'UPDATE THESIS_APPLICATION SET STATE = 2 WHERE THESIS = ? AND STUDENT = ? AND STATE = 0';
     db.run(sql, [thesis, student], function (err) {
       if (err) {
         reject(err);
         return;
       }
-      resolve(this.lastID);
+      resolve("Rejected");
     });
   });
 };
+
+
+exports.archiveThesis=(thesis) => {
+  return new Promise((resolve, reject) => {
+    const sql = 'UPDATE THESIS_STATUS SET STATE = 0 WHERE THESIS = ? AND STATE = 1';
+    db.run(sql, [thesis], function (err) {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve("Archived");
+    });
+  });
+}
 
