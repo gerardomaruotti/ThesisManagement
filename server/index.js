@@ -391,12 +391,16 @@ app.post('/api/accept/application', [
 	check('studentID').isString(),
 	check('thesisID').isInt(),
 	
-], async (req, res) => {
+], checkJwt, async (req, res) => {
 	try {
 		//controllo tramite la getRole che il prof possa eseguire l'azione di accettare o rifiutare un application
 		let thesis = req.body.thesisID;
 		let student = req.body.studentID;
 
+		let getRole=await db.getRole(req.auth);
+		if(getRole.role != "teacher"){
+			return res.status(401).json({error: "Unauthorized"})
+		}
 		//check if exist the pair stud - application 
 		let getApplication = await db.checkExistenceApplication(thesis, student);
 		console.log(getApplication)
@@ -408,7 +412,7 @@ app.post('/api/accept/application', [
 			let cancelApplication = await db.cancelApplications(thesis, student);
 			return res.status(200).json('Applicazione accettata con successo');
 		}else{
-			return res.status(401).json({ error: 'Applicazione inesistente' })
+			return res.status(400).json({ error: 'Applicazione inesistente' })
 		}
 
 		
@@ -421,12 +425,18 @@ app.post('/api/reject/application', [
 	check('studentID').isString(),
 	check('thesisID').isInt(),
 	
-], async (req, res) => {
+], checkJwt, async (req, res) => {
 	try {
+
+	
 		//controllo tramite la getRole che il prof possa eseguire l'azione di accettare o rifiutare un application
 		let thesis = req.body.thesisID;
 		let student = req.body.studentID;
 
+		let getRole=await db.getRole(req.auth);
+		if(getRole.role != "teacher"){
+			return res.status(401).json({error: "Unauthorized"})
+		}
 		//check if exist the pair stud - application 
 		let getApplication = await db.checkExistenceApplication(thesis, student);
 		if (getApplication.available == 1 && getApplication.data.state == 0){
@@ -435,7 +445,7 @@ app.post('/api/reject/application', [
 			console.log(rejectApplication)
 			return res.status(200).json('Applicazione rifiutata con successo');
 		}else{
-			return res.status(401).json({ error: 'Applicazione inesistente' })
+			return res.status(400).json({ error: 'Applicazione inesistente' })
 		}
 		
 	} catch (err) {
