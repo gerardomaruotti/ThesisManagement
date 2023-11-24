@@ -166,7 +166,8 @@ function InsertProposal(props) {
 
 	return (
 		<Container>
-			<Form style={{ padding: 20, margin: 20 }} onSubmit={handleSubmit}>
+			<h2 style={{ textAlign: 'center', marginTop: 20 }}>New Proposal</h2>
+			<Form style={{ padding: 20, marginRight: 20, marginLeft: 20 }} onSubmit={handleSubmit}>
 				<Row>
 					<Col md={4}>
 						<Form.Group className='mb-3' controlId='formCoSupervisors'>
@@ -215,7 +216,13 @@ function InsertProposal(props) {
 						</Form.Group>
 						<Form.Group className='mb-3' controlId='formDescription'>
 							<Form.Label>Description</Form.Label>
-							<Form.Control as='textarea' required placeholder='Enter description' onChange={(event) => setDescription(event.target.value)} />
+							<Form.Control
+								as='textarea'
+								rows={5}
+								required
+								placeholder='Enter description'
+								onChange={(event) => setDescription(event.target.value)}
+							/>
 						</Form.Group>
 						<Form.Group className='mb-3' controlId='formRequiredKnowledge'>
 							<Form.Label>Required knowledge</Form.Label>
