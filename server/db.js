@@ -608,7 +608,7 @@ exports.acceptApplication = (thesis, student) => {
 
 exports.cancelApplications = (thesis, student) => {
   return new Promise((resolve, reject) => {
-    const sql = 'UPDATE THESIS_PROPOSAL SET STATE = 3 WHERE THESIS = ? AND STUDENT != ?';
+    const sql = 'UPDATE THESIS_PROPOSAL SET STATE = 3 WHERE THESIS = ? AND STUDENT != AND STATE == 0?';
     db.run(sql, [thesis, student], function (err) {
       if (err) {
         reject(err);
