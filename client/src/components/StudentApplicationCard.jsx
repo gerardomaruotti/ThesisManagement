@@ -92,7 +92,7 @@ function StudentApplicationCard(props) {
 				</Row>
 				<Row>
 					<Col>
-						{props.application.status === 'Accepted' ? (
+						{props.application.state === 1 ? (
 							<div style={{ display: 'flex', alignItems: 'center', float: 'left', marginTop: 20 }}>
 								<Col style={{ display: 'flex', alignItems: 'center', float: 'left' }}>
 									<span
@@ -108,11 +108,11 @@ function StudentApplicationCard(props) {
 									</span>
 								</Col>
 								<Col style={{ display: 'flex', alignItems: 'left', float: 'left', marginLeft: 5 }}>
-									<span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>{props.application.status}</span>
+									<span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>Accepted</span>
 								</Col>
 							</div>
 						) : null}
-						{props.application.status === 'Rejected' ? (
+						{props.application.state === 2 ? (
 							<div style={{ display: 'flex', alignItems: 'center', float: 'left', marginTop: 20 }}>
 								<Col style={{ display: 'flex', alignItems: 'center', float: 'left' }}>
 									<span
@@ -128,11 +128,11 @@ function StudentApplicationCard(props) {
 									</span>
 								</Col>
 								<Col style={{ display: 'flex', alignItems: 'left', float: 'left', marginLeft: 5 }}>
-									<span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>{props.application.status}</span>
+									<span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>Rejected</span>
 								</Col>
 							</div>
 						) : null}
-						{props.application.status === 'Pending' ? (
+						{props.application.state === 0 ? (
 							<div style={{ display: 'flex', alignItems: 'center', float: 'left', marginTop: 20 }}>
 								<Col style={{ display: 'flex', alignItems: 'center', float: 'left' }}>
 									<span
@@ -148,11 +148,11 @@ function StudentApplicationCard(props) {
 									</span>
 								</Col>
 								<Col style={{ display: 'flex', alignItems: 'left', float: 'left', marginLeft: 5 }}>
-									<span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>{props.application.status}</span>
+									<span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>Pending</span>
 								</Col>
 							</div>
 						) : null}
-						{props.application.status === 'Canceled' ? (
+						{props.application.state === 3 ? (
 							<div style={{ display: 'flex', alignItems: 'center', float: 'left', marginTop: 20 }}>
 								<Col style={{ display: 'flex', alignItems: 'center', float: 'left' }}>
 									<span
@@ -168,7 +168,7 @@ function StudentApplicationCard(props) {
 									</span>
 								</Col>
 								<Col style={{ display: 'flex', alignItems: 'left', float: 'left', marginLeft: 5 }}>
-									<span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>{props.application.status}</span>
+									<span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>Canceled</span>
 								</Col>
 							</div>
 						) : null}
