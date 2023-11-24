@@ -652,3 +652,74 @@ exports.archiveThesis=(thesis) => {
   });
 }
 
+exports.editThesis = (id, title, description, req_know, notes, exp_date, level, degree, supervisor) => {
+  return new Promise((resolve, reject) => {
+    const sql = 'UPDATE thesis SET title = ?, description = ?, required_knowledge = ?, notes = ?, expiration_date = ?, level = ?, degree = ?, supervisor = ? WHERE id_thesis = ?';
+    db.run(sql, [title, description, req_know, notes, exp_date, level, degree, supervisor, id], function (err) {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve(this.lastID);
+    });
+  });
+};
+
+exports.deleteCoSupervisor = (id) => {
+  return new Promise((resolve, reject) => {
+    const sql = 'DELETE FROM co_supervisor WHERE thesis = ?';
+    db.run(sql, [id], function (err) {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve(1);
+    });
+  });
+};
+
+exports.deleteKeyword = (id) => {
+  return new Promise((resolve, reject) => {
+    const sql = 'DELETE FROM keyword WHERE thesis = ?';
+    db.run(sql, [id], function (err) {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve(1);
+    });
+  });
+};
+
+exports.deleteType = (id) => {
+  return new Promise((resolve, reject) => {
+    const sql = 'DELETE FROM TYPE WHERE thesis = ?';
+    db.run(sql, [id], function (err) {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve(1);
+    });
+  });
+}
+
+exports.checkExistenceApllicationForThesis= (thesis)=> {
+  return new Promise((resolve, reject) => {
+    const sql = 'SELECT * FROM THESIS_PROPOSAL WHERE THESIS = ?';
+    db.get(sql, [thesis], (err, row) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      else {
+        if (row == undefined)
+          resolve(0)
+        else{
+          resolve(1)
+        }
+      }
+    });
+  });
+}
+
