@@ -10,9 +10,14 @@ import InsertProposal from './views/InsertProposal';
 import Proposal from './views/Proposal';
 import NotFound from './views/NotFound.jsx';
 import API from './API.jsx';
+import { useLoading } from './LoadingContext.jsx';
+import StudentApplications from './views/StudentApplications.jsx';
+import toast, { Toaster } from 'react-hot-toast';
+import ProfessorApplications from './views/ProfessorApplications.jsx';
+import ProfessorApplicationsThesis from './views/ProfessorApplicationsThesis.jsx';
 
 function App() {
-	const { user, isAuthenticated, getAccessTokenSilently, loginWithRedirect } = useAuth0();
+	const { user, isAuthenticated, getAccessTokenSilently, isLoading, loginWithRedirect } = useAuth0();
 	const [title, setTitle] = useState('');
 	const [requiredKnowledge, setRequiredKnowledge] = useState('');
 	const [description, setDescription] = useState('');
@@ -29,6 +34,9 @@ function App() {
 	const [accessToken, setAccessToken] = useState(null);
 	const [dirty, setDirty] = useState(false);
 	const [isProfessor, setIsProfessor] = useState(false);
+	const [isStudent, setIsStudent] = useState(false);
+
+	const { setLoading } = useLoading();
 
 	// Filters
 	const [activatedFilters, setActivatedFilters] = useState(false);
@@ -39,14 +47,33 @@ function App() {
 	const [selectedGroups, setSelectedGroups] = useState([]);
 	const [expirationDate2, setExpirationDate2] = useState('all');
 
-
 	function handleError(err) {
-		console.log(err);
+		toast.error(err.error ? err.error : err, {
+			position: 'bottom-center',
+			duration: 5000,
+			style: {
+				borderRadius: '10px',
+				background: 'rgba(255, 0, 0, 0.9)',
+				color: '#fff',
+			},
+		});
+	}
+
+	function handleSuccess(msg) {
+		toast.success(msg, {
+			position: 'bottom-center',
+			style: {
+				borderRadius: '10px',
+				background: 'rgba(40, 199, 111, 0.9)',
+				color: '#fff',
+			},
+		});
 	}
 
 	useEffect(() => {
 		const getUserMetadata = async () => {
 			try {
+				setLoading(true);
 				const accessToken = await getAccessTokenSilently({
 					authorizationParams: {
 						audience: `https://thesismanagement.eu.auth0.com/api/v2/`,
@@ -59,38 +86,47 @@ function App() {
 						setUserData(user);
 						if (user.role === 'student') {
 							setIsProfessor(false);
+							setIsStudent(true);
 						} else if (user.role === 'teacher') {
 							setIsProfessor(true);
+							setIsStudent(false);
 						}
+						handleSuccess('Logged in successfully!');
 					})
 					.catch((err) => handleError(err));
-
 				API.getAllThesis(accessToken)
 					.then((thesis) => {
 						setThesis(thesis);
 					})
-					.catch((err) => handleError(err));
+					.catch((err) => handleError(err))
+					.finally(() => setLoading(false));
 			} catch (e) {
-				console.log(e.message);
+				handleError(e.message);
 			}
 		};
 		if (isAuthenticated) {
 			getUserMetadata();
 			setDirty(false);
 		}
-	}, [isAuthenticated, getAccessTokenSilently, user?.sub, dirty]);
+	}, [isAuthenticated, getAccessTokenSilently, user?.sub, dirty, setLoading]);
+
+	useEffect(() => {
+		if (!isAuthenticated && !isLoading) {
+			loginWithRedirect();
+		}
+	}, [isAuthenticated, isLoading]);
 
 	return (
 		<BrowserRouter>
-			<Header />
+			<Header userData={userData} />
+			<Toaster />
 			<Routes>
 				<Route
 					path='/'
 					element={
 						isProfessor ? (
-							<ProfessorHome
-								thesis={thesis} />
-						) : (
+							<ProfessorHome thesis={thesis} />
+						) : isStudent ? (
 							<StudentHome
 								isProfessor={isProfessor}
 								thesis={thesis}
@@ -110,42 +146,60 @@ function App() {
 								setSelectedGroups={setSelectedGroups}
 								expirationDate={expirationDate2}
 								setExpirationDate={setExpirationDate2}
+								handleError={handleError}
 							/>
-						)
+						) : null
 					}
 				/>
-				<Route path='/proposal/:id' element={<Proposal accessToken={accessToken} isProfessor={isProfessor} />} />
+				<Route path='/proposal/:id' element={<Proposal accessToken={accessToken} isProfessor={isProfessor} handleError={handleError} />} />
 				<Route
 					path='/proposals/add'
 					element={
-						<InsertProposal
-							title={title}
-							setTitle={setTitle}
-							requiredKnowledge={requiredKnowledge}
-							setRequiredKnowledge={setRequiredKnowledge}
-							description={description}
-							setDescription={setDescription}
-							notes={notes}
-							setNotes={setNotes}
-							keywords={keywords}
-							setKeywords={setKeywords}
-							supervisor={supervisor}
-							setSupervisor={setSupervisor}
-							coSupervisors={coSupervisors}
-							setCoSupervisors={setCoSupervisors}
-							level={level}
-							setLevel={setLevel}
-							cds={cds}
-							setCds={setCds}
-							type={type}
-							setType={setType}
-							expirationDate={expirationDate}
-							setExpirationDate={setExpirationDate}
-							accessToken={accessToken}
-							setDirty={setDirty}
-						/>
+						isProfessor ? (
+							<InsertProposal
+								title={title}
+								setTitle={setTitle}
+								requiredKnowledge={requiredKnowledge}
+								setRequiredKnowledge={setRequiredKnowledge}
+								description={description}
+								setDescription={setDescription}
+								notes={notes}
+								setNotes={setNotes}
+								keywords={keywords}
+								setKeywords={setKeywords}
+								supervisor={supervisor}
+								setSupervisor={setSupervisor}
+								coSupervisors={coSupervisors}
+								setCoSupervisors={setCoSupervisors}
+								level={level}
+								setLevel={setLevel}
+								cds={cds}
+								setCds={setCds}
+								type={type}
+								setType={setType}
+								expirationDate={expirationDate}
+								setExpirationDate={setExpirationDate}
+								accessToken={accessToken}
+								setDirty={setDirty}
+								user={userData}
+							/>
+						) : isStudent ? (
+							<NotFound />
+						) : null
 					}
 				/>
+				<Route
+					path='/applications'
+					element={
+						isProfessor ? (
+							<ProfessorApplications accessToken={accessToken} handleError={handleError} isProfessor={isProfessor} />
+						) : isStudent ? (
+							<StudentApplications accessToken={accessToken} handleError={handleError} />
+						) : null
+					}
+				/>
+				<Route path='/applications/proposal/:id' element={<ProfessorApplicationsThesis accessToken={accessToken} handleError={handleError} isProfessor={isProfessor} handleSuccess={handleSuccess} />} />
+
 				<Route path='/*' element={<NotFound />} />
 			</Routes>
 		</BrowserRouter>

@@ -292,7 +292,7 @@ exports.getGroup = (idThesis) => {
 
 exports.getRole = (auth0) => {
   return new Promise((resolve, reject) => {
-    const sql = 'SELECT * FROM STUD_AUTH0 WHERE ID_AUTH0=? ';
+    const sql = 'SELECT S.ID AS ID, S.NAME AS NAME, S.SURNAME AS SURNAME, S.EMAIL AS EMAIL FROM STUD_AUTH0 SA JOIN STUDENT S ON S.ID == SA.ID  WHERE ID_AUTH0=? ';
     db.get(sql, [auth0.payload.sub], (err, elem) => {
       if (err) {
         reject(err);
@@ -300,9 +300,9 @@ exports.getRole = (auth0) => {
       }
       else {
         if (elem != undefined)
-          resolve({ "role": "student", "id": elem.ID })
+          resolve({ "role": "student", "id": elem.ID, "name":elem.NAME, "surname": elem.SURNAME, "email": elem.EMAIL})
         else {
-          const sql2 = 'SELECT * FROM TEACHER_AUTH0 WHERE ID_AUTH0=? ';
+          const sql2 = 'SELECT T.ID AS ID, T.NAME AS NAME, T.SURNAME AS SURNAME, T.EMAIL AS EMAIL FROM TEACHER T JOIN TEACHER_AUTH0 TA ON T.ID == TA.ID WHERE ID_AUTH0=? ';
           db.get(sql2, [auth0.payload.sub], (err, elem) => {
             if (err) {
               reject(err);
@@ -310,7 +310,7 @@ exports.getRole = (auth0) => {
             }
             else {
               if (elem != undefined)
-                resolve({ "role": "teacher", "id": elem.ID })
+                resolve({ "role": "teacher", "id": elem.ID , "name":elem.NAME, "surname": elem.SURNAME, "email": elem.EMAIL})
               else
                 resolve({})//non ritorna nulla se non è autenticato, ma qua non entra
             }
@@ -323,7 +323,7 @@ exports.getRole = (auth0) => {
 
 exports.getThesisTeacher = (ID) => {
   return new Promise((resolve, reject) => {
-    const sql = 'SELECT DISTINCT T.ID_THESIS as ID, T.TITLE AS title, T.NOTES as notes, T.DESCRIPTION AS description , T.REQUIRED_KNOWLEDGE AS req_know, TE.NAME AS sup_name, TE.SURNAME AS sup_surname FROM THESIS T JOIN TEACHER TE ON T.SUPERVISOR == TE.ID WHERE TE.ID = ?';
+    const sql = 'SELECT DISTINCT T.ID_THESIS as ID, TS.STATE AS status,  T.TITLE AS title, T.NOTES as notes, T.DESCRIPTION AS description , T.REQUIRED_KNOWLEDGE AS req_know, TE.NAME AS sup_name, TE.SURNAME AS sup_surname FROM THESIS T JOIN TEACHER TE ON T.SUPERVISOR == TE.ID JOIN THESIS_STATUS TS ON TS.THESIS == T.ID_THESIS WHERE TE.ID = ? ';
     db.all(sql, [ID], (err, rows) => {
       if (err) {
         reject(err);
@@ -339,6 +339,7 @@ exports.getThesisTeacher = (ID) => {
             sup_name: elem.sup_name,
             sup_surname: elem.sup_surname,
             notes: elem.notes,
+            status : elem.status,
             count: 0,
             keywords: []
           }))
@@ -507,3 +508,133 @@ exports.insertProposal = (userId, idThesis) => {
     });
   });
 }
+
+exports.getTeacherApplications = (teacherId) => {
+  return new Promise((resolve, reject) => {
+    const sql = 'SELECT ID_THESIS,TITLE,EXPIRATION_DATE,LEVEL, DEGREE, STUDENT, S.NAME as NAME, S.SURNAME as SURNAME, S.EMAIL as EMAIL, STATE FROM THESIS T, TEACHER TE, THESIS_PROPOSAL TP, STUDENT S WHERE T.SUPERVISOR=TE.ID AND T.ID_THESIS=TP.THESIS AND TP.STUDENT=S.ID AND TE.ID=?';
+    db.all(sql, [teacherId], (err,rows) => {
+      if (err) {
+        reject(err);
+        return;
+      } else{
+        const applications=rows.map((elem)=>({
+          id: elem.ID_THESIS,
+          title: elem.TITLE,
+          expirationDate: elem.EXPIRATION_DATE,
+          level: elem.LEVEL,
+          degree: elem.DEGREE,
+          student: elem.STUDENT,
+          name: elem.NAME,
+          surname: elem.SURNAME,
+          email: elem.EMAIL,
+          state: elem.STATE
+        }));
+
+        resolve(applications)
+      }
+      
+    });
+  });
+}
+
+
+exports.getStudentApplications = (studentId) => {
+  return new Promise((resolve, reject) => {
+    const sql = 'SELECT ID_THESIS,TITLE,EXPIRATION_DATE,LEVEL, DEGREE, SUPERVISOR, TE.NAME as NAME, TE.SURNAME as SURNAME, STATE FROM THESIS T, STUDENT S, THESIS_PROPOSAL TP, TEACHER TE WHERE TP.STUDENT=S.ID AND T.ID_THESIS=TP.THESIS AND T.SUPERVISOR = TE.ID AND S.ID=?';
+    db.all(sql, [studentId], (err,rows) => {
+      if (err) {
+        reject(err);
+        return;
+      } else{
+        const applications=rows.map((elem)=>({
+          id: elem.ID_THESIS,
+          title: elem.TITLE,
+          expirationDate: elem.EXPIRATION_DATE,
+          level: elem.LEVEL,
+          degree: elem.DEGREE,
+          supervisor: elem.SUPERVISOR,
+          name: elem.NAME,
+          surname: elem.SURNAME,
+          state: elem.STATE,
+          keywords: [],
+          types: []
+        }));
+
+        resolve(applications)
+      }
+      
+    });
+  });
+}
+
+
+exports.checkExistenceApplication= (thesis, student)=> {
+  return new Promise((resolve, reject) => {
+    const sql = 'SELECT * FROM THESIS_PROPOSAL WHERE STUDENT = ? AND THESIS = ?';
+    db.get(sql, [student, thesis], (err, row) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      else {
+        if (row == undefined)
+          resolve({"available":0, data:""})
+        else{
+          let application = {
+            student: row.STUDENT,
+            thesis: row.THESIS,
+            state : row.STATE
+          };
+          resolve({"available":1, data:application})
+        }
+      }
+    });
+  });
+}
+
+
+
+
+exports.acceptApplication = (thesis, student) => {
+  return new Promise((resolve, reject) => {
+    const sql = 'UPDATE THESIS_PROPOSAL SET STATE = 1 WHERE THESIS = ? AND STUDENT = ?';
+    db.run(sql, [thesis, student], function (err) {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve(this.lastID);
+    });
+  });
+};
+
+
+
+exports.cancelApplications = (thesis, student) => {
+  return new Promise((resolve, reject) => {
+    const sql = 'UPDATE THESIS_PROPOSAL SET STATE = 3 WHERE THESIS = ? AND STUDENT != ? AND STATE == 0';
+    db.run(sql, [thesis, student], function (err) {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve(this.lastID);
+    });
+  });
+};
+
+
+
+exports.rejectApplication = (thesis, student) => {
+  return new Promise((resolve, reject) => {
+    const sql = 'UPDATE THESIS_PROPOSAL SET STATE = 2 WHERE THESIS = ? AND STUDENT = ?';
+    db.run(sql, [thesis, student], function (err) {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve(this.lastID);
+    });
+  });
+};
+

@@ -77,4 +77,16 @@
 | s317642 | s317642@studenti.polito.it  |     Gerardo Maruotti     |  LM-20  | s317642  |
 | s317611 | s317611@studenti.polito.it  |      Edoardo Morello     |  LM-53  | s317611  |
 
-  
+## Sequence for running the project on Docker
+
+Before starting the process described below, download [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+
+- start `Docker Desktop`
+- execute `docker compose build` from a terminal to create a container with the three images (node app, mongoDB server, node test suite)
+- execute `docker compose -p thesismanagement up` from a terminal to launch the container
+- on `Docker Desktop -> Containers` locate the container `thesismanagement`, it should contain three separate images (`client-1`, `server-1`, `test-1`)
+- `test-1` ends after completing the test cases directly on the terminal, its logs can be seen on `Docker Desktop -> Containers -> thesismanagement-test-1 -> Logs`
+- `server-1` is the container that holds the node.js application
+- to test changes in the code directly on Docker, all the images present in the container on `Docker Desktop` must be stopped before executing `docker compose build` and `docker compose up` again
+- the two commands must be launched together in this exact order after code changes, or the images will not be built with the new code
+- ensure that ports 5173 and 3001 are free before executing `docker compose up` with `docker ps`

@@ -5,10 +5,13 @@ import { useNavigate } from 'react-router-dom';
 import ProposalCard from '../components/ProposalCard';
 import { useAuth0 } from '@auth0/auth0-react';
 import { useEffect } from 'react';
+import { useLoading } from '../LoadingContext.jsx';
+import Loading from '../components/Loading.jsx';
 
 function ProfessorHome(props) {
 	const navigate = useNavigate();
 	const { loginWithRedirect, isAuthenticated, isLoading } = useAuth0();
+	const { loading, setLoading } = useLoading();
 
 	useEffect(() => {
 		if (!isAuthenticated && !isLoading) {
@@ -16,7 +19,9 @@ function ProfessorHome(props) {
 		}
 	}, [isAuthenticated, isLoading]);
 
-	return (
+	return loading ? (
+		<Loading />
+	) : (
 		<Container>
 			<Row style={{ marginBottom: 25 }}>
 				{props.thesis != [] ? props.thesis.map((thesis, index) => <ProposalCard key={thesis.ID} isProfessor={1} thesis={thesis} />) : null}
