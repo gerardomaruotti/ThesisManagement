@@ -490,7 +490,7 @@ app.put('/api/edit/thesis/:id',
 			const userRole = await db.getRole(req.auth);
 			if (userRole.role == 'teacher') {
 				const supervisor = userRole.id;
-				const checkApplications = await db.checkExistenceApllicationForThesis(thesisId);
+				const checkApplications = await db.checkExistenceApplicationForThesis(thesisId);
 				if(checkApplications==1) return res.status(401).json({ error: 'The thesis has applications, cannot be modified' });
 
 				const deleteCosup = await db.deleteCoSupervisor(thesisId);

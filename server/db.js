@@ -704,9 +704,9 @@ exports.deleteType = (id) => {
   });
 }
 
-exports.checkExistenceApllicationForThesis= (thesis)=> {
+exports.checkExistenceApplicationForThesis= (thesis)=> {
   return new Promise((resolve, reject) => {
-    const sql = 'SELECT * FROM THESIS_PROPOSAL WHERE THESIS = ?';
+    const sql = 'SELECT * FROM THESIS_APPLICATION WHERE THESIS = ?';
     db.get(sql, [thesis], (err, row) => {
       if (err) {
         reject(err);
