@@ -19,7 +19,7 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
-app.get('/api/keywords',  checkJwt, (req, res) => {
+app.get('/api/keywords', checkJwt, (req, res) => {
 	db.getKeywords()
 		.then((keywords) => res.status(200).json(keywords))
 		.catch((err) => {
@@ -76,7 +76,7 @@ app.post('/api/thesis', checkJwt, async (req, res) => {
 	try {
 		//searching for the role of the user authenticated
 		let getRole = await db.getRole(req.auth);
-	
+
 		if (getRole.role == 'teacher') {
 			//if it is student we search for the thesis related to his COD_DEGREE
 			let thesis = await db.getThesisTeacher(getRole.id);
@@ -95,9 +95,9 @@ app.post('/api/thesis', checkJwt, async (req, res) => {
 				let types = await db.getTypesbyId(thesis[i].ID);
 				thesis[i].types = types;
 			}
-			if(req.body.filters == null){
+			if (req.body.filters == null) {
 				res.status(200).json(thesis);
-			}else{
+			} else {
 				let validThesis = [];
 				let keyword = req.body.filters.keyword;
 				let type = req.body.filters.type;
@@ -106,7 +106,7 @@ app.post('/api/thesis', checkJwt, async (req, res) => {
 				let groups = req.body.filters.group;
 				let exp_date = req.body.filters.exp_date;
 
-				for (let i=0; i<thesis.length; i++){
+				for (let i = 0; i < thesis.length; i++) {
 					let valid = true;
 					let totFilters = 0;
 					let keywords = await db.getKeywordsbyId(thesis[i].ID)
@@ -115,86 +115,86 @@ app.post('/api/thesis', checkJwt, async (req, res) => {
 					let sup = await db.getThesisSupervisor(thesis[i].ID);
 					let allGroups = await db.getGroup(thesis[i].ID);
 					let expirationDate = await db.getThesisExpDate(thesis[i].ID);
-					
-					if(keyword.length > 0){
-						let count=0;
+
+					if (keyword.length > 0) {
+						let count = 0;
 						keyword.forEach(t => {
-							if (keywords.includes(t)){
+							if (keywords.includes(t)) {
 								count++;
 							}
 						});
 						totFilters += count;
-						if (count <= 0){
+						if (count <= 0) {
 							valid = false;
 						}
 					}
-					if(type.length > 0 && valid){
-						let count=0;
+					if (type.length > 0 && valid) {
+						let count = 0;
 						type.forEach(t => {
-							if (allTypesOfThesis.includes(t)){
+							if (allTypesOfThesis.includes(t)) {
 								count++;
 							}
 						});
 						totFilters += count;
-							if (count <= 0){
-								valid = false;
-							}
+						if (count <= 0) {
+							valid = false;
+						}
 					}
-					if(cosupervisor.length > 0 && valid){
-						let count=0;
+					if (cosupervisor.length > 0 && valid) {
+						let count = 0;
 						cosupervisor.forEach(c => {
-							if (cosupervisors.includes(c)){
+							if (cosupervisors.includes(c)) {
 								count++;
 							}
 						});
 						totFilters += count;
-						if (count <= 0){
+						if (count <= 0) {
 							valid = false;
 						}
 					}
-					if(groups.length > 0 && valid){
-						let count=0;
+					if (groups.length > 0 && valid) {
+						let count = 0;
 						groups.forEach(g => {
-							if (allGroups.includes(g)){
+							if (allGroups.includes(g)) {
 								count++;
 							}
 						});
 						totFilters += count;
-						if (count <= 0){
+						if (count <= 0) {
 							valid = false;
 						}
 					}
-									
-					if(supervisor.length>0 && valid){
-						let count=0;
-						if(supervisor.includes(sup)){
+
+					if (supervisor.length > 0 && valid) {
+						let count = 0;
+						if (supervisor.includes(sup)) {
 							count++;
 						}
 						totFilters += count;
-						if (count <= 0){
+						if (count <= 0) {
 							valid = false;
 						}
 					}
-					if(exp_date !== undefined && valid){
+					if (exp_date !== undefined && valid) {
 						let param = exp_date.split("/");
-						let exp_date_tmp = new Date(param[2]+"-"+ param[1] +"-"+param[0]);
+						let exp_date_tmp = new Date(param[2] + "-" + param[1] + "-" + param[0]);
 						let param2 = expirationDate.split("/");
-						let expirationDate_tmp = new Date(param2[2]+"-"+ param2[1] +"-"+param2[0]);
-	
-						if (exp_date_tmp < expirationDate_tmp){
+						let expirationDate_tmp = new Date(param2[2] + "-" + param2[1] + "-" + param2[0]);
+
+						if (exp_date_tmp < expirationDate_tmp) {
 							valid = false;
-						}else{
+						} else {
 							totFilters++;
 						}
 					}
 					thesis[i].count = totFilters;
-					if (valid){ validThesis.push(thesis[i]);}
+					if (valid) { validThesis.push(thesis[i]); }
 				}
-				res.status(200).json(validThesis);	
+				res.status(200).json(validThesis);
 			}
-						
+
 		}
-	
+
 		//if it is student we search for the thesis related to his COD_DEGREE
 		//if it is teacher we get the thesis in which he is supervisor
 
@@ -330,16 +330,16 @@ app.post('/api/thesis/:id/apply', checkJwt, async (req, res) => {
 		let userRole = await db.getRole(req.auth);
 		await db.getThesis(thesisId);
 		const state = await db.checkThesisActive(thesisId);
-		let applications=await db.getStudentApplications(userRole.id)
+		let applications = await db.getStudentApplications(userRole.id)
 
-		applications=applications.filter((elem)=> (elem.state == '0' || elem.state == '1'))
+		applications = applications.filter((elem) => (elem.state == '0' || elem.state == '1'))
 
 		if (state != '1') {
 			return res.status(400).json({ error: 'Thesis not active' });
 		}
 
-		if(applications.length > 0){
-			return res.status(400).json({error : 'Pending or accepted application already exists'})
+		if (applications.length > 0) {
+			return res.status(400).json({ error: 'Pending or accepted application already exists' })
 		}
 
 		if (userRole.role == 'student') {
@@ -355,27 +355,27 @@ app.post('/api/thesis/:id/apply', checkJwt, async (req, res) => {
 });
 
 
-app.get('/api/thesis/applications/browse', checkJwt, async(req,res)=> {
+app.get('/api/thesis/applications/browse', checkJwt, async (req, res) => {
 
-	try{
-		const userRole=await db.getRole(req.auth);
-		if(userRole.role == "teacher"){
-			const applications=await db.getTeacherApplications(userRole.id);
+	try {
+		const userRole = await db.getRole(req.auth);
+		if (userRole.role == "teacher") {
+			const applications = await db.getTeacherApplications(userRole.id);
 			return res.status(200).json(applications);
-		} else{
-			if(userRole.role == "student"){
-				const applications=await db.getStudentApplications(userRole.id);
-				for(let i=0;i<applications.length;i++){
-					applications[i].keywords=await db.getKeywordsbyId(applications[i].id);
-					applications[i].types=await db.getTypesbyId(applications[i].id)
+		} else {
+			if (userRole.role == "student") {
+				const applications = await db.getStudentApplications(userRole.id);
+				for (let i = 0; i < applications.length; i++) {
+					applications[i].keywords = await db.getKeywordsbyId(applications[i].id);
+					applications[i].types = await db.getTypesbyId(applications[i].id)
 				}
 				return res.status(200).json(applications)
 			}
 		}
 
 		return res.status(401).json({ error: 'Unauthorized user' })
-	} catch(err){
-		res.status(503).json({error: "GetApplications error"})
+	} catch (err) {
+		res.status(503).json({ error: "GetApplications error" })
 	}
 })
 /*
@@ -392,66 +392,74 @@ metto rejected l'application dello studente che ha richiesto l'application
 
 //API for the 3rd story --> Apply for proposal
 app.post('/api/accept/application', [
-	check('studentID').isString(),
+	check('studentID').isString().trim().notEmpty(),
 	check('thesisID').isInt(),
-	
+
 ], checkJwt, async (req, res) => {
 	try {
 		//controllo tramite la getRole che il prof possa eseguire l'azione di accettare o rifiutare un application
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			return res.status(422).json({ errors: errors.array() });
+		}
+
 		let thesis = req.body.thesisID;
 		let student = req.body.studentID;
 
-		let getRole=await db.getRole(req.auth);
-		if(getRole.role != "teacher"){
-			return res.status(401).json({error: "Unauthorized"})
+		let getRole = await db.getRole(req.auth);
+		if (getRole.role != "teacher") {
+			return res.status(401).json({ error: "Unauthorized" })
 		}
 		//check if exist the pair stud - application 
 		let getApplication = await db.checkExistenceApplication(thesis, student);
-		if (getApplication.available == 1 && getApplication.data.state == 0){
+		if (getApplication.available == 1 && getApplication.data.state == 0) {
 			//The application exists
 			let acceptApplication = await db.acceptApplication(thesis, student);
 
 			//now i have to update all the others request for that thesis 
 			let cancelApplication = await db.cancelApplications(thesis, student);
 
-			let archived=await db.archiveThesis(thesis);
+			let archived = await db.archiveThesis(thesis);
 			return res.status(200).json(acceptApplication);
-		}else{
+		} else {
 			return res.status(400).json({ error: 'Applicazione inesistente' })
 		}
 
-		
+
 	} catch (err) {
 		return res.status(503).json({ error: "Errore nell'accettazione di una tesi" });
 	}
 });
 
 app.post('/api/reject/application', [
-	check('studentID').isString(),
+	check('studentID').isString().trim().notEmpty(),
 	check('thesisID').isInt(),
-	
+
 ], checkJwt, async (req, res) => {
 	try {
 
-	
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			return res.status(422).json({ errors: errors.array() });
+		}
 		//controllo tramite la getRole che il prof possa eseguire l'azione di accettare o rifiutare un application
 		let thesis = req.body.thesisID;
 		let student = req.body.studentID;
 
-		let getRole=await db.getRole(req.auth);
-		if(getRole.role != "teacher"){
-			return res.status(401).json({error: "Unauthorized"})
+		let getRole = await db.getRole(req.auth);
+		if (getRole.role != "teacher") {
+			return res.status(401).json({ error: "Unauthorized" })
 		}
 		//check if exist the pair stud - application 
 		let getApplication = await db.checkExistenceApplication(thesis, student);
-		if (getApplication.available == 1 && getApplication.data.state == 0){
+		if (getApplication.available == 1 && getApplication.data.state == 0) {
 			//The application exists, now i reject it
 			let rejectApplication = await db.rejectApplication(thesis, student);
 			return res.status(200).json(rejectApplication);
-		}else{
+		} else {
 			return res.status(400).json({ error: 'Applicazione inesistente' })
 		}
-		
+
 	} catch (err) {
 		return res.status(503).json({ error: "Errore nella reject di una tesi" });
 	}
@@ -472,7 +480,7 @@ app.put('/api/edit/thesis/:id',
 	],
 	checkJwt,
 	async (req, res) => {
-		const thesisId= req.params.id;
+		const thesisId = req.params.id;
 
 		const title = req.body.title;
 		const description = req.body.description;
@@ -491,7 +499,7 @@ app.put('/api/edit/thesis/:id',
 			if (userRole.role == 'teacher') {
 				const supervisor = userRole.id;
 				const checkApplications = await db.checkExistenceApplicationForThesis(thesisId);
-				if(checkApplications==1) return res.status(401).json({ error: 'The thesis has applications, cannot be modified' });
+				if (checkApplications == 1) return res.status(401).json({ error: 'The thesis has applications, cannot be modified' });
 
 				const deleteCosup = await db.deleteCoSupervisor(thesisId);
 				for (let i = 0; i < co_supervisors.length; i++) {
