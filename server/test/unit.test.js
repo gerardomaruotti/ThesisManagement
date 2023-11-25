@@ -1144,8 +1144,6 @@ describe('POST Accept Application', () => {
             }
         }
 
-        const result = "accepted"
-
         db.getRole.mockResolvedValueOnce(user);
         db.checkExistenceApplication.mockResolvedValueOnce(application);
 
@@ -1178,8 +1176,6 @@ describe('POST Accept Application', () => {
                 state: 1,
             }
         }
-
-        const result = "accepted"
 
         db.getRole.mockResolvedValueOnce(user);
         db.checkExistenceApplication.mockResolvedValueOnce(application);
