@@ -70,25 +70,31 @@ TEMPLATE FOR RETROSPECTIVE (Team 18)
 
 - Hours per task average, standard deviation (estimate and actual)
 <br><br> - Story #0: 
-<br>Hours per task average (estimate) = 1h 23m
-<br>Hours per task average (actual) = 1h 27m
-<br>Standard deviation (estimate) = 0.63h
-<br>Standard deviation (actual) = 1.2h
+<br>Hours per task average (estimate) = 1.39h
+<br>Hours per task average (actual) = 1.45h
+<br>Standard deviation (estimate) = 0.74h
+<br>Standard deviation (actual) = 1.84h
 <br><br> - Story #1: 
+<br>Hours per task average (estimate) = 1.29h
+<br>Hours per task average (actual) = 2.05h
+<br>Standard deviation (estimate) = 0.39h
+<br>Standard deviation (actual) = 4.89h
+<br><br> - Story #2: 
 <br>Hours per task average (estimate) = 1h 10m
 <br>Hours per task average (actual) = 1h 57m
 <br>Standard deviation (estimate) = 0.47h
 <br>Standard deviation (actual) = 0.87h
 <br><br>- General: 
-<br>Hours per task average (estimate) = 1h 27m
-<br>Hours per task average (actual) = 2h 15m
-<br>Standard deviation (estimate) = 0.62h
-<br>Standard deviation (actual) = 1.09h
+<br>Hours per task average (estimate) = 1.28h
+<br>Hours per task average (actual) = 1.59m
+<br>Standard deviation (estimate) = 0.52h
+<br>Standard deviation (actual) = 3.34h
 
 - Total task estimation error ratio: sum of total hours estimation / sum of total hours spent - 1
-<br><br> - Task #0: -0.31 
-<br><br> - Task #1: -0.4
-<br><br> - General: -0.35
+<br><br> - Task #0: -0.03 
+<br><br> - Task #1: -0.37
+<br><br> - Task #2: 0.45
+<br><br> - General: -0.19
 
   
 ## QUALITY MEASURES 
