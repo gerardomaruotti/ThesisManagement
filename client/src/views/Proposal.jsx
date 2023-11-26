@@ -15,6 +15,7 @@ function Proposal(props) {
 	const [msgAndColor, setMsgAndColor] = useState({ header: '', msg: '', color: '' });
 	const [showDetails, setShowDetails] = useState(false);
 	const { id } = useParams();
+	const { fromHome, setFromHome } = props;
 
 	const handleClose = () => setShowDetails(false);
 	const handleShow = () => setShowDetails(true);
@@ -51,6 +52,15 @@ function Proposal(props) {
 			});
 	}
 
+	function handleRedirect() {
+		if (fromHome) {
+			navigate(-1);
+		} else {
+			setFromHome(true);
+			navigate('/');
+		}
+	}
+
 	return loading ? (
 		<Loading />
 	) : (
@@ -67,7 +77,7 @@ function Proposal(props) {
 							<Card style={{ padding: 20 }} className='custom-card'>
 								<Row>
 									<Col className='d-flex align-items-center d-none d-md-flex'>
-										<Button variant='outline-primary' style={{ borderRadius: 50, width: 75 }} onClick={() => navigate(-1)}>
+										<Button variant='outline-primary' style={{ borderRadius: 50, width: 75 }} onClick={handleRedirect}>
 											<i className='bi bi-arrow-left'></i>
 										</Button>
 									</Col>

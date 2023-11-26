@@ -446,6 +446,40 @@ function rejectApplication(parameters, accessToken) {
 			}); // connection errors
 	});
 }
+
+function editProposal(accessToken, thesis, id) {
+	return new Promise((resolve, reject) => {
+		fetch(URL + '/edit/thesis/' + id, {
+			method: 'PUT',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${accessToken}`,
+			},
+			body: JSON.stringify(thesis),
+		})
+			.then((response) => {
+				if (response.ok) {
+					response
+						.json()
+						.then((thesis) => resolve(thesis))
+						.catch((e) => {
+							reject({ error: e.error ? e.error : e });
+						});
+				} else {
+					response
+						.json()
+						.then((message) => {
+							reject(message);
+						})
+						.catch(() => {
+							reject({ error: 'Cannot parse server response.' });
+						});
+				}
+			})
+			.catch(() => reject({ error: 'Cannot communicate with the server.' }));
+	});
+}
+
 const API = {
 	getAllKeywords,
 	getAllTypes,
@@ -459,6 +493,7 @@ const API = {
 	ThesisApply,
 	getApplications,
 	acceptApplication,
-	rejectApplication
+	rejectApplication,
+	editProposal,
 };
 export default API;

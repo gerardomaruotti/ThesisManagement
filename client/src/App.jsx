@@ -16,26 +16,17 @@ import toast, { Toaster } from 'react-hot-toast';
 import ProfessorApplications from './views/ProfessorApplications.jsx';
 import ProfessorApplicationsThesis from './views/ProfessorApplicationsThesis.jsx';
 import GenericModal from './components/GenericModal.jsx';
+import EditProposal from './views/EditProposal.jsx';
 
 function App() {
 	const { user, isAuthenticated, getAccessTokenSilently, isLoading, loginWithRedirect } = useAuth0();
-	const [title, setTitle] = useState('');
-	const [requiredKnowledge, setRequiredKnowledge] = useState('');
-	const [description, setDescription] = useState('');
-	const [notes, setNotes] = useState('');
-	const [keywords, setKeywords] = useState([]);
-	const [supervisor, setSupervisor] = useState('');
-	const [coSupervisors, setCoSupervisors] = useState([]);
-	const [level, setLevel] = useState('');
-	const [cds, setCds] = useState('');
-	const [type, setType] = useState([]);
-	const [expirationDate, setExpirationDate] = useState('');
 	const [userData, setUserData] = useState(null);
 	const [thesis, setThesis] = useState([]);
 	const [accessToken, setAccessToken] = useState(null);
 	const [dirty, setDirty] = useState(false);
 	const [isProfessor, setIsProfessor] = useState(false);
 	const [isStudent, setIsStudent] = useState(false);
+	const [fromHome, setFromHome] = useState(false);
 
 	const { setLoading } = useLoading();
 
@@ -50,7 +41,7 @@ function App() {
 
 	//GenericModal
 	const [showModal, setShowModal] = useState(false);
-	const [msgModal, setMsgModal] = useState({});  // {header: "header", body: "body", method: method}
+	const [msgModal, setMsgModal] = useState({}); // {header: "header", body: "body", method: method}
 
 	function handleError(err) {
 		toast.error(err.error ? err.error : err, {
@@ -112,6 +103,7 @@ function App() {
 		if (isAuthenticated) {
 			getUserMetadata();
 			setDirty(false);
+			setFromHome(true);
 		}
 	}, [isAuthenticated, getAccessTokenSilently, user?.sub, dirty, setLoading]);
 
@@ -157,38 +149,27 @@ function App() {
 						) : null
 					}
 				/>
-				<Route path='/proposal/:id' element={<Proposal accessToken={accessToken} isProfessor={isProfessor} handleError={handleError} />} />
+				<Route
+					path='/proposal/:id'
+					element={
+						<Proposal fromHome={fromHome} setFromHome={setFromHome} accessToken={accessToken} isProfessor={isProfessor} handleError={handleError} />
+					}
+				/>
 				<Route
 					path='/proposals/add'
 					element={
 						isProfessor ? (
-							<InsertProposal
-								title={title}
-								setTitle={setTitle}
-								requiredKnowledge={requiredKnowledge}
-								setRequiredKnowledge={setRequiredKnowledge}
-								description={description}
-								setDescription={setDescription}
-								notes={notes}
-								setNotes={setNotes}
-								keywords={keywords}
-								setKeywords={setKeywords}
-								supervisor={supervisor}
-								setSupervisor={setSupervisor}
-								coSupervisors={coSupervisors}
-								setCoSupervisors={setCoSupervisors}
-								level={level}
-								setLevel={setLevel}
-								cds={cds}
-								setCds={setCds}
-								type={type}
-								setType={setType}
-								expirationDate={expirationDate}
-								setExpirationDate={setExpirationDate}
-								accessToken={accessToken}
-								setDirty={setDirty}
-								user={userData}
-							/>
+							<InsertProposal accessToken={accessToken} setDirty={setDirty} user={userData} handleError={handleError} setFromHome={setFromHome} />
+						) : isStudent ? (
+							<NotFound />
+						) : null
+					}
+				/>
+				<Route
+					path='/proposals/edit/:id'
+					element={
+						isProfessor ? (
+							<EditProposal accessToken={accessToken} setDirty={setDirty} user={userData} handleError={handleError} setFromHome={setFromHome} />
 						) : isStudent ? (
 							<NotFound />
 						) : null
@@ -204,14 +185,19 @@ function App() {
 						) : null
 					}
 				/>
-				<Route path='/applications/proposal/:id' element={
-					<ProfessorApplicationsThesis
-						accessToken={accessToken}
-						handleError={handleError}
-						isProfessor={isProfessor}
-						handleSuccess={handleSuccess}
-						setMsgModal={setMsgModal}
-						setShowModal={setShowModal} />} />
+				<Route
+					path='/applications/proposal/:id'
+					element={
+						<ProfessorApplicationsThesis
+							accessToken={accessToken}
+							handleError={handleError}
+							isProfessor={isProfessor}
+							handleSuccess={handleSuccess}
+							setMsgModal={setMsgModal}
+							setShowModal={setShowModal}
+						/>
+					}
+				/>
 			</Routes>
 		</BrowserRouter>
 	);
