@@ -16,8 +16,6 @@ function StudentHome(props) {
 	const { loading, setLoading } = useLoading();
 	const [filtersShow, setFiltersShow] = useState(false);
 	const navigate = useNavigate();
-	const [popup, setPopup] = useState(false);
-	const [msgAndColor, setMsgAndColor] = useState({ header: '', msg: '', color: '' });
 	const [search, setSearch] = useState('');
 	const [filteredThesis, setFilteredThesis] = useState(props.thesis);
 	const [rapidFilter, setRapidFilter] = useState('all');
@@ -186,7 +184,7 @@ function StudentHome(props) {
 						filteredThesis
 							.sort((a, b) => b.count - a.count)
 							.map((thesis, index) => (
-								<ProposalCard key={thesis.ID} thesis={thesis} accessToken={props.accessToken} setPopup={setPopup} setMsgAndColor={setMsgAndColor} />
+								<ProposalCard key={thesis.ID} thesis={thesis} accessToken={props.accessToken} setMsgModal={props.setMsgModal} setShowModal={props.setShowModal} handleError={props.handleError} handleSuccess={props.handleSuccess} />
 							))
 					) : (
 						<Col style={{ marginTop: 25 }}>
@@ -196,14 +194,6 @@ function StudentHome(props) {
 				</Row>
 			</Container>
 
-			<ToastContainer style={{ position: 'fixed', top: 20, right: 20, zIndex: 10 }} className='p-3'>
-				<Toast bg={msgAndColor.color} onClose={() => setPopup(false)} show={popup} delay={5000} autohide>
-					<Toast.Header>
-						<strong className='me-auto'>{msgAndColor.header}</strong>
-					</Toast.Header>
-					<Toast.Body>{msgAndColor.msg}</Toast.Body>
-				</Toast>
-			</ToastContainer>
 		</>
 	);
 }

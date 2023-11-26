@@ -11,8 +11,6 @@ function Proposal(props) {
 	const { loading, setLoading } = useLoading();
 	const navigate = useNavigate();
 	const [thesis, setThesis] = useState(null);
-	const [popup, setPopup] = useState(false);
-	const [msgAndColor, setMsgAndColor] = useState({ header: '', msg: '', color: '' });
 	const [showDetails, setShowDetails] = useState(false);
 	const { id } = useParams();
 
@@ -36,19 +34,20 @@ function Proposal(props) {
 	}, [props.accessToken]);
 
 	function apply() {
+		props.setShowModal(false);
 		API.ThesisApply(id, props.accessToken)
 			.then(() => {
-				setMsgAndColor({ header: 'Application successful', msg: 'Successful application to the thesis ' + thesis.title, color: 'success' });
-				setPopup(true);
+				props.handleSuccess('Application accepted');
 			})
-			.catch(() => {
-				setMsgAndColor({
-					header: 'Application failed',
-					msg: 'You have already sent an application for this thesis or you do not have authorization',
-					color: 'danger',
-				});
-				setPopup(true);
+			.catch((err) => {
+				props.handleError(err);
 			});
+	}
+
+	function showModal(event) {
+		event.stopPropagation();
+		props.setShowModal(true);
+		props.setMsgModal({ header: 'Apply', body: 'Are you sure you want to apply to this thesis?', method: apply })
 	}
 
 	return loading ? (
@@ -60,10 +59,10 @@ function Proposal(props) {
 					<Row>
 						<Col md={4} className='d-none d-md-flex'>
 							<Card style={{ padding: 20, paddingBottom: 30, position: 'sticky', top: 25 }} className='custom-card'>
-								<DetailsProposalLeftBar thesis={thesis} apply={apply} isProfessor={props.isProfessor} />
+								<DetailsProposalLeftBar thesis={thesis} apply={showModal} isProfessor={props.isProfessor} />
 							</Card>
 						</Col>
-						<Col>
+						<Col md={8}>
 							<Card style={{ padding: 20 }} className='custom-card'>
 								<Row>
 									<Col className='d-flex align-items-center d-none d-md-flex'>
@@ -113,18 +112,10 @@ function Proposal(props) {
 					<Offcanvas.Title>Details</Offcanvas.Title>
 				</Offcanvas.Header>
 				<Offcanvas.Body>
-					<DetailsProposalLeftBar thesis={thesis} apply={apply} isProfessor={props.isProfessor} />
+					<DetailsProposalLeftBar thesis={thesis} apply={showModal} isProfessor={props.isProfessor} />
 				</Offcanvas.Body>
 			</Offcanvas>
 
-			<ToastContainer style={{ position: 'fixed', top: 20, right: 20, zIndex: 10 }} className='p-3'>
-				<Toast bg={msgAndColor.color} onClose={() => setPopup(false)} show={popup} delay={5000} autohide>
-					<Toast.Header>
-						<strong className='me-auto'>{msgAndColor.header}</strong>
-					</Toast.Header>
-					<Toast.Body>{msgAndColor.msg}</Toast.Body>
-				</Toast>
-			</ToastContainer>
 		</>
 	);
 }

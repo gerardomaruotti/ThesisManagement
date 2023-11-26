@@ -10,16 +10,21 @@ function ProposalCard(props) {
 	const navigate = useNavigate();
 
 	function apply(event) {
+		props.setShowModal(false);
 		API.ThesisApply(props.thesis.ID, props.accessToken)
 			.then(() => {
-				props.setMsgAndColor({ header: "Application successful", msg: "Successful application to the thesis " + props.thesis.title, color: "success" });
-				props.setPopup(true);
+				props.handleSuccess('Application accepted')
 			})
-			.catch(() => {
-				props.setMsgAndColor({ header: "Application failed", msg: "You have already sent an application for this thesis or you do not have authorization", color: "danger" });
-				props.setPopup(true)
+			.catch((err) => {
+				props.handleError(err)
 			});
 		event.stopPropagation();
+	}
+
+	function showModal(event) {
+		event.stopPropagation();
+		props.setShowModal(true);
+		props.setMsgModal({ header: 'Apply', body: 'Are you sure you want to apply to this thesis?', method: apply })
 	}
 
 	return (
@@ -35,6 +40,7 @@ function ProposalCard(props) {
 				<div className="hide-scrollbar" style={{
 					fontWeight: 'semi-bold',
 					fontSize: 14,
+					height: 25,
 					marginTop: 5,
 					overflowX: 'auto',
 					whiteSpace: 'nowrap',
@@ -115,7 +121,7 @@ function ProposalCard(props) {
 				</div>
 				{props.isProfessor != 1 ?
 					<div style={{ marginTop: 20, textAlign: 'center' }}>
-						<Button variant='primary' style={{ width: 130 }} onClick={apply} >
+						<Button variant='primary' style={{ width: 130 }} onClick={showModal} >
 							Apply
 						</Button>
 					</div> :

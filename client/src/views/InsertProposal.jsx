@@ -177,11 +177,11 @@ function InsertProposal(props) {
 							<CreatableSelect isClearable isMulti options={type} styles={colorStyles} onChange={handleselectedTypess} />
 						</Form.Group>
 						<Form.Group className='mb-3' controlId='formLevel'>
-							<Form.Label>Level</Form.Label>
+							<Form.Label>Level*</Form.Label>
 							<Select isClearable options={levels} styles={colorStyles} required onChange={handleSelectedLevel} />
 						</Form.Group>
 						<Form.Group className='mb-3' controlId='formCds'>
-							<Form.Label>Cds</Form.Label>
+							<Form.Label>Cds*</Form.Label>
 							<Select
 								options={cds}
 								styles={colorStyles}
@@ -193,7 +193,7 @@ function InsertProposal(props) {
 							/>
 						</Form.Group>
 						<Form.Group className='mb-3' controlId='formExpirationDate'>
-							<Form.Label>Expiration date</Form.Label>
+							<Form.Label>Expiration date*</Form.Label>
 							<Form.Control type='date' required onChange={(event) => setExpirationDate(event.target.value)} />
 						</Form.Group>
 						<Form.Group className='mb-3' controlId='formKeywords'>
@@ -203,7 +203,7 @@ function InsertProposal(props) {
 					</Col>
 					<Col md={8}>
 						<Form.Group className='mb-3' controlId='formTitle'>
-							<Form.Label>Title</Form.Label>
+							<Form.Label>Title*</Form.Label>
 							<Form.Control
 								type='text'
 								required
@@ -213,7 +213,7 @@ function InsertProposal(props) {
 							/>
 						</Form.Group>
 						<Form.Group className='mb-3' controlId='formDescription'>
-							<Form.Label>Description</Form.Label>
+							<Form.Label>Description*</Form.Label>
 							<Form.Control
 								as='textarea'
 								rows={5}

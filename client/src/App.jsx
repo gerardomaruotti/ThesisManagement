@@ -99,12 +99,7 @@ function App() {
 						handleSuccess('Logged in successfully!');
 					})
 					.catch((err) => handleError(err));
-				API.getAllThesis(accessToken)
-					.then((thesis) => {
-						setThesis(thesis);
-					})
-					.catch((err) => handleError(err))
-					.finally(() => setLoading(false));
+
 			} catch (e) {
 				handleError(e.message);
 			}
@@ -113,7 +108,19 @@ function App() {
 			getUserMetadata();
 			setDirty(false);
 		}
-	}, [isAuthenticated, getAccessTokenSilently, user?.sub, dirty, setLoading]);
+	}, [isAuthenticated, getAccessTokenSilently, user?.sub, setLoading]);
+
+	useEffect(() => {
+		if (isAuthenticated) {
+			API.getAllThesis(accessToken)
+				.then((thesis) => {
+					setThesis(thesis);
+				})
+				.catch((err) => handleError(err))
+				.finally(() => setLoading(false));
+
+		}
+	}, [dirty, accessToken]);
 
 	useEffect(() => {
 		if (!isAuthenticated && !isLoading) {
@@ -153,11 +160,21 @@ function App() {
 								expirationDate={expirationDate2}
 								setExpirationDate={setExpirationDate2}
 								handleError={handleError}
+								handleSuccess={handleSuccess}
+								setMsgModal={setMsgModal}
+								setShowModal={setShowModal}
 							/>
 						) : null
 					}
 				/>
-				<Route path='/proposal/:id' element={<Proposal accessToken={accessToken} isProfessor={isProfessor} handleError={handleError} />} />
+				<Route path='/proposal/:id'
+					element={<Proposal
+						accessToken={accessToken}
+						isProfessor={isProfessor}
+						handleError={handleError}
+						handleSuccess={handleSuccess}
+						setMsgModal={setMsgModal}
+						setShowModal={setShowModal} />} />
 				<Route
 					path='/proposals/add'
 					element={
