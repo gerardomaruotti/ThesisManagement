@@ -14,8 +14,6 @@ function ProfessorApplicationsThesis(props) {
     const navigate = useNavigate();
     const [thesis, setThesis] = useState(null);
     const [showDetails, setShowDetails] = useState(false);
-    const [showModal, setShowModal] = useState(false);
-    const [msgModal, setMsgModal] = useState({});
     const [dirty, setDirty] = useState(false);
     const [applicationsThesis, setApplicationsThesis] = useState([]);
 
@@ -69,10 +67,12 @@ function ProfessorApplicationsThesis(props) {
     }, [props.accessToken]);
 
     function acceptApplication(idStudent) {
+        props.setShowModal(false);
         const parameters = { thesisID: id, studentID: idStudent };
         API.acceptApplication(parameters, props.accessToken)
             .then(() => {
                 setDirty(true);
+                props.handleSuccess('Application accepted');
             })
             .catch((err) => {
                 props.handleError(err);
@@ -80,26 +80,16 @@ function ProfessorApplicationsThesis(props) {
     }
 
     function rejectApplication(idStudent) {
+        props.setShowModal(false);
         const parameters = { thesisID: id, studentID: idStudent };
         API.rejectApplication(parameters, props.accessToken)
             .then(() => {
                 setDirty(true);
+                props.handleError('Application rejected');
             })
             .catch((err) => {
                 props.handleError(err);
             });
-    }
-
-    function assignOrReject() {
-        if (msgModal.accept) {
-            acceptApplication(msgModal.studentID);
-            props.handleSuccess('Application accepted');
-
-        } else {
-            rejectApplication(msgModal.studentID);
-            props.handleError('Application rejected');
-        }
-        setShowModal(false);
     }
 
 
@@ -112,7 +102,7 @@ function ProfessorApplicationsThesis(props) {
                     <Row>
                         <Col md={4} className='d-none d-md-flex'>
                             <Card style={{ padding: 20, paddingBottom: 30, position: 'sticky', top: 25 }} className='custom-card'>
-                            <DetailsProposalLeftBar thesis={thesis} isProfessor={props.isProfessor} />
+                                <DetailsProposalLeftBar thesis={thesis} isProfessor={props.isProfessor} />
                             </Card>
                         </Col>
                         <Col md={8} sm={12}>
@@ -184,10 +174,24 @@ function ProfessorApplicationsThesis(props) {
                                                                 app.state == 2 ? <span className='badge custom-badge-danger'>Rejected</span> :
                                                                     app.state == 3 ? <span className='badge custom-badge-warning'>Cancelled</span> :
                                                                         <div>
-                                                                           <Button variant='outline-success' style={{ borderRadius: 100 }} size='sm' onClick={() => { setShowModal(true); setMsgModal({ accept: true, studentID: app.student }) }}>
+                                                                            <Button
+                                                                                variant='outline-success'
+                                                                                style={{ borderRadius: 100 }}
+                                                                                size='sm'
+                                                                                onClick={() => {
+                                                                                    props.setShowModal(true);
+                                                                                    props.setMsgModal({ header: 'Accept application', body: `Are you sure you want to accept the application of student ${app.student}? The other application will be cancelled`, method: () => acceptApplication(app.student) })
+                                                                                }}>
                                                                                 <i className="bi bi-check2"></i>
                                                                             </Button>
-                                                                            <Button variant='outline-danger' style={{ borderRadius: 100, marginLeft: 8 }} size='sm' onClick={() => { setShowModal(true); setMsgModal({ accept: false, studentID: app.student }) }}>
+                                                                            <Button
+                                                                                variant='outline-danger'
+                                                                                style={{ borderRadius: 100, marginLeft: 8 }}
+                                                                                size='sm'
+                                                                                onClick={() => {
+                                                                                    props.setShowModal(true);
+                                                                                    props.setMsgModal({ header: 'Reject Application', body: `Are you sure you want to reject the application of student ${app.student}?`, method: () => rejectApplication(app.student) })
+                                                                                }}>
                                                                                 <i className="bi bi-x-lg"></i>
                                                                             </Button>
                                                                         </div>
@@ -208,31 +212,18 @@ function ProfessorApplicationsThesis(props) {
                         </Col>
                     </Row>
                 )}
-            </Container>
+            </Container >
 
             <Offcanvas show={showDetails} onHide={handleClose}>
                 <Offcanvas.Header closeButton>
                     <Offcanvas.Title>Details</Offcanvas.Title>
                 </Offcanvas.Header>
                 <Offcanvas.Body>
-                <DetailsProposalLeftBar thesis={thesis} isProfessor={props.isProfessor} />
+                    <DetailsProposalLeftBar thesis={thesis} isProfessor={props.isProfessor} />
                 </Offcanvas.Body>
             </Offcanvas>
 
-            <Modal show={showModal} onHide={() => setShowModal(false)} centered>
-                <Modal.Header closeButton>
-                    <Modal.Title>{msgModal.accept ? 'Accept application' : 'Reject Application'}</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>Are you sure you want to {msgModal.accept ? 'accept' : 'reject'} the application of student {msgModal.studentID}? {msgModal.accept ? 'The other application will be cancelled' : null} </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="outline-secondary" onClick={() => { setShowModal(false); }}>
-                        No
-                    </Button>
-                    <Button variant="outline-primary" onClick={assignOrReject}>
-                        Yes
-                    </Button>
-                </Modal.Footer>
-            </Modal>
+
         </>
     );
 }

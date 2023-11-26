@@ -15,6 +15,7 @@ import StudentApplications from './views/StudentApplications.jsx';
 import toast, { Toaster } from 'react-hot-toast';
 import ProfessorApplications from './views/ProfessorApplications.jsx';
 import ProfessorApplicationsThesis from './views/ProfessorApplicationsThesis.jsx';
+import GenericModal from './components/GenericModal.jsx';
 
 function App() {
 	const { user, isAuthenticated, getAccessTokenSilently, isLoading, loginWithRedirect } = useAuth0();
@@ -46,6 +47,10 @@ function App() {
 	const [selectedTypes, setSelectedTypes] = useState([]);
 	const [selectedGroups, setSelectedGroups] = useState([]);
 	const [expirationDate2, setExpirationDate2] = useState('all');
+
+	//GenericModal
+	const [showModal, setShowModal] = useState(false);
+	const [msgModal, setMsgModal] = useState({});  // {header: "header", body: "body", method: method}
 
 	function handleError(err) {
 		toast.error(err.error ? err.error : err, {
@@ -120,6 +125,7 @@ function App() {
 		<BrowserRouter>
 			<Header userData={userData} />
 			<Toaster />
+			<GenericModal showModal={showModal} setShowModal={setShowModal} msgModal={msgModal} />
 			<Routes>
 				<Route
 					path='/'
@@ -198,7 +204,14 @@ function App() {
 						) : null
 					}
 				/>
-				<Route path='/applications/proposal/:id' element={<ProfessorApplicationsThesis accessToken={accessToken} handleError={handleError} isProfessor={isProfessor} handleSuccess={handleSuccess} />} />
+				<Route path='/applications/proposal/:id' element={
+					<ProfessorApplicationsThesis
+						accessToken={accessToken}
+						handleError={handleError}
+						isProfessor={isProfessor}
+						handleSuccess={handleSuccess}
+						setMsgModal={setMsgModal}
+						setShowModal={setShowModal} />} />
 			</Routes>
 		</BrowserRouter>
 	);
