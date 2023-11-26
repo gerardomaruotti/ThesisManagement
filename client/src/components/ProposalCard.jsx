@@ -118,7 +118,18 @@ function ProposalCard(props) {
 						<Button variant='primary' style={{ width: 130 }} onClick={apply} >
 							Apply
 						</Button>
-					</div> : null}
+					</div> :
+					<div style={{ marginTop: 20, textAlign: 'right' }}>
+						<Button variant='primary' onClick={apply} style={{ marginRight: 10 }} size='sm'>
+							<i className="bi bi-pencil"></i>
+						</Button>
+						<Button variant='primary' onClick={apply} style={{ marginRight: 10 }} size='sm'>
+							<i className="bi bi-archive"></i>
+						</Button>
+						<Button variant='danger' onClick={apply} size='sm'>
+							<i className="bi bi-trash3"></i>
+						</Button>
+					</div>}
 			</Card >
 		</Col >
 	);
