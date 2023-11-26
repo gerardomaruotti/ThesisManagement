@@ -29,7 +29,15 @@ function StudentApplications(props) {
 	) : (
 		<Container>
 			<Row style={{ marginBottom: 25 }}>
-				{applications != [] ? applications.map((application, index) => <StudentApplicationCard key={index} application={application} />) : null}
+				{applications.length > 0 ? (
+					applications.map((application, index) => <StudentApplicationCard key={index} application={application} />)
+				) : (
+					<div className='d-flex justify-content-center align-items-center min-vh-100'>
+						<div className='text-center'>
+							<h1>No application has been made</h1>
+						</div>
+					</div>
+				)}
 			</Row>
 		</Container>
 	);
