@@ -393,7 +393,7 @@ metto rejected l'application dello studente che ha richiesto l'application
 //API for the 3rd story --> Apply for proposal
 app.post('/api/accept/application', [
 	check('studentID').isString().trim().notEmpty(),
-	check('thesisID').isInt(),
+	check('thesisID').isInt().custom(value => value > 0),
 
 ], checkJwt, async (req, res) => {
 	try {
@@ -433,7 +433,7 @@ app.post('/api/accept/application', [
 
 app.post('/api/reject/application', [
 	check('studentID').isString().trim().notEmpty(),
-	check('thesisID').isInt(),
+	check('thesisID').isInt().custom(value => value > 0),
 
 ], checkJwt, async (req, res) => {
 	try {
@@ -468,19 +468,28 @@ app.post('/api/reject/application', [
 //thesis update
 app.put('/api/edit/thesis/:id',
 	[
-		check('title').isLength({ min: 1 }),
-		check('description').isLength({ min: 1 }),
-		check('required_knowledge').isLength({ min: 1 }),
-		check('notes').isLength({ min: 1 }),
-		check('expiration_date').isLength({ min: 1 }),
-		check('level').isLength({ min: 1 }),
-		check('degree').isLength({ min: 1 }),
-		check('co-supervisors').isArray(),
+		check('title').isString().trim().isLength({ min: 1 }),
+		check('description').isString().trim().isLength({ min: 1 }),
+		check('required_knowledge').isString(),
+		check('notes').isString(),
+		check('expiration_date').isString().trim().isLength({ min: 10, max: 10 }),
+		check('level').isString().trim().isLength({ min: 1 }),
+		check('degree').isString().trim().isLength({ min: 1 }),
+		check('co_supervisors').isArray(),
 		check('keywords').isArray(),
+		check('types').isArray(),
 	],
 	checkJwt,
 	async (req, res) => {
 		const thesisId = req.params.id;
+		if (isNaN(thesisId) || thesisId <= 0) {
+			return res.status(400).json({ error: 'Invalid thesis Id.' });
+		}
+
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			return res.status(422).json({ errors: errors.array() });
+		}
 
 		const title = req.body.title;
 		const description = req.body.description;
@@ -499,7 +508,7 @@ app.put('/api/edit/thesis/:id',
 			if (userRole.role == 'teacher') {
 				const supervisor = userRole.id;
 				const checkApplications = await db.checkExistenceApplicationForThesis(thesisId);
-				if (checkApplications == 1) return res.status(401).json({ error: 'The thesis has applications, cannot be modified' });
+				if (checkApplications == 1) return res.status(400).json({ error: 'The thesis has applications, cannot be modified' });
 
 				const deleteCosup = await db.deleteCoSupervisor(thesisId);
 				for (let i = 0; i < co_supervisors.length; i++) {
