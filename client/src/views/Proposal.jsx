@@ -38,6 +38,7 @@ function Proposal(props) {
 		API.ThesisApply(id, props.accessToken)
 			.then(() => {
 				props.handleSuccess('Application accepted');
+				props.setDirty(true);
 			})
 			.catch((err) => {
 				props.handleError(err);

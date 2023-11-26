@@ -36,6 +36,7 @@ function App() {
 	const [dirty, setDirty] = useState(false);
 	const [isProfessor, setIsProfessor] = useState(false);
 	const [isStudent, setIsStudent] = useState(false);
+	const [applications, setApplications] = useState([]);
 
 	const { setLoading } = useLoading();
 
@@ -123,6 +124,19 @@ function App() {
 	}, [dirty, accessToken]);
 
 	useEffect(() => {
+		if (isAuthenticated && isStudent) {
+			API.getApplications(accessToken)
+				.then((app) => {
+					setApplications(app);
+					//console.log(app);
+				})
+				.catch((err) => {
+					handleError(err);
+				});
+		}
+	}, [dirty, accessToken, isStudent]);
+
+	useEffect(() => {
 		if (!isAuthenticated && !isLoading) {
 			loginWithRedirect();
 		}
@@ -163,6 +177,8 @@ function App() {
 								handleSuccess={handleSuccess}
 								setMsgModal={setMsgModal}
 								setShowModal={setShowModal}
+								applications={applications}
+								setDirty={setDirty}
 							/>
 						) : null
 					}
@@ -174,7 +190,9 @@ function App() {
 						handleError={handleError}
 						handleSuccess={handleSuccess}
 						setMsgModal={setMsgModal}
-						setShowModal={setShowModal} />} />
+						setShowModal={setShowModal}
+						setDirty={setDirty}
+						applications={applications} />} />
 				<Route
 					path='/proposals/add'
 					element={

@@ -14,6 +14,7 @@ function ProposalCard(props) {
 		API.ThesisApply(props.thesis.ID, props.accessToken)
 			.then(() => {
 				props.handleSuccess('Application accepted')
+				props.setDirty(true);
 			})
 			.catch((err) => {
 				props.handleError(err)
@@ -35,7 +36,7 @@ function ProposalCard(props) {
 					WebkitBoxOrient: 'vertical',
 					WebkitLineClamp: '2',
 					overflow: 'hidden'
-				}}>{props.thesis.title}</div>
+				}}>{props.thesis.title}{props.state}</div>
 
 				<div className="hide-scrollbar" style={{
 					fontWeight: 'semi-bold',
@@ -120,11 +121,30 @@ function ProposalCard(props) {
 					{props.thesis.description}
 				</div>
 				{props.isProfessor != 1 ?
-					<div style={{ marginTop: 20, textAlign: 'center' }}>
-						<Button variant='primary' style={{ width: 130 }} onClick={showModal} >
-							Apply
-						</Button>
-					</div> :
+					(
+						props.state == 0 ?
+							<div style={{ marginTop: 20, textAlign: 'center' }}>
+								<span
+									className='badge'
+									style={{
+										backgroundColor: 'rgba(164, 161, 141, 0.2)',
+										color: 'rgba(164, 161, 141)',
+										padding: '1em 1em',
+										borderRadius: '0.25rem',
+										marginRight: 10,
+									}}
+								>
+									<i className='bi bi-hourglass-split' style={{ fontSize: '16px' }}></i>
+								</span>
+
+								<span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>Pending</span>
+							</div>
+							:
+							<div style={{ marginTop: 20, textAlign: 'center' }}>
+								<Button variant='primary' style={{ width: 130 }} onClick={showModal} >
+									Apply
+								</Button>
+							</div>) :
 					<div style={{ marginTop: 20, textAlign: 'right' }}>
 						<Button variant='primary' onClick={apply} style={{ marginRight: 10 }} size='sm'>
 							<i className="bi bi-pencil"></i>

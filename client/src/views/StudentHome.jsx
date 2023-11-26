@@ -184,8 +184,17 @@ function StudentHome(props) {
 						filteredThesis
 							.sort((a, b) => b.count - a.count)
 							.map((thesis, index) => (
-								<ProposalCard key={thesis.ID} thesis={thesis} accessToken={props.accessToken} setMsgModal={props.setMsgModal} setShowModal={props.setShowModal} handleError={props.handleError} handleSuccess={props.handleSuccess} />
-							))
+								<ProposalCard
+									key={thesis.ID}
+									thesis={thesis}
+									accessToken={props.accessToken}
+									setMsgModal={props.setMsgModal}
+									setShowModal={props.setShowModal}
+									handleError={props.handleError}
+									handleSuccess={props.handleSuccess}
+									setDirty={props.setDirty}
+									state={props.applications.find(app => app.id === thesis.ID && app.state != 2) ? props.applications.find(app => app.id === thesis.ID && app.state != 2).state : null}
+								/>))
 					) : (
 						<Col style={{ marginTop: 25 }}>
 							<p>No thesis to display</p>
