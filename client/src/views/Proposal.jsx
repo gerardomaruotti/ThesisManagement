@@ -57,10 +57,10 @@ function Proposal(props) {
 		<>
 			<Container style={{ marginTop: 25, marginBottom: 25 }}>
 				{thesis == null ? null : (
-					<Row>
+					<Row style={{ display: 'flex', alignItems: 'start' }}>
 						<Col md={4} className='d-none d-md-flex'>
-							<Card style={{ padding: 20, paddingBottom: 30, position: 'sticky', top: 25 }} className='custom-card'>
-								<DetailsProposalLeftBar thesis={thesis} apply={showModal} isProfessor={props.isProfessor} />
+							<Card style={{ padding: 20, position: 'sticky', top: 25 }} className='custom-card'>
+								<DetailsProposalLeftBar id={id} thesis={thesis} apply={showModal} isProfessor={props.isProfessor} applications={props.applications} />
 							</Card>
 						</Col>
 						<Col md={8}>
@@ -113,7 +113,7 @@ function Proposal(props) {
 					<Offcanvas.Title>Details</Offcanvas.Title>
 				</Offcanvas.Header>
 				<Offcanvas.Body>
-					<DetailsProposalLeftBar thesis={thesis} apply={showModal} isProfessor={props.isProfessor} />
+					<DetailsProposalLeftBar id={id} thesis={thesis} apply={showModal} isProfessor={props.isProfessor} applications={props.applications} />
 				</Offcanvas.Body>
 			</Offcanvas>
 

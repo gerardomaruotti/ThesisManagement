@@ -30,13 +30,14 @@ function ProposalCard(props) {
 
 	return (
 		<Col lg={6} sm={12} style={{ marginTop: 25 }}>
-			<Card style={{ padding: 20, cursor: 'pointer' }} className='custom-card' onClick={() => navigate('/proposal/' + props.thesis.ID)}>
-				<div style={{
+			<Card style={{ padding: 20 }} className='custom-card' >
+				<div className='title' onClick={() => navigate('/proposal/' + props.thesis.ID)} style={{
 					fontWeight: 'medium', fontSize: 18, height: 55, display: '-webkit-box',
 					WebkitBoxOrient: 'vertical',
 					WebkitLineClamp: '2',
-					overflow: 'hidden'
-				}}>{props.thesis.title}{props.state}</div>
+					overflow: 'hidden',
+					cursor: 'pointer'
+				}}>{props.thesis.title}</div>
 
 				<div className="hide-scrollbar" style={{
 					fontWeight: 'semi-bold',
