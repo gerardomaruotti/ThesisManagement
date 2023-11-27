@@ -132,7 +132,7 @@ exports.getTeacher = (codSupervisor) => {
 
 exports.getCoSupervisors = (idThesis) => {
   return new Promise((resolve, reject) => {
-    const sql = 'SELECT NAME, SURNAME FROM CO_SUPERVISOR WHERE THESIS=?';
+    const sql = 'SELECT NAME, SURNAME, EMAIL FROM CO_SUPERVISOR WHERE THESIS=?';
     db.all(sql, [idThesis], (err, rows) => {
       if (err) {
         reject(err);
@@ -141,7 +141,8 @@ exports.getCoSupervisors = (idThesis) => {
       else {
         const coSupervisors = rows.map((elem) => ({
           name: elem.NAME,
-          surname: elem.SURNAME
+          surname: elem.SURNAME,
+          email: elem.EMAIL
         }));
 
         resolve(coSupervisors)
@@ -321,9 +322,9 @@ exports.getRole = (auth0) => {
   });
 }
 
-exports.getThesisTeacher = (ID) => {
+exports.getThesisTeacher = (ID, curDate) => {
   return new Promise((resolve, reject) => {
-    const sql = 'SELECT DISTINCT T.ID_THESIS as ID, TS.STATE AS status,  T.TITLE AS title, T.NOTES as notes, T.DESCRIPTION AS description , T.REQUIRED_KNOWLEDGE AS req_know, TE.NAME AS sup_name, TE.SURNAME AS sup_surname FROM THESIS T JOIN TEACHER TE ON T.SUPERVISOR == TE.ID JOIN THESIS_STATUS TS ON TS.THESIS == T.ID_THESIS WHERE TE.ID = ? ';
+    const sql = 'SELECT DISTINCT T.ID_THESIS as ID, TS.STATE AS status,  T.TITLE AS title, T.NOTES as notes, T.EXPIRATION_DATE AS date, T.DESCRIPTION AS description , T.REQUIRED_KNOWLEDGE AS req_know, TE.NAME AS sup_name, TE.SURNAME AS sup_surname FROM THESIS T JOIN TEACHER TE ON T.SUPERVISOR == TE.ID JOIN THESIS_STATUS TS ON TS.THESIS == T.ID_THESIS WHERE TE.ID = ? ';
     db.all(sql, [ID], (err, rows) => {
       if (err) {
         reject(err);
@@ -339,7 +340,7 @@ exports.getThesisTeacher = (ID) => {
             sup_name: elem.sup_name,
             sup_surname: elem.sup_surname,
             notes: elem.notes,
-            status : elem.status,
+            status : (elem.status &&(curDate <= '2023-11-29' ? 1:0)),
             count: 0,
             keywords: [],
             types: [], 
@@ -355,10 +356,9 @@ exports.getThesisTeacher = (ID) => {
 }
 
 exports.getThesisStudent = (ID, curDate) => {
-  console.log(curDate);
   return new Promise((resolve, reject) => {
-    const sql = 'SELECT DISTINCT T.ID_THESIS as ID, T.TITLE AS title, T.NOTES as notes, T.DESCRIPTION AS description , T.REQUIRED_KNOWLEDGE AS req_know, TE.NAME AS sup_name, TE.SURNAME AS sup_surname FROM THESIS T JOIN STUDENT S ON S.COD_DEGREE == T.DEGREE JOIN TEACHER TE ON T.SUPERVISOR == TE.ID JOIN THESIS_STATUS TS ON TS.THESIS == T.ID_THESIS WHERE S.ID = ? AND TS.STATE == 1';
-    db.all(sql, [ID], (err, rows) => {
+    const sql = 'SELECT DISTINCT T.ID_THESIS as ID, T.TITLE AS title, T.NOTES as notes, T.DESCRIPTION AS description , T.REQUIRED_KNOWLEDGE AS req_know, TE.NAME AS sup_name, TE.SURNAME AS sup_surname FROM THESIS T JOIN STUDENT S ON S.COD_DEGREE == T.DEGREE JOIN TEACHER TE ON T.SUPERVISOR == TE.ID JOIN THESIS_STATUS TS ON TS.THESIS == T.ID_THESIS WHERE S.ID = ? AND TS.STATE == 1 AND date(EXPIRATION_DATE) >= date(?) ';
+    db.all(sql, [ID,curDate], (err, rows) => {
       if (err) {
         reject(err);
         return;

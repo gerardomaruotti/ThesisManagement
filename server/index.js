@@ -307,6 +307,7 @@ app.get('/api/thesis/:id', checkJwt, async (req, res) => {
 			notes: infoThesis.notes,
 			expirationDate: infoThesis.expirationDate,
 			level: infoThesis.level,
+			codeDegree: infoThesis.cds,
 			cds: titleDegree,
 			supervisor: supervisor, //arriva come oggetto con name e surname
 			keywords: keywords,
@@ -314,7 +315,7 @@ app.get('/api/thesis/:id', checkJwt, async (req, res) => {
 			groups: groups,
 			coSupervisors: coSupervisors,
 		};
-
+		console.log(thesis)
 		res.status(200).json(thesis);
 	} catch (err) {
 		res.status(500).json({ error: 'Errore visualizzazione tesi' });
