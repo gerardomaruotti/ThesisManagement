@@ -17,13 +17,11 @@ function ProposalForm(props) {
 	const [requiredKnowledge, setRequiredKnowledge] = useState(props.thesis ? props.thesis.requiredKnowledge : '');
 	const [description, setDescription] = useState(props.thesis ? props.thesis.description : '');
 	const [notes, setNotes] = useState(props.thesis ? props.thesis.notes : '');
-	const [keywords, setKeywords] = useState(props.thesis ? props.thesis.keywords : []);
-	const [coSupervisors, setCoSupervisors] = useState(props.thesis ? props.thesis.coSupervisors : []);
-	const [cds, setCds] = useState(props.thesis ? { label: props.thesis.cds, value: props.thesis.cds } : '');
-	const [type, setType] = useState(props.thesis ? props.thesis.types : []);
-	const [expirationDate, setExpirationDate] = useState(
-		props.thesis && dayjs(props.thesis.expirationDate).isValid() ? dayjs(props.thesis.expirationDate).format('YYYY-MM-DD') : ''
-	);
+	const [keywords, setKeywords] = useState([]);
+	const [coSupervisors, setCoSupervisors] = useState([]);
+	const [cds, setCds] = useState('');
+	const [type, setType] = useState([]);
+	const [expirationDate, setExpirationDate] = useState(props.thesis ? dayjs(props.thesis.expiration_date).format('YYYY-MM-DD') : '');
 	const levels = [
 		{ value: 'BSc', label: 'BSc' },
 		{ value: 'MSc', label: 'MSc' },
@@ -108,7 +106,6 @@ function ProposalForm(props) {
 	useEffect(() => {
 		if (selectedLevel === null) {
 			setSelectedCds('');
-			console.log('cds: ', selectedCds);
 		}
 		API.getAllCds(accessToken)
 			.then((cds) => {
