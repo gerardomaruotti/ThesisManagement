@@ -85,6 +85,8 @@ app.post('/api/thesis', checkJwt, async (req, res) => {
 				thesis[i].keywords = keywords;
 				let types = await db.getTypesbyId(thesis[i].ID);
 				thesis[i].types = types;
+				let checkApplication = await db.checkExistenceApplicationForThesis(thesis[i].ID);
+				thesis[i].applications = checkApplication;
 			}
 			res.status(200).json(thesis);
 		} else if (getRole.role == 'student') {

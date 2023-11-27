@@ -341,7 +341,8 @@ exports.getThesisTeacher = (ID) => {
             notes: elem.notes,
             status : elem.status,
             count: 0,
-            keywords: []
+            keywords: [], 
+            applications: 0
           }))
           resolve(thesis)
         } else {
@@ -371,7 +372,7 @@ exports.getThesisStudent = (ID) => {
             sup_surname: elem.sup_surname,
             notes: elem.notes,
             count: 0,
-            keywords: []
+            keywords: [], 
           }))
 
           resolve(thesis)
