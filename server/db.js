@@ -652,10 +652,10 @@ exports.archiveThesis=(thesis) => {
   });
 }
 
-exports.editThesis = (id, title, description, req_know, notes, exp_date, level, degree, supervisor) => {
+exports.editThesis = (id, title, description, req_know, notes, exp_date, level, degree) => {
   return new Promise((resolve, reject) => {
-    const sql = 'UPDATE thesis SET title = ?, description = ?, required_knowledge = ?, notes = ?, expiration_date = ?, level = ?, degree = ?, supervisor = ? WHERE id_thesis = ?';
-    db.run(sql, [title, description, req_know, notes, exp_date, level, degree, supervisor, id], function (err) {
+    const sql = 'UPDATE thesis SET title = ?, description = ?, required_knowledge = ?, notes = ?, expiration_date = ?, level = ?, degree = ? WHERE id_thesis = ?';
+    db.run(sql, [title, description, req_know, notes, exp_date, level, degree, id], function (err) {
       if (err) {
         reject(err);
         return;

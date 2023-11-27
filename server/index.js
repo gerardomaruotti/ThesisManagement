@@ -506,7 +506,9 @@ app.put('/api/edit/thesis/:id',
 			//i need groups of supervisor and co-supervisor of the thesis
 			const userRole = await db.getRole(req.auth);
 			if (userRole.role == 'teacher') {
-				const supervisor = userRole.id;
+				const supervisor = await db.getThesisSupervisor(thesisId);
+				if (userRole.id != supervisor) return res.status(400).json({ error: 'The teacher do not have the permission to modify the thesis' });
+
 				const checkApplications = await db.checkExistenceApplicationForThesis(thesisId);
 				if (checkApplications == 1) return res.status(400).json({ error: 'The thesis has applications, cannot be modified' });
 
@@ -525,7 +527,7 @@ app.put('/api/edit/thesis/:id',
 					const typesId = await db.insertType(thesisId, types[i]);
 				}
 
-				const id = await db.editThesis(thesisId, title, description, req_know, notes, exp_date, level, degree, supervisor);
+				const id = await db.editThesis(thesisId, title, description, req_know, notes, exp_date, level, degree);
 				return res.status(200).json(thesisId);
 			} else {
 				return res.status(401).json({ error: 'Unauthorized user' });
