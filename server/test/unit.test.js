@@ -1492,6 +1492,7 @@ describe('PUT Edit Thesis', () => {
         const application = 0;
 
         db.getRole.mockResolvedValueOnce(user);
+        db.getThesisSupervisor.mockResolvedValueOnce("userId");
         db.checkExistenceApplicationForThesis.mockResolvedValueOnce(application);
         db.deleteCoSupervisor.mockResolvedValueOnce();
         db.insertCoSupervisor.mockResolvedValueOnce();
@@ -1505,6 +1506,8 @@ describe('PUT Edit Thesis', () => {
         const res = await request(app).put('/api/edit/thesis/1').send(body);
 
         expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.getThesisSupervisor).toHaveBeenCalledTimes(1);
+        expect(db.getThesisSupervisor).toHaveBeenCalledWith("1");
         expect(db.checkExistenceApplicationForThesis).toHaveBeenCalledTimes(1);
         expect(db.checkExistenceApplicationForThesis).toHaveBeenCalledWith("1");
         expect(db.deleteCoSupervisor).toHaveBeenCalledTimes(1);
@@ -1517,7 +1520,7 @@ describe('PUT Edit Thesis', () => {
         expect(db.insertKeyword).toHaveBeenCalledTimes(body.keywords.length);
         expect(db.insertType).toHaveBeenCalledTimes(body.types.length);
         expect(db.editThesis).toHaveBeenCalledTimes(1);
-        expect(db.editThesis).toHaveBeenCalledWith("1", body.title, body.description, body.required_knowledge, body.notes, body.expiration_date, body.level, body.degree, user.id)
+        expect(db.editThesis).toHaveBeenCalledWith("1", body.title, body.description, body.required_knowledge, body.notes, body.expiration_date, body.level, body.degree)
         expect(res.status).toBe(200);
         expect(res.body).toEqual("1");
     });
@@ -1570,6 +1573,42 @@ describe('PUT Edit Thesis', () => {
         expect(res.body).toEqual({ error: 'Unauthorized user' });
     });
 
+    test('should return a 400 when called on a thesis for which the teacher is not the supervisor.', async () => {
+        const body = {
+            title: "Title1",
+            description: "Description",
+            required_knowledge: "Requiredknowledge",
+            notes: "Notes",
+            expiration_date: "01/01/2023",
+            level: "Level",
+            degree: "degree",
+            types: ["type1", "type2"],
+            co_supervisors: ["co-1", "co-2"],
+            keywords: ["key1", "key2"]
+        };
+
+        const user = {
+            id: "userId",
+            role: "teacher"
+        };
+
+        const application = 1;
+
+
+        db.getRole.mockResolvedValueOnce(user);
+        db.getThesisSupervisor.mockResolvedValueOnce("NotuserId");
+
+        const res = await request(app).put('/api/edit/thesis/1').send(body);
+
+        expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.getThesisSupervisor).toHaveBeenCalledTimes(1);
+        expect(db.getThesisSupervisor).toHaveBeenCalledWith("1");
+        expect(db.checkExistenceApplicationForThesis).toHaveBeenCalledTimes(0);
+        expect(db.editThesis).toHaveBeenCalledTimes(0);
+        expect(res.status).toBe(400);
+        expect(res.body).toEqual({ error: 'The teacher do not have the permission to modify the thesis' });
+    });
+
     test('should return a 400 when called on a thesis that has already at least one application', async () => {
         const body = {
             title: "Title1",
@@ -1593,11 +1632,14 @@ describe('PUT Edit Thesis', () => {
 
 
         db.getRole.mockResolvedValueOnce(user);
+        db.getThesisSupervisor.mockResolvedValueOnce("userId");
         db.checkExistenceApplicationForThesis.mockResolvedValueOnce(application);
 
         const res = await request(app).put('/api/edit/thesis/1').send(body);
 
         expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.getThesisSupervisor).toHaveBeenCalledTimes(1);
+        expect(db.getThesisSupervisor).toHaveBeenCalledWith("1");
         expect(db.checkExistenceApplicationForThesis).toHaveBeenCalledTimes(1);
         expect(db.checkExistenceApplicationForThesis).toHaveBeenCalledWith("1");
         expect(db.editThesis).toHaveBeenCalledTimes(0);
