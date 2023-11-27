@@ -342,7 +342,8 @@ exports.getThesisTeacher = (ID) => {
             status : elem.status,
             count: 0,
             keywords: [],
-            types: []
+            types: [], 
+            applications: 0
           }))
           resolve(thesis)
         } else {
@@ -374,7 +375,7 @@ exports.getThesisStudent = (ID, curDate) => {
             notes: elem.notes,
             count: 0,
             keywords: [],
-            types: []
+            types: [], 
           }))
 
           resolve(thesis)
