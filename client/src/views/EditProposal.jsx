@@ -29,11 +29,15 @@ function EditProposal(props) {
 	}, [id]);
 
 	function editProposal(thesis) {
-		API.editProposal(props.accessToken, thesis, id).then(() => {
-			props.setDirty(true);
-			props.setFromHome(false);
-			navigate('/proposal/' + id);
-		});
+		API.editProposal(props.accessToken, thesis, id)
+			.then(() => {
+				props.setDirty(true);
+				props.setFromHome(false);
+				navigate('/proposal/' + id);
+			})
+			.catch((err) => {
+				props.handleError(err);
+			});
 	}
 
 	return loading ? (

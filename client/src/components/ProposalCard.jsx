@@ -153,7 +153,7 @@ function ProposalCard(props) {
 					</div>
 				) : (
 					<div style={{ marginTop: 20, textAlign: 'right' }}>
-						<Button variant='primary' onClick={editProposal} style={{ marginRight: 10 }} size='sm'>
+						<Button variant='primary' onClick={editProposal} disabled={!props.isEditable} style={{ marginRight: 10 }} size='sm'>
 							<i className='bi bi-pencil'></i>
 						</Button>
 						{/* <Button variant='primary' onClick={archiveProposal} style={{ marginRight: 10 }} size='sm'>

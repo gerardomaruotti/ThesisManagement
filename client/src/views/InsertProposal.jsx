@@ -9,11 +9,15 @@ function InsertProposal(props) {
 	const { accessToken, user, handleError } = props;
 
 	function createProposal(thesis) {
-		API.insertThesis(accessToken, thesis).then((thesisID) => {
-			props.setDirty(true);
-			props.setFromHome(false);
-			navigate('/proposal/' + thesisID);
-		});
+		API.insertThesis(accessToken, thesis)
+			.then((thesisID) => {
+				props.setDirty(true);
+				props.setFromHome(false);
+				navigate('/proposal/' + thesisID);
+			})
+			.catch((err) => {
+				props.handleError(err);
+			});
 	}
 
 	return (
