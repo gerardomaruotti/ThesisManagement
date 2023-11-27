@@ -6,6 +6,9 @@ const app = express();
 const { auth } = require('express-oauth2-jwt-bearer');
 const db = require('./db'); // module for accessing the DB
 const port = process.env.PORT || 3001;
+const dayjs = require('dayjs');
+const currentDate = dayjs();
+
 app.use(express.json());
 
 const checkJwt = auth({
@@ -79,7 +82,7 @@ app.post('/api/thesis', checkJwt, async (req, res) => {
 
 		if (getRole.role == 'teacher') {
 			//if it is student we search for the thesis related to his COD_DEGREE
-			let thesis = await db.getThesisTeacher(getRole.id);
+			let thesis = await db.getThesisTeacher(getRole.id, currentDate.format('YYYY-MM-DD'));
 			for (let i = 0; i < thesis.length; i++) {
 				let keywords = await db.getKeywordsbyId(thesis[i].ID);
 				thesis[i].keywords = keywords;
@@ -88,7 +91,7 @@ app.post('/api/thesis', checkJwt, async (req, res) => {
 			}
 			res.status(200).json(thesis);
 		} else if (getRole.role == 'student') {
-			let thesis = await db.getThesisStudent(getRole.id);
+			let thesis = await db.getThesisStudent(getRole.id, currentDate.format('YYYY-MM-DD'));
 			for (let i = 0; i < thesis.length; i++) {
 				let keywords = await db.getKeywordsbyId(thesis[i].ID);
 				thesis[i].keywords = keywords;
