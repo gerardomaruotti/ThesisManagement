@@ -101,7 +101,7 @@ function ProfessorApplicationsThesis(props) {
                     <Row>
                         <Col md={4} className='d-none d-md-flex'>
                             <Card style={{ padding: 20, paddingBottom: 30, position: 'sticky', top: 25 }} className='custom-card'>
-                                <DetailsProposalLeftBar thesis={thesis} isProfessor={props.isProfessor} />
+                                <DetailsProposalLeftBar thesis={thesis} isProfessor={props.isProfessor} fromApplication={true} id={id} />
                             </Card>
                         </Col>
                         <Col md={8} sm={12}>
