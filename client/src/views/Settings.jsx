@@ -10,6 +10,7 @@ import API from '../API.jsx';
 function Settings(props) {
 	const { loading, setLoading } = useLoading();
 	const { virtualClock, setVirtualClock, dateVirtualClock, setDateVirtualClock } = props;
+	const [date, setDate] = useState(dateVirtualClock ? dateVirtualClock : null);
 
 	useEffect(() => {
 		if (dateVirtualClock == null) {
@@ -23,6 +24,7 @@ function Settings(props) {
 				.then(() => {
 					props.setDirty(true);
 					setDateVirtualClock(null);
+					setDate(null);
 				})
 				.catch((err) => {
 					props.handleError(err);
@@ -32,11 +34,12 @@ function Settings(props) {
 	};
 
 	const handleDateVirtualClockDate = (event) => {
-		setDateVirtualClock(event.target.value);
+		setDate(event.target.value);
 	};
 
 	const handleDateVirtualClock = () => {
-		API.setVirtualClock(props.accessToken, dateVirtualClock)
+		setDateVirtualClock(date);
+		API.setVirtualClock(props.accessToken, date)
 			.then((res) => {
 				props.handleSuccess(`Date set to ${dateVirtualClock}`);
 				props.setDirty(true);
@@ -72,7 +75,7 @@ function Settings(props) {
 								<Col md={4}>
 									<Form.Control
 										type='date'
-										value={dateVirtualClock ? dateVirtualClock : ''}
+										value={date ? date : ''}
 										min={dayjs().add(1, 'day').format('YYYY-MM-DD')}
 										onChange={handleDateVirtualClockDate}
 										inline='true'
