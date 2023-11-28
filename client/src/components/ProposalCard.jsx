@@ -10,25 +10,18 @@ function ProposalCard(props) {
 	const navigate = useNavigate();
 
 	function apply(event) {
+		props.setShowModal(false);
 		API.ThesisApply(props.thesis.ID, props.accessToken)
 			.then(() => {
-				props.setMsgAndColor({
-					header: 'Application successful',
-					msg: 'Successful application to the thesis ' + props.thesis.title,
-					color: 'success',
-				});
-				props.setPopup(true);
+				props.handleSuccess('Application accepted')
+				props.setDirty(true);
 			})
-			.catch(() => {
-				props.setMsgAndColor({
-					header: 'Application failed',
-					msg: 'You have already sent an application for this thesis or you do not have authorization',
-					color: 'danger',
-				});
-				props.setPopup(true);
+			.catch((err) => {
+				props.handleError(err)
 			});
 		event.stopPropagation();
 	}
+
 
 	function editProposal(event) {
 		navigate('/proposals/edit/' + props.thesis.ID);
@@ -43,37 +36,33 @@ function ProposalCard(props) {
 	function deleteProposal(event) {
 		console.log('delete');
 		event.stopPropagation();
+
+	function showModal(event) {
+		event.stopPropagation();
+		props.setShowModal(true);
+		props.setMsgModal({ header: 'Apply', body: 'Are you sure you want to apply to this thesis?', method: apply })
 	}
 
 	return (
 		<Col lg={6} sm={12} style={{ marginTop: 25 }}>
-			<Card style={{ padding: 20, cursor: 'pointer' }} className='custom-card' onClick={() => navigate('/proposal/' + props.thesis.ID)}>
-				<div
-					style={{
-						fontWeight: 'medium',
-						fontSize: 18,
-						height: 55,
-						display: '-webkit-box',
-						WebkitBoxOrient: 'vertical',
-						WebkitLineClamp: '2',
-						overflow: 'hidden',
-					}}
-				>
-					{props.thesis.title}
-				</div>
-
-				<div
-					className='hide-scrollbar'
-					style={{
-						fontWeight: 'semi-bold',
-						fontSize: 14,
-						marginTop: 5,
-						overflowX: 'auto',
-						whiteSpace: 'nowrap',
-						scrollbarWidth: 'none' /* For Firefox */,
-						msOverflowStyle: 'none' /* For Internet Explorer and Edge */,
-					}}
-				>
+			<Card style={{ padding: 20 }} className='custom-card' >
+				<div className='title' onClick={() => navigate('/proposal/' + props.thesis.ID)} style={{
+					fontWeight: 'medium', fontSize: 18, height: 55, display: '-webkit-box',
+					WebkitBoxOrient: 'vertical',
+					WebkitLineClamp: '2',
+					overflow: 'hidden',
+					cursor: 'pointer'
+				}}>{props.thesis.title}</div>
+				<div className="hide-scrollbar" style={{
+					fontWeight: 'semi-bold',
+					fontSize: 14,
+					height: 25,
+					marginTop: 5,
+					overflowX: 'auto',
+					whiteSpace: 'nowrap',
+					scrollbarWidth: 'none', /* For Firefox */
+					msOverflowStyle: 'none', /* For Internet Explorer and Edge */
+				}}>
 					{props.thesis.keywords.map((keyword, index) => (
 						<span
 							key={index}
@@ -145,13 +134,31 @@ function ProposalCard(props) {
 				>
 					{props.thesis.description}
 				</div>
-				{props.isProfessor != 1 ? (
-					<div style={{ marginTop: 20, textAlign: 'center' }}>
-						<Button variant='primary' style={{ width: 130 }} onClick={apply}>
-							Apply
-						</Button>
-					</div>
-				) : (
+				{props.isProfessor != 1 ?
+					(
+						props.state == 0 ?
+							<div style={{ marginTop: 20, textAlign: 'center' }}>
+								<span
+									className='badge'
+									style={{
+										backgroundColor: 'rgba(164, 161, 141, 0.2)',
+										color: 'rgba(164, 161, 141)',
+										padding: '1em 1em',
+										borderRadius: '0.25rem',
+										marginRight: 10,
+									}}
+								>
+									<i className='bi bi-hourglass-split' style={{ fontSize: '16px' }}></i>
+								</span>
+
+								<span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>Pending</span>
+							</div>
+							:
+							<div style={{ marginTop: 20, textAlign: 'center' }}>
+								<Button variant='primary' style={{ width: 130 }} onClick={showModal} >
+									Apply
+								</Button>
+							</div>) :
 					<div style={{ marginTop: 20, textAlign: 'right' }}>
 						<Button variant='primary' onClick={editProposal} disabled={!props.isEditable} style={{ marginRight: 10 }} size='sm'>
 							<i className='bi bi-pencil'></i>

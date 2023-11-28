@@ -9,7 +9,7 @@ function StudentApplicationCard(props) {
 	const navigate = useNavigate();
 	return (
 		<Col lg={6} sm={12} style={{ marginTop: 25 }}>
-			<Card style={{ padding: 20, cursor: 'pointer' }} className='custom-card'>
+			<Card style={{ padding: 20 }} className='custom-card'>
 				<div
 					style={{
 						fontWeight: 'medium',

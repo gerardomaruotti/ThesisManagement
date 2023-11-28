@@ -26,6 +26,7 @@ function App() {
 	const [dirty, setDirty] = useState(false);
 	const [isProfessor, setIsProfessor] = useState(false);
 	const [isStudent, setIsStudent] = useState(false);
+	const [applications, setApplications] = useState([]);
 
 	const { setLoading } = useLoading();
 
@@ -89,12 +90,7 @@ function App() {
 						handleSuccess('Logged in successfully!');
 					})
 					.catch((err) => handleError(err));
-				API.getAllThesis(accessToken)
-					.then((thesis) => {
-						setThesis(thesis);
-					})
-					.catch((err) => handleError(err))
-					.finally(() => setLoading(false));
+
 			} catch (e) {
 				handleError(e.message);
 			}
@@ -103,7 +99,32 @@ function App() {
 			getUserMetadata();
 			setDirty(false);
 		}
-	}, [isAuthenticated, getAccessTokenSilently, user?.sub, dirty, setLoading]);
+	}, [isAuthenticated, getAccessTokenSilently, user?.sub, setLoading]);
+
+	useEffect(() => {
+		if (isAuthenticated) {
+			API.getAllThesis(accessToken)
+				.then((thesis) => {
+					setThesis(thesis);
+				})
+				.catch((err) => handleError(err))
+				.finally(() => setLoading(false));
+
+		}
+	}, [dirty, accessToken]);
+
+	useEffect(() => {
+		if (isAuthenticated && isStudent) {
+			API.getApplications(accessToken)
+				.then((app) => {
+					setApplications(app);
+					//console.log(app);
+				})
+				.catch((err) => {
+					handleError(err);
+				});
+		}
+	}, [dirty, accessToken, isStudent]);
 
 	useEffect(() => {
 		if (!isAuthenticated && !isLoading) {
@@ -143,11 +164,25 @@ function App() {
 								expirationDate={expirationDate2}
 								setExpirationDate={setExpirationDate2}
 								handleError={handleError}
+								handleSuccess={handleSuccess}
+								setMsgModal={setMsgModal}
+								setShowModal={setShowModal}
+								applications={applications}
+								setDirty={setDirty}
 							/>
 						) : null
 					}
 				/>
-				<Route path='/proposal/:id' element={<Proposal accessToken={accessToken} isProfessor={isProfessor} handleError={handleError} />} />
+				<Route path='/proposal/:id'
+					element={<Proposal
+						accessToken={accessToken}
+						isProfessor={isProfessor}
+						handleError={handleError}
+						handleSuccess={handleSuccess}
+						setMsgModal={setMsgModal}
+						setShowModal={setShowModal}
+						setDirty={setDirty}
+						applications={applications} />} />
 				<Route
 					path='/proposals/add'
 					element={

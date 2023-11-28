@@ -162,8 +162,8 @@ function ProfessorApplicationsThesis(props) {
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {applicationsThesis != [] ? applicationsThesis.map((app) => (
-                                                    <tr key={app.student}>
+                                                {applicationsThesis != [] ? applicationsThesis.map((app, index) => (
+                                                    <tr key={index}>
                                                         <td>{app.student}</td>
                                                         <td>{app.name}</td>
                                                         <td>{app.surname}</td>
@@ -180,7 +180,7 @@ function ProfessorApplicationsThesis(props) {
                                                                                 size='sm'
                                                                                 onClick={() => {
                                                                                     props.setShowModal(true);
-                                                                                    props.setMsgModal({ header: 'Accept application', body: `Are you sure you want to accept the application of student ${app.student}? The other application will be cancelled`, method: () => acceptApplication(app.student) })
+                                                                                    props.setMsgModal({ header: 'Accept application', body: `Are you sure you want to accept the application of student ${app.student}? The other pending application will be cancelled`, method: () => acceptApplication(app.student) })
                                                                                 }}>
                                                                                 <i className="bi bi-check2"></i>
                                                                             </Button>

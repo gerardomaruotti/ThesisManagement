@@ -6,6 +6,9 @@ const app = express();
 const { auth } = require('express-oauth2-jwt-bearer');
 const db = require('./db'); // module for accessing the DB
 const port = process.env.PORT || 3001;
+const dayjs = require('dayjs');
+const currentDate = dayjs();
+
 app.use(express.json());
 
 const checkJwt = auth({
@@ -79,16 +82,18 @@ app.post('/api/thesis', checkJwt, async (req, res) => {
 
 		if (getRole.role == 'teacher') {
 			//if it is student we search for the thesis related to his COD_DEGREE
-			let thesis = await db.getThesisTeacher(getRole.id);
+			let thesis = await db.getThesisTeacher(getRole.id, currentDate.format('YYYY-MM-DD'));
 			for (let i = 0; i < thesis.length; i++) {
 				let keywords = await db.getKeywordsbyId(thesis[i].ID);
 				thesis[i].keywords = keywords;
 				let types = await db.getTypesbyId(thesis[i].ID);
 				thesis[i].types = types;
+				let checkApplication = await db.checkExistenceApplicationForThesis(thesis[i].ID);
+				thesis[i].applications = checkApplication;
 			}
 			res.status(200).json(thesis);
 		} else if (getRole.role == 'student') {
-			let thesis = await db.getThesisStudent(getRole.id);
+			let thesis = await db.getThesisStudent(getRole.id, currentDate.format('YYYY-MM-DD'));
 			for (let i = 0; i < thesis.length; i++) {
 				let keywords = await db.getKeywordsbyId(thesis[i].ID);
 				thesis[i].keywords = keywords;
@@ -302,6 +307,7 @@ app.get('/api/thesis/:id', checkJwt, async (req, res) => {
 			notes: infoThesis.notes,
 			expirationDate: infoThesis.expirationDate,
 			level: infoThesis.level,
+			codeDegree: infoThesis.cds,
 			cds: titleDegree,
 			supervisor: supervisor, //arriva come oggetto con name e surname
 			keywords: keywords,
@@ -309,7 +315,7 @@ app.get('/api/thesis/:id', checkJwt, async (req, res) => {
 			groups: groups,
 			coSupervisors: coSupervisors,
 		};
-
+		console.log(thesis)
 		res.status(200).json(thesis);
 	} catch (err) {
 		res.status(500).json({ error: 'Errore visualizzazione tesi' });
@@ -393,7 +399,7 @@ metto rejected l'application dello studente che ha richiesto l'application
 //API for the 3rd story --> Apply for proposal
 app.post('/api/accept/application', [
 	check('studentID').isString().trim().notEmpty(),
-	check('thesisID').isInt(),
+	check('thesisID').isInt().custom(value => value > 0),
 
 ], checkJwt, async (req, res) => {
 	try {
@@ -433,7 +439,7 @@ app.post('/api/accept/application', [
 
 app.post('/api/reject/application', [
 	check('studentID').isString().trim().notEmpty(),
-	check('thesisID').isInt(),
+	check('thesisID').isInt().custom(value => value > 0),
 
 ], checkJwt, async (req, res) => {
 	try {
@@ -468,19 +474,28 @@ app.post('/api/reject/application', [
 //thesis update
 app.put('/api/edit/thesis/:id',
 	[
-		check('title').isLength({ min: 1 }),
-		check('description').isLength({ min: 1 }),
-		check('required_knowledge').isLength({ min: 1 }),
-		check('notes').isLength({ min: 1 }),
-		check('expiration_date').isLength({ min: 1 }),
-		check('level').isLength({ min: 1 }),
-		check('degree').isLength({ min: 1 }),
-		check('co-supervisors').isArray(),
+		check('title').isString().trim().isLength({ min: 1 }),
+		check('description').isString().trim().isLength({ min: 1 }),
+		check('required_knowledge').isString(),
+		check('notes').isString(),
+		check('expiration_date').isString().trim().isLength({ min: 10, max: 10 }),
+		check('level').isString().trim().isLength({ min: 1 }),
+		check('degree').isString().trim().isLength({ min: 1 }),
+		check('co_supervisors').isArray(),
 		check('keywords').isArray(),
+		check('types').isArray(),
 	],
 	checkJwt,
 	async (req, res) => {
 		const thesisId = req.params.id;
+		if (isNaN(thesisId) || thesisId <= 0) {
+			return res.status(400).json({ error: 'Invalid thesis Id.' });
+		}
+
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			return res.status(422).json({ errors: errors.array() });
+		}
 
 		const title = req.body.title;
 		const description = req.body.description;
@@ -497,9 +512,11 @@ app.put('/api/edit/thesis/:id',
 			//i need groups of supervisor and co-supervisor of the thesis
 			const userRole = await db.getRole(req.auth);
 			if (userRole.role == 'teacher') {
-				const supervisor = userRole.id;
+				const supervisor = await db.getThesisSupervisor(thesisId);
+				if (userRole.id != supervisor) return res.status(400).json({ error: 'The teacher do not have the permission to modify the thesis' });
+
 				const checkApplications = await db.checkExistenceApplicationForThesis(thesisId);
-				if (checkApplications == 1) return res.status(401).json({ error: 'The thesis has applications, cannot be modified' });
+				if (checkApplications == 1) return res.status(400).json({ error: 'The thesis has applications, cannot be modified' });
 
 				const deleteCosup = await db.deleteCoSupervisor(thesisId);
 				for (let i = 0; i < co_supervisors.length; i++) {
@@ -516,7 +533,7 @@ app.put('/api/edit/thesis/:id',
 					const typesId = await db.insertType(thesisId, types[i]);
 				}
 
-				const id = await db.editThesis(thesisId, title, description, req_know, notes, exp_date, level, degree, supervisor);
+				const id = await db.editThesis(thesisId, title, description, req_know, notes, exp_date, level, degree);
 				return res.status(200).json(thesisId);
 			} else {
 				return res.status(401).json({ error: 'Unauthorized user' });

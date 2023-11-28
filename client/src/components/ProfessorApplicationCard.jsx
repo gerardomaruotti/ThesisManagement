@@ -10,7 +10,7 @@ function ProfessorApplicationCard(props) {
 
     return (
         <Col lg={6} sm={12} style={{ marginTop: 25 }}>
-            <Card style={{ padding: 20, cursor: 'pointer' }} className='custom-card' onClick={() => navigate('/applications/proposal/' + props.applications[0].id)}>
+            <Card style={{ padding: 20 }} className='custom-card' >
                 <div style={{
                     fontWeight: 'medium', fontSize: 18, height: 55, display: '-webkit-box',
                     WebkitBoxOrient: 'vertical',
