@@ -219,7 +219,13 @@ function ProposalForm(props) {
 					) : null}
 					<Form.Group className='mb-3'>
 						<Form.Label>Expiration date*</Form.Label>
-						<Form.Control type='date' value={expirationDate} required onChange={(event) => setExpirationDate(event.target.value)} />
+						<Form.Control
+							type='date'
+							value={expirationDate}
+							min={dayjs().format('YYYY-MM-DD')}
+							required
+							onChange={(event) => setExpirationDate(event.target.value)}
+						/>
 					</Form.Group>
 					<Form.Group className='mb-3' controlId='formKeywords'>
 						<Form.Label>Keywords</Form.Label>
