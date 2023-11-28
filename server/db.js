@@ -752,7 +752,7 @@ exports.getVirtualDate= ()=> {
         if (row.data == null)
           resolve(0)
         else{
-          resolve(row.date)
+          resolve(row.data)
         }
       }
     });
