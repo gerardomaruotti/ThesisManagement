@@ -122,7 +122,7 @@ function FiltersModal(props) {
 				keyword: formattedKeywords,
 				type: formattedTypes,
 				group: formattedGroups,
-				exp_date: today ? today.format('DD/MM/YYYY') : undefined,
+				exp_date: today ? today.format('YYYY-MM-DD') : undefined,
 			},
 		};
 

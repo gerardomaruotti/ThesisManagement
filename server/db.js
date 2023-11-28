@@ -656,6 +656,19 @@ exports.archiveThesis=(thesis) => {
   });
 }
 
+exports.activateThesis=(thesis) => {
+  return new Promise((resolve, reject) => {
+    const sql = 'UPDATE THESIS_STATUS SET STATE = 1 WHERE THESIS = ? AND STATE = 0';
+    db.run(sql, [thesis], function (err) {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve("Activated");
+    });
+  });
+}
+
 exports.editThesis = (id, title, description, req_know, notes, exp_date, level, degree) => {
   return new Promise((resolve, reject) => {
     const sql = 'UPDATE thesis SET title = ?, description = ?, required_knowledge = ?, notes = ?, expiration_date = ?, level = ?, degree = ? WHERE id_thesis = ?';

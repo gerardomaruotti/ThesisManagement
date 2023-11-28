@@ -59,13 +59,9 @@ function Header(props) {
 							</Dropdown.Toggle>
 
 							<Dropdown.Menu>
-								<Dropdown.Item>
+								<Dropdown.Item onClick={() => navigate('/settings')}>
 									<i className='bi bi-gear'></i>
 									<span style={{ marginLeft: 15 }}>Settings</span>
-								</Dropdown.Item>
-								<Dropdown.Item>
-									<i className='bi bi-clock-history'></i>
-									<span style={{ marginLeft: 15 }}>virtual clock</span>
 								</Dropdown.Item>
 								<Dropdown.Divider />
 								{isAuthenticated ? (

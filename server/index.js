@@ -182,10 +182,8 @@ app.post('/api/thesis', checkJwt, async (req, res) => {
 						}
 					}
 					if (exp_date !== undefined && valid) {
-						let param = exp_date.split("/");
-						let exp_date_tmp = new Date(param[2] + "-" + param[1] + "-" + param[0]);
-						let param2 = expirationDate.split("/");
-						let expirationDate_tmp = new Date(param2[2] + "-" + param2[1] + "-" + param2[0]);
+						let exp_date_tmp = new Date(exp_date);
+						let expirationDate_tmp = new Date(expirationDate);
 
 						if (exp_date_tmp < expirationDate_tmp) {
 							valid = false;
@@ -509,6 +507,7 @@ app.put('/api/edit/thesis/:id',
 		const co_supervisors = req.body.co_supervisors;
 		const keywords = req.body.keywords;
 
+
 		try {
 			//i need groups of supervisor and co-supervisor of the thesis
 			const userRole = await db.getRole(req.auth);
@@ -519,6 +518,10 @@ app.put('/api/edit/thesis/:id',
 				const checkApplications = await db.checkExistenceApplicationForThesis(thesisId);
 				if (checkApplications == 1) return res.status(400).json({ error: 'The thesis has applications, cannot be modified' });
 
+				if (dayjs(exp_date).isBefore(dayjs())) return res.status(400).json({ error: 'The expiration date is not valid, change the expriration date' });
+
+				const checkStatus = await db.checkThesisActive(thesisId);
+				
 				const deleteCosup = await db.deleteCoSupervisor(thesisId);
 				for (let i = 0; i < co_supervisors.length; i++) {
 					const CoSupID = await db.insertCoSupervisor(thesisId, co_supervisors[i].name, co_supervisors[i].surname, co_supervisors[i].email);
@@ -534,6 +537,9 @@ app.put('/api/edit/thesis/:id',
 					const typesId = await db.insertType(thesisId, types[i]);
 				}
 
+				if (checkStatus == '0') {
+					await db.activateThesis(thesisId);
+				}
 				const id = await db.editThesis(thesisId, title, description, req_know, notes, exp_date, level, degree);
 				return res.status(200).json(thesisId);
 			} else {
