@@ -558,12 +558,12 @@ app.get('/api/virtualClockStatus', checkJwt, async(req,res) => {
 
 
 app.put('/api/virtualClockOn', [
-	check('virtualDate').isString({min: 1})
+	check('date').isString({min: 1})
 ],
 checkJwt, 
 async(req,res)=> {
 	try{
-		await db.setVirtualDate(req.body.virtualDate);
+		await db.setVirtualDate(req.body.date);
 		return res.status(200).json("Updated")
 	}
 	catch(err){
