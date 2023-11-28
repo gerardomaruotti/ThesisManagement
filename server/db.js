@@ -340,7 +340,7 @@ exports.getThesisTeacher = (ID, date) => {
             sup_name: elem.sup_name,
             sup_surname: elem.sup_surname,
             notes: elem.notes,
-            status : (elem.status && (date <= elem.date)),
+            status : (elem.status && ((date <= elem.date) ? 1 : 0)),
             count: 0,
             keywords: [],
             types: [], 
@@ -484,7 +484,7 @@ exports.getThesis = (idThesis) => {
 
 exports.checkThesisActive = (idThesis,date) => {
   return new Promise((resolve, reject) => {
-    const sql = 'SELECT STATE,EXPIRATION_DATE FROM THESIS_STATUS TS, THESIS S WHERE TS.THESIS=T.ID_THESIS AND TS.THESIS=?';
+    const sql = 'SELECT STATE,EXPIRATION_DATE FROM THESIS_STATUS TS, THESIS T WHERE TS.THESIS=T.ID_THESIS AND T.ID_THESIS=?';
     db.get(sql, [idThesis], (err, row) => {
       if (err) {
         reject(err);
@@ -493,7 +493,7 @@ exports.checkThesisActive = (idThesis,date) => {
       if (row == undefined) {
         reject({ error: 'Thesis not found.' });
       } else {
-        resolve((row.STATE) && (date <= row.EXPIRATION_DATE));
+        resolve((row.STATE) && ((date <= row.EXPIRATION_DATE) ? 1 : 0));
       }
     });
   });
