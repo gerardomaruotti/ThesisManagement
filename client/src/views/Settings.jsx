@@ -31,6 +31,10 @@ function Settings(props) {
 		setVirtualClock(event.target.checked);
 	};
 
+	const handleDateVirtualClockDate = (event) => {
+		setDateVirtualClock(event.target.value);
+	};
+
 	const handleDateVirtualClock = () => {
 		API.setVirtualClock(props.accessToken, dateVirtualClock)
 			.then((res) => {
@@ -70,7 +74,7 @@ function Settings(props) {
 										type='date'
 										value={dateVirtualClock ? dateVirtualClock : ''}
 										min={dayjs().add(1, 'day').format('YYYY-MM-DD')}
-										onChange={(event) => setDateVirtualClock(event.target.value)}
+										onChange={handleDateVirtualClockDate}
 										inline='true'
 									/>
 								</Col>
