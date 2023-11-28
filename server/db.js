@@ -727,3 +727,34 @@ exports.checkExistenceApplicationForThesis= (thesis)=> {
   });
 }
 
+exports.getVirtualDate= ()=> {
+  return new Promise((resolve, reject) => {
+    const sql = 'SELECT data FROM VIRTUAL_CLOCK';
+    db.get(sql, [], (err, row) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      else {
+        if (row.data == null)
+          resolve(0)
+        else{
+          resolve(row.date)
+        }
+      }
+    });
+  });
+}
+
+exports.setVirtualDate= (date)=> {
+  return new Promise((resolve, reject) => {
+    const sql = 'UPDATE VIRTUAL_CLOCK SET data=?';
+    db.get(sql, [date], (err, row) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve(this.lastID)
+    });
+  });
+}
