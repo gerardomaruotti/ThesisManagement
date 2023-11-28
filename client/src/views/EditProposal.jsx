@@ -44,7 +44,7 @@ function EditProposal(props) {
 	) : (
 		<Container>
 			<h2 style={{ textAlign: 'center', marginTop: 20 }}>Edit Proposal</h2>
-			<ProposalForm thesis={thesis} accessToken={props.accessToken} user={props.user} handleError={props.handleError} editProposal={editProposal} />
+			<ProposalForm thesis={thesis} accessToken={props.accessToken} user={props.user} handleError={props.handleError} editProposal={editProposal} date={props.date} />
 		</Container>
 	);
 }

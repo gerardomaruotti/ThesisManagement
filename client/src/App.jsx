@@ -223,7 +223,7 @@ function App() {
 					path='/proposals/add'
 					element={
 						isProfessor ? (
-							<InsertProposal accessToken={accessToken} setDirty={setDirty} user={userData} handleError={handleError} />
+							<InsertProposal accessToken={accessToken} setDirty={setDirty} user={userData} handleError={handleError} date={dateVirtualClock} />
 						) : isStudent ? (
 							<NotFound />
 						) : null
@@ -233,7 +233,7 @@ function App() {
 					path='/proposals/edit/:id'
 					element={
 						isProfessor ? (
-							<EditProposal accessToken={accessToken} setDirty={setDirty} user={userData} handleError={handleError} />
+							<EditProposal accessToken={accessToken} setDirty={setDirty} user={userData} handleError={handleError} date={dateVirtualClock} />
 						) : isStudent ? (
 							<NotFound />
 						) : null

@@ -22,7 +22,7 @@ function InsertProposal(props) {
 	return (
 		<Container>
 			<h2 style={{ textAlign: 'center', marginTop: 20 }}>New Proposal</h2>
-			<ProposalForm accessToken={accessToken} user={user} handleError={handleError} createProposal={createProposal} />
+			<ProposalForm accessToken={accessToken} user={user} handleError={handleError} createProposal={createProposal} date={props.date} />
 		</Container>
 	);
 }
