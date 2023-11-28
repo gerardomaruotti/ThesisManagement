@@ -46,25 +46,12 @@ function Proposal(props) {
 			});
 	}
 
-	// function handleRedirect() {
-	// 	navigate('/');
-	// 	// if (fromHome) {
-	// 	// 	navigate(-1);
-	// 	// } else {
-	// 	// 	setFromHome(true);
-	// 	// 	navigate('/');
-	// 	// }
-	// }
-
 	function handleRedirect() {
-		// Check the pathname of the previous location
 		const fromHome = location.state && location.state.fromHome;
 
 		if (fromHome) {
-			// Redirect to a specific page for users coming from the home page
 			navigate(-1);
 		} else {
-			// Redirect to a different page for users coming from other pages or with no state information
 			navigate('/');
 		}
 	}

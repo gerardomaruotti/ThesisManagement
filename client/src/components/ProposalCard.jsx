@@ -28,12 +28,10 @@ function ProposalCard(props) {
 	}
 
 	function archiveProposal(event) {
-		console.log('archive');
 		event.stopPropagation();
 	}
 
 	function deleteProposal(event) {
-		console.log('delete');
 		event.stopPropagation();
 	}
 
@@ -173,13 +171,13 @@ function ProposalCard(props) {
 					)
 				) : (
 					<div style={{ marginTop: 20, textAlign: 'right' }}>
-						<Button variant='primary' onClick={editProposal} style={{ marginRight: 10 }} size='sm'>
+						<Button variant='primary' disabled={props.thesis.applications != 0} onClick={editProposal} style={{ marginRight: 10 }} size='sm'>
 							<i className='bi bi-pencil'></i>
 						</Button>
-						<Button variant='primary' disabled onClick={archiveProposal} style={{ marginRight: 10 }} size='sm'>
+						<Button variant='primary' disabled={props.thesis.applications != 0} onClick={archiveProposal} style={{ marginRight: 10 }} size='sm'>
 							<i className='bi bi-archive'></i>
 						</Button>
-						<Button variant='danger' disabled onClick={deleteProposal} size='sm'>
+						<Button variant='danger' disabled={props.thesis.applications != 0} onClick={deleteProposal} size='sm'>
 							<i className='bi bi-trash3'></i>
 						</Button>
 					</div>
