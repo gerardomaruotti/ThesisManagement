@@ -21,7 +21,7 @@ function ProposalForm(props) {
 	const [coSupervisors, setCoSupervisors] = useState([]);
 	const [cds, setCds] = useState('');
 	const [type, setType] = useState([]);
-	const [expirationDate, setExpirationDate] = useState(props.thesis ? dayjs(props.thesis.expiration_date).format('YYYY-MM-DD') : '');
+	const [expirationDate, setExpirationDate] = useState(props.thesis ? dayjs(props.thesis.expirationDate).format('YYYY-MM-DD') : '');
 	const levels = [
 		{ value: 'BSc', label: 'BSc' },
 		{ value: 'MSc', label: 'MSc' },
@@ -202,19 +202,21 @@ function ProposalForm(props) {
 						<Form.Label>Level*</Form.Label>
 						<Select defaultValue={selectedLevel} isClearable options={levels} styles={colorStyles} required onChange={handleSelectedLevel} />
 					</Form.Group>
-					<Form.Group className='mb-3' controlId='formCds'>
-						<Form.Label>Cds*</Form.Label>
-						<Select
-							defaultValue={selectedCds}
-							options={cds}
-							styles={colorStyles}
-							required
-							onChange={handleSelectedCds}
-							isDisabled={selectedLevel === ''}
-							isClearable
-							placeholder={selectedLevel === '' ? 'Select a level first' : 'Select...'}
-						/>
-					</Form.Group>
+					{selectedLevel ? (
+						<Form.Group className='mb-3' controlId='formCds'>
+							<Form.Label>Cds*</Form.Label>
+							<Select
+								defaultValue={selectedCds}
+								options={cds}
+								styles={colorStyles}
+								required
+								onChange={handleSelectedCds}
+								isDisabled={selectedLevel === ''}
+								isClearable
+								placeholder={selectedLevel === '' ? 'Select a level first' : 'Select...'}
+							/>
+						</Form.Group>
+					) : null}
 					<Form.Group className='mb-3'>
 						<Form.Label>Expiration date*</Form.Label>
 						<Form.Control type='date' value={expirationDate} required onChange={(event) => setExpirationDate(event.target.value)} />
