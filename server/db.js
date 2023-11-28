@@ -322,7 +322,7 @@ exports.getRole = (auth0) => {
   });
 }
 
-exports.getThesisTeacher = (ID, curDate) => {
+exports.getThesisTeacher = (ID, date) => {
   return new Promise((resolve, reject) => {
     const sql = 'SELECT DISTINCT T.ID_THESIS as ID, TS.STATE AS status,  T.TITLE AS title, T.NOTES as notes, T.EXPIRATION_DATE AS date, T.DESCRIPTION AS description , T.REQUIRED_KNOWLEDGE AS req_know, TE.NAME AS sup_name, TE.SURNAME AS sup_surname FROM THESIS T JOIN TEACHER TE ON T.SUPERVISOR == TE.ID JOIN THESIS_STATUS TS ON TS.THESIS == T.ID_THESIS WHERE TE.ID = ? ';
     db.all(sql, [ID], (err, rows) => {
@@ -340,7 +340,7 @@ exports.getThesisTeacher = (ID, curDate) => {
             sup_name: elem.sup_name,
             sup_surname: elem.sup_surname,
             notes: elem.notes,
-            status : (elem.status &&(curDate <= '2023-11-29' ? 1:0)),
+            status : (elem.status && (date <= elem.date)),
             count: 0,
             keywords: [],
             types: [], 
