@@ -22,6 +22,21 @@ function ProposalCard(props) {
 		event.stopPropagation();
 	}
 
+
+	function editProposal(event) {
+		navigate('/proposals/edit/' + props.thesis.ID);
+		event.stopPropagation();
+	}
+
+	function archiveProposal(event) {
+		console.log('archive');
+		event.stopPropagation();
+	}
+
+	function deleteProposal(event) {
+		console.log('delete');
+		event.stopPropagation();
+
 	function showModal(event) {
 		event.stopPropagation();
 		props.setShowModal(true);
@@ -38,7 +53,6 @@ function ProposalCard(props) {
 					overflow: 'hidden',
 					cursor: 'pointer'
 				}}>{props.thesis.title}</div>
-
 				<div className="hide-scrollbar" style={{
 					fontWeight: 'semi-bold',
 					fontSize: 14,
@@ -71,9 +85,9 @@ function ProposalCard(props) {
 						<Image style={{ height: 35, width: 35 }} src={Avatar} roundedCircle />
 					</Col>
 					<Col lg={5} xs={5} style={{ display: 'flex', alignItems: 'center' }}>
-						<span style={{ color: 'rgba(0, 0, 0, 0.8)' }}>{props.thesis.sup_name + " " + props.thesis.sup_surname}</span>
+						<span style={{ color: 'rgba(0, 0, 0, 0.8)' }}>{props.thesis.sup_name + ' ' + props.thesis.sup_surname}</span>
 					</Col>
-					{props.thesis.types.filter((type) => type == "IN COMPANY").length > 0 ?
+					{props.thesis.types.filter((type) => type == 'IN COMPANY').length > 0 ? (
 						<>
 							<Col lg={1} xs={1} style={{ display: 'flex', alignItems: 'center', float: 'right' }}>
 								<span
@@ -87,8 +101,8 @@ function ProposalCard(props) {
 								<span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>Company</span>
 							</Col>
 						</>
-						: null}
-					{props.thesis.types.filter((type) => type == 'ABROAD').length > 0 ?
+					) : null}
+					{props.thesis.types.filter((type) => type == 'ABROAD').length > 0 ? (
 						<>
 							<Col lg={1} xs={1} style={{ display: 'flex', alignItems: 'center', float: 'right' }}>
 								<span
@@ -103,22 +117,21 @@ function ProposalCard(props) {
 								<span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>Abroad</span>
 							</Col>
 						</>
-						: null}
-
-
-
-				</Row >
-				<div style={{
-					fontWeight: 'regular',
-					fontSize: 16,
-					marginTop: 20,
-					minHeight: 72,
-					color: 'rgba(0, 0, 0, 0.8)',
-					display: '-webkit-box',
-					WebkitBoxOrient: 'vertical',
-					WebkitLineClamp: '3',
-					overflow: 'hidden'
-				}}>
+					) : null}
+				</Row>
+				<div
+					style={{
+						fontWeight: 'regular',
+						fontSize: 16,
+						marginTop: 20,
+						minHeight: 72,
+						color: 'rgba(0, 0, 0, 0.8)',
+						display: '-webkit-box',
+						WebkitBoxOrient: 'vertical',
+						WebkitLineClamp: '3',
+						overflow: 'hidden',
+					}}
+				>
 					{props.thesis.description}
 				</div>
 				{props.isProfessor != 1 ?
@@ -147,18 +160,19 @@ function ProposalCard(props) {
 								</Button>
 							</div>) :
 					<div style={{ marginTop: 20, textAlign: 'right' }}>
-						<Button variant='primary' onClick={apply} style={{ marginRight: 10 }} size='sm'>
-							<i className="bi bi-pencil"></i>
+						<Button variant='primary' onClick={editProposal} disabled={!props.isEditable} style={{ marginRight: 10 }} size='sm'>
+							<i className='bi bi-pencil'></i>
 						</Button>
-						<Button variant='primary' onClick={apply} style={{ marginRight: 10 }} size='sm'>
-							<i className="bi bi-archive"></i>
+						{/* <Button variant='primary' onClick={archiveProposal} style={{ marginRight: 10 }} size='sm'>
+							<i className='bi bi-archive'></i>
 						</Button>
-						<Button variant='danger' onClick={apply} size='sm'>
-							<i className="bi bi-trash3"></i>
-						</Button>
-					</div>}
-			</Card >
-		</Col >
+						<Button variant='danger' onClick={deleteProposal} size='sm'>
+							<i className='bi bi-trash3'></i>
+						</Button> */}
+					</div>
+				)}
+			</Card>
+		</Col>
 	);
 }
 

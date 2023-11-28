@@ -13,6 +13,7 @@ function Proposal(props) {
 	const [thesis, setThesis] = useState(null);
 	const [showDetails, setShowDetails] = useState(false);
 	const { id } = useParams();
+	const { fromHome, setFromHome } = props;
 
 	const handleClose = () => setShowDetails(false);
 	const handleShow = () => setShowDetails(true);
@@ -45,10 +46,20 @@ function Proposal(props) {
 			});
 	}
 
+	function handleRedirect() {
+		navigate('/');
+		// if (fromHome) {
+		// 	navigate(-1);
+		// } else {
+		// 	setFromHome(true);
+		// 	navigate('/');
+		// }
+
 	function showModal(event) {
 		event.stopPropagation();
 		props.setShowModal(true);
 		props.setMsgModal({ header: 'Apply', body: 'Are you sure you want to apply to this thesis?', method: apply })
+
 	}
 
 	return loading ? (
@@ -67,7 +78,7 @@ function Proposal(props) {
 							<Card style={{ padding: 20 }} className='custom-card'>
 								<Row>
 									<Col className='d-flex align-items-center d-none d-md-flex'>
-										<Button variant='outline-primary' style={{ borderRadius: 50, width: 75 }} onClick={() => navigate(-1)}>
+										<Button variant='outline-primary' style={{ borderRadius: 50, width: 75 }} onClick={handleRedirect}>
 											<i className='bi bi-arrow-left'></i>
 										</Button>
 									</Col>
