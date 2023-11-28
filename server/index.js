@@ -544,6 +544,15 @@ app.put('/api/edit/thesis/:id',
 	}
 );
 
+app.get('/api/virtualClockStatus', checkJwt, async(req,res) => {
+	try{
+		const date=await db.getVirtualDate();
+		return res.status(200).json(date)
+
+	} catch(err){
+		return res.status(503).json({error : "Get Virtual Clock status error"})
+	}
+})
 
 app.put('/api/virtualClockOn', [
 	check('virtualDate').isString({min: 1})
