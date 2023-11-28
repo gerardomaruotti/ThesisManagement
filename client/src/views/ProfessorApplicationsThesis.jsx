@@ -1,13 +1,12 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Row, Col, Card, Table, Button, Container, Toast, ToastContainer, Offcanvas, Badge, Modal } from 'react-bootstrap';
-
-
 import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import API from '../API.jsx';
 import { useLoading } from '../LoadingContext.jsx';
 import Loading from '../components/Loading.jsx';
 import DetailsProposalLeftBar from '../components/DetailsProposalLeftBar.jsx';
+import dayjs from 'dayjs';
 
 function ProfessorApplicationsThesis(props) {
     const { loading, setLoading } = useLoading();
@@ -122,25 +121,50 @@ function ProfessorApplicationsThesis(props) {
                                         <div style={{ fontWeight: 'bold', fontSize: 20 }}> Status: </div>
                                     </Col>
                                     <Col lg={3} md={4}>
-                                        {applicationsThesis.filter((app) => app.state == 1).length > 0 ?
-                                            (<div style={{ fontWeight: 'medium', fontSize: 15 }}>
-                                                <span
-                                                    className='badge'
-                                                    style={{ backgroundColor: 'rgba(40, 199, 111, 0.2)', color: 'rgba(40, 199, 111, 1)', padding: '1em 1em', borderRadius: '0.25rem' }}
-                                                >
-                                                    <i className='bi bi-person-check' style={{ fontSize: '16px' }}></i>
-                                                </span>
-                                                <span style={{ paddingLeft: 8, color: 'rgba(0, 0, 0, 0.5)' }}>Assigned</span>
-                                            </div>) :
-                                            (<div style={{ fontWeight: 'medium', fontSize: 15 }}>
-                                                <span
-                                                    className='badge'
-                                                    style={{ backgroundColor: 'rgba(164, 161, 141, 0.2)', color: 'rgba(164, 161, 141, 1)', padding: '1em 1em', borderRadius: '0.25rem' }}
-                                                >
-                                                    <i className='bi bi-hourglass-split' style={{ fontSize: '16px' }}></i>
-                                                </span>
-                                                <span style={{ paddingLeft: 8, color: 'rgba(0, 0, 0, 0.5)' }}>Pending</span>
-                                            </div>)}
+                                        {
+                                            applicationsThesis.filter((app) => app.state == 1).length > 0 ?
+                                                (<Col>
+                                                    <span
+                                                        className='badge'
+                                                        style={{ backgroundColor: 'rgba(40, 199, 111, 0.2)', color: 'rgba(40, 199, 111, 1)', padding: '1em 1em', borderRadius: '0.25rem' }}
+                                                    >
+                                                        <i className='bi bi-person-check' style={{ fontSize: '16px' }}></i>
+                                                    </span>
+                                                    <span style={{ color: 'rgba(0, 0, 0, 0.5)', paddingLeft: 8 }}>Assigned</span>
+                                                </Col>)
+                                                :
+                                                applicationsThesis.filter((app) => app.state == 0).length > 0 ?
+                                                    (<Col>
+                                                        <span
+                                                            className='badge'
+                                                            style={{ backgroundColor: 'rgba(164, 161, 141, 0.2)', color: 'rgba(164, 161, 141, 1)', padding: '1em 1em', borderRadius: '0.25rem' }}
+                                                        >
+                                                            <i className='bi bi-hourglass-split' style={{ fontSize: '16px' }}></i>
+                                                        </span>
+                                                        <span style={{ color: 'rgba(0, 0, 0, 0.5)', paddingLeft: 8 }}>Pending</span>
+                                                    </Col>)
+                                                    :
+                                                    dayjs(thesis.expirationDate).isBefore(dayjs(props.date)) ?
+                                                        (<Col>
+                                                            <span
+                                                                className='badge'
+                                                                style={{ backgroundColor: 'rgba(234, 84, 85, 0.2)', color: 'rgba(234, 84, 85)', padding: '1em 1em', borderRadius: '0.25rem' }}
+                                                            >
+                                                                <i className='bi bi-calendar-x' style={{ fontSize: '16px' }}></i>
+                                                            </span>
+                                                            <span style={{ color: 'rgba(0, 0, 0, 0.5)', paddingLeft: 8 }}>Expired</span>
+                                                        </Col>)
+                                                        :
+                                                        (<Col>
+                                                            <span
+                                                                className='badge'
+                                                                style={{ backgroundColor: 'rgba(164, 161, 141, 0.2)', color: 'rgba(164, 161, 141, 1)', padding: '1em 1em', borderRadius: '0.25rem' }}
+                                                            >
+                                                                <i className='bi bi-hourglass-split' style={{ fontSize: '16px' }}></i>
+                                                            </span>
+                                                            <span style={{ color: 'rgba(0, 0, 0, 0.5)', paddingLeft: 8 }}>Pending</span>
+                                                        </Col>)
+                                        }
                                     </Col>
                                 </Row>
                                 <Row style={{ marginTop: 32 }}>

@@ -6,6 +6,7 @@ import { useLoading } from '../LoadingContext.jsx';
 import ProfessorApplicationCard from '../components/ProfessorApplicationCard.jsx';
 import { useEffect, useState } from 'react';
 import API from '../API.jsx';
+import dayjs from 'dayjs';
 
 function ProfessorApplications(props) {
     const { loading, setLoading } = useLoading();
@@ -47,7 +48,7 @@ function ProfessorApplications(props) {
             const filter = { ...applicationsThesis };
             for (const id in applicationsThesis) {
                 for (const app in applicationsThesis[id]) {
-                    if (applicationsThesis[id][app].state == 1) {
+                    if (applicationsThesis[id][app].state == 1 || dayjs(dayjs(applicationsThesis[id][app].expirationDate).isBefore(props.date))) {
                         delete filter[id];
                     }
                 }
@@ -59,6 +60,17 @@ function ProfessorApplications(props) {
                 for (const app in applicationsThesis[id]) {
                     if (applicationsThesis[id][app].state == 1) {
                         filter[id] = applicationsThesis[id];
+                    }
+                }
+            }
+            setFilteredApplications(filter);
+        }
+        else if (rapidFilter === 'expired') {
+            const filter = { ...applicationsThesis };
+            for (const id in applicationsThesis) {
+                for (const app in applicationsThesis[id]) {
+                    if (applicationsThesis[id][app].state == 1 || dayjs(props.date).isBefore(dayjs(applicationsThesis[id][app].expirationDate))) {
+                        delete filter[id];
                     }
                 }
             }
@@ -90,6 +102,11 @@ function ProfessorApplications(props) {
                                         Assigned
                                     </Nav.Link>
                                 </Nav.Item>
+                                <Nav.Item>
+                                    <Nav.Link eventKey='expired' className='buttons-rapid-filter' onClick={() => setRapidFilter('expired')}>
+                                        Expired
+                                    </Nav.Link>
+                                </Nav.Item>
                             </Nav>
                         </Col>
                     </Row>
@@ -98,7 +115,7 @@ function ProfessorApplications(props) {
             <Container>
                 <Row style={{ marginBottom: 25 }}>
                     {filteredApplications != [] ? Object.entries(filteredApplications).map(([id, app]) =>
-                        <ProfessorApplicationCard key={id} applications={app} />) : null}
+                        <ProfessorApplicationCard key={id} applications={app} date={props.date} />) : null}
                 </Row>
             </Container>
         </>

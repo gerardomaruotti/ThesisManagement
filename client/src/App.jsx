@@ -243,7 +243,7 @@ function App() {
 					path='/applications'
 					element={
 						isProfessor ? (
-							<ProfessorApplications accessToken={accessToken} handleError={handleError} isProfessor={isProfessor} />
+							<ProfessorApplications accessToken={accessToken} handleError={handleError} isProfessor={isProfessor} date={dateVirtualClock} />
 						) : isStudent ? (
 							<StudentApplications accessToken={accessToken} handleError={handleError} />
 						) : null
@@ -259,6 +259,7 @@ function App() {
 							handleSuccess={handleSuccess}
 							setMsgModal={setMsgModal}
 							setShowModal={setShowModal}
+							date={dateVirtualClock}
 						/>
 					}
 				/>
