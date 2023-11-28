@@ -12,7 +12,6 @@ function InsertProposal(props) {
 		API.insertThesis(accessToken, thesis)
 			.then((thesisID) => {
 				props.setDirty(true);
-				props.setFromHome(false);
 				navigate('/proposal/' + thesisID);
 			})
 			.catch((err) => {

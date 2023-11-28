@@ -53,12 +53,13 @@ function Proposal(props) {
 	}
 
 	function handleRedirect() {
-		if (fromHome) {
-			navigate(-1);
-		} else {
-			setFromHome(true);
-			navigate('/');
-		}
+		navigate('/');
+		// if (fromHome) {
+		// 	navigate(-1);
+		// } else {
+		// 	setFromHome(true);
+		// 	navigate('/');
+		// }
 	}
 
 	return loading ? (

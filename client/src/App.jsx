@@ -26,7 +26,6 @@ function App() {
 	const [dirty, setDirty] = useState(false);
 	const [isProfessor, setIsProfessor] = useState(false);
 	const [isStudent, setIsStudent] = useState(false);
-	const [fromHome, setFromHome] = useState(false);
 
 	const { setLoading } = useLoading();
 
@@ -103,7 +102,6 @@ function App() {
 		if (isAuthenticated) {
 			getUserMetadata();
 			setDirty(false);
-			setFromHome(true);
 		}
 	}, [isAuthenticated, getAccessTokenSilently, user?.sub, dirty, setLoading]);
 
@@ -149,17 +147,12 @@ function App() {
 						) : null
 					}
 				/>
-				<Route
-					path='/proposal/:id'
-					element={
-						<Proposal fromHome={fromHome} setFromHome={setFromHome} accessToken={accessToken} isProfessor={isProfessor} handleError={handleError} />
-					}
-				/>
+				<Route path='/proposal/:id' element={<Proposal accessToken={accessToken} isProfessor={isProfessor} handleError={handleError} />} />
 				<Route
 					path='/proposals/add'
 					element={
 						isProfessor ? (
-							<InsertProposal accessToken={accessToken} setDirty={setDirty} user={userData} handleError={handleError} setFromHome={setFromHome} />
+							<InsertProposal accessToken={accessToken} setDirty={setDirty} user={userData} handleError={handleError} />
 						) : isStudent ? (
 							<NotFound />
 						) : null
@@ -169,7 +162,7 @@ function App() {
 					path='/proposals/edit/:id'
 					element={
 						isProfessor ? (
-							<EditProposal accessToken={accessToken} setDirty={setDirty} user={userData} handleError={handleError} setFromHome={setFromHome} />
+							<EditProposal accessToken={accessToken} setDirty={setDirty} user={userData} handleError={handleError} />
 						) : isStudent ? (
 							<NotFound />
 						) : null

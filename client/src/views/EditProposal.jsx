@@ -32,7 +32,6 @@ function EditProposal(props) {
 		API.editProposal(props.accessToken, thesis, id)
 			.then(() => {
 				props.setDirty(true);
-				props.setFromHome(false);
 				navigate('/proposal/' + id);
 			})
 			.catch((err) => {
