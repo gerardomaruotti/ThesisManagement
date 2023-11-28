@@ -54,12 +54,12 @@ function Proposal(props) {
 		// 	setFromHome(true);
 		// 	navigate('/');
 		// }
+	}
 
 	function showModal(event) {
 		event.stopPropagation();
 		props.setShowModal(true);
-		props.setMsgModal({ header: 'Apply', body: 'Are you sure you want to apply to this thesis?', method: apply })
-
+		props.setMsgModal({ header: 'Apply', body: 'Are you sure you want to apply to this thesis?', method: apply });
 	}
 
 	return loading ? (
@@ -127,7 +127,6 @@ function Proposal(props) {
 					<DetailsProposalLeftBar id={id} thesis={thesis} apply={showModal} isProfessor={props.isProfessor} applications={props.applications} />
 				</Offcanvas.Body>
 			</Offcanvas>
-
 		</>
 	);
 }
