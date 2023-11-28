@@ -48,7 +48,7 @@ function ProposalCard(props) {
 			<Card style={{ padding: 20 }} className='custom-card'>
 				<div
 					className='title'
-					onClick={() => navigate('/proposal/' + props.thesis.ID)}
+					onClick={() => navigate('/proposal/' + props.thesis.ID, { state: { fromHome: true } })}
 					style={{
 						fontWeight: 'medium',
 						fontSize: 18,
@@ -176,10 +176,10 @@ function ProposalCard(props) {
 						<Button variant='primary' onClick={editProposal} style={{ marginRight: 10 }} size='sm'>
 							<i className='bi bi-pencil'></i>
 						</Button>
-						<Button variant='primary' onClick={archiveProposal} style={{ marginRight: 10 }} size='sm'>
+						<Button variant='primary' disabled onClick={archiveProposal} style={{ marginRight: 10 }} size='sm'>
 							<i className='bi bi-archive'></i>
 						</Button>
-						<Button variant='danger' onClick={deleteProposal} size='sm'>
+						<Button variant='danger' disabled onClick={deleteProposal} size='sm'>
 							<i className='bi bi-trash3'></i>
 						</Button>
 					</div>

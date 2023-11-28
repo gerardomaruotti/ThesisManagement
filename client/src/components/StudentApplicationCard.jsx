@@ -175,7 +175,7 @@ function StudentApplicationCard(props) {
 					</Col>
 					<Col>
 						<div style={{ marginTop: 20, marginRight: 10, textAlign: 'right' }}>
-							<Button variant='primary' onClick={() => navigate('/proposal/' + props.application.id)}>
+							<Button variant='primary' onClick={() => navigate('/proposal/' + props.application.id, { state: { fromHome: true } })}>
 								<i className='bi bi-arrow-right' style={{ fontSize: '16px' }}></i>
 							</Button>
 						</div>
