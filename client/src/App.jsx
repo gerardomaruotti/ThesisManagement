@@ -126,9 +126,9 @@ function App() {
 			API.getApplications(accessToken)
 				.then((app) => {
 					setApplications(app);
-					setDirty(false);
-					let applied = app.some((application) => application.state == 1 || application.state == 2);
+					let applied = app.some((application) => application.state == 0 || application.state == 1);
 					setHasApplied(applied);
+					setDirty(false);
 				})
 				.catch((err) => {
 					handleError(err);
