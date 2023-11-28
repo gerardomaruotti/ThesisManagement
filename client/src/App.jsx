@@ -47,7 +47,7 @@ function App() {
 
 	//virtual clock
 	const [virtualClock, setVirtualClock] = useState(false);
-	const [dateVirtualClock, setDateVirtualClock] = useState(dayjs().add(1, 'day').format('YYYY-MM-DD'));
+	const [dateVirtualClock, setDateVirtualClock] = useState(null);
 
 	function handleError(err) {
 		toast.error(err.error ? err.error : err, {
@@ -257,7 +257,14 @@ function App() {
 				<Route
 					path='/settings'
 					element={
-						<Settings virtualClock={virtualClock} setVirtualClock={setVirtualClock} dateVirtualClock={dateVirtualClock} setDateVirtualClock={setDateVirtualClock}
+						<Settings
+							virtualClock={virtualClock}
+							setVirtualClock={setVirtualClock}
+							dateVirtualClock={dateVirtualClock}
+							setDateVirtualClock={setDateVirtualClock}
+							accessToken={accessToken}
+							handleError={handleError}
+							handleSuccess={handleSuccess}
 						/>
 					}
 				/>

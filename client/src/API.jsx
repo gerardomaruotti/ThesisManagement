@@ -514,6 +514,73 @@ function getStatusVirtualClock(accessToken) {
 	});
 }
 
+function resetVirtualClock(accessToken) {
+	// call  /api/virtualClockOff
+	return new Promise((resolve, reject) => {
+		fetch(URL + '/virtualClockOff', {
+			method: 'PUT',
+			headers: {
+				Authorization: `Bearer ${accessToken}`,
+			},
+		})
+			.then((response) => {
+				if (response.ok) {
+					response
+						.json()
+						.then((msg) => resolve(msg))
+						.catch(() => {
+							reject({ error: 'Cannot parse server response.' });
+						});
+				} else {
+					response
+						.json()
+						.then((message) => {
+							reject(message);
+						})
+						.catch(() => {
+							reject({ error: 'Cannot parse server response.' });
+						});
+				}
+			})
+			.catch(() => reject({ error: 'Cannot communicate with the server.' }));
+	});
+}
+
+function setVirtualClock(accessToken, date) {
+	// call  /api/virtualClockOn
+	return new Promise((resolve, reject) => {
+		fetch(URL + '/virtualClockOn', {
+			method: 'PUT',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${accessToken}`,
+			},
+			body: JSON.stringify({ date: date }),
+		})
+			.then((response) => {
+				if (response.ok) {
+					response
+						.json()
+						.then((msg) => resolve(msg))
+						.catch(() => {
+							reject({ error: 'Cannot parse server response.' });
+						});
+				} else {
+					response
+						.json()
+						.then((message) => {
+							reject(message);
+						})
+						.catch(() => {
+							reject({ error: 'Cannot parse server response.' });
+						});
+				}
+			})
+			.catch(() => reject({ error: 'Cannot communicate with the server.' }));
+	});
+}
+
+
 const API = {
 	getAllKeywords,
 	getAllTypes,
@@ -530,5 +597,7 @@ const API = {
 	rejectApplication,
 	editProposal,
 	getStatusVirtualClock,
+	resetVirtualClock,
+	setVirtualClock
 };
 export default API;
