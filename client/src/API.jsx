@@ -480,6 +480,40 @@ function editProposal(accessToken, thesis, id) {
 	});
 }
 
+function getStatusVirtualClock(accessToken) {
+	// call  /api/virtualClockStatus
+	return new Promise((resolve, reject) => {
+		fetch(URL + '/virtualClockStatus', {
+			headers: {
+				Authorization: `Bearer ${accessToken}`,
+			},
+		})
+			.then((response) => {
+				if (response.ok) {
+					response
+						.json()
+						.then((status) => resolve(status))
+						.catch(() => {
+							reject({ error: 'Cannot parse server response.' });
+						});
+				} else {
+					// analyze the cause of error
+					response
+						.json()
+						.then((message) => {
+							reject(message);
+						}) // error message in the response body
+						.catch(() => {
+							reject({ error: 'Cannot parse server response.' });
+						});
+				}
+			})
+			.catch(() => {
+				reject({ error: 'Cannot communicate with the server.' });
+			}); // connection errors
+	});
+}
+
 const API = {
 	getAllKeywords,
 	getAllTypes,
@@ -495,5 +529,6 @@ const API = {
 	acceptApplication,
 	rejectApplication,
 	editProposal,
+	getStatusVirtualClock,
 };
 export default API;

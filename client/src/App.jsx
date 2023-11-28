@@ -17,6 +17,8 @@ import ProfessorApplications from './views/ProfessorApplications.jsx';
 import ProfessorApplicationsThesis from './views/ProfessorApplicationsThesis.jsx';
 import GenericModal from './components/GenericModal.jsx';
 import EditProposal from './views/EditProposal.jsx';
+import Settings from './views/Settings.jsx';
+import dayjs from 'dayjs';
 
 function App() {
 	const { user, isAuthenticated, getAccessTokenSilently, isLoading, loginWithRedirect } = useAuth0();
@@ -42,6 +44,10 @@ function App() {
 	//GenericModal
 	const [showModal, setShowModal] = useState(false);
 	const [msgModal, setMsgModal] = useState({}); // {header: "header", body: "body", method: method}
+
+	//virtual clock
+	const [virtualClock, setVirtualClock] = useState(false);
+	const [dateVirtualClock, setDateVirtualClock] = useState(dayjs().add(1, 'day').format('YYYY-MM-DD'));
 
 	function handleError(err) {
 		toast.error(err.error ? err.error : err, {
@@ -103,6 +109,7 @@ function App() {
 
 	useEffect(() => {
 		if (isAuthenticated) {
+			setLoading(true);
 			API.getAllThesis(accessToken)
 				.then((thesis) => {
 					setThesis(thesis);
@@ -115,6 +122,7 @@ function App() {
 
 	useEffect(() => {
 		if (isAuthenticated && isStudent) {
+			setLoading(true);
 			API.getApplications(accessToken)
 				.then((app) => {
 					setApplications(app);
@@ -122,9 +130,29 @@ function App() {
 				})
 				.catch((err) => {
 					handleError(err);
-				});
+				})
+				.finally(() => setLoading(false));
 		}
 	}, [dirty, accessToken, isStudent]);
+
+	useEffect(() => {
+		if (isAuthenticated) {
+			API.getStatusVirtualClock(accessToken)
+				.then((res) => {
+					if (res == 0) {
+						setVirtualClock(false);
+						setDateVirtualClock(dayjs().add(1, 'day').format('YYYY-MM-DD'));
+					}
+					else {
+						setVirtualClock(true);
+						setDateVirtualClock(res);
+					}
+				})
+				.catch((err) => {
+					handleError(err);
+				});
+		}
+	}, [dirty, accessToken]);
 
 	useEffect(() => {
 		if (!isAuthenticated && !isLoading) {
@@ -223,6 +251,13 @@ function App() {
 							handleSuccess={handleSuccess}
 							setMsgModal={setMsgModal}
 							setShowModal={setShowModal}
+						/>
+					}
+				/>
+				<Route
+					path='/settings'
+					element={
+						<Settings virtualClock={virtualClock} setVirtualClock={setVirtualClock} dateVirtualClock={dateVirtualClock} setDateVirtualClock={setDateVirtualClock}
 						/>
 					}
 				/>
