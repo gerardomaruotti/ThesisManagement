@@ -71,7 +71,14 @@ function Proposal(props) {
 					<Row style={{ display: 'flex', alignItems: 'start' }}>
 						<Col md={4} className='d-none d-md-flex'>
 							<Card style={{ padding: 20, position: 'sticky', top: 25 }} className='custom-card'>
-								<DetailsProposalLeftBar id={id} thesis={thesis} apply={showModal} isProfessor={props.isProfessor} applications={props.applications} />
+								<DetailsProposalLeftBar
+									id={id}
+									thesis={thesis}
+									apply={showModal}
+									isProfessor={props.isProfessor}
+									applications={props.applications}
+									hasApplied={props.hasApplied}
+								/>
 							</Card>
 						</Col>
 						<Col md={8}>

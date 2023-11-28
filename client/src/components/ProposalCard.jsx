@@ -164,7 +164,7 @@ function ProposalCard(props) {
 						</div>
 					) : (
 						<div style={{ marginTop: 20, textAlign: 'center' }}>
-							<Button variant='primary' style={{ width: 130 }} onClick={showModal}>
+							<Button variant='primary' disabled={props.hasApplied} style={{ width: 130 }} onClick={showModal}>
 								Apply
 							</Button>
 						</div>

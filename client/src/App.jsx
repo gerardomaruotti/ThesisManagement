@@ -29,6 +29,7 @@ function App() {
 	const [isProfessor, setIsProfessor] = useState(false);
 	const [isStudent, setIsStudent] = useState(false);
 	const [applications, setApplications] = useState([]);
+	const [hasApplied, setHasApplied] = useState(false);
 
 	const { setLoading } = useLoading();
 
@@ -39,7 +40,7 @@ function App() {
 	const [selectedKeywords, setSelectedKeywords] = useState([]);
 	const [selectedTypes, setSelectedTypes] = useState([]);
 	const [selectedGroups, setSelectedGroups] = useState([]);
-	const [expirationDate2, setExpirationDate2] = useState('all');
+	const [expirationDate, setexpirationDate] = useState('all');
 
 	//GenericModal
 	const [showModal, setShowModal] = useState(false);
@@ -96,7 +97,6 @@ function App() {
 						handleSuccess('Logged in successfully!');
 					})
 					.catch((err) => handleError(err));
-
 			} catch (e) {
 				handleError(e.message);
 			}
@@ -116,7 +116,6 @@ function App() {
 				})
 				.catch((err) => handleError(err))
 				.finally(() => setLoading(false));
-
 		}
 	}, [dirty, accessToken]);
 
@@ -126,7 +125,8 @@ function App() {
 			API.getApplications(accessToken)
 				.then((app) => {
 					setApplications(app);
-					//console.log(app);
+					let applied = app.some((application) => application.state == 1 || application.state == 2);
+					setHasApplied(applied);
 				})
 				.catch((err) => {
 					handleError(err);
@@ -142,8 +142,7 @@ function App() {
 					if (res == 0) {
 						setVirtualClock(false);
 						setDateVirtualClock(dayjs().add(1, 'day').format('YYYY-MM-DD'));
-					}
-					else {
+					} else {
 						setVirtualClock(true);
 						setDateVirtualClock(res);
 					}
@@ -189,28 +188,35 @@ function App() {
 								setSelectedTypes={setSelectedTypes}
 								selectedGroups={selectedGroups}
 								setSelectedGroups={setSelectedGroups}
-								expirationDate={expirationDate2}
-								setExpirationDate={setExpirationDate2}
+								expirationDate={expirationDate}
+								setExpirationDate={setexpirationDate}
 								handleError={handleError}
 								handleSuccess={handleSuccess}
 								setMsgModal={setMsgModal}
 								setShowModal={setShowModal}
 								applications={applications}
 								setDirty={setDirty}
+								hasApplied={hasApplied}
 							/>
 						) : null
 					}
 				/>
-				<Route path='/proposal/:id'
-					element={<Proposal
-						accessToken={accessToken}
-						isProfessor={isProfessor}
-						handleError={handleError}
-						handleSuccess={handleSuccess}
-						setMsgModal={setMsgModal}
-						setShowModal={setShowModal}
-						setDirty={setDirty}
-						applications={applications} />} />
+				<Route
+					path='/proposal/:id'
+					element={
+						<Proposal
+							accessToken={accessToken}
+							isProfessor={isProfessor}
+							handleError={handleError}
+							handleSuccess={handleSuccess}
+							setMsgModal={setMsgModal}
+							setShowModal={setShowModal}
+							setDirty={setDirty}
+							applications={applications}
+							hasApplied={hasApplied}
+						/>
+					}
+				/>
 				<Route
 					path='/proposals/add'
 					element={
