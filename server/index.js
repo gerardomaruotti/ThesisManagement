@@ -331,10 +331,10 @@ app.post('/api/thesis/:id/apply', checkJwt, async (req, res) => {
 		if (isNaN(thesisId) || thesisId <= 0) {
 			return res.status(400).json({ error: 'Invalid thesis ID.' });
 		}
-
+		const date=await db.getVirtualDate();
 		let userRole = await db.getRole(req.auth);
 		await db.getThesis(thesisId);
-		const state = await db.checkThesisActive(thesisId);
+		const state = await db.checkThesisActive(thesisId, (date == 0) ? currentDate.format('YYYY-MM-DD'): date);
 		let applications = await db.getStudentApplications(userRole.id)
 
 		applications = applications.filter((elem) => (elem.state == '0' || elem.state == '1'))
@@ -364,12 +364,13 @@ app.get('/api/thesis/applications/browse', checkJwt, async (req, res) => {
 
 	try {
 		const userRole = await db.getRole(req.auth);
+		const date=await db.getVirtualDate();
 		if (userRole.role == "teacher") {
-			const applications = await db.getTeacherApplications(userRole.id);
+			const applications = await db.getTeacherApplications(userRole.id, (date==0) ? currentDate.format("YYYY-MM-DD") : date);
 			return res.status(200).json(applications);
 		} else {
 			if (userRole.role == "student") {
-				const applications = await db.getStudentApplications(userRole.id);
+				const applications = await db.getStudentApplications(userRole.id, (date==0) ? currentDate.format("YYYY-MM-DD") : date);
 				for (let i = 0; i < applications.length; i++) {
 					applications[i].keywords = await db.getKeywordsbyId(applications[i].id);
 					applications[i].types = await db.getTypesbyId(applications[i].id)

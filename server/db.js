@@ -482,9 +482,9 @@ exports.getThesis = (idThesis) => {
   });
 };
 
-exports.checkThesisActive = (idThesis) => {
+exports.checkThesisActive = (idThesis,date) => {
   return new Promise((resolve, reject) => {
-    const sql = 'SELECT STATE FROM THESIS_STATUS WHERE THESIS=?';
+    const sql = 'SELECT STATE,EXPIRATION_DATE FROM THESIS_STATUS TS, THESIS S WHERE TS.THESIS=T.ID_THESIS AND TS.THESIS=?';
     db.get(sql, [idThesis], (err, row) => {
       if (err) {
         reject(err);
@@ -493,7 +493,7 @@ exports.checkThesisActive = (idThesis) => {
       if (row == undefined) {
         reject({ error: 'Thesis not found.' });
       } else {
-        resolve(row.STATE);
+        resolve((row.STATE) && (date <= row.EXPIRATION_DATE));
       }
     });
   });
@@ -513,7 +513,7 @@ exports.insertApplication = (userId, idThesis) => {
   });
 }
 
-exports.getTeacherApplications = (teacherId) => {
+exports.getTeacherApplications = (teacherId,date) => {
   return new Promise((resolve, reject) => {
     const sql = 'SELECT ID_THESIS,TITLE,EXPIRATION_DATE,LEVEL, DEGREE, STUDENT, S.NAME as NAME, S.SURNAME as SURNAME, S.EMAIL as EMAIL, STATE FROM THESIS T, TEACHER TE, THESIS_APPLICATION TA, STUDENT S WHERE T.SUPERVISOR=TE.ID AND T.ID_THESIS=TA.THESIS AND TA.STUDENT=S.ID AND TE.ID=?';
     db.all(sql, [teacherId], (err,rows) => {
@@ -531,7 +531,7 @@ exports.getTeacherApplications = (teacherId) => {
           name: elem.NAME,
           surname: elem.SURNAME,
           email: elem.EMAIL,
-          state: elem.STATE
+          state: (date <= elem.EXPIRATION_DATE) ? elem.STATE : ((elem.STATE != 0) ? elem.STATE : 3),
         }));
 
         resolve(applications)
@@ -542,7 +542,7 @@ exports.getTeacherApplications = (teacherId) => {
 }
 
 
-exports.getStudentApplications = (studentId) => {
+exports.getStudentApplications = (studentId,date) => {
   return new Promise((resolve, reject) => {
     const sql = 'SELECT ID_THESIS,TITLE,EXPIRATION_DATE,LEVEL, DEGREE, SUPERVISOR, TE.NAME as NAME, TE.SURNAME as SURNAME, STATE FROM THESIS T, STUDENT S, THESIS_APPLICATION TA, TEACHER TE WHERE TA.STUDENT=S.ID AND T.ID_THESIS=TA.THESIS AND T.SUPERVISOR = TE.ID AND S.ID=?';
     db.all(sql, [studentId], (err,rows) => {
@@ -559,7 +559,7 @@ exports.getStudentApplications = (studentId) => {
           supervisor: elem.SUPERVISOR,
           name: elem.NAME,
           surname: elem.SURNAME,
-          state: elem.STATE,
+          state: (date <= elem.EXPIRATION_DATE) ? elem.STATE : ((elem.STATE != 0) ? elem.STATE : 3),
           keywords: [],
           types: []
         }));
