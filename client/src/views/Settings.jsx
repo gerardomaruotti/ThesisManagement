@@ -19,10 +19,10 @@ function Settings(props) {
 
 	const handleSwitchChange = (event) => {
 		if (event.target.checked == false) {
-			setDateVirtualClock(null);
 			API.resetVirtualClock(props.accessToken)
 				.then(() => {
 					props.setDirty(true);
+					setDateVirtualClock(null);
 				})
 				.catch((err) => {
 					props.handleError(err);

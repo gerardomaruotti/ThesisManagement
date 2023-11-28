@@ -144,7 +144,7 @@ function ProfessorApplicationsThesis(props) {
                                                         <span style={{ color: 'rgba(0, 0, 0, 0.5)', paddingLeft: 8 }}>Pending</span>
                                                     </Col>)
                                                     :
-                                                    dayjs(thesis.expirationDate).isBefore(dayjs(props.date)) ?
+                                                    dayjs(thesis.expirationDate).isBefore(props.date ? dayjs(props.date) : dayjs()) ?
                                                         (<Col>
                                                             <span
                                                                 className='badge'

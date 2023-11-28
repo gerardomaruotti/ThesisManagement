@@ -48,7 +48,7 @@ function ProfessorApplications(props) {
             const filter = { ...applicationsThesis };
             for (const id in applicationsThesis) {
                 for (const app in applicationsThesis[id]) {
-                    if (applicationsThesis[id][app].state == 1 || dayjs(dayjs(applicationsThesis[id][app].expirationDate).isBefore(props.date))) {
+                    if (applicationsThesis[id][app].state == 1 || dayjs(applicationsThesis[id][app].expirationDate).isBefore(props.date ? dayjs(props.date) : dayjs())) {
                         delete filter[id];
                     }
                 }
@@ -67,9 +67,10 @@ function ProfessorApplications(props) {
         }
         else if (rapidFilter === 'expired') {
             const filter = { ...applicationsThesis };
+            const date = props.date ? dayjs(props.date) : dayjs();
             for (const id in applicationsThesis) {
                 for (const app in applicationsThesis[id]) {
-                    if (applicationsThesis[id][app].state == 1 || dayjs(props.date).isBefore(dayjs(applicationsThesis[id][app].expirationDate))) {
+                    if (applicationsThesis[id][app].state == 1 || date.isBefore(dayjs(applicationsThesis[id][app].expirationDate))) {
                         delete filter[id];
                     }
                 }
