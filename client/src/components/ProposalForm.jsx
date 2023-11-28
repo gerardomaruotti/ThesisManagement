@@ -57,7 +57,7 @@ function ProposalForm(props) {
 			: []
 	);
 	const [selectedLevel, setSelectedLevel] = useState(props.thesis ? { value: props.thesis.level, label: props.thesis.level } : '');
-	const [selectedCds, setSelectedCds] = useState(props.thesis ? { value: props.thesis.cds, label: props.thesis.cds } : '');
+	const [selectedCds, setSelectedCds] = useState(props.thesis ? { value: props.thesis.codeDegree, label: props.thesis.cds } : '');
 
 	useEffect(() => {
 		setCds([
