@@ -1,6 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Row, Col, Card, Image, Button, Container, Toast, ToastContainer, Offcanvas } from 'react-bootstrap';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import API from '../API.jsx';
 import { useLoading } from '../LoadingContext.jsx';
@@ -13,6 +13,7 @@ function Proposal(props) {
 	const [thesis, setThesis] = useState(null);
 	const [showDetails, setShowDetails] = useState(false);
 	const { id } = useParams();
+	const location = useLocation();
 
 	const handleClose = () => setShowDetails(false);
 	const handleShow = () => setShowDetails(true);
@@ -46,13 +47,13 @@ function Proposal(props) {
 	}
 
 	function handleRedirect() {
-		navigate('/');
-		// if (fromHome) {
-		// 	navigate(-1);
-		// } else {
-		// 	setFromHome(true);
-		// 	navigate('/');
-		// }
+		const fromHome = location.state && location.state.fromHome;
+
+		if (fromHome) {
+			navigate(-1);
+		} else {
+			navigate('/');
+		}
 	}
 
 	function showModal(event) {

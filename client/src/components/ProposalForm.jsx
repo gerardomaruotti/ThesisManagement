@@ -171,8 +171,6 @@ function ProposalForm(props) {
 			keywords: keywordsValues,
 		};
 
-		console.log('Thesis', thesisObject);
-
 		if (props.thesis) {
 			props.editProposal(thesisObject);
 		} else {
