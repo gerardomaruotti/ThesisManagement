@@ -113,6 +113,7 @@ function App() {
 			API.getAllThesis(accessToken)
 				.then((thesis) => {
 					setThesis(thesis);
+					setDirty(false);
 				})
 				.catch((err) => handleError(err))
 				.finally(() => setLoading(false));
@@ -125,6 +126,7 @@ function App() {
 			API.getApplications(accessToken)
 				.then((app) => {
 					setApplications(app);
+					setDirty(false);
 					let applied = app.some((application) => application.state == 1 || application.state == 2);
 					setHasApplied(applied);
 				})
@@ -151,7 +153,7 @@ function App() {
 					handleError(err);
 				});
 		}
-	}, [dirty, accessToken]);
+	}, [accessToken]);
 
 	useEffect(() => {
 		if (!isAuthenticated && !isLoading) {
@@ -271,6 +273,7 @@ function App() {
 							accessToken={accessToken}
 							handleError={handleError}
 							handleSuccess={handleSuccess}
+							setDirty={setDirty}
 						/>
 					}
 				/>
