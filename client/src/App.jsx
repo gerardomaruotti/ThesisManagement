@@ -141,7 +141,7 @@ function App() {
 				.then((res) => {
 					if (res == 0) {
 						setVirtualClock(false);
-						setDateVirtualClock(dayjs().add(1, 'day').format('YYYY-MM-DD'));
+						setDateVirtualClock(null);
 					}
 					else {
 						setVirtualClock(true);
@@ -152,7 +152,7 @@ function App() {
 					handleError(err);
 				});
 		}
-	}, [dirty, accessToken]);
+	}, [accessToken]);
 
 	useEffect(() => {
 		if (!isAuthenticated && !isLoading) {
@@ -265,6 +265,7 @@ function App() {
 							accessToken={accessToken}
 							handleError={handleError}
 							handleSuccess={handleSuccess}
+							setDirty={setDirty}
 						/>
 					}
 				/>

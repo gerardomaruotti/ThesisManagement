@@ -21,9 +21,13 @@ function Settings(props) {
         if (event.target.checked == false) {
             setDateVirtualClock(null);
             API.resetVirtualClock(props.accessToken)
+                .then(() => {
+                    props.setDirty(true);
+                })
                 .catch((err) => {
                     props.handleError(err);
                 });
+
         }
         setVirtualClock(event.target.checked);
     }
@@ -33,6 +37,7 @@ function Settings(props) {
         API.setVirtualClock(props.accessToken, event.target.value)
             .then((res) => {
                 props.handleSuccess(`Date set to ${event.target.value}`);
+                props.setDirty(true);
             })
             .catch((err) => {
                 props.handleError(err);
@@ -71,7 +76,7 @@ function Settings(props) {
                             <Col md={4}>
                                 <Form.Control
                                     type='date'
-                                    value={dateVirtualClock ? dateVirtualClock : undefined}
+                                    value={dateVirtualClock ? dateVirtualClock : ''}
                                     min={dayjs().add(1, 'day').format('YYYY-MM-DD')}
                                     onChange={handleDateVirtualClock}
                                     inline='true'
