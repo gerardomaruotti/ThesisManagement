@@ -163,7 +163,7 @@ function App() {
 
 	return (
 		<BrowserRouter>
-			<Header userData={userData} />
+			<Header userData={userData} date={dateVirtualClock} />
 			<Toaster />
 			<GenericModal showModal={showModal} setShowModal={setShowModal} msgModal={msgModal} />
 			<Routes>

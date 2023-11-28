@@ -3,6 +3,7 @@ import Avatar from '../assets/avatar.svg';
 import { Color } from '../constants/colors.js';
 import randomcolor from 'randomcolor';
 import { Row, Col, Image, Button } from 'react-bootstrap';
+import dayjs from 'dayjs';
 
 function DetailsProposalLeftBar(props) {
 	const { thesis, apply } = props;
@@ -123,7 +124,7 @@ function DetailsProposalLeftBar(props) {
 					>
 						<i className='bi bi-calendar3' style={{ fontSize: '16px' }}></i>
 					</span>
-					<span style={{ marginLeft: 8, color: 'rgba(0, 0, 0, 0.5)' }}>{thesis.expirationDate}</span>
+					<span style={{ marginLeft: 8, color: 'rgba(0, 0, 0, 0.5)' }}>{dayjs(thesis.expirationDate).format('DD/MM/YYYY')}</span>
 				</div>
 			</Col>
 			{props.isProfessor ? null : (

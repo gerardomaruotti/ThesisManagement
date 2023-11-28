@@ -5,6 +5,7 @@ import logo_white from '../assets/logo_white.svg';
 import { Color } from '../constants/colors.js';
 import Avatar from '../assets/avatar.svg';
 import { useNavigate, useLocation } from 'react-router-dom';
+import dayjs from 'dayjs';
 
 function Header(props) {
 	const { isAuthenticated, loginWithRedirect, logout } = useAuth0();
@@ -34,6 +35,14 @@ function Header(props) {
 
 					<Navbar.Collapse className='d-none d-md-flex'>{navElement()}</Navbar.Collapse>
 					<Nav className='d-flex flex-row'>
+						{props.date ? (
+							<Nav.Link eventKey='/settings' onClick={() => navigate('/settings')} style={{ height: 53 }}>
+								<div className='d-flex align-items-center justify-content-center' style={{ marginTop: '7px' }}>
+									<i className='bi bi-calendar3' style={{ marginRight: 10 }}></i>
+									{dayjs(props.date).format('DD MMM YYYY')}
+								</div>
+							</Nav.Link>
+						) : null}
 						<Dropdown align='end'>
 							<Dropdown.Toggle variant='primary' id='dropdown-custom' style={{ height: 53 }}>
 								<i className='bi bi-bell' style={{ fontSize: '20px' }}></i>
