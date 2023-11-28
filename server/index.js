@@ -79,10 +79,11 @@ app.post('/api/thesis', checkJwt, async (req, res) => {
 	try {
 		//searching for the role of the user authenticated
 		let getRole = await db.getRole(req.auth);
-
+		let date=await db.getVirtualDate();
 		if (getRole.role == 'teacher') {
 			//if it is student we search for the thesis related to his COD_DEGREE
-			let thesis = await db.getThesisTeacher(getRole.id, currentDate.format('YYYY-MM-DD'));
+			
+			let thesis = await db.getThesisTeacher(getRole.id, (date == 0) ? currentDate.format('YYYY-MM-DD'): date);
 			for (let i = 0; i < thesis.length; i++) {
 				let keywords = await db.getKeywordsbyId(thesis[i].ID);
 				thesis[i].keywords = keywords;
@@ -93,7 +94,7 @@ app.post('/api/thesis', checkJwt, async (req, res) => {
 			}
 			res.status(200).json(thesis);
 		} else if (getRole.role == 'student') {
-			let thesis = await db.getThesisStudent(getRole.id, currentDate.format('YYYY-MM-DD'));
+			let thesis = await db.getThesisStudent(getRole.id, (date == 0) ? currentDate.format('YYYY-MM-DD'): date);
 			for (let i = 0; i < thesis.length; i++) {
 				let keywords = await db.getKeywordsbyId(thesis[i].ID);
 				thesis[i].keywords = keywords;
@@ -544,4 +545,43 @@ app.put('/api/edit/thesis/:id',
 	}
 );
 
+
+app.get('/api/virtualClockStatus', checkJwt, async(req,res) => {
+	try{
+		const date=await db.getVirtualDate();
+		return res.status(200).json(date)
+
+	} catch(err){
+		return res.status(503).json({error : "Get Virtual Clock status error"})
+	}
+})
+
+
+app.put('/api/virtualClockOn', [
+	check('virtualDate').isString({min: 1})
+],
+checkJwt, 
+async(req,res)=> {
+	try{
+		await db.setVirtualDate(req.body.virtualDate);
+		return res.status(200).json("Updated")
+	}
+	catch(err){
+		return res.status(503).json({error: "Update error"})
+	}
+
+
+})
+
+
+app.put('/api/virtualClockOff', checkJwt, async(req,res) => {
+	try{
+		await db.setVirtualDate(null);
+		return res.status(200).json("Updated")
+	}
+	catch(err){
+		return res.status(503).json({error: "Update error"})
+	}
+
+})
 module.exports = { app, port, checkJwt };
