@@ -8,89 +8,84 @@ import dayjs from 'dayjs';
 import API from '../API.jsx';
 
 function Settings(props) {
-    const { loading, setLoading } = useLoading();
-    const { virtualClock, setVirtualClock, dateVirtualClock, setDateVirtualClock } = props;
+	const { loading, setLoading } = useLoading();
+	const { virtualClock, setVirtualClock, dateVirtualClock, setDateVirtualClock } = props;
 
-    useEffect(() => {
-        if (dateVirtualClock == null) {
-            setVirtualClock(false);
-        }
-    }, []);
+	useEffect(() => {
+		if (dateVirtualClock == null) {
+			setVirtualClock(false);
+		}
+	}, []);
 
-    const handleSwitchChange = (event) => {
-        if (event.target.checked == false) {
-            setDateVirtualClock(null);
-            API.resetVirtualClock(props.accessToken)
-                .then(() => {
-                    props.setDirty(true);
-                })
-                .catch((err) => {
-                    props.handleError(err);
-                });
+	const handleSwitchChange = (event) => {
+		if (event.target.checked == false) {
+			setDateVirtualClock(null);
+			API.resetVirtualClock(props.accessToken)
+				.then(() => {
+					props.setDirty(true);
+				})
+				.catch((err) => {
+					props.handleError(err);
+				});
+		}
+		setVirtualClock(event.target.checked);
+	};
 
-        }
-        setVirtualClock(event.target.checked);
-    }
+	const handleDateVirtualClock = () => {
+		API.setVirtualClock(props.accessToken, dateVirtualClock)
+			.then((res) => {
+				props.handleSuccess(`Date set to ${dateVirtualClock}`);
+				props.setDirty(true);
+			})
+			.catch((err) => {
+				props.handleError(err);
+			});
+	};
 
-    const handleDateVirtualClock = (event) => {
-        setDateVirtualClock(event.target.value);
-        API.setVirtualClock(props.accessToken, event.target.value)
-            .then((res) => {
-                props.handleSuccess(`Date set to ${event.target.value}`);
-                props.setDirty(true);
-            })
-            .catch((err) => {
-                props.handleError(err);
-            });
-    }
-
-
-    return loading ? (
-        <Loading />
-    ) : (
-        <Container>
-            <Row style={{ marginTop: 25 }}>
-                <Col>
-                    <div style={{ fontSize: 30, fontWeight: 'bold' }}>Settings</div>
-                </Col>
-            </Row>
-            <Card style={{ padding: 20, marginTop: 25 }} className='custom-card'>
-                <Row>
-                    <Col>
-                        <div style={{ fontSize: 20, fontWeight: 'bold' }}>
-                            Virtual Clock
-                            <Form.Check
-                                type="switch"
-                                id="true"
-                                style={{ float: 'right', }}
-                                checked={virtualClock}
-                                onChange={handleSwitchChange}
-                            />
-                        </div>
-                    </Col>
-                </Row>
-                {virtualClock && (
-                    <div >
-                        <hr />
-                        <Row>
-                            <Col md={4}>
-                                <Form.Control
-                                    type='date'
-                                    value={dateVirtualClock ? dateVirtualClock : ''}
-                                    min={dayjs().add(1, 'day').format('YYYY-MM-DD')}
-                                    onChange={handleDateVirtualClock}
-                                    inline='true'
-                                />
-                            </Col>
-                            {/* <Col>
-                                <Button style={{ marginLeft: 10 }} variant='primary' onClick={() => { }}>Apply</Button>
-                            </Col> */}
-                        </Row>
-                    </div>
-                )}
-            </Card>
-        </Container >
-    );
+	return loading ? (
+		<Loading />
+	) : (
+		<Container>
+			<Form>
+				<Row style={{ marginTop: 25 }}>
+					<Col>
+						<div style={{ fontSize: 30, fontWeight: 'bold' }}>Settings</div>
+					</Col>
+				</Row>
+				<Card style={{ padding: 20, marginTop: 25 }} className='custom-card'>
+					<Row>
+						<Col>
+							<div style={{ fontSize: 20, fontWeight: 'bold' }}>
+								Virtual Clock
+								<Form.Check type='switch' id='true' style={{ float: 'right' }} checked={virtualClock} onChange={handleSwitchChange} />
+							</div>
+						</Col>
+					</Row>
+					{virtualClock && (
+						<div>
+							<hr />
+							<Row>
+								<Col md={4}>
+									<Form.Control
+										type='date'
+										value={dateVirtualClock ? dateVirtualClock : ''}
+										min={dayjs().add(1, 'day').format('YYYY-MM-DD')}
+										onChange={(event) => setDateVirtualClock(event.target.value)}
+										inline='true'
+									/>
+								</Col>
+								<Col>
+									<Button style={{ marginLeft: 10 }} variant='primary' onClick={handleDateVirtualClock}>
+										Set Date
+									</Button>
+								</Col>
+							</Row>
+						</div>
+					)}
+				</Card>
+			</Form>
+		</Container>
+	);
 }
 
 export default Settings;
