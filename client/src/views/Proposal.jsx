@@ -13,7 +13,6 @@ function Proposal(props) {
 	const [thesis, setThesis] = useState(null);
 	const [showDetails, setShowDetails] = useState(false);
 	const { id } = useParams();
-	const { fromHome, setFromHome } = props;
 
 	const handleClose = () => setShowDetails(false);
 	const handleShow = () => setShowDetails(true);

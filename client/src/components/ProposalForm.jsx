@@ -149,7 +149,7 @@ function ProposalForm(props) {
 		event.preventDefault();
 		const typesValues = selectedTypes.map((type) => type.value);
 		const keywordsValues = selectedKeywords.map((keyword) => keyword.value);
-		const formattedDate = dayjs(expirationDate).format('DD/MM/YYYY');
+		const formattedDate = dayjs(expirationDate).format('YYYY-MM-DD');
 		const formattedCoSupervisors = selectedCoSupervisors.map((selectedCoSupervisor) => {
 			return {
 				email: selectedCoSupervisor.email,
