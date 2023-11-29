@@ -5,6 +5,8 @@ import Avatar from '../assets/avatar.svg';
 import { useNavigate } from 'react-router-dom';
 import API from '../API.jsx';
 import randomcolor from 'randomcolor';
+import EditingButtons from './EditingButtons.jsx';
+import { useEffect } from 'react';
 
 function ProposalCard(props) {
 	const navigate = useNavigate();
@@ -171,15 +173,7 @@ function ProposalCard(props) {
 					)
 				) : (
 					<div style={{ marginTop: 20, textAlign: 'right' }}>
-						<Button variant='primary' disabled={props.thesis.applications != 0} onClick={editProposal} style={{ marginRight: 10 }} size='sm'>
-							<i className='bi bi-pencil'></i>
-						</Button>
-						<Button variant='primary' disabled={props.thesis.applications != 0} onClick={archiveProposal} style={{ marginRight: 10 }} size='sm'>
-							<i className='bi bi-archive'></i>
-						</Button>
-						<Button variant='danger' disabled={props.thesis.applications != 0} onClick={deleteProposal} size='sm'>
-							<i className='bi bi-trash3'></i>
-						</Button>
+						<EditingButtons disabled={props.thesis.applications != 0} id={props.thesis.ID} />
 					</div>
 				)}
 			</Card>

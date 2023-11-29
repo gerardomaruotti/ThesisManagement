@@ -4,7 +4,7 @@ import Select from 'react-select';
 import CreatableSelect from 'react-select/creatable';
 import { Form, Button, Row, Col, Container, Alert } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { colorStyles } from '../constants/colors.js';
 import API from '../API.jsx';
 import dayjs from 'dayjs';
@@ -29,30 +29,30 @@ function ProposalForm(props) {
 	const [selectedKeywords, setSelectedKeywords] = useState(
 		props.thesis
 			? props.thesis.keywords.map((keyword) => {
-				return { value: keyword, label: keyword };
-			})
+					return { value: keyword, label: keyword };
+			  })
 			: []
 	);
 	const [selectedCoSupervisors, setSelectedCoSupervisors] = useState(
 		props.thesis
 			? props.thesis.coSupervisors
-				.filter((cosupervisor) => cosupervisor.ID !== user.id)
-				.map((cosupervisor) => {
-					return {
-						value: cosupervisor.email,
-						label: cosupervisor.name + ' ' + cosupervisor.surname,
-						email: cosupervisor.email,
-						name: cosupervisor.name,
-						surname: cosupervisor.surname,
-					};
-				})
+					.filter((cosupervisor) => cosupervisor.ID !== user.id)
+					.map((cosupervisor) => {
+						return {
+							value: cosupervisor.email,
+							label: cosupervisor.name + ' ' + cosupervisor.surname,
+							email: cosupervisor.email,
+							name: cosupervisor.name,
+							surname: cosupervisor.surname,
+						};
+					})
 			: []
 	);
 	const [selectedTypes, setselectedTypes] = useState(
 		props.thesis
 			? props.thesis.types.map((type) => {
-				return { value: type, label: type };
-			})
+					return { value: type, label: type };
+			  })
 			: []
 	);
 	const [selectedLevel, setSelectedLevel] = useState(props.thesis ? { value: props.thesis.level, label: props.thesis.level } : '');
