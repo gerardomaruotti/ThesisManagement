@@ -55,7 +55,20 @@
 - PUT `/api/edit/thesis/:id`
   - request parameters: thesis identifier.
   - request body content: an object including all the data necessary to update a thesis: a title, a description, required knowledge, notes, expiration date, the level, related degree, a list of co-supervisors, a list of related keywords and a list of related types.
-  - response body content: the identifier of the just modified thesis.  
+  - response body content: the identifier of the just modified thesis.
+- GET `/api/virtualClockStatus`
+  - request parameters: none.
+  - response body content: 
+    - Virtual Clock On: a string representing the predefined date.
+    - Virtual Clock Off: valute "0".
+- PUT `/api/virtualClockOn`
+  - request parameters: none.
+  - request body content: the date to set.
+  - response body content: a string 'Updated' validating the succes of the operation.
+- PUT `/api/virtualClockOff`  
+  - request parameters: none.
+  - request body content: none.
+  - response body content: a string 'Updated' validating the succes of the operation.
 
 ## Database Main Tables
 
