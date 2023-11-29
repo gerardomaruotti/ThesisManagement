@@ -96,14 +96,15 @@ function Proposal(props) {
 								<Row>
 									<Col md={12}>
 										<div style={{ fontWeight: 'bold', fontSize: 15, marginTop: 15, color: '#E6782B' }}> Description </div>
-										<div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}>{thesis.description}</div>
+										<div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15, whiteSpace: 'pre-line' }}>{thesis.description}</div>
 									</Col>
 								</Row>
 								{thesis.requiredKnowledge == '' ? null : (
 									<Row>
 										<Col md={12}>
 											<div style={{ fontWeight: 'bold', fontSize: 15, marginTop: 15, color: '#E6782B' }}> Required Knowledge </div>
-											{thesis.requiredKnowledge}
+											<div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15, whiteSpace: 'pre-line' }}>{thesis.requiredKnowledge}</div>
+
 										</Col>
 									</Row>
 								)}
@@ -111,7 +112,7 @@ function Proposal(props) {
 									<Row>
 										<Col md={12}>
 											<div style={{ fontWeight: 'bold', fontSize: 15, marginTop: 15, color: '#E6782B' }}> Notes </div>
-											<div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}>{thesis.notes}</div>
+											<div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15, whiteSpace: 'pre-line' }}>{thesis.notes}</div>
 										</Col>
 									</Row>
 								)}

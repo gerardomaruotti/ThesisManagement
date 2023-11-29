@@ -138,6 +138,7 @@ function ProposalCard(props) {
 						WebkitBoxOrient: 'vertical',
 						WebkitLineClamp: '3',
 						overflow: 'hidden',
+						whiteSpace: 'pre-line'
 					}}
 				>
 					{props.thesis.description}
