@@ -1,12 +1,11 @@
-import { Row, Col, Card, Image, Button } from 'react-bootstrap';
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import { Row, Col, Card, Image, Button } from 'react-bootstrap';
 import { Color } from '../constants/colors.js';
 import Avatar from '../assets/avatar.svg';
 import { useNavigate } from 'react-router-dom';
 import API from '../API.jsx';
 import randomcolor from 'randomcolor';
 import EditingButtons from './EditingButtons.jsx';
-import { useEffect } from 'react';
 
 function ProposalCard(props) {
 	const navigate = useNavigate();
@@ -106,7 +105,9 @@ function ProposalCard(props) {
 								>
 									<i className='bi bi-building-check' style={{ fontSize: '16px' }}></i>
 								</span>
-								<span className='d-none d-md-flex' style={{ color: 'rgba(0, 0, 0, 0.5)', paddingLeft: 8 }}>Company</span>
+								<span className='d-none d-md-flex' style={{ color: 'rgba(0, 0, 0, 0.5)', paddingLeft: 8 }}>
+									Company
+								</span>
 							</Col>
 						</>
 					) : null}
@@ -119,7 +120,9 @@ function ProposalCard(props) {
 								>
 									<i className='bi bi-globe-americas' style={{ fontSize: '16px' }}></i>
 								</span>
-								<span className='d-none d-md-flex' style={{ color: 'rgba(0, 0, 0, 0.5)', paddingLeft: 8 }}>Abroad</span>
+								<span className='d-none d-md-flex' style={{ color: 'rgba(0, 0, 0, 0.5)', paddingLeft: 8 }}>
+									Abroad
+								</span>
 							</Col>
 						</>
 					) : null}
@@ -166,7 +169,7 @@ function ProposalCard(props) {
 					)
 				) : (
 					<div style={{ marginTop: 20, textAlign: 'right' }}>
-						<EditingButtons disabled={props.thesis.applications != 0} id={props.thesis.ID} />
+						<EditingButtons disabled={!props.isEditable} id={props.thesis.ID} />
 					</div>
 				)}
 			</Card>

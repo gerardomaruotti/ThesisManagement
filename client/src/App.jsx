@@ -18,7 +18,6 @@ import ProfessorApplicationsThesis from './views/ProfessorApplicationsThesis.jsx
 import GenericModal from './components/GenericModal.jsx';
 import EditProposal from './views/EditProposal.jsx';
 import Settings from './views/Settings.jsx';
-import dayjs from 'dayjs';
 
 function App() {
 	const { user, isAuthenticated, getAccessTokenSilently, isLoading, loginWithRedirect } = useAuth0();
@@ -30,6 +29,7 @@ function App() {
 	const [isStudent, setIsStudent] = useState(false);
 	const [applications, setApplications] = useState([]);
 	const [hasApplied, setHasApplied] = useState(false);
+	const [applicationsThesis, setApplicationsThesis] = useState([]);
 
 	const { setLoading } = useLoading();
 
@@ -71,6 +71,17 @@ function App() {
 				color: '#fff',
 			},
 		});
+	}
+
+	function unionForid(array) {
+		return array.reduce(function (acc, object) {
+			const key = object.id;
+			if (!acc[key]) {
+				acc[key] = [];
+			}
+			acc[key].push(object);
+			return acc;
+		}, {});
 	}
 
 	useEffect(() => {
@@ -138,6 +149,23 @@ function App() {
 	}, [dirty, accessToken, isStudent]);
 
 	useEffect(() => {
+		console.log('isProfessor dirty', isProfessor);
+		if (isAuthenticated && isProfessor) {
+			setLoading(true);
+			API.getApplications(accessToken)
+				.then((app) => {
+					setApplicationsThesis(app);
+					setLoading(false);
+					setDirty(false);
+				})
+				.catch((err) => {
+					handleError(err);
+					setLoading(false);
+				});
+		}
+	}, [dirty, accessToken, isProfessor]);
+
+	useEffect(() => {
 		if (isAuthenticated) {
 			API.getStatusVirtualClock(accessToken)
 				.then((res) => {
@@ -171,7 +199,7 @@ function App() {
 					path='/'
 					element={
 						isProfessor ? (
-							<ProfessorHome thesis={thesis} />
+							<ProfessorHome thesis={thesis} applications={applicationsThesis} />
 						) : isStudent ? (
 							<StudentHome
 								isProfessor={isProfessor}
@@ -215,8 +243,8 @@ function App() {
 							setMsgModal={setMsgModal}
 							setShowModal={setShowModal}
 							setDirty={setDirty}
-							applications={applications}
 							hasApplied={hasApplied}
+							applications={applicationsThesis}
 						/>
 					}
 				/>
@@ -261,6 +289,7 @@ function App() {
 							setMsgModal={setMsgModal}
 							setShowModal={setShowModal}
 							date={dateVirtualClock}
+							setDirty={setDirty}
 						/>
 					}
 				/>

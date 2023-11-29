@@ -21,7 +21,7 @@ function ProfessorHome(props) {
 		} else {
 			setFilteredThesis(props.thesis.filter((thesis) => thesis.status == 0));
 		}
-	}, [rapidFilter, props.thesis]);
+	}, [rapidFilter, props.thesis, props.applications, props.dirty]);
 
 	useEffect(() => {
 		if (!isAuthenticated && !isLoading) {
@@ -39,7 +39,7 @@ function ProfessorHome(props) {
 						<Col>
 							<Nav variant='pills' activeKey={rapidFilter}>
 								<Nav.Item>
-									<Nav.Link eventKey='active' className='buttons-rapid-filter' onClick={() => setRapidFilter('active')} >
+									<Nav.Link eventKey='active' className='buttons-rapid-filter' onClick={() => setRapidFilter('active')}>
 										Active
 									</Nav.Link>
 								</Nav.Item>
@@ -52,15 +52,23 @@ function ProfessorHome(props) {
 						</Col>
 					</Row>
 				</Container>
-			</div >
+			</div>
 			<Container>
 				<Row style={{ marginBottom: 25 }}>
-					{filteredThesis.length !== 0
-						? filteredThesis.map((thesis, index) => <ProposalCard key={thesis.ID} isProfessor={1} thesis={thesis} isEditable={true} />)
-						:
+					{filteredThesis.length !== 0 ? (
+						filteredThesis.map((thesis, index) => (
+							<ProposalCard
+								key={thesis.ID}
+								isProfessor={1}
+								thesis={thesis}
+								isEditable={!props.applications.some((app) => app.id == thesis.ID && app.state == 1)}
+							/>
+						))
+					) : (
 						<Col style={{ marginTop: 25 }}>
 							<p>No thesis to display</p>
-						</Col>}
+						</Col>
+					)}
 				</Row>
 				<Button variant='primary' className='insert-proposal' style={{ borderRadius: 50 }} onClick={() => navigate('/proposals/add')}>
 					<i className='bi bi-plus' style={{ fontSize: '1.5rem' }}></i>

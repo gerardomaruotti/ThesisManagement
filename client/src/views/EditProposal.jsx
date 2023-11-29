@@ -17,7 +17,6 @@ function EditProposal(props) {
 		setLoading(true);
 		API.getThesisByID(id, props.accessToken)
 			.then((thesis) => {
-				// console.log('Thesis: ', thesis);
 				setThesis(thesis);
 			})
 			.catch((err) => {
@@ -44,7 +43,14 @@ function EditProposal(props) {
 	) : (
 		<Container>
 			<h2 style={{ textAlign: 'center', marginTop: 20 }}>Edit Proposal</h2>
-			<ProposalForm thesis={thesis} accessToken={props.accessToken} user={props.user} handleError={props.handleError} editProposal={editProposal} date={props.date} />
+			<ProposalForm
+				thesis={thesis}
+				accessToken={props.accessToken}
+				user={props.user}
+				handleError={props.handleError}
+				editProposal={editProposal}
+				date={props.date}
+			/>
 		</Container>
 	);
 }
