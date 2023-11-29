@@ -13,6 +13,7 @@ function ProfessorApplicationCard(props) {
 		<Col lg={6} sm={12} style={{ marginTop: 25 }}>
 			<Card style={{ padding: 20 }} className='custom-card'>
 				<div
+					className='title'
 					style={{
 						fontWeight: 'medium',
 						fontSize: 18,
@@ -21,7 +22,9 @@ function ProfessorApplicationCard(props) {
 						WebkitBoxOrient: 'vertical',
 						WebkitLineClamp: '2',
 						overflow: 'hidden',
+						cursor: 'pointer',
 					}}
+					onClick={() => navigate('/proposal/' + props.applications[0].id, { state: { fromHome: true } })}
 				>
 					{props.applications[0].title}
 				</div>
