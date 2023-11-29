@@ -29,30 +29,30 @@ function ProposalForm(props) {
 	const [selectedKeywords, setSelectedKeywords] = useState(
 		props.thesis
 			? props.thesis.keywords.map((keyword) => {
-				return { value: keyword, label: keyword };
-			})
+					return { value: keyword, label: keyword };
+			  })
 			: []
 	);
 	const [selectedCoSupervisors, setSelectedCoSupervisors] = useState(
 		props.thesis
 			? props.thesis.coSupervisors
-				.filter((cosupervisor) => cosupervisor.ID !== user.id)
-				.map((cosupervisor) => {
-					return {
-						value: cosupervisor.email,
-						label: cosupervisor.name + ' ' + cosupervisor.surname,
-						email: cosupervisor.email,
-						name: cosupervisor.name,
-						surname: cosupervisor.surname,
-					};
-				})
+					.filter((cosupervisor) => cosupervisor.ID !== user.id)
+					.map((cosupervisor) => {
+						return {
+							value: cosupervisor.email,
+							label: cosupervisor.name + ' ' + cosupervisor.surname,
+							email: cosupervisor.email,
+							name: cosupervisor.name,
+							surname: cosupervisor.surname,
+						};
+					})
 			: []
 	);
 	const [selectedTypes, setselectedTypes] = useState(
 		props.thesis
 			? props.thesis.types.map((type) => {
-				return { value: type, label: type };
-			})
+					return { value: type, label: type };
+			  })
 			: []
 	);
 	const [selectedLevel, setSelectedLevel] = useState(props.thesis ? { value: props.thesis.level, label: props.thesis.level } : '');
@@ -61,25 +61,31 @@ function ProposalForm(props) {
 	useEffect(() => {
 		if (props.thesis) {
 			setTitle(props.thesis.title);
-			setSelectedCoSupervisors(props.thesis.coSupervisors
-				.filter((cosupervisor) => cosupervisor.ID !== user.id)
-				.map((cosupervisor) => {
-					return {
-						value: cosupervisor.email,
-						label: cosupervisor.name + ' ' + cosupervisor.surname,
-						email: cosupervisor.email,
-						name: cosupervisor.name,
-						surname: cosupervisor.surname,
-					};
-				}));
-			setselectedTypes(props.thesis.types.map((type) => {
-				return { value: type, label: type };
-			}));
+			setSelectedCoSupervisors(
+				props.thesis.coSupervisors
+					.filter((cosupervisor) => cosupervisor.ID !== user.id)
+					.map((cosupervisor) => {
+						return {
+							value: cosupervisor.email,
+							label: cosupervisor.name + ' ' + cosupervisor.surname,
+							email: cosupervisor.email,
+							name: cosupervisor.name,
+							surname: cosupervisor.surname,
+						};
+					})
+			);
+			setselectedTypes(
+				props.thesis.types.map((type) => {
+					return { value: type, label: type };
+				})
+			);
 			setSelectedLevel({ value: props.thesis.level, label: props.thesis.level });
 			setSelectedCds({ value: props.thesis.codeDegree, label: props.thesis.cds });
-			setSelectedKeywords(props.thesis.keywords.map((keyword) => {
-				return { value: keyword, label: keyword };
-			}));
+			setSelectedKeywords(
+				props.thesis.keywords.map((keyword) => {
+					return { value: keyword, label: keyword };
+				})
+			);
 			setExpirationDate(dayjs(props.thesis.expirationDate).format('YYYY-MM-DD'));
 		}
 	}, [props.thesis]);
@@ -209,13 +215,7 @@ function ProposalForm(props) {
 				<Col md={4}>
 					<Form.Group className='mb-3' controlId='formCoSupervisors'>
 						<Form.Label>Co-supervisors</Form.Label>
-						<Select
-							value={selectedCoSupervisors}
-							isMulti
-							options={coSupervisors}
-							styles={colorStyles}
-							onChange={handleSelectedCoSupervisors}
-						/>
+						<Select value={selectedCoSupervisors} isMulti options={coSupervisors} styles={colorStyles} onChange={handleSelectedCoSupervisors} />
 					</Form.Group>
 					<Form.Group className='mb-3' controlId='formType'>
 						<Form.Label>Type</Form.Label>
@@ -252,14 +252,7 @@ function ProposalForm(props) {
 					</Form.Group>
 					<Form.Group className='mb-3' controlId='formKeywords'>
 						<Form.Label>Keywords</Form.Label>
-						<CreatableSelect
-							value={selectedKeywords}
-							isClearable
-							isMulti
-							options={keywords}
-							styles={colorStyles}
-							onChange={handleSelectedKeywords}
-						/>
+						<CreatableSelect value={selectedKeywords} isClearable isMulti options={keywords} styles={colorStyles} onChange={handleSelectedKeywords} />
 					</Form.Group>
 				</Col>
 				<Col md={8}>
@@ -277,7 +270,7 @@ function ProposalForm(props) {
 					<Form.Group className='mb-3' controlId='formDescription'>
 						<Form.Label>Description*</Form.Label>
 						<Form.Control
-							value={props.thesis ? props.thesis.description : ''}
+							value={description}
 							as='textarea'
 							rows={5}
 							required
@@ -288,7 +281,7 @@ function ProposalForm(props) {
 					<Form.Group className='mb-3' controlId='formRequiredKnowledge'>
 						<Form.Label>Required knowledge</Form.Label>
 						<Form.Control
-							value={props.thesis ? props.thesis.requiredKnowledge : ''}
+							value={requiredKnowledge}
 							as='textarea'
 							placeholder='Enter required knowledge'
 							onChange={(event) => setRequiredKnowledge(event.target.value)}
@@ -296,12 +289,7 @@ function ProposalForm(props) {
 					</Form.Group>
 					<Form.Group className='mb-3' controlId='formNotes'>
 						<Form.Label>Notes</Form.Label>
-						<Form.Control
-							value={props.thesis ? props.thesis.notes : ''}
-							as='textarea'
-							placeholder='Enter notes'
-							onChange={(event) => setNotes(event.target.value)}
-						/>
+						<Form.Control value={notes} as='textarea' placeholder='Enter notes' onChange={(event) => setNotes(event.target.value)} />
 					</Form.Group>
 				</Col>
 			</Row>
