@@ -322,7 +322,7 @@ exports.getRole = (auth0) => {
   });
 }
 
-exports.getThesisTeacher = (ID, curDate) => {
+exports.getThesisTeacher = (ID, date) => {
   return new Promise((resolve, reject) => {
     const sql = 'SELECT DISTINCT T.ID_THESIS as ID, TS.STATE AS status,  T.TITLE AS title, T.NOTES as notes, T.EXPIRATION_DATE AS date, T.DESCRIPTION AS description , T.REQUIRED_KNOWLEDGE AS req_know, TE.NAME AS sup_name, TE.SURNAME AS sup_surname FROM THESIS T JOIN TEACHER TE ON T.SUPERVISOR == TE.ID JOIN THESIS_STATUS TS ON TS.THESIS == T.ID_THESIS WHERE TE.ID = ? ';
     db.all(sql, [ID], (err, rows) => {
@@ -340,7 +340,7 @@ exports.getThesisTeacher = (ID, curDate) => {
             sup_name: elem.sup_name,
             sup_surname: elem.sup_surname,
             notes: elem.notes,
-            status : (elem.status &&(curDate <= '2023-11-29' ? 1:0)),
+            status : (elem.status && (date <= elem.date)),
             count: 0,
             keywords: [],
             types: [], 
@@ -482,9 +482,9 @@ exports.getThesis = (idThesis) => {
   });
 };
 
-exports.checkThesisActive = (idThesis) => {
+exports.checkThesisActive = (idThesis,date) => {
   return new Promise((resolve, reject) => {
-    const sql = 'SELECT STATE FROM THESIS_STATUS WHERE THESIS=?';
+    const sql = 'SELECT STATE,EXPIRATION_DATE FROM THESIS_STATUS TS, THESIS S WHERE TS.THESIS=T.ID_THESIS AND TS.THESIS=?';
     db.get(sql, [idThesis], (err, row) => {
       if (err) {
         reject(err);
@@ -493,7 +493,7 @@ exports.checkThesisActive = (idThesis) => {
       if (row == undefined) {
         reject({ error: 'Thesis not found.' });
       } else {
-        resolve(row.STATE);
+        resolve((row.STATE) && (date <= row.EXPIRATION_DATE));
       }
     });
   });
@@ -513,7 +513,7 @@ exports.insertApplication = (userId, idThesis) => {
   });
 }
 
-exports.getTeacherApplications = (teacherId) => {
+exports.getTeacherApplications = (teacherId,date) => {
   return new Promise((resolve, reject) => {
     const sql = 'SELECT ID_THESIS,TITLE,EXPIRATION_DATE,LEVEL, DEGREE, STUDENT, S.NAME as NAME, S.SURNAME as SURNAME, S.EMAIL as EMAIL, STATE FROM THESIS T, TEACHER TE, THESIS_APPLICATION TA, STUDENT S WHERE T.SUPERVISOR=TE.ID AND T.ID_THESIS=TA.THESIS AND TA.STUDENT=S.ID AND TE.ID=?';
     db.all(sql, [teacherId], (err,rows) => {
@@ -531,7 +531,7 @@ exports.getTeacherApplications = (teacherId) => {
           name: elem.NAME,
           surname: elem.SURNAME,
           email: elem.EMAIL,
-          state: elem.STATE
+          state: (date <= elem.EXPIRATION_DATE) ? elem.STATE : ((elem.STATE != 0) ? elem.STATE : 3),
         }));
 
         resolve(applications)
@@ -542,7 +542,7 @@ exports.getTeacherApplications = (teacherId) => {
 }
 
 
-exports.getStudentApplications = (studentId) => {
+exports.getStudentApplications = (studentId,date) => {
   return new Promise((resolve, reject) => {
     const sql = 'SELECT ID_THESIS,TITLE,EXPIRATION_DATE,LEVEL, DEGREE, SUPERVISOR, TE.NAME as NAME, TE.SURNAME as SURNAME, STATE FROM THESIS T, STUDENT S, THESIS_APPLICATION TA, TEACHER TE WHERE TA.STUDENT=S.ID AND T.ID_THESIS=TA.THESIS AND T.SUPERVISOR = TE.ID AND S.ID=?';
     db.all(sql, [studentId], (err,rows) => {
@@ -559,7 +559,7 @@ exports.getStudentApplications = (studentId) => {
           supervisor: elem.SUPERVISOR,
           name: elem.NAME,
           surname: elem.SURNAME,
-          state: elem.STATE,
+          state: (date <= elem.EXPIRATION_DATE) ? elem.STATE : ((elem.STATE != 0) ? elem.STATE : 3),
           keywords: [],
           types: []
         }));
@@ -656,6 +656,19 @@ exports.archiveThesis=(thesis) => {
   });
 }
 
+exports.activateThesis=(thesis) => {
+  return new Promise((resolve, reject) => {
+    const sql = 'UPDATE THESIS_STATUS SET STATE = 1 WHERE THESIS = ? AND STATE = 0';
+    db.run(sql, [thesis], function (err) {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve("Activated");
+    });
+  });
+}
+
 exports.editThesis = (id, title, description, req_know, notes, exp_date, level, degree) => {
   return new Promise((resolve, reject) => {
     const sql = 'UPDATE thesis SET title = ?, description = ?, required_knowledge = ?, notes = ?, expiration_date = ?, level = ?, degree = ? WHERE id_thesis = ?';
@@ -727,3 +740,34 @@ exports.checkExistenceApplicationForThesis= (thesis)=> {
   });
 }
 
+exports.getVirtualDate= ()=> {
+  return new Promise((resolve, reject) => {
+    const sql = 'SELECT data FROM VIRTUAL_CLOCK';
+    db.get(sql, [], (err, row) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      else {
+        if (row.data == null)
+          resolve(0)
+        else{
+          resolve(row.data)
+        }
+      }
+    });
+  });
+}
+
+exports.setVirtualDate= (date)=> {
+  return new Promise((resolve, reject) => {
+    const sql = 'UPDATE VIRTUAL_CLOCK SET data=?';
+    db.get(sql, [date], (err, row) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve(this.lastID)
+    });
+  });
+}

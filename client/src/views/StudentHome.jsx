@@ -193,8 +193,14 @@ function StudentHome(props) {
 									handleError={props.handleError}
 									handleSuccess={props.handleSuccess}
 									setDirty={props.setDirty}
-									state={props.applications.find(app => app.id === thesis.ID && app.state != 2) ? props.applications.find(app => app.id === thesis.ID && app.state != 2).state : null}
-								/>))
+									state={
+										props.applications.find((app) => app.id === thesis.ID && app.state != 2)
+											? props.applications.find((app) => app.id === thesis.ID && app.state != 2).state
+											: null
+									}
+									hasApplied={props.hasApplied}
+								/>
+							))
 					) : (
 						<Col style={{ marginTop: 25 }}>
 							<p>No thesis to display</p>
@@ -202,7 +208,6 @@ function StudentHome(props) {
 					)}
 				</Row>
 			</Container>
-
 		</>
 	);
 }

@@ -1,6 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Row, Col, Card, Image, Button, Container, Toast, ToastContainer, Offcanvas } from 'react-bootstrap';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import API from '../API.jsx';
 import { useLoading } from '../LoadingContext.jsx';
@@ -13,6 +13,7 @@ function Proposal(props) {
 	const [thesis, setThesis] = useState(null);
 	const [showDetails, setShowDetails] = useState(false);
 	const { id } = useParams();
+	const location = useLocation();
 
 	const handleClose = () => setShowDetails(false);
 	const handleShow = () => setShowDetails(true);
@@ -45,10 +46,20 @@ function Proposal(props) {
 			});
 	}
 
+	function handleRedirect() {
+		const fromHome = location.state && location.state.fromHome;
+
+		if (fromHome) {
+			navigate(-1);
+		} else {
+			navigate('/');
+		}
+	}
+
 	function showModal(event) {
 		event.stopPropagation();
 		props.setShowModal(true);
-		props.setMsgModal({ header: 'Apply', body: 'Are you sure you want to apply to this thesis?', method: apply })
+		props.setMsgModal({ header: 'Apply', body: 'Are you sure you want to apply to this thesis?', method: apply });
 	}
 
 	return loading ? (
@@ -60,14 +71,21 @@ function Proposal(props) {
 					<Row style={{ display: 'flex', alignItems: 'start' }}>
 						<Col md={4} className='d-none d-md-flex'>
 							<Card style={{ padding: 20, position: 'sticky', top: 25 }} className='custom-card'>
-								<DetailsProposalLeftBar id={id} thesis={thesis} apply={showModal} isProfessor={props.isProfessor} applications={props.applications} />
+								<DetailsProposalLeftBar
+									id={id}
+									thesis={thesis}
+									apply={showModal}
+									isProfessor={props.isProfessor}
+									applications={props.applications}
+									hasApplied={props.hasApplied}
+								/>
 							</Card>
 						</Col>
 						<Col md={8}>
 							<Card style={{ padding: 20 }} className='custom-card'>
 								<Row>
 									<Col className='d-flex align-items-center d-none d-md-flex'>
-										<Button variant='outline-primary' style={{ borderRadius: 50, width: 75 }} onClick={() => navigate(-1)}>
+										<Button variant='outline-primary' style={{ borderRadius: 50, width: 75 }} onClick={handleRedirect}>
 											<i className='bi bi-arrow-left'></i>
 										</Button>
 									</Col>
@@ -116,7 +134,6 @@ function Proposal(props) {
 					<DetailsProposalLeftBar id={id} thesis={thesis} apply={showModal} isProfessor={props.isProfessor} applications={props.applications} />
 				</Offcanvas.Body>
 			</Offcanvas>
-
 		</>
 	);
 }

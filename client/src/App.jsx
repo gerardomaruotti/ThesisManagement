@@ -16,20 +16,12 @@ import toast, { Toaster } from 'react-hot-toast';
 import ProfessorApplications from './views/ProfessorApplications.jsx';
 import ProfessorApplicationsThesis from './views/ProfessorApplicationsThesis.jsx';
 import GenericModal from './components/GenericModal.jsx';
+import EditProposal from './views/EditProposal.jsx';
+import Settings from './views/Settings.jsx';
+import dayjs from 'dayjs';
 
 function App() {
 	const { user, isAuthenticated, getAccessTokenSilently, isLoading, loginWithRedirect } = useAuth0();
-	const [title, setTitle] = useState('');
-	const [requiredKnowledge, setRequiredKnowledge] = useState('');
-	const [description, setDescription] = useState('');
-	const [notes, setNotes] = useState('');
-	const [keywords, setKeywords] = useState([]);
-	const [supervisor, setSupervisor] = useState('');
-	const [coSupervisors, setCoSupervisors] = useState([]);
-	const [level, setLevel] = useState('');
-	const [cds, setCds] = useState('');
-	const [type, setType] = useState([]);
-	const [expirationDate, setExpirationDate] = useState('');
 	const [userData, setUserData] = useState(null);
 	const [thesis, setThesis] = useState([]);
 	const [accessToken, setAccessToken] = useState(null);
@@ -37,6 +29,7 @@ function App() {
 	const [isProfessor, setIsProfessor] = useState(false);
 	const [isStudent, setIsStudent] = useState(false);
 	const [applications, setApplications] = useState([]);
+	const [hasApplied, setHasApplied] = useState(false);
 
 	const { setLoading } = useLoading();
 
@@ -47,11 +40,15 @@ function App() {
 	const [selectedKeywords, setSelectedKeywords] = useState([]);
 	const [selectedTypes, setSelectedTypes] = useState([]);
 	const [selectedGroups, setSelectedGroups] = useState([]);
-	const [expirationDate2, setExpirationDate2] = useState('all');
+	const [expirationDate, setexpirationDate] = useState('all');
 
 	//GenericModal
 	const [showModal, setShowModal] = useState(false);
-	const [msgModal, setMsgModal] = useState({});  // {header: "header", body: "body", method: method}
+	const [msgModal, setMsgModal] = useState({}); // {header: "header", body: "body", method: method}
+
+	//virtual clock
+	const [virtualClock, setVirtualClock] = useState(false);
+	const [dateVirtualClock, setDateVirtualClock] = useState(null);
 
 	function handleError(err) {
 		toast.error(err.error ? err.error : err, {
@@ -100,7 +97,6 @@ function App() {
 						handleSuccess('Logged in successfully!');
 					})
 					.catch((err) => handleError(err));
-
 			} catch (e) {
 				handleError(e.message);
 			}
@@ -113,28 +109,51 @@ function App() {
 
 	useEffect(() => {
 		if (isAuthenticated) {
+			setLoading(true);
 			API.getAllThesis(accessToken)
 				.then((thesis) => {
 					setThesis(thesis);
+					setDirty(false);
 				})
 				.catch((err) => handleError(err))
 				.finally(() => setLoading(false));
-
 		}
 	}, [dirty, accessToken]);
 
 	useEffect(() => {
 		if (isAuthenticated && isStudent) {
+			setLoading(true);
 			API.getApplications(accessToken)
 				.then((app) => {
 					setApplications(app);
-					//console.log(app);
+					let applied = app.some((application) => application.state == 0 || application.state == 1);
+					setHasApplied(applied);
+					setDirty(false);
+				})
+				.catch((err) => {
+					handleError(err);
+				})
+				.finally(() => setLoading(false));
+		}
+	}, [dirty, accessToken, isStudent]);
+
+	useEffect(() => {
+		if (isAuthenticated) {
+			API.getStatusVirtualClock(accessToken)
+				.then((res) => {
+					if (res == 0) {
+						setVirtualClock(false);
+						setDateVirtualClock(null);
+					} else {
+						setVirtualClock(true);
+						setDateVirtualClock(res);
+					}
 				})
 				.catch((err) => {
 					handleError(err);
 				});
 		}
-	}, [dirty, accessToken, isStudent]);
+	}, [accessToken]);
 
 	useEffect(() => {
 		if (!isAuthenticated && !isLoading) {
@@ -144,7 +163,7 @@ function App() {
 
 	return (
 		<BrowserRouter>
-			<Header userData={userData} />
+			<Header userData={userData} date={dateVirtualClock} />
 			<Toaster />
 			<GenericModal showModal={showModal} setShowModal={setShowModal} msgModal={msgModal} />
 			<Routes>
@@ -171,59 +190,50 @@ function App() {
 								setSelectedTypes={setSelectedTypes}
 								selectedGroups={selectedGroups}
 								setSelectedGroups={setSelectedGroups}
-								expirationDate={expirationDate2}
-								setExpirationDate={setExpirationDate2}
+								expirationDate={expirationDate}
+								setExpirationDate={setexpirationDate}
 								handleError={handleError}
 								handleSuccess={handleSuccess}
 								setMsgModal={setMsgModal}
 								setShowModal={setShowModal}
 								applications={applications}
 								setDirty={setDirty}
+								hasApplied={hasApplied}
 							/>
 						) : null
 					}
 				/>
-				<Route path='/proposal/:id'
-					element={<Proposal
-						accessToken={accessToken}
-						isProfessor={isProfessor}
-						handleError={handleError}
-						handleSuccess={handleSuccess}
-						setMsgModal={setMsgModal}
-						setShowModal={setShowModal}
-						setDirty={setDirty}
-						applications={applications} />} />
+				<Route
+					path='/proposal/:id'
+					element={
+						<Proposal
+							accessToken={accessToken}
+							isProfessor={isProfessor}
+							handleError={handleError}
+							handleSuccess={handleSuccess}
+							setMsgModal={setMsgModal}
+							setShowModal={setShowModal}
+							setDirty={setDirty}
+							applications={applications}
+							hasApplied={hasApplied}
+						/>
+					}
+				/>
 				<Route
 					path='/proposals/add'
 					element={
 						isProfessor ? (
-							<InsertProposal
-								title={title}
-								setTitle={setTitle}
-								requiredKnowledge={requiredKnowledge}
-								setRequiredKnowledge={setRequiredKnowledge}
-								description={description}
-								setDescription={setDescription}
-								notes={notes}
-								setNotes={setNotes}
-								keywords={keywords}
-								setKeywords={setKeywords}
-								supervisor={supervisor}
-								setSupervisor={setSupervisor}
-								coSupervisors={coSupervisors}
-								setCoSupervisors={setCoSupervisors}
-								level={level}
-								setLevel={setLevel}
-								cds={cds}
-								setCds={setCds}
-								type={type}
-								setType={setType}
-								expirationDate={expirationDate}
-								setExpirationDate={setExpirationDate}
-								accessToken={accessToken}
-								setDirty={setDirty}
-								user={userData}
-							/>
+							<InsertProposal accessToken={accessToken} setDirty={setDirty} user={userData} handleError={handleError} date={dateVirtualClock} />
+						) : isStudent ? (
+							<NotFound />
+						) : null
+					}
+				/>
+				<Route
+					path='/proposals/edit/:id'
+					element={
+						isProfessor ? (
+							<EditProposal accessToken={accessToken} setDirty={setDirty} user={userData} handleError={handleError} date={dateVirtualClock} />
 						) : isStudent ? (
 							<NotFound />
 						) : null
@@ -233,20 +243,41 @@ function App() {
 					path='/applications'
 					element={
 						isProfessor ? (
-							<ProfessorApplications accessToken={accessToken} handleError={handleError} isProfessor={isProfessor} />
+							<ProfessorApplications accessToken={accessToken} handleError={handleError} isProfessor={isProfessor} date={dateVirtualClock} />
 						) : isStudent ? (
 							<StudentApplications accessToken={accessToken} handleError={handleError} />
 						) : null
 					}
 				/>
-				<Route path='/applications/proposal/:id' element={
-					<ProfessorApplicationsThesis
-						accessToken={accessToken}
-						handleError={handleError}
-						isProfessor={isProfessor}
-						handleSuccess={handleSuccess}
-						setMsgModal={setMsgModal}
-						setShowModal={setShowModal} />} />
+				<Route
+					path='/applications/proposal/:id'
+					element={
+						<ProfessorApplicationsThesis
+							accessToken={accessToken}
+							handleError={handleError}
+							isProfessor={isProfessor}
+							handleSuccess={handleSuccess}
+							setMsgModal={setMsgModal}
+							setShowModal={setShowModal}
+							date={dateVirtualClock}
+						/>
+					}
+				/>
+				<Route
+					path='/settings'
+					element={
+						<Settings
+							virtualClock={virtualClock}
+							setVirtualClock={setVirtualClock}
+							dateVirtualClock={dateVirtualClock}
+							setDateVirtualClock={setDateVirtualClock}
+							accessToken={accessToken}
+							handleError={handleError}
+							handleSuccess={handleSuccess}
+							setDirty={setDirty}
+						/>
+					}
+				/>
 			</Routes>
 		</BrowserRouter>
 	);
