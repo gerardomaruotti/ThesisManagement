@@ -500,10 +500,10 @@ exports.checkThesisActive = (idThesis,date) => {
 };
 
 
-exports.insertApplication = (userId, idThesis) => {
+exports.insertApplication = (userId, idThesis, date) => {
   return new Promise((resolve, reject) => {
-    const sql = 'INSERT INTO THESIS_APPLICATION (student, thesis, state) VALUES(?, ?, ?)';
-    db.run(sql, [userId, idThesis, 0], function (err) {
+    const sql = 'INSERT INTO THESIS_APPLICATION (student, thesis, state, application_date) VALUES(?, ?, ?, ?)';
+    db.run(sql, [userId, idThesis, 0, date], function (err) {
       if (err) {
         reject(err);
         return;
@@ -740,6 +740,25 @@ exports.checkExistenceApplicationForThesis= (thesis)=> {
   });
 }
 
+exports.checkExistenceAcceptedApplicationForThesis= (thesis)=> {
+  return new Promise((resolve, reject) => {
+    const sql = 'SELECT * FROM THESIS_APPLICATION WHERE THESIS = ? AND STATE=1';
+    db.get(sql, [thesis], (err, row) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      else {
+        if (row == undefined)
+          resolve(0)
+        else{
+          resolve(1)
+        }
+      }
+    });
+  });
+}
+
 exports.getVirtualDate= ()=> {
   return new Promise((resolve, reject) => {
     const sql = 'SELECT data FROM VIRTUAL_CLOCK';
@@ -768,6 +787,32 @@ exports.setVirtualDate= (date)=> {
         return;
       }
       resolve(this.lastID)
+    });
+  });
+}
+
+exports.resetStatusPastApplications = (date)=> {
+  return new Promise((resolve, reject) => {
+    const sql = 'UPDATE THESIS_APPLICATION SET STATE = 0 WHERE STATE = 3 AND THESIS IN (SELECT THESIS FROM THESIS_APPLICATION WHERE date(APPLICATION_DATE) > date(?) AND STATE=1)';
+    db.get(sql, [date], (err, row) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve(1)
+    });
+  });
+}
+
+exports.deleteFutureApplications = (date)=> {
+  return new Promise((resolve, reject) => {
+    const sql = 'DELETE FROM THESIS_APPLICATION WHERE date(APPLICATION_DATE) > date(?)';
+    db.get(sql, [date], (err, row) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve(1)
     });
   });
 }
