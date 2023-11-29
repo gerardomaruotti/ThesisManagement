@@ -105,7 +105,7 @@ function FiltersModal(props) {
 		const formattedKeywords = props.selectedKeywords.map((keyword) => keyword.value);
 		const formattedTypes = props.selectedTypes.map((type) => type.value);
 		const formattedGroups = props.selectedGroups.map((group) => group.value);
-		let today = dayjs();
+		let today = props.date ? dayjs(props.date) : dayjs();
 		if (props.expirationDate === 'all') {
 			today = undefined;
 		} else if (props.expirationDate === 'thisWeek') {

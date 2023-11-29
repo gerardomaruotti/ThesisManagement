@@ -199,6 +199,7 @@ function App() {
 								applications={applications}
 								setDirty={setDirty}
 								hasApplied={hasApplied}
+								date={dateVirtualClock}
 							/>
 						) : null
 					}

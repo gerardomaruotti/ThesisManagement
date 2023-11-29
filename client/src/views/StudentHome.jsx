@@ -177,6 +177,7 @@ function StudentHome(props) {
 				expirationDate={props.expirationDate}
 				setExpirationDate={props.setExpirationDate}
 				handleError={props.handleError}
+				date={props.date}
 			/>
 			<Container>
 				<Row style={{ marginBottom: 25 }}>
