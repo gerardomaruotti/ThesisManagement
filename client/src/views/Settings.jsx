@@ -16,7 +16,10 @@ function Settings(props) {
 		if (dateVirtualClock == null) {
 			setVirtualClock(false);
 		}
-	}, []);
+		else {
+			setDate(dateVirtualClock)
+		}
+	}, [dateVirtualClock]);
 
 	const handleSwitchChange = (event) => {
 		if (event.target.checked == false) {
@@ -38,10 +41,14 @@ function Settings(props) {
 	};
 
 	const handleDateVirtualClock = () => {
+		if (date == null) {
+			props.handleError('Please select a date');
+			return;
+		}
 		setDateVirtualClock(date);
 		API.setVirtualClock(props.accessToken, date)
 			.then((res) => {
-				props.handleSuccess(`Date set to ${dateVirtualClock}`);
+				props.handleSuccess(`Date set to ${dayjs(date).format('DD/MM/YYYY')}`);
 				props.setDirty(true);
 			})
 			.catch((err) => {
