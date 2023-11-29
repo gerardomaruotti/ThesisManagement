@@ -55,9 +55,12 @@ function ProfessorHome(props) {
 			</div >
 			<Container>
 				<Row style={{ marginBottom: 25 }}>
-					{props.thesis != []
+					{filteredThesis.length !== 0
 						? filteredThesis.map((thesis, index) => <ProposalCard key={thesis.ID} isProfessor={1} thesis={thesis} isEditable={true} />)
-						: null}
+						:
+						<Col style={{ marginTop: 25 }}>
+							<p>No thesis to display</p>
+						</Col>}
 				</Row>
 				<Button variant='primary' className='insert-proposal' style={{ borderRadius: 50 }} onClick={() => navigate('/proposals/add')}>
 					<i className='bi bi-plus' style={{ fontSize: '1.5rem' }}></i>

@@ -11,7 +11,7 @@ import dayjs from 'dayjs';
 function ProfessorApplications(props) {
     const { loading, setLoading } = useLoading();
     const [applicationsThesis, setApplicationsThesis] = useState([]);
-    const [filteredApplications, setFilteredApplications] = useState([]);
+    const [filteredApplications, setFilteredApplications] = useState({});
     const [rapidFilter, setRapidFilter] = useState('all');
 
 
@@ -115,8 +115,11 @@ function ProfessorApplications(props) {
             </div >
             <Container>
                 <Row style={{ marginBottom: 25 }}>
-                    {filteredApplications != [] ? Object.entries(filteredApplications).map(([id, app]) =>
-                        <ProfessorApplicationCard key={id} applications={app} date={props.date} />) : null}
+                    {Object.keys(filteredApplications).length !== 0 ? Object.entries(filteredApplications).map(([id, app]) =>
+                        <ProfessorApplicationCard key={id} applications={app} date={props.date} />) :
+                        (<Col style={{ marginTop: 25 }}>
+                            <p>No thesis to display</p>
+                        </Col>)}
                 </Row>
             </Container>
         </>

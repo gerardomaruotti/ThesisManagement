@@ -222,7 +222,7 @@ app.get('/api/thesis/:id/groups', checkJwt, async (req, res) => {
 		const groups = await db.getGroupSupervisorAndCoSupervisor(thesisID);
 		return res.status(200).json(groups);
 	} catch (err) {
-		return res.status(503).json({ error: 'Error while searching the groups' });
+		return res.status(503).json({ error: 'Errore nella restituzione dei gruppi' });
 	}
 });
 
