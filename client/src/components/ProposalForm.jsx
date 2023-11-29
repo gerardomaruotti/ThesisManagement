@@ -29,30 +29,30 @@ function ProposalForm(props) {
 	const [selectedKeywords, setSelectedKeywords] = useState(
 		props.thesis
 			? props.thesis.keywords.map((keyword) => {
-					return { value: keyword, label: keyword };
-			  })
+				return { value: keyword, label: keyword };
+			})
 			: []
 	);
 	const [selectedCoSupervisors, setSelectedCoSupervisors] = useState(
 		props.thesis
 			? props.thesis.coSupervisors
-					.filter((cosupervisor) => cosupervisor.ID !== user.id)
-					.map((cosupervisor) => {
-						return {
-							value: cosupervisor.email,
-							label: cosupervisor.name + ' ' + cosupervisor.surname,
-							email: cosupervisor.email,
-							name: cosupervisor.name,
-							surname: cosupervisor.surname,
-						};
-					})
+				.filter((cosupervisor) => cosupervisor.ID !== user.id)
+				.map((cosupervisor) => {
+					return {
+						value: cosupervisor.email,
+						label: cosupervisor.name + ' ' + cosupervisor.surname,
+						email: cosupervisor.email,
+						name: cosupervisor.name,
+						surname: cosupervisor.surname,
+					};
+				})
 			: []
 	);
 	const [selectedTypes, setselectedTypes] = useState(
 		props.thesis
 			? props.thesis.types.map((type) => {
-					return { value: type, label: type };
-			  })
+				return { value: type, label: type };
+			})
 			: []
 	);
 	const [selectedLevel, setSelectedLevel] = useState(props.thesis ? { value: props.thesis.level, label: props.thesis.level } : '');
@@ -61,6 +61,9 @@ function ProposalForm(props) {
 	useEffect(() => {
 		if (props.thesis) {
 			setTitle(props.thesis.title);
+			setDescription(props.thesis.description);
+			setRequiredKnowledge(props.thesis.requiredKnowledge);
+			setNotes(props.thesis.notes);
 			setSelectedCoSupervisors(
 				props.thesis.coSupervisors
 					.filter((cosupervisor) => cosupervisor.ID !== user.id)
