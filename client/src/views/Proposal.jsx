@@ -78,7 +78,6 @@ function Proposal(props) {
 									isProfessor={props.isProfessor}
 									applications={props.applications}
 									hasApplied={props.hasApplied}
-									isEditable={true}
 								/>
 							</Card>
 						</Col>

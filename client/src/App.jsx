@@ -27,8 +27,8 @@ function App() {
 	const [dirty, setDirty] = useState(false);
 	const [isProfessor, setIsProfessor] = useState(false);
 	const [isStudent, setIsStudent] = useState(false);
-	const [applications, setApplications] = useState([]);
 	const [hasApplied, setHasApplied] = useState(false);
+	const [applications, setApplications] = useState([]);
 	const [applicationsThesis, setApplicationsThesis] = useState([]);
 
 	const { setLoading } = useLoading();
@@ -149,7 +149,6 @@ function App() {
 	}, [dirty, accessToken, isStudent]);
 
 	useEffect(() => {
-		console.log('isProfessor dirty', isProfessor);
 		if (isAuthenticated && isProfessor) {
 			setLoading(true);
 			API.getApplications(accessToken)
@@ -244,7 +243,7 @@ function App() {
 							setShowModal={setShowModal}
 							setDirty={setDirty}
 							hasApplied={hasApplied}
-							applications={applicationsThesis}
+							applications={applications}
 						/>
 					}
 				/>

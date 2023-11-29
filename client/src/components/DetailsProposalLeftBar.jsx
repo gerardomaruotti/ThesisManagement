@@ -5,7 +5,6 @@ import randomcolor from 'randomcolor';
 import { Row, Col, Image, Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
-import EditingButtons from './EditingButtons.jsx';
 
 function DetailsProposalLeftBar(props) {
 	const { thesis, apply } = props;
@@ -139,11 +138,7 @@ function DetailsProposalLeftBar(props) {
 					</div>
 				</Col>
 			) : null}
-			{props.isProfessor ? (
-				<div style={{ marginTop: 20, textAlign: 'center' }}>
-					<EditingButtons disabled={!props.isEditable} id={props.thesis.ID} />
-				</div>
-			) : (
+			{props.isProfessor ? null : (
 				<Col md={12} className='d-flex justify-content-center'>
 					<div style={{ marginTop: 20, textAlign: 'center' }}>
 						{props.applications.find((app) => app.id == props.id && app.state != 2) ? (
