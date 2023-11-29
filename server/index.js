@@ -222,7 +222,7 @@ app.get('/api/thesis/:id/groups', checkJwt, async (req, res) => {
 		const groups = await db.getGroupSupervisorAndCoSupervisor(thesisID);
 		return res.status(200).json(groups);
 	} catch (err) {
-		return res.status(503).json({ error: 'Errore nella restituzione dei gruppi' });
+		return res.status(503).json({ error: 'Error while searching the groups' });
 	}
 });
 
@@ -277,7 +277,7 @@ app.post(
 				return res.status(401).json({ error: 'Unauthorized user' });
 			}
 		} catch (err) {
-			return res.status(503).json({ error: 'Errore nell inserimento' });
+			return res.status(503).json({ error: 'Error in the insertion'});
 		}
 	}
 );
@@ -318,7 +318,7 @@ app.get('/api/thesis/:id', checkJwt, async (req, res) => {
 		console.log(thesis)
 		res.status(200).json(thesis);
 	} catch (err) {
-		res.status(500).json({ error: 'Errore visualizzazione tesi' });
+		res.status(500).json({ error: 'Error the view of the thesis' });
 	}
 });
 
@@ -354,9 +354,9 @@ app.post('/api/thesis/:id/apply', checkJwt, async (req, res) => {
 			return res.status(401).json({ error: 'Unauthorized user' });
 		}
 
-		return res.status(200).json('Inserimento avvenuto con successo');
+		return res.status(200).json('Insertion Succesful');
 	} catch (err) {
-		return res.status(503).json({ error: 'Errore nell inserimento della proposta di tesi' });
+		return res.status(503).json({ error: 'Error in the insertion of an application' });
 	}
 });
 
@@ -428,12 +428,12 @@ app.post('/api/accept/application', [
 			let archived = await db.archiveThesis(thesis);
 			return res.status(200).json(acceptApplication);
 		} else {
-			return res.status(400).json({ error: 'Applicazione inesistente' })
+			return res.status(400).json({ error: 'Application does not exist' })
 		}
 
 
 	} catch (err) {
-		return res.status(503).json({ error: "Errore nell'accettazione di una tesi" });
+		return res.status(503).json({ error: "Error while awhile accepting the application" });
 	}
 });
 
@@ -463,11 +463,11 @@ app.post('/api/reject/application', [
 			let rejectApplication = await db.rejectApplication(thesis, student);
 			return res.status(200).json(rejectApplication);
 		} else {
-			return res.status(400).json({ error: 'Applicazione inesistente' })
+			return res.status(400).json({ error: 'The application does not exist'})
 		}
 
 	} catch (err) {
-		return res.status(503).json({ error: "Errore nella reject di una tesi" });
+		return res.status(503).json({ error: "Error in the reject of and application" });
 	}
 });
 
@@ -539,7 +539,7 @@ app.put('/api/edit/thesis/:id',
 				return res.status(401).json({ error: 'Unauthorized user' });
 			}
 		} catch (err) {
-			return res.status(503).json({ error: 'Errore nella modifica della tesi' });
+			return res.status(503).json({ error: 'Errore in the update of the thesis' });
 		}
 	}
 );
