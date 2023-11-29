@@ -92,7 +92,6 @@ app.post('/api/thesis', checkJwt, async (req, res) => {
 				let checkApplication = await db.checkExistenceApplicationForThesis(thesis[i].ID);
 				thesis[i].applications = checkApplication;
 			}
-			console.log(thesis)
 			res.status(200).json(thesis);
 		} else if (getRole.role == 'student') {
 			let thesis = await db.getThesisStudent(getRole.id, (date == 0) ? currentDate.format('YYYY-MM-DD'): date);
@@ -229,15 +228,16 @@ app.get('/api/thesis/:id/groups', checkJwt, async (req, res) => {
 app.post(
 	'/api/insert/thesis',
 	[
-		check('title').isLength({ min: 1 }),
-		check('description').isLength({ min: 1 }),
-		check('required_knowledge').isLength({ min: 1 }),
-		check('notes').isLength({ min: 1 }),
-		check('expiration_date').isLength({ min: 1 }),
-		check('level').isLength({ min: 1 }),
-		check('degree').isLength({ min: 1 }),
-		check('co-supervisors').isArray(),
+		check('title').isString().trim().isLength({ min: 1 }),
+		check('description').isString().trim().isLength({ min: 1 }),
+		check('required_knowledge').isString(),
+		check('notes').isString(),
+		check('expiration_date').isString().trim().isLength({ min: 10, max: 10 }),
+		check('level').isString().trim().isLength({ min: 1 }),
+		check('degree').isString().trim().isLength({ min: 1 }),
+		check('co_supervisors').isArray(),
 		check('keywords').isArray(),
+		check('types').isArray(),
 	],
 	checkJwt,
 	async (req, res) => {
@@ -322,7 +322,6 @@ app.get('/api/thesis/:id', checkJwt, async (req, res) => {
 			groups: groups,
 			coSupervisors: coSupervisors,
 		};
-		console.log(thesis)
 		res.status(200).json(thesis);
 	} catch (err) {
 		res.status(500).json({ error: 'Error the view of the thesis' });
@@ -475,7 +474,7 @@ app.post('/api/reject/application', [
 		}
 
 	} catch (err) {
-		return res.status(503).json({ error: "Error in the reject of and application" });
+		return res.status(503).json({ error: "Error in the reject of an application" });
 	}
 });
 
@@ -575,10 +574,15 @@ app.get('/api/virtualClockStatus', checkJwt, async(req,res) => {
 
 
 app.put('/api/virtualClockOn', [
-	check('date').isString({min: 1})
+	check('date').isString().trim().isLength({ min: 10, max: 10 })
 ],
 checkJwt, 
 async(req,res)=> {
+	const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			return res.status(422).json({ errors: errors.array() });
+		}
+
 	try{
 		await db.setVirtualDate(req.body.date);
 		return res.status(200).json("Updated")
