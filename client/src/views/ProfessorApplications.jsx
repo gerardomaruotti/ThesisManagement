@@ -87,28 +87,37 @@ function ProfessorApplications(props) {
                 <Container>
                     <Row style={{ paddingTop: 25, paddingBottom: 20 }}>
                         <Col>
-                            <Nav variant='pills' activeKey={rapidFilter}>
-                                <Nav.Item>
-                                    <Nav.Link eventKey='all' className='buttons-rapid-filter' onClick={() => setRapidFilter('all')} >
-                                        All
-                                    </Nav.Link>
-                                </Nav.Item>
-                                <Nav.Item>
-                                    <Nav.Link eventKey='pending' className='buttons-rapid-filter' onClick={() => setRapidFilter('pending')}>
-                                        Pending
-                                    </Nav.Link>
-                                </Nav.Item>
-                                <Nav.Item>
-                                    <Nav.Link eventKey='assigned' className='buttons-rapid-filter' onClick={() => setRapidFilter('assigned')}>
-                                        Assigned
-                                    </Nav.Link>
-                                </Nav.Item>
-                                <Nav.Item>
-                                    <Nav.Link eventKey='expired' className='buttons-rapid-filter' onClick={() => setRapidFilter('expired')}>
-                                        Expired
-                                    </Nav.Link>
-                                </Nav.Item>
-                            </Nav>
+                            <div className='hide-scrollbar'
+                                style={{
+                                    display: 'flex',
+                                    overflowX: 'auto',
+                                    whiteSpace: 'nowrap',
+                                    scrollbarWidth: 'none' /* For Firefox */,
+                                    msOverflowStyle: 'none' /* For Internet Explorer and Edge */,
+                                }}>
+                                <Nav variant='pills' activeKey={rapidFilter} style={{ display: 'flex', flexWrap: 'nowrap' }}>
+                                    <Nav.Item style={{ flexShrink: 0 }}>
+                                        <Nav.Link eventKey='all' className='buttons-rapid-filter' onClick={() => setRapidFilter('all')} >
+                                            All
+                                        </Nav.Link>
+                                    </Nav.Item>
+                                    <Nav.Item style={{ flexShrink: 0 }}>
+                                        <Nav.Link eventKey='pending' className='buttons-rapid-filter' onClick={() => setRapidFilter('pending')}>
+                                            Pending
+                                        </Nav.Link>
+                                    </Nav.Item>
+                                    <Nav.Item style={{ flexShrink: 0 }}>
+                                        <Nav.Link eventKey='assigned' className='buttons-rapid-filter' onClick={() => setRapidFilter('assigned')}>
+                                            Assigned
+                                        </Nav.Link>
+                                    </Nav.Item>
+                                    <Nav.Item style={{ flexShrink: 0 }}>
+                                        <Nav.Link eventKey='expired' className='buttons-rapid-filter' onClick={() => setRapidFilter('expired')}>
+                                            Expired
+                                        </Nav.Link>
+                                    </Nav.Item>
+                                </Nav>
+                            </div>
                         </Col>
                     </Row>
                 </Container>

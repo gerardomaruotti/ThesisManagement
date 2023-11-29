@@ -85,7 +85,7 @@ function ProfessorApplicationCard(props) {
 						>
 							<i className='bi bi-people' style={{ fontSize: '16px' }}></i>
 						</span>
-						<span style={{ color: 'rgba(0, 0, 0, 0.5)', paddingLeft: 8 }}>{props.applications.length} people applied</span>
+						<span style={{ color: 'rgba(0, 0, 0, 0.5)', paddingLeft: 8 }}>{props.applications.length} applied</span>
 					</Col>
 				</Row>
 
