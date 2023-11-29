@@ -92,7 +92,6 @@ app.post('/api/thesis', checkJwt, async (req, res) => {
 				let checkApplication = await db.checkExistenceApplicationForThesis(thesis[i].ID);
 				thesis[i].applications = checkApplication;
 			}
-			console.log(thesis)
 			res.status(200).json(thesis);
 		} else if (getRole.role == 'student') {
 			let thesis = await db.getThesisStudent(getRole.id, (date == 0) ? currentDate.format('YYYY-MM-DD'): date);
@@ -323,7 +322,6 @@ app.get('/api/thesis/:id', checkJwt, async (req, res) => {
 			groups: groups,
 			coSupervisors: coSupervisors,
 		};
-		console.log(thesis)
 		res.status(200).json(thesis);
 	} catch (err) {
 		res.status(500).json({ error: 'Error the view of the thesis' });
