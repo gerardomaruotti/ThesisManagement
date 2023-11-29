@@ -1,5 +1,5 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Navbar, Button, Nav, Image, Dropdown, Container } from 'react-bootstrap';
+import { Navbar, NavDropdown, Nav, Image, Dropdown, Container } from 'react-bootstrap';
 import { useAuth0 } from '@auth0/auth0-react';
 import logo_white from '../assets/logo_white.svg';
 import { Color } from '../constants/colors.js';
@@ -21,6 +21,21 @@ function Header(props) {
 				<Nav.Link eventKey='/applications' onClick={() => navigate('/applications')}>
 					Applications
 				</Nav.Link>
+				<Nav.Link className='d-md-none' eventKey='/notifications'>
+					Notifications
+				</Nav.Link>
+				<Nav.Link className='d-md-none' eventKey='/settings' onClick={() => navigate('/settings')}>
+					Settings
+				</Nav.Link>
+				{isAuthenticated ? (
+					<Nav.Link className='d-md-none' eventKey='/logout' onClick={logout}>
+						Logout
+					</Nav.Link>
+				) : (
+					<Nav.Link className='d-md-none' eventKey='/login' onClick={loginWithRedirect}>
+						Login
+					</Nav.Link>
+				)}
 			</Nav>
 		);
 	}
@@ -36,14 +51,14 @@ function Header(props) {
 					<Navbar.Collapse className='d-none d-md-flex'>{navElement()}</Navbar.Collapse>
 					<Nav className='d-flex flex-row'>
 						{props.date ? (
-							<Nav.Link eventKey='/settings' onClick={() => navigate('/settings')} style={{ height: 53 }}>
+							<Nav.Link eventKey='/settings' onClick={() => navigate('/settings')} style={{ height: 53, paddingRight: 8 }}>
 								<div className='d-flex align-items-center justify-content-center' style={{ marginTop: '7px' }}>
 									<i className='bi bi-calendar3' style={{ marginRight: 10 }}></i>
 									{dayjs(props.date).format('DD MMM YYYY')}
 								</div>
 							</Nav.Link>
 						) : null}
-						<Dropdown align='end'>
+						<Dropdown align='end' className='d-none d-md-flex'>
 							<Dropdown.Toggle variant='primary' id='dropdown-custom' style={{ height: 53 }}>
 								<i className='bi bi-bell' style={{ fontSize: '20px' }}></i>
 							</Dropdown.Toggle>
@@ -54,7 +69,7 @@ function Header(props) {
 								<Dropdown.Item>Notifica 3</Dropdown.Item>
 							</Dropdown.Menu>
 						</Dropdown>
-						<Dropdown align='end'>
+						<Dropdown align='end' className='d-none d-md-flex'>
 							<Dropdown.Toggle variant='primary' id='dropdown-custom'>
 								<Container className='d-flex justify-content-between align-items-center'>
 									<div style={{ marginRight: 15 }}>

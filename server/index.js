@@ -356,7 +356,7 @@ app.post('/api/thesis/:id/apply', checkJwt, async (req, res) => {
 		}
 
 		if (userRole.role == 'student') {
-			const propId = await db.insertApplication(userRole.id, thesisId);
+			const propId = await db.insertApplication(userRole.id, thesisId, (date == 0) ? currentDate.format('YYYY-MM-DD'): date);
 		} else {
 			return res.status(401).json({ error: 'Unauthorized user' });
 		}
@@ -526,10 +526,10 @@ app.put('/api/edit/thesis/:id',
 				const supervisor = await db.getThesisSupervisor(thesisId);
 				if (userRole.id != supervisor) return res.status(400).json({ error: 'The teacher do not have the permission to modify the thesis' });
 
-				const checkApplications = await db.checkExistenceApplicationForThesis(thesisId);
-				if (checkApplications == 1) return res.status(400).json({ error: 'The thesis has applications, cannot be modified' });
+				const checkApplications = await db.checkExistenceAcceptedApplicationForThesis(thesisId);
+				if (checkApplications == 1) return res.status(400).json({ error: 'The thesis has accepted applications, cannot be modified' });
 
-				if (dayjs(exp_date).isBefore(dayjs())) return res.status(400).json({ error: 'The expiration date is not valid, change the expriration date' });
+				if (dayjs(exp_date).isBefore((date == 0) ? currentDate.format("YYYY-MM-DD"): date)) return res.status(400).json({ error: 'The expiration date is not valid, change the expriration date' });
 
 				const checkStatus = await db.checkThesisActive(thesisId,(date==0) ? currentDate.format("YYYY-MM-DD") : date);
 				
@@ -594,6 +594,8 @@ async(req,res)=> {
 app.put('/api/virtualClockOff', checkJwt, async(req,res) => {
 	try{
 		await db.setVirtualDate(null);
+		await db.resetStatusPastApplications(currentDate.format("YYYY-MM-DD"))
+		await db.deleteFutureApplications(currentDate.format("YYYY-MM-DD"));
 		return res.status(200).json("Updated")
 	}
 	catch(err){

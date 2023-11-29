@@ -78,6 +78,7 @@ CREATE TABLE IF NOT EXISTS "THESIS_APPLICATION" (
 	"STUDENT"	VARCHAR(50),
 	"THESIS"	INTEGER NOT NULL,
 	"STATE"	INTEGER NOT NULL,
+	"APPLICATION_DATE" VARCHAR(50),
 	PRIMARY KEY("ID_APPLICATION" AUTOINCREMENT),
 	FOREIGN KEY("THESIS") REFERENCES "THESIS"("ID_THESIS"),
 	FOREIGN KEY("STUDENT") REFERENCES "STUDENT"("ID")
@@ -204,13 +205,13 @@ The project will develop a unified foundational infrastructure and comprehensive
 (4) It will develop novel technologies to automatically generate fixes, i.e., code patches to repair suspicious design components. The proposed approaches will be demonstrated on complex, realistic, industry-scale SoC designs.','Advanced programming skills, basics of data analytics, computer architectures, testing and verification of hardware devices.','The thesis is expected to be carried out under the tutelage of Prof. Debjit Pal at the University of Illinois at Chicago. Visa paperwork will be handled by the University of Chicago offices. All other expenses will be borne by the student. In case of particular impediments, the thesis can be developed at Politecnico.','2023-11-18','MSc','LM-29','d111111'),
  (9,'Artificial Intelligence in Aeronautics: a state-of-the-art','Artificial Intelligence (AI) is shaping the world we live in, providing new insights and offering unthinkable opportunities in every scope of engineering. This is true for the aviation industry as well as the most important industries in the field are looking at AI (and its explainable versions) with an interested eye. While AI offers immense potential for innovation, there are still technical challenges and concerns surrounding safety that need to be addressed. This thesis should approach and provide a bird eye perspective on where AI is currently used in the aerospace domain as well as the possible challenges and opportunities it may bring to the aerospace world.','Basic understanding of AI principles and aerospace','','2024-10-31','MSc','LM-20','d111111'),
  (10,'Digital Twins in the Aviation Sector: Assessing the Gap Between Theory and Reality','Digital twins (DTs) are virtual replicas of real-world objects or systems that span their lifecycle, are updated from real-time data, and use simulation, machine learning, and reasoning to aid decision-making. They are highly complex virtual models that accurately represent physical entities. The market for digital twins is expected to grow significantly across various industries. While digital twins have already made substantial progress in several sectors, there is still room for further advancements. On top of that, there is much confusion about what a DT is and what is not. Nevertheless, there is a lot of work still left to do and a systematic review which assesses the state-of-the-art and how far we have gone could be beneficial for both the academia and the industries.','Basic understanding of aerospace systems','Interest in the aerospace world and computational topics','2024-10-31','MSc','LM-20','d111111');
-INSERT INTO "THESIS_APPLICATION" ("ID_APPLICATION","STUDENT","THESIS","STATE") VALUES (1,'s313373',2,2),
- (2,'s317611',3,1),
- (3,'s317977',6,2),
- (4,'s317977',5,2),
- (5,'s319852',7,0),
- (6,'s313373',7,0),
- (7,'s317642',9,2);
+INSERT INTO "THESIS_APPLICATION" ("ID_APPLICATION","STUDENT","THESIS","STATE","APPLICATION_DATE") VALUES (1,'s313373',2,2,'2023-11-03'),
+ (2,'s317611',3,1,'2023-07-13'),
+ (3,'s317977',6,2,'2023-09-11'),
+ (4,'s317977',5,2,'2023-11-18'),
+ (5,'s319852',7,0,'2023-11-01'),
+ (6,'s313373',7,0,'2023-09-21'),
+ (7,'s317642',9,2,'2023-10-08');
 INSERT INTO "THESIS_STATUS" ("THESIS","STATE") VALUES (1,1),
  (2,1),
  (3,0),

@@ -72,7 +72,7 @@ function Settings(props) {
 						<div>
 							<hr />
 							<Row>
-								<Col md={4}>
+								<Col md={4} xs={7}>
 									<Form.Control
 										type='date'
 										value={date ? date : ''}
@@ -82,7 +82,7 @@ function Settings(props) {
 									/>
 								</Col>
 								<Col>
-									<Button style={{ marginLeft: 10 }} variant='primary' onClick={handleDateVirtualClock}>
+									<Button style={{ marginLeft: 10, width: 100 }} variant='primary' onClick={handleDateVirtualClock}>
 										Set Date
 									</Button>
 								</Col>

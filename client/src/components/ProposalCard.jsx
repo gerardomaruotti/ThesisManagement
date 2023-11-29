@@ -93,40 +93,33 @@ function ProposalCard(props) {
 				</div>
 
 				<Row style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15, height: 30 }}>
-					<Col lg={1} xs={1} style={{ display: 'flex', alignItems: 'center' }}>
+					<Col style={{ display: 'flex', alignItems: 'center' }}>
 						<Image style={{ height: 35, width: 35 }} src={Avatar} roundedCircle />
-					</Col>
-					<Col lg={5} xs={5} style={{ display: 'flex', alignItems: 'center' }}>
-						<span style={{ color: 'rgba(0, 0, 0, 0.8)' }}>{props.thesis.sup_name + ' ' + props.thesis.sup_surname}</span>
+						<span style={{ color: 'rgba(0, 0, 0, 0.8)', paddingLeft: 8 }}>{props.thesis.sup_name + ' ' + props.thesis.sup_surname}</span>
 					</Col>
 					{props.thesis.types.filter((type) => type == 'IN COMPANY').length > 0 ? (
 						<>
-							<Col lg={1} xs={1} style={{ display: 'flex', alignItems: 'center', float: 'right' }}>
+							<Col style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
 								<span
 									className='badge'
 									style={{ backgroundColor: 'rgba(230, 120, 43, 0.1)', color: Color.secondary, padding: '1em 1em', borderRadius: '0.25rem' }}
 								>
 									<i className='bi bi-building-check' style={{ fontSize: '16px' }}></i>
 								</span>
-							</Col>
-							<Col lg={2} xs={2} style={{ display: 'flex', alignItems: 'center', float: 'right' }}>
-								<span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>Company</span>
+								<span className='d-none d-md-flex' style={{ color: 'rgba(0, 0, 0, 0.5)', paddingLeft: 8 }}>Company</span>
 							</Col>
 						</>
 					) : null}
 					{props.thesis.types.filter((type) => type == 'ABROAD').length > 0 ? (
 						<>
-							<Col lg={1} xs={1} style={{ display: 'flex', alignItems: 'center', float: 'right' }}>
+							<Col style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
 								<span
 									className='badge'
 									style={{ backgroundColor: 'rgba(230, 120, 43, 0.1)', color: Color.secondary, padding: '1em 1em', borderRadius: '0.25rem' }}
 								>
 									<i className='bi bi-globe-americas' style={{ fontSize: '16px' }}></i>
 								</span>
-							</Col>
-
-							<Col lg={2} xs={2} style={{ display: 'flex', alignItems: 'center', float: 'right' }}>
-								<span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>Abroad</span>
+								<span className='d-none d-md-flex' style={{ color: 'rgba(0, 0, 0, 0.5)', paddingLeft: 8 }}>Abroad</span>
 							</Col>
 						</>
 					) : null}
