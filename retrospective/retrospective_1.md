@@ -34,7 +34,7 @@ TEMPLATE FOR RETROSPECTIVE (Team 18)
 
 | Story  | # Tasks | Points | Hours est. | Hours actual |
 |--------|---------|--------|------------|--------------|
-| #0    |      8   |    5   |    11h 10m        |     11h 40m         | 
+| #0 Insert Proposal   |      8   |    5   |    11h 10m        |     11h 40m         | 
 |    | #0 E2E test | --- | 1h | 1h 30m |
 |    | #1 Unit test | --- | 30m | 3h 30m |
 |    | #2 Insert API checks | --- | 1h | 0h |
@@ -129,7 +129,8 @@ TEMPLATE FOR RETROSPECTIVE (Team 18)
 - Improvement goals for the next sprint and how to achieve them (technical tasks, team coordination, etc.)
 
   > 1) Better initial planning.
-  > 2) Work even better on GitHub
+  > 2) Work even better on GitHub.
+  > 3) Do not work the most in the last days.
 
 - One thing you are proud of as a Team!!
 <br>Great adaptability and excellent teamwork.
