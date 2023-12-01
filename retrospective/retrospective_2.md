@@ -143,8 +143,8 @@ TEMPLATE FOR RETROSPECTIVE (Team 18)
 
 - Improvement goals for the next sprint and how to achieve them (technical tasks, team coordination, etc.)
 
-  > 1) 
-  > 2) 
+Looking forward to enhancing our team's future success by boosting each member's ability to effectively showcase their work. Let's elevate our collective exposition skills!
+
 
 - One thing you are proud of as a Team!!
 <br>. We have accomplished what we set out to improve.
