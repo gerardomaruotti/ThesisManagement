@@ -1,10 +1,11 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Navbar, Button, Nav, Image, Dropdown, Container } from 'react-bootstrap';
+import { Navbar, NavDropdown, Nav, Image, Dropdown, Container } from 'react-bootstrap';
 import { useAuth0 } from '@auth0/auth0-react';
 import logo_white from '../assets/logo_white.svg';
 import { Color } from '../constants/colors.js';
 import Avatar from '../assets/avatar.svg';
 import { useNavigate, useLocation } from 'react-router-dom';
+import dayjs from 'dayjs';
 
 function Header(props) {
 	const { isAuthenticated, loginWithRedirect, logout } = useAuth0();
@@ -20,6 +21,21 @@ function Header(props) {
 				<Nav.Link eventKey='/applications' onClick={() => navigate('/applications')}>
 					Applications
 				</Nav.Link>
+				<Nav.Link className='d-md-none' eventKey='/notifications'>
+					Notifications
+				</Nav.Link>
+				<Nav.Link className='d-md-none' eventKey='/settings' onClick={() => navigate('/settings')}>
+					Settings
+				</Nav.Link>
+				{isAuthenticated ? (
+					<Nav.Link className='d-md-none' eventKey='/logout' onClick={logout}>
+						Logout
+					</Nav.Link>
+				) : (
+					<Nav.Link className='d-md-none' eventKey='/login' onClick={loginWithRedirect}>
+						Login
+					</Nav.Link>
+				)}
 			</Nav>
 		);
 	}
@@ -34,7 +50,15 @@ function Header(props) {
 
 					<Navbar.Collapse className='d-none d-md-flex'>{navElement()}</Navbar.Collapse>
 					<Nav className='d-flex flex-row'>
-						<Dropdown align='end'>
+						{props.date ? (
+							<Nav.Link eventKey='/settings' onClick={() => navigate('/settings')} style={{ height: 53, paddingRight: 8 }}>
+								<div className='d-flex align-items-center justify-content-center' style={{ marginTop: '7px' }}>
+									<i className='bi bi-calendar3' style={{ marginRight: 10 }}></i>
+									{dayjs(props.date).format('DD MMM YYYY')}
+								</div>
+							</Nav.Link>
+						) : null}
+						<Dropdown align='end' className='d-none d-md-flex'>
 							<Dropdown.Toggle variant='primary' id='dropdown-custom' style={{ height: 53 }}>
 								<i className='bi bi-bell' style={{ fontSize: '20px' }}></i>
 							</Dropdown.Toggle>
@@ -45,7 +69,7 @@ function Header(props) {
 								<Dropdown.Item>Notifica 3</Dropdown.Item>
 							</Dropdown.Menu>
 						</Dropdown>
-						<Dropdown align='end'>
+						<Dropdown align='end' className='d-none d-md-flex'>
 							<Dropdown.Toggle variant='primary' id='dropdown-custom'>
 								<Container className='d-flex justify-content-between align-items-center'>
 									<div style={{ marginRight: 15 }}>
@@ -59,13 +83,9 @@ function Header(props) {
 							</Dropdown.Toggle>
 
 							<Dropdown.Menu>
-								<Dropdown.Item>
+								<Dropdown.Item onClick={() => navigate('/settings')}>
 									<i className='bi bi-gear'></i>
 									<span style={{ marginLeft: 15 }}>Settings</span>
-								</Dropdown.Item>
-								<Dropdown.Item>
-									<i className='bi bi-clock-history'></i>
-									<span style={{ marginLeft: 15 }}>virtual clock</span>
 								</Dropdown.Item>
 								<Dropdown.Divider />
 								{isAuthenticated ? (

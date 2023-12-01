@@ -4,40 +4,71 @@
 ## API Server
 
 - GET `/api/keywords`
-  - request parameters: none
+  - request parameters: none.
   - response body content: list of keywords.
 - GET `/api/user`
-  - request parameters: none
+  - request parameters: none.
   - response body content: an object including all the information of the authenticated user: unique identifier, name, surname and email.
 - GET `/api/types`
-  - request parameters: none
+  - request parameters: none.
   - response body content: list of types.
 - GET `/api/teachers`
-  - request parameters: none
+  - request parameters: none.
   - response body content: list of teachers identified with name, surname and email.
 - GET `/api/groups`
-  - request parameters: none
+  - request parameters: none.
   - response body content: list of groups identified with code of the group and the related name.
 - GET `/api/cds`
-  - request parameters: none
+  - request parameters: none.
   - response body content: list of cds identified with the code of the degree and the related title.
 - GET `/api/thesis`
-  - request parameters: none
+  - request parameters: none.
   - request body content: an object that may containing filters: a list of keywords, a list of types, a supervisor, a list of co-supervisors, a list of groups and an expiration date. 
   - response body content: list of thesis identified with an identifier, a title, a description, required knowledge, notes, expiration date, the level, related degree, a list containing the related types and a list containing the related keywords.
 - GET `/api/thesis/:id/groups`
-  - request parameters: thesis identifier
+  - request parameters: thesis identifier.
   - response body content: a list of groups identified with a code and a name.
 - POST `/api/insert/thesis`
   - request body content: an object including all the data necessary to insert a new thesis: a title, a description, required knowledge, notes, expiration date, the level, related degree, a list of co-supervisors, a list of types and a list of keywords.
   - response body content: the identifier of the thesis created.
 - GET `/api/thesis/:id`
-  - request parameters: thesis identifier
+  - request parameters: thesis identifier.
   - response body content: an object including all the data related to a thesis: a title, a description, required knowledge, notes, expiration date, the level, related degree, the supervisor and a list of co-supervisors, the list of groups to which the supervisors belong, a list of related keywords and a list of related types.
 - POST `/api/thesis/:id/proposal`
-  - request parameters: thesis identifier
+  - request parameters: thesis identifier.
   - request body content: none.
-  - response body content: successful message.  
+  - response body content: successful message. 
+- GET `/api/thesis/applications/browse`
+  - request parameters: none.
+  - response body content: 
+    - if called by a `teacher`: a list of applications for all the theses for which the professor is the supervisor. The object is composed of: thesis identifier, its title, thesis's expiration date, the level, the degree, the identifier of student who applied, student's name, student's surname, student's email and the application's state.
+    - if called by a `student`: a list of applications with which he has interacted. The object is composed of:
+    thesis identifier, its title, thesis' expiration date, the level, the degree, supervisor's identifier, supervisor's name, supervisor's surname, application's state, the list of keywords for that thesis and the list of types for that thesis.
+- POST `/api/accept/application`
+  - request parameters: none.
+  - request body content: student identifier and thesis identifier.
+  - response body content: a string 'Accepted' validating the success of the operation.
+- POST `/api/reject/application`
+  - request parameters: none.
+  - request body content: student identifier and thesis identifier.
+  - response body content: a string 'Rejected' validating the success of the operation.
+- PUT `/api/edit/thesis/:id`
+  - request parameters: thesis identifier.
+  - request body content: an object including all the data necessary to update a thesis: a title, a description, required knowledge, notes, expiration date, the level, related degree, a list of co-supervisors, a list of related keywords and a list of related types.
+  - response body content: the identifier of the just modified thesis.
+- GET `/api/virtualClockStatus`
+  - request parameters: none.
+  - response body content: 
+    - Virtual Clock On: a string representing the predefined date.
+    - Virtual Clock Off: valute "0".
+- PUT `/api/virtualClockOn`
+  - request parameters: none.
+  - request body content: the date to set.
+  - response body content: a string 'Updated' validating the succes of the operation.
+- PUT `/api/virtualClockOff`  
+  - request parameters: none.
+  - request body content: none.
+  - response body content: a string 'Updated' validating the succes of the operation.
 
 ## Database Main Tables
 
@@ -73,9 +104,12 @@
 | ------- | --------------------------  | ------------------------ | ------- | -------- |
 | s319852 | s319852@studenti.polito.it  | Evelina Marija Bratuhina |  LM-32  | s319852  |
 | s313373 | s313373@studenti.polito.it  |      Fabio Mangani       |  LM-32  | s313373  |
-| s111111 | s111111@studenti.polito.it  |      Giacomo Cauda       |  LM-29  | s111111  |
+| s317977 | s317977@studenti.polito.it  |      Giacomo Cauda       |  LM-29  | s317977  |
 | s317642 | s317642@studenti.polito.it  |     Gerardo Maruotti     |  LM-20  | s317642  |
 | s317611 | s317611@studenti.polito.it  |      Edoardo Morello     |  LM-53  | s317611  |
+| s319854 | s319854@studenti.polito.it  |     Riccardo Simeone     |  LM-32  | s319854  |
+| s318927 | s315327@studenti.polito.it  |      Davide Vilella      |  LM-31  | s318927  |
+| s318927 | s318927@studenti.polito.it  |    Andrea Scamporrino    |  LM-33  | s318927  |
 
 ## Sequence for running the project on Docker
 

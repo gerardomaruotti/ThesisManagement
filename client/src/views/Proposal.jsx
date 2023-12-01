@@ -1,6 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Row, Col, Card, Image, Button, Container, Toast, ToastContainer, Offcanvas } from 'react-bootstrap';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import API from '../API.jsx';
 import { useLoading } from '../LoadingContext.jsx';
@@ -11,10 +11,9 @@ function Proposal(props) {
 	const { loading, setLoading } = useLoading();
 	const navigate = useNavigate();
 	const [thesis, setThesis] = useState(null);
-	const [popup, setPopup] = useState(false);
-	const [msgAndColor, setMsgAndColor] = useState({ header: '', msg: '', color: '' });
 	const [showDetails, setShowDetails] = useState(false);
 	const { id } = useParams();
+	const location = useLocation();
 
 	const handleClose = () => setShowDetails(false);
 	const handleShow = () => setShowDetails(true);
@@ -36,19 +35,31 @@ function Proposal(props) {
 	}, [props.accessToken]);
 
 	function apply() {
+		props.setShowModal(false);
 		API.ThesisApply(id, props.accessToken)
 			.then(() => {
-				setMsgAndColor({ header: 'Application successful', msg: 'Successful application to the thesis ' + thesis.title, color: 'success' });
-				setPopup(true);
+				props.handleSuccess('Application accepted');
+				props.setDirty(true);
 			})
-			.catch(() => {
-				setMsgAndColor({
-					header: 'Application failed',
-					msg: 'You have already sent an application for this thesis or you do not have authorization',
-					color: 'danger',
-				});
-				setPopup(true);
+			.catch((err) => {
+				props.handleError(err);
 			});
+	}
+
+	function handleRedirect() {
+		const fromHome = location.state && location.state.fromHome;
+
+		if (fromHome) {
+			navigate(-1);
+		} else {
+			navigate('/');
+		}
+	}
+
+	function showModal(event) {
+		event.stopPropagation();
+		props.setShowModal(true);
+		props.setMsgModal({ header: 'Apply', body: 'Are you sure you want to apply to this thesis?', method: apply });
 	}
 
 	return loading ? (
@@ -57,17 +68,24 @@ function Proposal(props) {
 		<>
 			<Container style={{ marginTop: 25, marginBottom: 25 }}>
 				{thesis == null ? null : (
-					<Row>
+					<Row style={{ display: 'flex', alignItems: 'start' }}>
 						<Col md={4} className='d-none d-md-flex'>
-							<Card style={{ padding: 20, paddingBottom: 30, position: 'sticky', top: 25 }} className='custom-card'>
-								<DetailsProposalLeftBar thesis={thesis} apply={apply} isProfessor={props.isProfessor} />
+							<Card style={{ padding: 20, position: 'sticky', top: 25 }} className='custom-card'>
+								<DetailsProposalLeftBar
+									id={id}
+									thesis={thesis}
+									apply={showModal}
+									isProfessor={props.isProfessor}
+									applications={props.applications}
+									hasApplied={props.hasApplied}
+								/>
 							</Card>
 						</Col>
-						<Col>
+						<Col md={8}>
 							<Card style={{ padding: 20 }} className='custom-card'>
 								<Row>
 									<Col className='d-flex align-items-center d-none d-md-flex'>
-										<Button variant='outline-primary' style={{ borderRadius: 50, width: 75 }} onClick={() => navigate(-1)}>
+										<Button variant='outline-primary' style={{ borderRadius: 50, width: 75 }} onClick={handleRedirect}>
 											<i className='bi bi-arrow-left'></i>
 										</Button>
 									</Col>
@@ -78,14 +96,15 @@ function Proposal(props) {
 								<Row>
 									<Col md={12}>
 										<div style={{ fontWeight: 'bold', fontSize: 15, marginTop: 15, color: '#E6782B' }}> Description </div>
-										<div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}>{thesis.description}</div>
+										<div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15, whiteSpace: 'pre-line' }}>{thesis.description}</div>
 									</Col>
 								</Row>
 								{thesis.requiredKnowledge == '' ? null : (
 									<Row>
 										<Col md={12}>
 											<div style={{ fontWeight: 'bold', fontSize: 15, marginTop: 15, color: '#E6782B' }}> Required Knowledge </div>
-											{thesis.requiredKnowledge}
+											<div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15, whiteSpace: 'pre-line' }}>{thesis.requiredKnowledge}</div>
+
 										</Col>
 									</Row>
 								)}
@@ -93,7 +112,7 @@ function Proposal(props) {
 									<Row>
 										<Col md={12}>
 											<div style={{ fontWeight: 'bold', fontSize: 15, marginTop: 15, color: '#E6782B' }}> Notes </div>
-											<div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}>{thesis.notes}</div>
+											<div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15, whiteSpace: 'pre-line' }}>{thesis.notes}</div>
 										</Col>
 									</Row>
 								)}
@@ -113,18 +132,9 @@ function Proposal(props) {
 					<Offcanvas.Title>Details</Offcanvas.Title>
 				</Offcanvas.Header>
 				<Offcanvas.Body>
-					<DetailsProposalLeftBar thesis={thesis} apply={apply} isProfessor={props.isProfessor} />
+					<DetailsProposalLeftBar id={id} thesis={thesis} apply={showModal} isProfessor={props.isProfessor} applications={props.applications} />
 				</Offcanvas.Body>
 			</Offcanvas>
-
-			<ToastContainer style={{ position: 'fixed', top: 20, right: 20, zIndex: 10 }} className='p-3'>
-				<Toast bg={msgAndColor.color} onClose={() => setPopup(false)} show={popup} delay={5000} autohide>
-					<Toast.Header>
-						<strong className='me-auto'>{msgAndColor.header}</strong>
-					</Toast.Header>
-					<Toast.Body>{msgAndColor.msg}</Toast.Body>
-				</Toast>
-			</ToastContainer>
 		</>
 	);
 }

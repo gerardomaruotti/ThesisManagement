@@ -118,7 +118,7 @@ Content-Type: application/json
 }
 
 
-###########API Accettazione di un application                   
+###########API Accettazione di un application                    
 POST http://localhost:3001/api/accept/application HTTP/1.1   
 Content-Type: application/json
 

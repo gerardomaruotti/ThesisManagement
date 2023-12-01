@@ -16,8 +16,6 @@ function StudentHome(props) {
 	const { loading, setLoading } = useLoading();
 	const [filtersShow, setFiltersShow] = useState(false);
 	const navigate = useNavigate();
-	const [popup, setPopup] = useState(false);
-	const [msgAndColor, setMsgAndColor] = useState({ header: '', msg: '', color: '' });
 	const [search, setSearch] = useState('');
 	const [filteredThesis, setFilteredThesis] = useState(props.thesis);
 	const [rapidFilter, setRapidFilter] = useState('all');
@@ -122,16 +120,16 @@ function StudentHome(props) {
 							</InputGroup>
 						</Col>
 					</Row>
-					<Row style={{ marginTop: 25, paddingBottom: 20 }}>
-						<Col sm={8}>
-							<Nav variant='pills' activeKey={rapidFilter}>
+					<Row style={{ marginTop: 25, paddingBottom: 10 }}>
+						<Col md="auto" style={{ paddingBottom: 10, overflowX: 'auto' }}>
+							<Nav variant='pills' activeKey={rapidFilter} style={{ display: 'flex', flexWrap: 'nowrap' }}>
 								<Nav.Item>
 									<Nav.Link eventKey='all' className='buttons-rapid-filter' onClick={() => handleRapidFilters('all')}>
 										All
 									</Nav.Link>
 								</Nav.Item>
 								<Nav.Item>
-									<Nav.Link eventKey='company' className='buttons-rapid-filter' onClick={() => handleRapidFilters('company')}>
+									<Nav.Link eventKey='company' style={{ width: 120 }} className='buttons-rapid-filter' onClick={() => handleRapidFilters('company')}>
 										In company
 									</Nav.Link>
 								</Nav.Item>
@@ -142,14 +140,12 @@ function StudentHome(props) {
 								</Nav.Item>
 							</Nav>
 						</Col>
-						<Col sm={2}>
+						<Col style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 10 }}>
 							{props.activatedFilters ? (
-								<Button variant='outline-secondary' style={{ borderRadius: 50, float: 'right', width: 150 }} onClick={resetFilters}>
+								<Button variant='outline-secondary' style={{ borderRadius: 50, float: 'right', width: 150, marginRight: 8 }} onClick={resetFilters}>
 									Reset filters
 								</Button>
 							) : null}
-						</Col>
-						<Col sm={2}>
 							<Button variant='primary' style={{ borderRadius: 50, float: 'right', width: 115 }} onClick={() => setFiltersShow(true)}>
 								<span style={{ marginRight: 12 }}>Filters</span>
 								<i className='bi bi-filter-circle'></i>
@@ -157,7 +153,7 @@ function StudentHome(props) {
 						</Col>
 					</Row>
 				</Container>
-			</div>
+			</div >
 			<FiltersModal
 				show={filtersShow}
 				thesis={props.thesis}
@@ -179,6 +175,7 @@ function StudentHome(props) {
 				expirationDate={props.expirationDate}
 				setExpirationDate={props.setExpirationDate}
 				handleError={props.handleError}
+				date={props.date}
 			/>
 			<Container>
 				<Row style={{ marginBottom: 25 }}>
@@ -186,7 +183,22 @@ function StudentHome(props) {
 						filteredThesis
 							.sort((a, b) => b.count - a.count)
 							.map((thesis, index) => (
-								<ProposalCard key={thesis.ID} thesis={thesis} accessToken={props.accessToken} setPopup={setPopup} setMsgAndColor={setMsgAndColor} />
+								<ProposalCard
+									key={thesis.ID}
+									thesis={thesis}
+									accessToken={props.accessToken}
+									setMsgModal={props.setMsgModal}
+									setShowModal={props.setShowModal}
+									handleError={props.handleError}
+									handleSuccess={props.handleSuccess}
+									setDirty={props.setDirty}
+									state={
+										props.applications.find((app) => app.id === thesis.ID && app.state != 2)
+											? props.applications.find((app) => app.id === thesis.ID && app.state != 2).state
+											: null
+									}
+									hasApplied={props.hasApplied}
+								/>
 							))
 					) : (
 						<Col style={{ marginTop: 25 }}>
@@ -195,15 +207,6 @@ function StudentHome(props) {
 					)}
 				</Row>
 			</Container>
-
-			<ToastContainer style={{ position: 'fixed', top: 20, right: 20, zIndex: 10 }} className='p-3'>
-				<Toast bg={msgAndColor.color} onClose={() => setPopup(false)} show={popup} delay={5000} autohide>
-					<Toast.Header>
-						<strong className='me-auto'>{msgAndColor.header}</strong>
-					</Toast.Header>
-					<Toast.Body>{msgAndColor.msg}</Toast.Body>
-				</Toast>
-			</ToastContainer>
 		</>
 	);
 }
