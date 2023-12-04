@@ -10,7 +10,7 @@ const dayjs = require('dayjs');
 const currentDate = dayjs();
 const nodemailer = require('nodemailer');
 const sgTransport = require('nodemailer-sendgrid-transport');
-const sendgridApiKey = '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';
+const sendgridApiKey = '';
 
 app.use(express.json());
 
