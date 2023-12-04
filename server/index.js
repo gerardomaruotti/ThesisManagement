@@ -10,7 +10,7 @@ const dayjs = require('dayjs');
 const currentDate = dayjs();
 const nodemailer = require('nodemailer');
 const sgTransport = require('nodemailer-sendgrid-transport');
-const sendgridApiKey = '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';
+const sendgridApiKey = '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';
 
 app.use(express.json());
 
@@ -32,7 +32,6 @@ const transporter = nodemailer.createTransport(
 		},
 	})
 );
-
 
 app.get('/api/keywords', checkJwt, (req, res) => {
 	db.getKeywords()
@@ -352,7 +351,7 @@ app.post('/api/thesis/:id/apply', checkJwt, async (req, res) => {
 		}
 		const date = await db.getVirtualDate();
 		let userRole = await db.getRole(req.auth);
-		await db.getThesis(thesisId);
+		const thesis_info = await db.getThesis(thesisId);
 		const state = await db.checkThesisActive(thesisId, (date == 0) ? currentDate.format('YYYY-MM-DD') : date);
 		let applications = await db.getStudentApplications(userRole.id, (date == 0) ? currentDate.format('YYYY-MM-DD') : date)
 
@@ -371,7 +370,22 @@ app.post('/api/thesis/:id/apply', checkJwt, async (req, res) => {
 		} else {
 			return res.status(401).json({ error: 'Unauthorized user' });
 		}
+		let getMailTeacher = await db.getMailTeacher(thesis_info.supervisor);
 
+		const mailOptions = {
+			from: 's313373@studenti.polito.it',
+			to: `${getMailTeacher}`,
+			text: `You received a Thesis Application for ${thesis_info.title} from student ${userRole.id}`,
+			subject: 'Thesis Application',
+		};
+
+		// Send the email using Nodemailer
+		transporter.sendMail(mailOptions, (error, info) => {
+			if (error) {
+				return console.error(error);
+			}
+			console.log('Message sent: %s', info.message);
+		});
 		return res.status(200).json('Insertion Succesful');
 	} catch (err) {
 		return res.status(503).json({ error: 'Error in the insertion of an application' });
@@ -433,7 +447,7 @@ app.post('/api/accept/application', [
 
 		let getMailStudent = await db.getMailStudent(student);
 		
-
+        let thesis_info = await db.getThesis(thesis);
 		let getRole = await db.getRole(req.auth);
 		if (getRole.role != "teacher") {
 			return res.status(401).json({ error: "Unauthorized" })
@@ -452,7 +466,7 @@ app.post('/api/accept/application', [
 			const mailOptions = {
 				from: 's313373@studenti.polito.it',
 				to: `${getMailStudent}`,
-				text: `Your thesis application for ${thesis} has been accepted`,
+				text: `Your thesis application for ${thesis_info.title} has been accepted`,
 				subject: 'Thesis Accepted',
 			};
 
@@ -461,7 +475,7 @@ app.post('/api/accept/application', [
 				if (error) {
 					return console.error(error);
 				}
-				console.log('Message sent: %s', info.messageId);
+				console.log('Message sent: %s', info.message);
 			});
 			return res.status(200).json(acceptApplication);
 		} else {

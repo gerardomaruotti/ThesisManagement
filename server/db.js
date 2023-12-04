@@ -831,3 +831,20 @@ exports.getMailStudent = (studentID) => {
     });
   });
 }
+
+
+exports.getMailTeacher = (teacherId) => {
+  return new Promise((resolve, reject) => {
+    const sql = 'SELECT EMAIL FROM TEACHER WHERE ID=?';
+    db.get(sql, [teacherId], (err, row) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      else {
+        resolve(row.EMAIL)
+      }
+    });
+  });
+}
+
