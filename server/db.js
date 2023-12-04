@@ -816,3 +816,18 @@ exports.deleteFutureApplications = (date)=> {
     });
   });
 }
+
+exports.getMailStudent = (studentID) => {
+  return new Promise((resolve, reject) => {
+    const sql = 'SELECT EMAIL FROM STUDENT  WHERE ID=?';
+    db.get(sql, [studentID], (err, row) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      else {
+        resolve(row.EMAIL)
+      }
+    });
+  });
+}
