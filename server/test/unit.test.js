@@ -743,7 +743,7 @@ describe('Apply for Proposal', () => {
 
 describe('GET Theacher and Student Application', () => {
     test('should get the applications by teacher', async () => {
-        
+
         db.getRole.mockResolvedValueOnce(teacher);
         db.getVirtualDate.mockResolvedValueOnce(0);
         db.getTeacherApplications.mockResolvedValueOnce(applications);
@@ -757,7 +757,7 @@ describe('GET Theacher and Student Application', () => {
     });
 
     test('should get the applications by teacher using Virtual Clock', async () => {
-        
+
         db.getRole.mockResolvedValueOnce(teacher);
         db.getVirtualDate.mockResolvedValueOnce(date);
         db.getTeacherApplications.mockResolvedValueOnce(applications);
@@ -1266,7 +1266,6 @@ describe('PUT Edit Thesis', () => {
     });
 
     test('should return a 422 when there is any issue in the body', async () => {
-        
         const res = await request(app).put('/api/edit/thesis/1');
 
         expect(db.getRole).toHaveBeenCalledTimes(0);
@@ -1280,7 +1279,7 @@ describe('PUT Edit Thesis', () => {
 describe('GET VC Date', () => {
     test('should return the date when the Virtual Clock is active', async () => {
         db.getVirtualDate.mockResolvedValueOnce(date);
-        
+
         const res = await request(app).get('/api/virtualClockStatus');
 
         expect(db.getVirtualDate).toHaveBeenCalledTimes(1);
@@ -1290,19 +1289,19 @@ describe('GET VC Date', () => {
 
     test('should return a 503 when an error occurs', async () => {
         db.getVirtualDate.mockRejectedValueOnce(new Error('Internal server error'));
-        
+
         const res = await request(app).get('/api/virtualClockStatus');
 
         expect(db.getVirtualDate).toHaveBeenCalledTimes(1);
         expect(res.status).toBe(503);
-        expect(res.body).toEqual({error : "Get Virtual Clock status error"});
+        expect(res.body).toEqual({ error: "Get Virtual Clock status error" });
     });
 });
 
 describe('PUT VC On', () => {
-    test('should set the Virtual Clock to the provided date', async () => {        
+    test('should set the Virtual Clock to the provided date', async () => {
         db.setVirtualDate.mockResolvedValueOnce();
-        
+
         const res = await request(app).put('/api/virtualClockOn').send(vcBody);
 
         expect(db.setVirtualDate).toHaveBeenCalledTimes(1);
@@ -1313,18 +1312,18 @@ describe('PUT VC On', () => {
 
     test('should return a 503 error when an error occurs', async () => {
         db.setVirtualDate.mockRejectedValueOnce(new Error('Internal server error'));
-        
+
         const res = await request(app).put('/api/virtualClockOn').send(vcBody);
 
         expect(db.setVirtualDate).toHaveBeenCalledTimes(1);
         expect(db.setVirtualDate).toHaveBeenCalledWith(vcBody.date);
         expect(res.status).toBe(503);
-        expect(res.body).toEqual({error: "Update error"});
+        expect(res.body).toEqual({ error: "Update error" });
     });
 
     test('should return a 422 when date is not a string or it has not 10 length', async () => {
         const body = {
-            date : 'NotValidDate'
+            date: 'NotValidDate'
         };
 
         const res = await request(app).put('/api/virtualClockOn').send(body);
@@ -1353,14 +1352,14 @@ describe('PUT VC Off', () => {
         expect(res.body).toEqual("Updated");
     });
 
-    test('should return a 503 error when an error occurs', async () => {        
+    test('should return a 503 error when an error occurs', async () => {
         db.setVirtualDate.mockRejectedValueOnce(new Error('Internal server error'));
-        
+
         const res = await request(app).put('/api/virtualClockOff');
 
         expect(db.setVirtualDate).toHaveBeenCalledTimes(1);
         expect(db.setVirtualDate).toHaveBeenCalledWith(null);
         expect(res.status).toBe(503);
-        expect(res.body).toEqual({error: "Update error"});
+        expect(res.body).toEqual({ error: "Update error" });
     });
 });
