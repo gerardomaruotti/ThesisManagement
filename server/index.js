@@ -33,13 +33,6 @@ const transporter = nodemailer.createTransport(
 	})
 );
 
-/////TEST MAIL
-app.get('/api/mail', (req, res) => {
-	console.log(process.env.API_KEY)
-	res.status(503).json('test ok');
-});
-
-
 app.get('/api/keywords', checkJwt, (req, res) => {
 	db.getKeywords()
 		.then((keywords) => res.status(200).json(keywords))
@@ -216,7 +209,6 @@ app.post('/api/thesis', checkJwt, async (req, res) => {
 			}
 
 		}
-
 		//if it is student we search for the thesis related to his COD_DEGREE
 		//if it is teacher we get the thesis in which he is supervisor
 
@@ -381,7 +373,8 @@ app.post('/api/thesis/:id/apply', checkJwt, async (req, res) => {
 
 		const mailOptions = {
 			from: 's313373@studenti.polito.it',
-			to: `${getMailTeacher}`,
+			//to: `${getMailTeacher}`,  //da sostituire, la mai 317977 è per test
+			to: 's317977@studenti.polito.it',
 			text: `You received a Thesis Application for ${thesis_info.title} from student ${userRole.id}`,
 			subject: 'Thesis Application',
 		};
