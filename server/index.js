@@ -10,7 +10,7 @@ const dayjs = require('dayjs');
 const currentDate = dayjs();
 const nodemailer = require('nodemailer');
 const sgTransport = require('nodemailer-sendgrid-transport');
-const sendgridApiKey = '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';
+require('dotenv').config();
 
 app.use(express.json());
 
@@ -28,10 +28,17 @@ app.use(cors(corsOptions));
 const transporter = nodemailer.createTransport(
 	sgTransport({
 		auth: {
-			api_key: sendgridApiKey,
+			api_key: process.env.API_KEY,
 		},
 	})
 );
+
+/////TEST MAIL
+app.get('/api/mail', (req, res) => {
+	console.log(process.env.API_KEY)
+	res.status(503).json('test ok');
+});
+
 
 app.get('/api/keywords', checkJwt, (req, res) => {
 	db.getKeywords()
