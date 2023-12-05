@@ -5,6 +5,7 @@
     "main": "index.js",
     "scripts": {
         "test": "jest",
+        "cov": "jest --coverage",
         "test:unit": "jest test/unit.test.js",
         "start": "node index.js"
     },

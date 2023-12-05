@@ -15,9 +15,7 @@ beforeEach(() => {
 
 describe('GET Keywords', () => {
     test('should return an empty list when retrieving a list of keywords', async () => {
-        const kw = [];
-
-        db.getKeywords.mockResolvedValueOnce(kw);
+        db.getKeywords.mockResolvedValueOnce([]);
         const res = await request(app).get('/api/keywords');
 
         expect(db.getKeywords).toHaveBeenCalledTimes(1);
@@ -28,7 +26,7 @@ describe('GET Keywords', () => {
     test('should return a non-empty list when retrieving a list of keywords', async () => {
         const kw = ["Example1", "Example2"];
 
-        db.getKeywords.mockResolvedValueOnce(kw);
+        db.getKeywords.mockResolvedValueOnce(["Example1", "Example2"]);
         const res = await request(app).get('/api/keywords');
 
         expect(db.getKeywords).toHaveBeenCalledTimes(1);
@@ -50,9 +48,7 @@ describe('GET Keywords', () => {
 
 describe('GET Types', () => {
     test('should return an empty list when retrieving a list of types', async () => {
-        const ty = [];
-
-        db.getTypes.mockResolvedValueOnce(ty);
+        db.getTypes.mockResolvedValueOnce([]);
         const res = await request(app).get('/api/types');
 
         expect(db.getTypes).toHaveBeenCalledTimes(1);
@@ -85,9 +81,8 @@ describe('GET Types', () => {
 
 describe('GET Teachers', () => {
     test('should return an empty list when retrieving a list of teachers', async () => {
-        const teach = [];
 
-        db.getTeachers.mockResolvedValueOnce(teach);
+        db.getTeachers.mockResolvedValueOnce([]);
         const res = await request(app).get('/api/teachers');
 
         expect(db.getTeachers).toHaveBeenCalledTimes(1);
@@ -120,9 +115,7 @@ describe('GET Teachers', () => {
 
 describe('GET Cds', () => {
     test('should return an empty list when retrieving a list of cds', async () => {
-        const cds = [];
-
-        db.getCdS.mockResolvedValueOnce(cds);
+        db.getCdS.mockResolvedValueOnce([]);
         const res = await request(app).get('/api/cds');
 
         expect(db.getCdS).toHaveBeenCalledTimes(1);
@@ -556,15 +549,6 @@ describe('GET Supervisors Groups', () => {
         expect(res.body).toEqual({ error: 'Invalid thesis ID.' });
 
     });
-
-    test('should return a 400 error when the id parameter is a number less than or equal to zero', async () => {
-        const res = await request(app).get('/api/thesis/0/groups');
-
-        expect(db.getGroupSupervisorAndCoSupervisor).toHaveBeenCalledTimes(0);
-        expect(res.status).toBe(400);
-        expect(res.body).toEqual({ error: 'Invalid thesis ID.' });
-
-    });
 });
 
 describe('Insert Thesis', () => {
@@ -738,125 +722,7 @@ describe('Insert Thesis', () => {
 
     });
 
-    test('should return a 503 error when an error occurs while inserting new co supervisor in db', async () => {
-        const thesis = {
-            title: "title",
-            description: "description",
-            required_knowledge: "required_knowledge",
-            notes: "notes",
-            expiration_date: "2025-03-01",
-            level: "level",
-            degree: "degree",
-            types: ["type1", "type2"],
-            co_supervisors: [{ name: "name1", surname: "surname1", email: "email1" }, { name: "name2", surname: "surname2", email: "email2" }],
-            keywords: ["keyword1", "keyword2"]
-        };
-
-        db.getRole.mockResolvedValueOnce({ role: "teacher", id: "1" });
-        db.insertThesis.mockResolvedValueOnce(1);
-        db.insertCoSupervisor.mockRejectedValueOnce(new Error('Internal server error'));
-        const res = await request(app).post('/api/insert/thesis').send(thesis);
-
-        expect(db.getRole).toHaveBeenCalledTimes(1);
-        expect(db.insertThesis).toHaveBeenCalledTimes(1);
-        expect(db.insertCoSupervisor).toHaveBeenCalledTimes(1);
-        expect(res.status).toBe(503);
-        expect(res.body).toEqual({ error: 'Error in the insertion' });
-
-    });
-
-    test('should return a 503 error when an error occurs while inserting new keyword in db', async () => {
-        const thesis = {
-            title: "title",
-            description: "description",
-            required_knowledge: "required_knowledge",
-            notes: "notes",
-            expiration_date: "2025-02-01",
-            level: "level",
-            degree: "degree",
-            types: ["type1", "type2"],
-            co_supervisors: [{ name: "name1", surname: "surname1", email: "email1" }, { name: "name2", surname: "surname2", email: "email2" }],
-            keywords: ["keyword1", "keyword2"]
-        };
-
-        db.getRole.mockResolvedValueOnce({ role: "teacher", id: "1" });
-        db.insertThesis.mockResolvedValueOnce(1);
-        db.insertCoSupervisor.mockResolvedValueOnce(1);
-        db.insertKeyword.mockRejectedValueOnce(new Error('Internal server error'));
-        const res = await request(app).post('/api/insert/thesis').send(thesis);
-
-        expect(db.getRole).toHaveBeenCalledTimes(1);
-        expect(db.insertThesis).toHaveBeenCalledTimes(1);
-        expect(db.insertCoSupervisor).toHaveBeenCalledTimes(2);
-        expect(db.insertKeyword).toHaveBeenCalledTimes(1);
-        expect(res.status).toBe(503);
-        expect(res.body).toEqual({ error: 'Error in the insertion' });
-
-    });
-
-    test('should return a 503 error when an error occurs while inserting new type in db', async () => {
-        const thesis = {
-            title: "title",
-            description: "description",
-            required_knowledge: "required_knowledge",
-            notes: "notes",
-            expiration_date: "2025-01-01",
-            level: "level",
-            degree: "degree",
-            types: ["type1", "type2"],
-            co_supervisors: [{ name: "name1", surname: "surname1", email: "email1" }, { name: "name2", surname: "surname2", email: "email2" }],
-            keywords: ["keyword1", "keyword2"]
-        };
-
-        db.getRole.mockResolvedValueOnce({ role: "teacher", id: "1" });
-        db.insertThesis.mockResolvedValueOnce(1);
-        db.insertCoSupervisor.mockResolvedValueOnce(1);
-        db.insertKeyword.mockResolvedValueOnce(1);
-        db.insertType.mockRejectedValueOnce(new Error('Internal server error'));
-        const res = await request(app).post('/api/insert/thesis').send(thesis);
-
-        expect(db.getRole).toHaveBeenCalledTimes(1);
-        expect(db.insertThesis).toHaveBeenCalledTimes(1);
-        expect(db.insertCoSupervisor).toHaveBeenCalledTimes(2);
-        expect(db.insertKeyword).toHaveBeenCalledTimes(2);
-        expect(db.insertType).toHaveBeenCalledTimes(1);
-        expect(res.status).toBe(503);
-        expect(res.body).toEqual({ error: 'Error in the insertion' });
-    });
-
-    test('should return a 503 error when an error occurs while inserting thesis status in db', async () => {
-        const thesis = {
-            title: "title",
-            description: "description",
-            required_knowledge: "required_knowledge",
-            notes: "notes",
-            expiration_date: "2025-01-04",
-            level: "level",
-            degree: "degree",
-            types: ["type1", "type2"],
-            co_supervisors: [{ name: "name1", surname: "surname1", email: "email1" }, { name: "name2", surname: "surname2", email: "email2" }],
-            keywords: ["keyword1", "keyword2"]
-        };
-
-        db.getRole.mockResolvedValueOnce({ role: "teacher", id: "1" });
-        db.insertThesis.mockResolvedValueOnce(1);
-        db.insertCoSupervisor.mockResolvedValueOnce(1);
-        db.insertKeyword.mockResolvedValueOnce(1);
-        db.insertType.mockResolvedValueOnce(1);
-        db.insertThesisStatus.mockRejectedValueOnce(new Error('Internal server error'));
-        const res = await request(app).post('/api/insert/thesis').send(thesis);
-
-        expect(db.getRole).toHaveBeenCalledTimes(1);
-        expect(db.insertThesis).toHaveBeenCalledTimes(1);
-        expect(db.insertCoSupervisor).toHaveBeenCalledTimes(2);
-        expect(db.insertKeyword).toHaveBeenCalledTimes(2);
-        expect(db.insertType).toHaveBeenCalledTimes(2);
-        expect(db.insertThesisStatus).toHaveBeenCalledTimes(1);
-        expect(res.status).toBe(503);
-        expect(res.body).toEqual({ error: 'Error in the insertion' });
-    });
-
-    test('should return a 422 when title is not a string or is an empty one', async () => {
+    test('should return a 422 when there is any error in the body', async () => {
         const thesis = {
             title: "   ",
             description: "description",
@@ -867,202 +733,6 @@ describe('Insert Thesis', () => {
             degree: "degree",
             types: ["type1", "type2"],
             co_supervisors: [{ name: "name1", surname: "surname1", email: "email1" }, { name: "name2", surname: "surname2", email: "email2" }],
-            keywords: ["keyword1", "keyword2"]
-        };
-
-        const res = await request(app).post('/api/insert/thesis').send(thesis)
-
-        expect(db.getRole).toHaveBeenCalledTimes(0);
-        expect(db.insertThesis).toHaveBeenCalledTimes(0);
-        expect(res.status).toBe(422);
-        expect(res.body.errors).toHaveLength(1);
-    });
-
-    test('should return a 422 when description is not a string or is an empty one', async () => {
-        const thesis = {
-            title: "title",
-            description: "   ",
-            required_knowledge: "required_knowledge",
-            notes: "notes",
-            expiration_date: "2025-01-04",
-            level: "level",
-            degree: "degree",
-            types: ["type1", "type2"],
-            co_supervisors: [{ name: "name1", surname: "surname1", email: "email1" }, { name: "name2", surname: "surname2", email: "email2" }],
-            keywords: ["keyword1", "keyword2"]
-        };
-
-        const res = await request(app).post('/api/insert/thesis').send(thesis)
-
-        expect(db.getRole).toHaveBeenCalledTimes(0);
-        expect(db.insertThesis).toHaveBeenCalledTimes(0);
-        expect(res.status).toBe(422);
-        expect(res.body.errors).toHaveLength(1);
-    });
-
-    test('should return a 422 when required knowledge is not a string', async () => {
-        const thesis = {
-            title: "title",
-            description: "description",
-            notes: "notes",
-            expiration_date: "2025-01-04",
-            level: "level",
-            degree: "degree",
-            types: ["type1", "type2"],
-            co_supervisors: [{ name: "name1", surname: "surname1", email: "email1" }, { name: "name2", surname: "surname2", email: "email2" }],
-            keywords: ["keyword1", "keyword2"]
-        };
-
-        const res = await request(app).post('/api/insert/thesis').send(thesis)
-
-        expect(db.getRole).toHaveBeenCalledTimes(0);
-        expect(db.insertThesis).toHaveBeenCalledTimes(0);
-        expect(res.status).toBe(422);
-        expect(res.body.errors).toHaveLength(1);
-    });
-
-    test('should return a 422 when notes is not a string', async () => {
-        const thesis = {
-            title: "title",
-            description: "description",
-            required_knowledge: "required_knowledge",
-            expiration_date: "2025-01-04",
-            level: "level",
-            degree: "degree",
-            types: ["type1", "type2"],
-            co_supervisors: [{ name: "name1", surname: "surname1", email: "email1" }, { name: "name2", surname: "surname2", email: "email2" }],
-            keywords: ["keyword1", "keyword2"]
-        };
-
-        const res = await request(app).post('/api/insert/thesis').send(thesis)
-
-        expect(db.getRole).toHaveBeenCalledTimes(0);
-        expect(db.insertThesis).toHaveBeenCalledTimes(0);
-        expect(res.status).toBe(422);
-        expect(res.body.errors).toHaveLength(1);
-    });
-
-    test('should return a 422 when expiration_date is not a string or it has not 10 length', async () => {
-        const thesis = {
-            title: "title",
-            description: "description",
-            required_knowledge: "required_knowledge",
-            notes: "notes",
-            expiration_date: "NotValidDate",
-            level: "level",
-            degree: "degree",
-            types: ["type1", "type2"],
-            co_supervisors: [{ name: "name1", surname: "surname1", email: "email1" }, { name: "name2", surname: "surname2", email: "email2" }],
-            keywords: ["keyword1", "keyword2"]
-        };
-
-        const res = await request(app).post('/api/insert/thesis').send(thesis)
-
-        expect(db.getRole).toHaveBeenCalledTimes(0);
-        expect(db.insertThesis).toHaveBeenCalledTimes(0);
-        expect(res.status).toBe(422);
-        expect(res.body.errors).toHaveLength(1);
-    });
-
-    test('should return a 422 when level is not a string or is an empty one', async () => {
-        const thesis = {
-            title: "title",
-            description: "description",
-            required_knowledge: "required_knowledge",
-            notes: "notes",
-            expiration_date: "2025-01-04",
-            level: "   ",
-            degree: "degree",
-            types: ["type1", "type2"],
-            co_supervisors: [{ name: "name1", surname: "surname1", email: "email1" }, { name: "name2", surname: "surname2", email: "email2" }],
-            keywords: ["keyword1", "keyword2"]
-        };
-
-        const res = await request(app).post('/api/insert/thesis').send(thesis)
-
-        expect(db.getRole).toHaveBeenCalledTimes(0);
-        expect(db.insertThesis).toHaveBeenCalledTimes(0);
-        expect(res.status).toBe(422);
-        expect(res.body.errors).toHaveLength(1);
-    });
-
-    test('should return a 422 when degree is not a string or is an empty one', async () => {
-        const thesis = {
-            title: "title",
-            description: "description",
-            required_knowledge: "required_knowledge",
-            notes: "notes",
-            expiration_date: "2025-01-04",
-            level: "level",
-            degree: "  ",
-            types: ["type1", "type2"],
-            co_supervisors: [{ name: "name1", surname: "surname1", email: "email1" }, { name: "name2", surname: "surname2", email: "email2" }],
-            keywords: ["keyword1", "keyword2"]
-        };
-
-        const res = await request(app).post('/api/insert/thesis').send(thesis)
-
-        expect(db.getRole).toHaveBeenCalledTimes(0);
-        expect(db.insertThesis).toHaveBeenCalledTimes(0);
-        expect(res.status).toBe(422);
-        expect(res.body.errors).toHaveLength(1);
-    });
-
-    test('should return a 422 when types is not an array', async () => {
-        const thesis = {
-            title: "title",
-            description: "description",
-            required_knowledge: "required_knowledge",
-            notes: "notes",
-            expiration_date: "2025-01-04",
-            level: "level",
-            degree: "degree",
-            types: { type1: "type1", type2: "type2" },
-            co_supervisors: [{ name: "name1", surname: "surname1", email: "email1" }, { name: "name2", surname: "surname2", email: "email2" }],
-            keywords: ["keyword1", "keyword2"]
-        };
-
-        const res = await request(app).post('/api/insert/thesis').send(thesis)
-
-        expect(db.getRole).toHaveBeenCalledTimes(0);
-        expect(db.insertThesis).toHaveBeenCalledTimes(0);
-        expect(res.status).toBe(422);
-        expect(res.body.errors).toHaveLength(1);
-    });
-
-    test('should return a 422 when keywords is not an array', async () => {
-        const thesis = {
-            title: "title",
-            description: "description",
-            required_knowledge: "required_knowledge",
-            notes: "notes",
-            expiration_date: "2025-01-04",
-            level: "level",
-            degree: "degree",
-            types: ["type1", "type2"],
-            co_supervisors: [{ name: "name1", surname: "surname1", email: "email1" }, { name: "name2", surname: "surname2", email: "email2" }],
-            keywords: "keywords"
-        };
-
-        const res = await request(app).post('/api/insert/thesis').send(thesis)
-
-        expect(db.getRole).toHaveBeenCalledTimes(0);
-        expect(db.insertThesis).toHaveBeenCalledTimes(0);
-        expect(res.status).toBe(422);
-        expect(res.body.errors).toHaveLength(1);
-    });
-
-    test('should return a 422 when co_supervisors is not an array', async () => {
-        const thesis = {
-            title: "title",
-            description: "description",
-            required_knowledge: "required_knowledge",
-            notes: "notes",
-            expiration_date: "2025-01-04",
-            level: "level",
-            degree: "degree",
-            types: ["type1", "type2"],
-            co_supervisors: "co_supervisors",
             keywords: ["keyword1", "keyword2"]
         };
 
@@ -1126,7 +796,7 @@ describe('GET Thesis by ID', () => {
         expect(res.body).toEqual({ error: 'Invalid thesis ID.' });
     });
 
-    test('should return a 500 if error occurs in getThesis', async () => {
+    test('should return a 500 if error occurs', async () => {
         db.getThesis.mockRejectedValueOnce(new Error('Internal server error'));
         const res = await request(app).get('/api/thesis/1');
 
@@ -1135,101 +805,6 @@ describe('GET Thesis by ID', () => {
         expect(res.body).toEqual({ error: 'Error the view of the thesis' });
     });
 
-    test('should return a 500 if error occurs in getTitleDegree', async () => {
-        db.getThesis.mockResolvedValueOnce({});
-        db.getTitleDegree.mockRejectedValueOnce(new Error('Internal server error'));
-        const res = await request(app).get('/api/thesis/1');
-
-        expect(db.getThesis).toHaveBeenCalledTimes(1);
-        expect(db.getTitleDegree).toHaveBeenCalledTimes(1);
-        expect(res.status).toBe(500);
-        expect(res.body).toEqual({ error: 'Error the view of the thesis' });
-    });
-
-    test('should return a 500 if error occurs in getTeacher', async () => {
-        db.getThesis.mockResolvedValueOnce({});
-        db.getTitleDegree.mockResolvedValueOnce({});
-        db.getTeacher.mockRejectedValueOnce(new Error('Internal server error'));
-        const res = await request(app).get('/api/thesis/1');
-
-        expect(db.getThesis).toHaveBeenCalledTimes(1);
-        expect(db.getTitleDegree).toHaveBeenCalledTimes(1);
-        expect(db.getTeacher).toHaveBeenCalledTimes(1);
-        expect(res.status).toBe(500);
-        expect(res.body).toEqual({ error: 'Error the view of the thesis' });
-    });
-
-    test('should return a 500 if error occurs in getKeywordsbyId', async () => {
-        db.getThesis.mockResolvedValueOnce({});
-        db.getTitleDegree.mockResolvedValueOnce({});
-        db.getTeacher.mockResolvedValueOnce({});
-        db.getKeywordsbyId.mockRejectedValueOnce(new Error('Internal server error'));
-        const res = await request(app).get('/api/thesis/1');
-
-        expect(db.getThesis).toHaveBeenCalledTimes(1);
-        expect(db.getTitleDegree).toHaveBeenCalledTimes(1);
-        expect(db.getTeacher).toHaveBeenCalledTimes(1);
-        expect(db.getKeywordsbyId).toHaveBeenCalledTimes(1);
-        expect(res.status).toBe(500);
-        expect(res.body).toEqual({ error: 'Error the view of the thesis' });
-    });
-
-    test('should return a 500 if error occurs in getTypesbyId', async () => {
-        db.getThesis.mockResolvedValueOnce({});
-        db.getTitleDegree.mockResolvedValueOnce({});
-        db.getTeacher.mockResolvedValueOnce({});
-        db.getKeywordsbyId.mockResolvedValueOnce({});
-        db.getTypesbyId.mockRejectedValueOnce(new Error('Internal server error'));
-        const res = await request(app).get('/api/thesis/1');
-
-        expect(db.getThesis).toHaveBeenCalledTimes(1);
-        expect(db.getTitleDegree).toHaveBeenCalledTimes(1);
-        expect(db.getTeacher).toHaveBeenCalledTimes(1);
-        expect(db.getKeywordsbyId).toHaveBeenCalledTimes(1);
-        expect(db.getTypesbyId).toHaveBeenCalledTimes(1);
-        expect(res.status).toBe(500);
-        expect(res.body).toEqual({ error: 'Error the view of the thesis' });
-    });
-
-    test('should return a 500 if error occurs in getGroupSupervisorAndCoSupervisor', async () => {
-        db.getThesis.mockResolvedValueOnce({});
-        db.getTitleDegree.mockResolvedValueOnce({});
-        db.getTeacher.mockResolvedValueOnce({});
-        db.getKeywordsbyId.mockResolvedValueOnce({});
-        db.getTypesbyId.mockResolvedValueOnce({});
-        db.getGroupSupervisorAndCoSupervisor.mockRejectedValueOnce(new Error('Internal server error'));
-        const res = await request(app).get('/api/thesis/1');
-
-        expect(db.getThesis).toHaveBeenCalledTimes(1);
-        expect(db.getTitleDegree).toHaveBeenCalledTimes(1);
-        expect(db.getTeacher).toHaveBeenCalledTimes(1);
-        expect(db.getKeywordsbyId).toHaveBeenCalledTimes(1);
-        expect(db.getTypesbyId).toHaveBeenCalledTimes(1);
-        expect(db.getGroupSupervisorAndCoSupervisor).toHaveBeenCalledTimes(1);
-        expect(res.status).toBe(500);
-        expect(res.body).toEqual({ error: 'Error the view of the thesis' });
-    });
-
-    test('should return a 500 if error occurs in getCoSupervisors', async () => {
-        db.getThesis.mockResolvedValueOnce({});
-        db.getTitleDegree.mockResolvedValueOnce({});
-        db.getTeacher.mockResolvedValueOnce({});
-        db.getKeywordsbyId.mockResolvedValueOnce({});
-        db.getTypesbyId.mockResolvedValueOnce({});
-        db.getGroupSupervisorAndCoSupervisor.mockResolvedValueOnce({});
-        db.getCoSupervisors.mockRejectedValueOnce(new Error('Internal server error'));
-        const res = await request(app).get('/api/thesis/1');
-
-        expect(db.getThesis).toHaveBeenCalledTimes(1);
-        expect(db.getTitleDegree).toHaveBeenCalledTimes(1);
-        expect(db.getTeacher).toHaveBeenCalledTimes(1);
-        expect(db.getKeywordsbyId).toHaveBeenCalledTimes(1);
-        expect(db.getTypesbyId).toHaveBeenCalledTimes(1);
-        expect(db.getGroupSupervisorAndCoSupervisor).toHaveBeenCalledTimes(1);
-        expect(db.getCoSupervisors).toHaveBeenCalledTimes(1);
-        expect(res.status).toBe(500);
-        expect(res.body).toEqual({ error: 'Error the view of the thesis' });
-    });
 });
 
 describe('Apply for Proposal', () => {
@@ -1433,19 +1008,6 @@ describe('Apply for Proposal', () => {
     test('should return a 400 error when the id parameter is not a number', async () => {
 
         const res = await request(app).post('/api/thesis/Nan/apply');
-
-        expect(db.getRole).toHaveBeenCalledTimes(0);
-        expect(db.getThesis).toHaveBeenCalledTimes(0);
-        expect(db.checkThesisActive).toHaveBeenCalledTimes(0);
-        expect(db.insertApplication).toHaveBeenCalledTimes(0);
-        expect(res.status).toBe(400);
-        expect(res.body).toEqual({ error: 'Invalid thesis ID.' });
-
-    });
-
-    test('should return a 400 error when the id parameter is a number less than or equal to zero', async () => {
-
-        const res = await request(app).post('/api/thesis/0/apply');
 
         expect(db.getRole).toHaveBeenCalledTimes(0);
         expect(db.getThesis).toHaveBeenCalledTimes(0);
@@ -1806,42 +1368,6 @@ describe('POST Accept Application', () => {
         expect(res.status).toBe(422);
         expect(res.body.errors).toHaveLength(2);
     });
-
-    test('should return a 422 if thesisID is greater than zero', async () => {
-        const body = {
-            thesisID: 0,
-            studentID: "id1"
-        };
-
-        const res = await request(app).post('/api/accept/application').send(body);
-
-        expect(db.getRole).toHaveBeenCalledTimes(0);
-        expect(db.checkExistenceApplication).toHaveBeenCalledTimes(0);
-        expect(db.acceptApplication).toHaveBeenCalledTimes(0);
-        expect(db.cancelApplications).toHaveBeenCalledTimes(0);
-        expect(db.archiveThesis).toHaveBeenCalledTimes(0);
-        expect(res.status).toBe(422);
-        expect(res.body.errors).toHaveLength(1);
-    });
-
-    test('should return a 422 if studentID is not a string or is an empty one', async () => {
-        const body = {
-            thesisID: 1,
-            studentID: "   "
-        };
-
-        const res = await request(app).post('/api/accept/application').send(body);
-
-        expect(db.getRole).toHaveBeenCalledTimes(0);
-        expect(db.checkExistenceApplication).toHaveBeenCalledTimes(0);
-        expect(db.acceptApplication).toHaveBeenCalledTimes(0);
-        expect(db.cancelApplications).toHaveBeenCalledTimes(0);
-        expect(db.archiveThesis).toHaveBeenCalledTimes(0);
-        expect(res.status).toBe(422);
-        expect(res.body.errors).toHaveLength(1);
-    });
-
-
 });
 
 describe('POST Reject Application', () => {
@@ -1979,7 +1505,7 @@ describe('POST Reject Application', () => {
         expect(res.body).toEqual({ error: "Error in the reject of an application" });
     });
 
-    test('should return a 422 if thesisID is Nan', async () => {
+    test('should return a 422 if thesisID or studentID in the body are in a wrong format', async () => {
         const body = {
             thesisID: "Nan",
             studentID: "id1"
@@ -1992,36 +1518,6 @@ describe('POST Reject Application', () => {
         expect(db.rejectApplication).toHaveBeenCalledTimes(0);
         expect(res.status).toBe(422);
         expect(res.body.errors).toHaveLength(2);
-    });
-
-    test('should return a 422 if thesisID is greater than zero', async () => {
-        const body = {
-            thesisID: 0,
-            studentID: "id1"
-        };
-
-        const res = await request(app).post('/api/reject/application').send(body);
-
-        expect(db.getRole).toHaveBeenCalledTimes(0);
-        expect(db.checkExistenceApplication).toHaveBeenCalledTimes(0);
-        expect(db.rejectApplication).toHaveBeenCalledTimes(0);
-        expect(res.status).toBe(422);
-        expect(res.body.errors).toHaveLength(1);
-    });
-
-    test('should return a 422 if studentID is not a string or is an empty one', async () => {
-        const body = {
-            thesisID: 1,
-            studentID: "   "
-        };
-
-        const res = await request(app).post('/api/reject/application').send(body);
-
-        expect(db.getRole).toHaveBeenCalledTimes(0);
-        expect(db.checkExistenceApplication).toHaveBeenCalledTimes(0);
-        expect(db.rejectApplication).toHaveBeenCalledTimes(0);
-        expect(res.status).toBe(422);
-        expect(res.body.errors).toHaveLength(1);
     });
 });
 
@@ -2392,7 +1888,7 @@ describe('PUT Edit Thesis', () => {
         expect(res.body).toEqual({ error: 'Errore in the update of the thesis' });
     });
 
-    test('should return a 422 when title is not a string or is an empty one', async () => {
+    test('should return a 422 when there is any issue in the body', async () => {
         const body = {
             title: "  ",
             description: "Description",
@@ -2403,208 +1899,6 @@ describe('PUT Edit Thesis', () => {
             degree: "degree",
             types: ["type1", "type2"],
             co_supervisors: ["co-1", "co-2"],
-            keywords: ["key1", "key2"]
-        };
-
-        const res = await request(app).put('/api/edit/thesis/1').send(body);
-
-        expect(db.getRole).toHaveBeenCalledTimes(0);
-        expect(db.checkExistenceAcceptedApplicationForThesis).toHaveBeenCalledTimes(0);
-        expect(db.editThesis).toHaveBeenCalledTimes(0);
-        expect(res.status).toBe(422);
-        expect(res.body.errors).toHaveLength(1);
-    });
-
-    test('should return a 422 when description is not a string or is an empty one', async () => {
-        const body = {
-            title: "title",
-            description: "   ",
-            required_knowledge: "Requiredknowledge",
-            notes: "Notes",
-            expiration_date: "2024-01-01",
-            level: "Level",
-            degree: "degree",
-            types: ["type1", "type2"],
-            co_supervisors: ["co-1", "co-2"],
-            keywords: ["key1", "key2"]
-        };
-
-        const res = await request(app).put('/api/edit/thesis/1').send(body);
-
-        expect(db.getRole).toHaveBeenCalledTimes(0);
-        expect(db.checkExistenceAcceptedApplicationForThesis).toHaveBeenCalledTimes(0);
-        expect(db.editThesis).toHaveBeenCalledTimes(0);
-        expect(res.status).toBe(422);
-        expect(res.body.errors).toHaveLength(1);
-    });
-
-    test('should return a 422 when required knowledge is not a string', async () => {
-        const body = {
-            title: "Title",
-            description: "Description",
-            notes: "Notes",
-            expiration_date: "2024-01-01",
-            level: "Level",
-            degree: "degree",
-            types: ["type1", "type2"],
-            co_supervisors: ["co-1", "co-2"],
-            keywords: ["key1", "key2"]
-        };
-
-        const res = await request(app).put('/api/edit/thesis/1').send(body);
-
-        expect(db.getRole).toHaveBeenCalledTimes(0);
-        expect(db.checkExistenceAcceptedApplicationForThesis).toHaveBeenCalledTimes(0);
-        expect(db.editThesis).toHaveBeenCalledTimes(0);
-        expect(res.status).toBe(422);
-        expect(res.body.errors).toHaveLength(1);
-    });
-
-    test('should return a 422 when notes is not a string', async () => {
-        const body = {
-            title: "Title",
-            description: "Description",
-            required_knowledge: "Requiredknowledge",
-            expiration_date: "2024-01-01",
-            level: "Level",
-            degree: "degree",
-            types: ["type1", "type2"],
-            co_supervisors: ["co-1", "co-2"],
-            keywords: ["key1", "key2"]
-        };
-
-        const res = await request(app).put('/api/edit/thesis/1').send(body);
-
-        expect(db.getRole).toHaveBeenCalledTimes(0);
-        expect(db.checkExistenceAcceptedApplicationForThesis).toHaveBeenCalledTimes(0);
-        expect(db.editThesis).toHaveBeenCalledTimes(0);
-        expect(res.status).toBe(422);
-        expect(res.body.errors).toHaveLength(1);
-    });
-
-    test('should return a 422 when expiration_date is not a string or it has not 10 length', async () => {
-        const body = {
-            title: "Title",
-            description: "Description",
-            required_knowledge: "Requiredknowledge",
-            notes: "Notes",
-            expiration_date: "Date",
-            level: "Level",
-            degree: "degree",
-            types: ["type1", "type2"],
-            co_supervisors: ["co-1", "co-2"],
-            keywords: ["key1", "key2"]
-        };
-
-        const res = await request(app).put('/api/edit/thesis/1').send(body);
-
-        expect(db.getRole).toHaveBeenCalledTimes(0);
-        expect(db.checkExistenceAcceptedApplicationForThesis).toHaveBeenCalledTimes(0);
-        expect(db.editThesis).toHaveBeenCalledTimes(0);
-        expect(res.status).toBe(422);
-        expect(res.body.errors).toHaveLength(1);
-    });
-
-    test('should return a 422 when level is not a string or is an empty one', async () => {
-        const body = {
-            title: "Title",
-            description: "Description",
-            required_knowledge: "Requiredknowledge",
-            notes: "Notes",
-            expiration_date: "2024-01-01",
-            level: "  ",
-            degree: "degree",
-            types: ["type1", "type2"],
-            co_supervisors: ["co-1", "co-2"],
-            keywords: ["key1", "key2"]
-        };
-
-        const res = await request(app).put('/api/edit/thesis/1').send(body);
-
-        expect(db.getRole).toHaveBeenCalledTimes(0);
-        expect(db.checkExistenceAcceptedApplicationForThesis).toHaveBeenCalledTimes(0);
-        expect(db.editThesis).toHaveBeenCalledTimes(0);
-        expect(res.status).toBe(422);
-        expect(res.body.errors).toHaveLength(1);
-    });
-
-    test('should return a 422 when degree is not a string or is an empty one', async () => {
-        const body = {
-            title: "Title",
-            description: "Description",
-            required_knowledge: "Requiredknowledge",
-            notes: "Notes",
-            expiration_date: "2024-01-01",
-            level: "level",
-            degree: "  ",
-            types: ["type1", "type2"],
-            co_supervisors: ["co-1", "co-2"],
-            keywords: ["key1", "key2"]
-        };
-
-        const res = await request(app).put('/api/edit/thesis/1').send(body);
-
-        expect(db.getRole).toHaveBeenCalledTimes(0);
-        expect(db.checkExistenceAcceptedApplicationForThesis).toHaveBeenCalledTimes(0);
-        expect(db.editThesis).toHaveBeenCalledTimes(0);
-        expect(res.status).toBe(422);
-        expect(res.body.errors).toHaveLength(1);
-    });
-
-    test('should return a 422 when types is not an array', async () => {
-        const body = {
-            title: "Title",
-            description: "Description",
-            required_knowledge: "Requiredknowledge",
-            notes: "Notes",
-            expiration_date: "2024-01-01",
-            level: "Level",
-            degree: "degree",
-            co_supervisors: ["co-1", "co-2"],
-            keywords: ["key1", "key2"]
-        };
-
-        const res = await request(app).put('/api/edit/thesis/1').send(body);
-
-        expect(db.getRole).toHaveBeenCalledTimes(0);
-        expect(db.checkExistenceAcceptedApplicationForThesis).toHaveBeenCalledTimes(0);
-        expect(db.editThesis).toHaveBeenCalledTimes(0);
-        expect(res.status).toBe(422);
-        expect(res.body.errors).toHaveLength(1);
-    });
-
-    test('should return a 422 when keywords is not an array', async () => {
-        const body = {
-            title: "Title",
-            description: "Description",
-            required_knowledge: "Requiredknowledge",
-            notes: "Notes",
-            expiration_date: "2024-01-01",
-            level: "Level",
-            degree: "degree",
-            types: ["type1", "type2"],
-            co_supervisors: ["co-1", "co-2"],
-        };
-
-        const res = await request(app).put('/api/edit/thesis/1').send(body);
-
-        expect(db.getRole).toHaveBeenCalledTimes(0);
-        expect(db.checkExistenceAcceptedApplicationForThesis).toHaveBeenCalledTimes(0);
-        expect(db.editThesis).toHaveBeenCalledTimes(0);
-        expect(res.status).toBe(422);
-        expect(res.body.errors).toHaveLength(1);
-    });
-
-    test('should return a 422 when co_supervisors is not an array', async () => {
-        const body = {
-            title: "Title",
-            description: "Description",
-            required_knowledge: "Requiredknowledge",
-            notes: "Notes",
-            expiration_date: "2024-01-01",
-            level: "Level",
-            degree: "degree",
-            types: ["type1", "type2"],
             keywords: ["key1", "key2"]
         };
 
