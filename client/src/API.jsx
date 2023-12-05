@@ -4,26 +4,32 @@
 
 const URL = 'http://localhost:3001/api';
 
-function getAllKeywords(accessToken) {
-	// call  /api/keywords
+function callAPI(endpoint, accessToken, method, body) {
+	let options = {
+		headers: {
+			Authorization: `Bearer ${accessToken}`
+		}
+	};
+
+	if (method == 'POST' || method == 'PUT') {
+		options.method = method;
+		if (body != null) {
+			options.headers['Content-Type'] = 'application/json';
+			options.body = JSON.stringify(body);
+		}
+	}
+
 	return new Promise((resolve, reject) => {
-		fetch(URL + '/keywords', {
-			headers: {
-				Authorization: `Bearer ${accessToken}`,
-			},
-		})
+		fetch(URL + endpoint, options)
 			.then((response) => {
 				if (response.ok) {
-					response
-						.json()
-						.then((keywords) => resolve(keywords))
+					response.json()
+						.then((res) => resolve(res))
 						.catch(() => {
 							reject({ error: 'Cannot parse server response.' });
 						});
 				} else {
-					// analyze the cause of error
-					response
-						.json()
+					response.json() // analyze the cause of error
 						.then((message) => {
 							reject(message);
 						}) // error message in the response body
@@ -36,550 +42,78 @@ function getAllKeywords(accessToken) {
 				reject({ error: 'Cannot communicate with the server.' });
 			}); // connection errors
 	});
+}
+
+
+
+
+function getAllKeywords(accessToken) {
+	return callAPI('/keywords', accessToken, 'GET', null);
 }
 
 function getAllThesis(accessToken, filters) {
-	// call  /api/keywords
-	return new Promise((resolve, reject) => {
-		fetch(URL + '/thesis', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: `Bearer ${accessToken}`,
-			},
-			body: JSON.stringify(filters),
-		})
-			.then((response) => {
-				if (response.ok) {
-					response
-						.json()
-						.then((thesis) => resolve(thesis))
-						.catch(() => {
-							reject({ error: 'Cannot parse server response.' });
-						});
-				} else {
-					// analyze the cause of error
-					response
-						.json()
-						.then((message) => {
-							reject(message);
-						}) // error message in the response body
-						.catch(() => {
-							reject({ error: 'Cannot parse server response.' });
-						});
-				}
-			})
-			.catch(() => {
-				reject({ error: 'Cannot communicate with the server.' });
-			}); // connection errors
-	});
+	return callAPI('/thesis', accessToken, 'POST', filters);
 }
 
 function getAllTypes(accessToken) {
-	// call  /api/types
-	return new Promise((resolve, reject) => {
-		fetch(URL + '/types', {
-			headers: {
-				Authorization: `Bearer ${accessToken}`,
-			},
-		})
-			.then((response) => {
-				if (response.ok) {
-					response
-						.json()
-						.then((types) => resolve(types))
-						.catch(() => {
-							reject({ error: 'Cannot parse server response.' });
-						});
-				} else {
-					// analyze the cause of error
-					response
-						.json()
-						.then((message) => {
-							reject(message);
-						}) // error message in the response body
-						.catch(() => {
-							reject({ error: 'Cannot parse server response.' });
-						});
-				}
-			})
-			.catch(() => {
-				reject({ error: 'Cannot communicate with the server.' });
-			}); // connection errors
-	});
+	return callAPI('/types', accessToken, 'GET', null);
 }
 
 function getAllSupervisors(accessToken) {
-	// call  /api/teachers
-	return new Promise((resolve, reject) => {
-		fetch(URL + '/teachers', {
-			headers: {
-				Authorization: `Bearer ${accessToken}`,
-			},
-		})
-			.then((response) => {
-				if (response.ok) {
-					response
-						.json()
-						.then((supervisors) => resolve(supervisors))
-						.catch(() => {
-							reject({ error: 'Cannot parse server response.' });
-						});
-				} else {
-					// analyze the cause of error
-					response
-						.json()
-						.then((message) => {
-							reject(message);
-						}) // error message in the response body
-						.catch(() => {
-							reject({ error: 'Cannot parse server response.' });
-						});
-				}
-			})
-			.catch(() => {
-				reject({ error: 'Cannot communicate with the server.' });
-			}); // connection errors
-	});
+	return callAPI('/teachers', accessToken, 'GET', null);
 }
 
 function getAllCds(accessToken) {
-	// call  /api/teachers
-	return new Promise((resolve, reject) => {
-		fetch(URL + '/cds', {
-			headers: {
-				Authorization: `Bearer ${accessToken}`,
-			},
-		})
-			.then((response) => {
-				if (response.ok) {
-					response
-						.json()
-						.then((cds) => resolve(cds))
-						.catch(() => {
-							reject({ error: 'Cannot parse server response.' });
-						});
-				} else {
-					// analyze the cause of error
-					response
-						.json()
-						.then((message) => {
-							reject(message);
-						}) // error message in the response body
-						.catch(() => {
-							reject({ error: 'Cannot parse server response.' });
-						});
-				}
-			})
-			.catch(() => {
-				reject({ error: 'Cannot communicate with the server.' });
-			}); // connection errors
-	});
+	return callAPI('/cds', accessToken, 'GET', null);
 }
 
 function getAllGroups(accessToken) {
-	// call  /api/groups
-	return new Promise((resolve, reject) => {
-		fetch(URL + '/groups', {
-			headers: {
-				Authorization: `Bearer ${accessToken}`,
-			},
-		})
-			.then((response) => {
-				if (response.ok) {
-					response
-						.json()
-						.then((groups) => resolve(groups))
-						.catch(() => {
-							reject({ error: 'Cannot parse server response.' });
-						});
-				} else {
-					// analyze the cause of error
-					response
-						.json()
-						.then((message) => {
-							reject(message);
-						}) // error message in the response body
-						.catch(() => {
-							reject({ error: 'Cannot parse server response.' });
-						});
-				}
-			})
-			.catch(() => {
-				reject({ error: 'Cannot communicate with the server.' });
-			}); // connection errors
-	});
+	return callAPI('/groups', accessToken, 'GET', null);
 }
 
 function getThesisByID(id, accessToken) {
-	// call  /api/thesis/<id>
-	return new Promise((resolve, reject) => {
-		fetch(URL + `/thesis/${id}`, {
-			headers: {
-				Authorization: `Bearer ${accessToken}`,
-			},
-		})
-			.then((response) => {
-				if (response.ok) {
-					response
-						.json()
-						.then((thesis) => resolve(thesis))
-						.catch(() => {
-							reject({ error: 'Cannot parse server response.' });
-						});
-				} else {
-					// analyze the cause of error
-					response
-						.json()
-						.then((message) => {
-							reject(message);
-						}) // error message in the response body
-						.catch(() => {
-							reject({ error: 'Cannot parse server response.' });
-						});
-				}
-			})
-			.catch(() => {
-				reject({ error: 'Cannot communicate with the server.' });
-			}); // connection errors
-	});
+	return callAPI(`/thesis/${id}`, accessToken, 'GET', null);
 }
 
 function insertThesis(accessToken, thesis) {
-	return new Promise((resolve, reject) => {
-		fetch(URL + '/insert/thesis', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: `Bearer ${accessToken}`,
-			},
-			body: JSON.stringify(thesis),
-		})
-			.then((response) => {
-				if (response.ok) {
-					response
-						.json()
-						.then((thesis) => resolve(thesis))
-						.catch(() => {
-							reject({ error: 'Cannot parse server response.' });
-						});
-				} else {
-					// analyze the cause of error
-					response
-						.json()
-						.then((message) => {
-							reject(message);
-						}) // error message in the response body
-						.catch(() => {
-							reject({ error: 'Cannot parse server response.' });
-						});
-				}
-			})
-			.catch(() => {
-				reject({ error: 'Cannot communicate with the server.' });
-			}); // connection errors
-	});
+	return callAPI('/insert/thesis', accessToken, 'POST', thesis);
 }
 
 function ThesisApply(id, accessToken) {
-	return new Promise((resolve, reject) => {
-		fetch(URL + `/thesis/${id}/apply`, {
-			method: 'POST',
-			headers: {
-				Authorization: `Bearer ${accessToken}`,
-			},
-		})
-			.then((response) => {
-				if (response.ok) {
-					response
-						.json()
-						.then((message) => resolve(message))
-						.catch(() => {
-							reject({ error: 'Cannot parse server response.' });
-						});
-				} else {
-					// analyze the cause of error
-					response
-						.json()
-						.then((message) => {
-							reject(message);
-						}) // error message in the response body
-						.catch(() => {
-							reject({ error: 'Cannot parse server response.' });
-						});
-				}
-			})
-			.catch(() => {
-				reject({ error: 'Cannot communicate with the server.' });
-			}); // connection errors
-	});
+	return callAPI(`/thesis/${id}/apply`, accessToken, 'POST', null);
 }
 
 function getUser(accessToken) {
-	return new Promise((resolve, reject) => {
-		fetch(URL + '/user', {
-			headers: {
-				Authorization: `Bearer ${accessToken}`,
-			},
-		})
-			.then((response) => {
-				if (response.ok) {
-					response
-						.json()
-						.then((user) => resolve(user))
-						.catch(() => {
-							reject({ error: 'Cannot parse server response.' });
-						});
-				} else {
-					response
-						.json()
-						.then((message) => {
-							reject(message);
-						})
-						.catch(() => {
-							reject({ error: 'Cannot parse server response.' });
-						});
-				}
-			})
-			.catch(() => reject({ error: 'Cannot communicate with the server.' }));
-	});
+	return callAPI('/user', accessToken, 'GET', null);
 }
 
 function getApplications(accessToken) {
-	return new Promise((resolve, reject) => {
-		fetch(URL + '/thesis/applications/browse', {
-			headers: {
-				Authorization: `Bearer ${accessToken}`,
-			},
-		})
-			.then((response) => {
-				if (response.ok) {
-					response
-						.json()
-						.then((applications) => resolve(applications))
-						.catch(() => {
-							reject({ error: 'Cannot parse server response.' });
-						});
-				} else {
-					response
-						.json()
-						.then((message) => {
-							reject(message);
-						})
-						.catch(() => {
-							reject({ error: 'Cannot parse server response.' });
-						});
-				}
-			})
-			.catch(() => reject({ error: 'Cannot communicate with the server.' }));
-	});
+	return callAPI('/thesis/applications/browse', accessToken, 'GET', null);
 }
 
 function acceptApplication(parameters, accessToken) {
-	return new Promise((resolve, reject) => {
-		fetch(URL + '/accept/application', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: `Bearer ${accessToken}`,
-			},
-			body: JSON.stringify(parameters),
-		})
-			.then((response) => {
-				if (response.ok) {
-					response
-						.json()
-						.then((message) => resolve(message))
-						.catch(() => {
-							reject({ error: 'Cannot parse server response.' });
-						});
-				} else {
-					// analyze the cause of error
-					response
-						.json()
-						.then((message) => {
-							reject(message);
-						}) // error message in the response body
-						.catch(() => {
-							reject({ error: 'Cannot parse server response.' });
-						});
-				}
-			})
-			.catch(() => {
-				reject({ error: 'Cannot communicate with the server.' });
-			}); // connection errors
-	});
+	return callAPI('/accept/application', accessToken, 'POST', parameters);
 }
 
 function rejectApplication(parameters, accessToken) {
-	return new Promise((resolve, reject) => {
-		fetch(URL + '/reject/application', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: `Bearer ${accessToken}`,
-			},
-			body: JSON.stringify(parameters),
-		})
-			.then((response) => {
-				if (response.ok) {
-					response
-						.json()
-						.then((message) => resolve(message))
-						.catch(() => {
-							reject({ error: 'Cannot parse server response.' });
-						});
-				} else {
-					// analyze the cause of error
-					response
-						.json()
-						.then((message) => {
-							reject(message);
-						}) // error message in the response body
-						.catch(() => {
-							reject({ error: 'Cannot parse server response.' });
-						});
-				}
-			})
-			.catch(() => {
-				reject({ error: 'Cannot communicate with the server.' });
-			}); // connection errors
-	});
+	return callAPI('/reject/application', accessToken, 'POST', parameters);
 }
 
 function editProposal(accessToken, thesis, id) {
-	return new Promise((resolve, reject) => {
-		fetch(URL + '/edit/thesis/' + id, {
-			method: 'PUT',
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: `Bearer ${accessToken}`,
-			},
-			body: JSON.stringify(thesis),
-		})
-			.then((response) => {
-				if (response.ok) {
-					response
-						.json()
-						.then((thesis) => resolve(thesis))
-						.catch((e) => {
-							reject({ error: e.error ? e.error : e });
-						});
-				} else {
-					response
-						.json()
-						.then((message) => {
-							reject(message);
-						})
-						.catch(() => {
-							reject({ error: 'Cannot parse server response.' });
-						});
-				}
-			})
-			.catch(() => reject({ error: 'Cannot communicate with the server.' }));
-	});
+	return callAPI(`/edit/thesis/${id}`, accessToken, 'PUT', thesis);
 }
 
 function getStatusVirtualClock(accessToken) {
-	// call  /api/virtualClockStatus
-	return new Promise((resolve, reject) => {
-		fetch(URL + '/virtualClockStatus', {
-			headers: {
-				Authorization: `Bearer ${accessToken}`,
-			},
-		})
-			.then((response) => {
-				if (response.ok) {
-					response
-						.json()
-						.then((status) => resolve(status))
-						.catch(() => {
-							reject({ error: 'Cannot parse server response.' });
-						});
-				} else {
-					// analyze the cause of error
-					response
-						.json()
-						.then((message) => {
-							reject(message);
-						}) // error message in the response body
-						.catch(() => {
-							reject({ error: 'Cannot parse server response.' });
-						});
-				}
-			})
-			.catch(() => {
-				reject({ error: 'Cannot communicate with the server.' });
-			}); // connection errors
-	});
+	return callAPI('/virtualClockStatus', accessToken, 'GET', null);
 }
 
 function resetVirtualClock(accessToken) {
-	// call  /api/virtualClockOff
-	return new Promise((resolve, reject) => {
-		fetch(URL + '/virtualClockOff', {
-			method: 'PUT',
-			headers: {
-				Authorization: `Bearer ${accessToken}`,
-			},
-		})
-			.then((response) => {
-				if (response.ok) {
-					response
-						.json()
-						.then((msg) => resolve(msg))
-						.catch(() => {
-							reject({ error: 'Cannot parse server response.' });
-						});
-				} else {
-					response
-						.json()
-						.then((message) => {
-							reject(message);
-						})
-						.catch(() => {
-							reject({ error: 'Cannot parse server response.' });
-						});
-				}
-			})
-			.catch(() => reject({ error: 'Cannot communicate with the server.' }));
-	});
+	return callAPI('/virtualClockOff', accessToken, 'PUT', null);
 }
 
 function setVirtualClock(accessToken, date) {
-	// call  /api/virtualClockOn
-	return new Promise((resolve, reject) => {
-		fetch(URL + '/virtualClockOn', {
-			method: 'PUT',
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: `Bearer ${accessToken}`,
-			},
-			body: JSON.stringify({ date: date }),
-		})
-			.then((response) => {
-				if (response.ok) {
-					response
-						.json()
-						.then((msg) => resolve(msg))
-						.catch(() => {
-							reject({ error: 'Cannot parse server response.' });
-						});
-				} else {
-					response
-						.json()
-						.then((message) => {
-							reject(message);
-						})
-						.catch(() => {
-							reject({ error: 'Cannot parse server response.' });
-						});
-				}
-			})
-			.catch(() => reject({ error: 'Cannot communicate with the server.' }));
-	});
+	return callAPI('/virtualClockOn', accessToken, 'PUT', { date: date });
 }
-
 
 const API = {
 	getAllKeywords,
