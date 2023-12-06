@@ -651,4 +651,44 @@ app.put('/api/virtualClockOff', checkJwt, async (req, res) => {
 	}
 
 })
+
+
+//DELETE THESIS 
+app.post('/api/delete/thesis', [
+	check('thesisID').isInt().custom(value => value > 0),
+
+], checkJwt, async (req, res) => {
+	try {
+		//controllo tramite la getRole che il prof possa eseguire l'azione di accettare o rifiutare un application
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			return res.status(422).json({ errors: errors.array() });
+		}
+		let thesis = req.body.thesisID;
+		let getRole = await db.getRole(req.auth);
+		if (getRole.role != "teacher") {
+			return res.status(401).json({ error: "Unauthorized" })
+		}
+		//check if exist the pair stud - application 
+		let getThesisExistance = await db.checkExistenceThesis(thesis);
+		if (getThesisExistance.available == 1 && getThesisExistance.data.state == 1) { //eventualmente posso fare controllo su stato
+			let statusDeleted = await db.setStatusDeleted(thesis)
+			let cancelApplication = await db.cancelApplicationsByThesis(thesis)
+			console.log(statusDeleted)
+			console.log(cancelApplication)
+
+			return res.status(200).json("Thesis deleted succesfully");
+		} else {
+			return res.status(400).json({ error: 'Application does not exist' })
+		}
+	} catch (err) {
+		console.log(err)
+		return res.status(503).json({ error: "Error while awhile accepting the application" });
+	}
+});
+
+
 module.exports = { app, port, checkJwt };
+
+
+
