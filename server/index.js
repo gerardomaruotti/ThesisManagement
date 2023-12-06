@@ -502,8 +502,9 @@ app.post('/api/reject/application', [
 		//controllo tramite la getRole che il prof possa eseguire l'azione di accettare o rifiutare un application
 		let thesis = req.body.thesisID;
 		let student = req.body.studentID;
-
+		let getMailStudent = await db.getMailStudent(student);
 		let getRole = await db.getRole(req.auth);
+		let thesis_info = await db.getThesis(thesis);
 		if (getRole.role != "teacher") {
 			return res.status(401).json({ error: "Unauthorized" })
 		}
@@ -512,6 +513,21 @@ app.post('/api/reject/application', [
 		if (getApplication.available == 1 && getApplication.data.state == 0) {
 			//The application exists, now i reject it
 			let rejectApplication = await db.rejectApplication(thesis, student);
+
+			const mailOptions = {
+				from: 's313373@studenti.polito.it',
+				to: `${getMailStudent}`,
+				text: `Your thesis application for ${thesis_info.title} has been rejected`,
+				subject: 'Thesis Rejected',
+			};
+
+			// Send the email using Nodemailer
+			transporter.sendMail(mailOptions, (error, info) => {
+				if (error) {
+					return console.error(error);
+				}
+				console.log('Message sent: %s', info.message);
+			});
 			return res.status(200).json(rejectApplication);
 		} else {
 			return res.status(400).json({ error: 'Application does not exist' })
