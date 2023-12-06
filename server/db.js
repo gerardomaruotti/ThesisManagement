@@ -596,7 +596,28 @@ exports.checkExistenceApplication= (thesis, student)=> {
   });
 }
 
-
+exports.checkExistenceThesis= (thesis)=> {
+  return new Promise((resolve, reject) => {
+    const sql = 'SELECT TS.STATE AS STATE FROM THESIS T JOIN THESIS_STATUS TS ON T.ID_THESIS = TS.THESIS WHERE T.ID_THESIS = ?';
+    db.get(sql, [thesis], (err, row) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      else {
+        if (row == undefined)
+          resolve({"available":0, data:""})
+        else{
+          let thesis_status = {
+            id:thesis,
+            state : row.STATE
+          };
+          resolve({"available":1, data:thesis_status})
+        }
+      }
+    });
+  });
+}
 
 
 exports.acceptApplication = (thesis, student) => {
@@ -816,3 +837,64 @@ exports.deleteFutureApplications = (date)=> {
     });
   });
 }
+
+exports.getMailStudent = (studentID) => {
+  return new Promise((resolve, reject) => {
+    const sql = 'SELECT EMAIL FROM STUDENT  WHERE ID=?';
+    db.get(sql, [studentID], (err, row) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      else {
+        resolve(row.EMAIL)
+      }
+    });
+  });
+}
+
+
+exports.getMailTeacher = (teacherId) => {
+  return new Promise((resolve, reject) => {
+    const sql = 'SELECT EMAIL FROM TEACHER WHERE ID=?';
+    db.get(sql, [teacherId], (err, row) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      else {
+        resolve(row.EMAIL)
+      }
+    });
+  });
+}
+
+
+exports.setStatusDeleted = (thesis) => {
+  return new Promise((resolve, reject) => {
+    const sql = 'UPDATE THESIS_STATUS SET STATE = 2 WHERE THESIS = ?';
+    db.run(sql, [thesis], function (err) {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve("updated");
+    });
+  });
+
+};
+
+
+exports.cancelApplicationsByThesis = (thesis) => {
+  return new Promise((resolve, reject) => {
+    const sql = 'UPDATE THESIS_APPLICATION SET STATE = 3 WHERE THESIS = ?';
+    db.run(sql, [thesis], function (err) {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve("Canceled");
+    });
+  });
+};
+
