@@ -214,7 +214,7 @@ exports.insertThesis = (n, date) => {
                 reject(err);
             } else {
                 resolve();
-            }s
+            }
         });
     });
 }

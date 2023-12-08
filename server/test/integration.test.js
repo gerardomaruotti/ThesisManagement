@@ -1,7 +1,5 @@
 const request = require('supertest');
 const { app } = require('../index.js');
-const sqlite3 = require('sqlite3');
-//const dbModule = require('../db.js');
 const insert = require('./insert4test.js')
 jest.mock('express-oauth2-jwt-bearer', () => ({
     auth: jest.fn(() => (_, __, next) => next()),
