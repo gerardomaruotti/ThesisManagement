@@ -1,21 +1,13 @@
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import { Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import API from '../API';
 
 function EditingButtons(props) {
-	const { disabled, id } = props;
+	const { disabled, id, editProposal, deleteProposal } = props;
 	const nagigate = useNavigate();
 
-	function editProposal(event) {
-		nagigate('/proposals/edit/' + id, { state: { fromHome: true } });
-		event.stopPropagation();
-	}
-
 	function archiveProposal(event) {
-		event.stopPropagation();
-	}
-
-	function deleteProposal(event) {
 		event.stopPropagation();
 	}
 

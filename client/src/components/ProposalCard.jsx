@@ -24,7 +24,7 @@ function ProposalCard(props) {
 	}
 
 	function editProposal(event) {
-		navigate('/proposals/edit/' + props.thesis.ID);
+		navigate('/proposals/edit/' + props.thesis.ID, { state: { fromHome: true } });
 		event.stopPropagation();
 	}
 
@@ -34,6 +34,20 @@ function ProposalCard(props) {
 
 	function deleteProposal(event) {
 		event.stopPropagation();
+		const thesis = {
+			thesisID: props.thesis.ID,
+		};
+		API.deleteProposal(props.accessToken, thesis)
+			.then((res) => {
+				if (res.status === 200) {
+					props.setDirty(true);
+				} else {
+					props.handleError('Error deleting proposal');
+				}
+			})
+			.catch((err) => {
+				props.handleError(err);
+			});
 	}
 
 	function showModal(event) {
@@ -138,7 +152,7 @@ function ProposalCard(props) {
 						WebkitBoxOrient: 'vertical',
 						WebkitLineClamp: '3',
 						overflow: 'hidden',
-						whiteSpace: 'pre-line'
+						whiteSpace: 'pre-line',
 					}}
 				>
 					{props.thesis.description}
@@ -170,7 +184,7 @@ function ProposalCard(props) {
 					)
 				) : (
 					<div style={{ marginTop: 20, textAlign: 'right' }}>
-						<EditingButtons disabled={!props.isEditable} id={props.thesis.ID} />
+						<EditingButtons disabled={!props.isEditable} id={props.thesis.ID} editProposal={editProposal} deleteProposal={deleteProposal} />
 					</div>
 				)}
 			</Card>

@@ -42,7 +42,7 @@ function Header(props) {
 
 	return (
 		<>
-			<Navbar collapseOnSelect expand='md' style={{ backgroundColor: Color.primary }} variant='dark'>
+			<Navbar collapseOnSelect expand='md' fixed='top' style={{ backgroundColor: Color.primary, position: 'sticky' }} variant='dark'>
 				<Container fluid>
 					<Navbar.Brand style={{ paddingLeft: '20px', paddingRight: 20 }} onClick={() => navigate('/')}>
 						<img src={logo_white} alt='Logo' style={{ height: '40px' }} />
