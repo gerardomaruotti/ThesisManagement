@@ -1,5 +1,5 @@
 const request = require('supertest');
-const { app, checkJwt } = require('../index.js');
+const { app, transporter } = require('../index.js');
 const db = require('../db');
 const dayjs = require('dayjs');
 const currentDate = dayjs();
@@ -83,6 +83,11 @@ jest.mock('../db');
 jest.mock('express-oauth2-jwt-bearer', () => ({
     auth: jest.fn(() => (_, __, next) => next()),
 }));
+jest.mock('nodemailer', () => ({
+    createTransport: jest.fn(() => ({
+      sendMail: jest.fn(),
+    })),
+  }));
 
 beforeEach(() => {
     jest.clearAllMocks();
@@ -116,7 +121,7 @@ describe('GET Keywords', () => {
 
         expect(db.getKeywords).toHaveBeenCalledTimes(1);
         expect(res.status).toBe(503);
-        expect(res.body).toEqual("getKeywords error");
+        expect(res.body).toEqual({ error: 'getKeywords error'});
 
     });
 });
@@ -149,7 +154,7 @@ describe('GET Types', () => {
 
         expect(db.getTypes).toHaveBeenCalledTimes(1);
         expect(res.status).toBe(503);
-        expect(res.body).toEqual("getTypes error");
+        expect(res.body).toEqual({ error: 'getTypes error'});
 
     });
 });
@@ -183,7 +188,7 @@ describe('GET Teachers', () => {
 
         expect(db.getTeachers).toHaveBeenCalledTimes(1);
         expect(res.status).toBe(503);
-        expect(res.body).toEqual("getTeachers error");
+        expect(res.body).toEqual({error: "getTeachers error"});
 
     });
 });
@@ -216,7 +221,7 @@ describe('GET Cds', () => {
 
         expect(db.getCdS).toHaveBeenCalledTimes(1);
         expect(res.status).toBe(503);
-        expect(res.body).toEqual("getCds error");
+        expect(res.body).toEqual({error: "getCds error"});
 
     });
 });
@@ -366,7 +371,7 @@ describe('GET User Info', () => {
 
         expect(db.getRole).toHaveBeenCalledTimes(1);
         expect(res.status).toBe(503);
-        expect(res.body).toEqual("error retrieving user info");
+        expect(res.body).toEqual({"error": "error retrieving user info"});
 
     });
 });
@@ -402,7 +407,7 @@ describe('GET Groups', () => {
 
         expect(db.getGroups).toHaveBeenCalledTimes(1);
         expect(res.status).toBe(503);
-        expect(res.body).toEqual("getGroups error");
+        expect(res.body).toEqual({"error": "getGroups error"});
 
     });
 });
@@ -601,10 +606,12 @@ describe('Apply for Proposal', () => {
 
         db.getVirtualDate.mockResolvedValueOnce(0);
         db.getRole.mockResolvedValueOnce(student);
-        db.getThesis.mockResolvedValueOnce();
+        db.getThesis.mockResolvedValueOnce(thesis1);
         db.checkThesisActive.mockResolvedValueOnce(1);
         db.getStudentApplications.mockResolvedValueOnce([]);
         db.insertApplication.mockResolvedValueOnce();
+        db.getMailTeacher.mockResolvedValueOnce("d111111@polito.it");
+        transporter.sendMail.mockResolvedValueOnce();
 
         const res = await request(app).post('/api/thesis/5/apply');
 
@@ -618,6 +625,9 @@ describe('Apply for Proposal', () => {
         expect(db.getStudentApplications).toHaveBeenCalledWith(student.id, currentDate.format('YYYY-MM-DD'));
         expect(db.insertApplication).toHaveBeenCalledTimes(1);
         expect(db.insertApplication).toHaveBeenCalledWith(student.id, "5", currentDate.format('YYYY-MM-DD'));
+        expect(db.getMailTeacher).toHaveBeenCalledTimes(1);
+        expect(db.getMailTeacher).toHaveBeenCalledWith(thesis1.supervisor);
+        expect(transporter.sendMail).toHaveBeenCalledTimes(1);
         expect(res.status).toBe(200);
         expect(res.body).toEqual('Insertion Succesful');
     });
@@ -626,10 +636,12 @@ describe('Apply for Proposal', () => {
 
         db.getVirtualDate.mockResolvedValueOnce(date);
         db.getRole.mockResolvedValueOnce(student);
-        db.getThesis.mockResolvedValueOnce();
+        db.getThesis.mockResolvedValueOnce(thesis1);
         db.checkThesisActive.mockResolvedValueOnce(1);
         db.getStudentApplications.mockResolvedValueOnce([]);
         db.insertApplication.mockResolvedValueOnce();
+        db.getMailTeacher.mockResolvedValueOnce("d111111@polito.it");
+        transporter.sendMail.mockResolvedValueOnce();
 
         const res = await request(app).post('/api/thesis/5/apply');
 
@@ -643,6 +655,9 @@ describe('Apply for Proposal', () => {
         expect(db.getStudentApplications).toHaveBeenCalledWith(student.id, date);
         expect(db.insertApplication).toHaveBeenCalledTimes(1);
         expect(db.insertApplication).toHaveBeenCalledWith(student.id, "5", date);
+        expect(db.getMailTeacher).toHaveBeenCalledTimes(1);
+        expect(db.getMailTeacher).toHaveBeenCalledWith(thesis1.supervisor);
+        expect(transporter.sendMail).toHaveBeenCalledTimes(1);
         expect(res.status).toBe(200);
         expect(res.body).toEqual('Insertion Succesful');
     });
@@ -836,14 +851,21 @@ describe('POST Accept Application', () => {
         }
         const result = "accepted"
 
+        db.getMailStudent.mockResolvedValueOnce("s111111@studenti.polito.it");
+        db.getThesis.mockResolvedValueOnce(thesis1);
         db.getRole.mockResolvedValueOnce(teacher);
         db.checkExistenceApplication.mockResolvedValueOnce(application);
         db.acceptApplication.mockResolvedValueOnce(result);
         db.cancelApplications.mockResolvedValueOnce();
         db.archiveThesis.mockResolvedValueOnce();
+        transporter.sendMail.mockResolvedValueOnce();
 
         const res = await request(app).post('/api/accept/application').send(applicationBody);
 
+        expect(db.getMailStudent).toHaveBeenCalledTimes(1);
+        expect(db.getMailStudent).toHaveBeenCalledWith(applicationBody.studentID);
+        expect(db.getThesis).toHaveBeenCalledTimes(1);
+        expect(db.getThesis).toHaveBeenCalledWith(applicationBody.thesisID);
         expect(db.getRole).toHaveBeenCalledTimes(1);
         expect(db.checkExistenceApplication).toHaveBeenCalledTimes(1);
         expect(db.checkExistenceApplication).toHaveBeenCalledWith(applicationBody.thesisID, applicationBody.studentID);
@@ -853,6 +875,7 @@ describe('POST Accept Application', () => {
         expect(db.cancelApplications).toHaveBeenCalledWith(applicationBody.thesisID, applicationBody.studentID);
         expect(db.archiveThesis).toHaveBeenCalledTimes(1);
         expect(db.archiveThesis).toHaveBeenCalledWith(applicationBody.thesisID);
+        expect(transporter.sendMail).toHaveBeenCalledTimes(1);
         expect(res.status).toBe(200);
         expect(res.body).toEqual(result);
     });
@@ -961,17 +984,25 @@ describe('POST Reject Application', () => {
 
         const result = "rejected"
 
+        db.getMailStudent.mockResolvedValueOnce("s111111@studenti.polito.it");
         db.getRole.mockResolvedValueOnce(teacher);
+        db.getThesis.mockResolvedValueOnce(thesis1);
         db.checkExistenceApplication.mockResolvedValueOnce(application);
         db.rejectApplication.mockResolvedValueOnce(result);
+        transporter.sendMail.mockResolvedValueOnce();
 
         const res = await request(app).post('/api/reject/application').send(applicationBody);
 
+        expect(db.getMailStudent).toHaveBeenCalledTimes(1);
+        expect(db.getMailStudent).toHaveBeenCalledWith(applicationBody.studentID);
+        expect(db.getThesis).toHaveBeenCalledTimes(1);
+        expect(db.getThesis).toHaveBeenCalledWith(applicationBody.thesisID);
         expect(db.getRole).toHaveBeenCalledTimes(1);
         expect(db.checkExistenceApplication).toHaveBeenCalledTimes(1);
         expect(db.checkExistenceApplication).toHaveBeenCalledWith(applicationBody.thesisID, applicationBody.studentID);
         expect(db.rejectApplication).toHaveBeenCalledTimes(1);
         expect(db.rejectApplication).toHaveBeenCalledWith(applicationBody.thesisID, applicationBody.studentID);
+        expect(transporter.sendMail).toHaveBeenCalledTimes(1);
         expect(res.status).toBe(200);
         expect(res.body).toEqual(result);
     });
