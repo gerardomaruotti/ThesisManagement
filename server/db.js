@@ -5,11 +5,13 @@ const crypto = require('crypto');
 const { Console } = require('console');
 
 
-const db = new sqlite.Database('thesis_management.db', (err) => {
+let db = new sqlite.Database('thesis_management.db', (err) => {
   if (err) throw err;
 });
 
-
+exports.init = (database) => {
+  db = database;
+}
 
 exports.getKeywords = () => {
   return new Promise((resolve, reject) => {

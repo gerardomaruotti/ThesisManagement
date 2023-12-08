@@ -37,7 +37,7 @@ app.get('/api/keywords', checkJwt, (req, res) => {
 	db.getKeywords()
 		.then((keywords) => res.status(200).json(keywords))
 		.catch((err) => {
-			res.status(503).json('getKeywords error');
+			res.status(503).json({ error: 'getKeywords error'});
 		});
 });
 
@@ -45,7 +45,7 @@ app.get('/api/user', checkJwt, (req, res) => {
 	db.getRole(req.auth)
 		.then((userInfo) => res.status(200).json(userInfo))
 		.catch((err) => {
-			res.status(503).json('error retrieving user info');
+			res.status(503).json({ error: 'error retrieving user info'});
 		});
 });
 
@@ -53,7 +53,7 @@ app.get('/api/types', checkJwt, (req, res) => {
 	db.getTypes()
 		.then((types) => res.status(200).json(types))
 		.catch((err) => {
-			res.status(503).json('getTypes error');
+			res.status(503).json({ error: 'getTypes error'});
 		});
 });
 
@@ -61,7 +61,7 @@ app.get('/api/teachers', checkJwt, (req, res) => {
 	db.getTeachers()
 		.then((teachers) => res.status(200).json(teachers))
 		.catch((err) => {
-			res.status(503).json('getTeachers error');
+			res.status(503).json({ error: 'getTeachers error'});
 		});
 });
 
@@ -69,7 +69,7 @@ app.get('/api/groups', checkJwt, (req, res) => {
 	db.getGroups()
 		.then((groups) => res.status(200).json(groups))
 		.catch((err) => {
-			res.status(503).json('getGroups error');
+			res.status(503).json({ error: 'getGroups error'});
 		});
 });
 
@@ -77,7 +77,7 @@ app.get('/api/cds', checkJwt, (req, res) => {
 	db.getCdS()
 		.then((cds) => res.status(200).json(cds))
 		.catch((err) => {
-			res.status(503).json('getCds error');
+			res.status(503).json({ error: 'getCds error'});
 		});
 });
 //METODI API

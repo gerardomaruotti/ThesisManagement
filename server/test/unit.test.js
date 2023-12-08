@@ -221,7 +221,7 @@ describe('GET Cds', () => {
     });
 });
 
-describe('GET Thesis', () => {
+describe('POST Thesis', () => {
     test('should get all thesis of the departement of the professor', async () => {
 
         const thesis = [thesis1, thesis2];
