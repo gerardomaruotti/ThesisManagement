@@ -295,35 +295,62 @@ exports.getGroup = (idThesis) => {
 
 exports.getRole = (auth0) => {
   return new Promise((resolve, reject) => {
-    const sql = 'SELECT S.ID AS ID, S.NAME AS NAME, S.SURNAME AS SURNAME, S.EMAIL AS EMAIL FROM STUD_AUTH0 SA JOIN STUDENT S ON S.ID == SA.ID  WHERE ID_AUTH0=? ';
-    db.get(sql, [auth0.payload.sub], (err, elem) => {
+    const findStudentQuery = 'SELECT S.ID AS ID, S.NAME AS NAME, S.SURNAME AS SURNAME, S.EMAIL AS EMAIL FROM STUD_AUTH0 SA JOIN STUDENT S ON S.ID == SA.ID  WHERE ID_AUTH0=? ';
+    const findTeacherQuery = 'SELECT T.ID AS ID, T.NAME AS NAME, T.SURNAME AS SURNAME, T.EMAIL AS EMAIL FROM TEACHER T JOIN TEACHER_AUTH0 TA ON T.ID == TA.ID WHERE ID_AUTH0=? ';
+
+    const handleStudentQueryResult = (err, elem) => {
       if (err) {
         reject(err);
-        return;
-      }
-      else {
-        if (elem != undefined)
-          resolve({ "role": "student", "id": elem.ID, "name":elem.NAME, "surname": elem.SURNAME, "email": elem.EMAIL})
-        else {
-          const sql2 = 'SELECT T.ID AS ID, T.NAME AS NAME, T.SURNAME AS SURNAME, T.EMAIL AS EMAIL FROM TEACHER T JOIN TEACHER_AUTH0 TA ON T.ID == TA.ID WHERE ID_AUTH0=? ';
-          db.get(sql2, [auth0.payload.sub], (err, elem) => {
-            if (err) {
-              reject(err);
-              return;
-            }
-            else {
-              if (elem != undefined)
-                resolve({ "role": "teacher", "id": elem.ID , "name":elem.NAME, "surname": elem.SURNAME, "email": elem.EMAIL})
-              else
-                resolve({})//non ritorna nulla se non è autenticato, ma qua non entra
-            }
+      } else {
+        if (elem !== undefined) {
+          resolve({
+            "role": "student",
+            "id": elem.ID,
+            "name": elem.NAME,
+            "surname": elem.SURNAME,
+            "email": elem.EMAIL
           });
+        } else {
+          findTeacher(); // If not a student, check if it's a teacher
         }
       }
-    });
-  });
-}
+    };
 
+    const handleTeacherQueryResult = (err, elem) => {
+      if (err) {
+        reject(err);
+      } else {
+        if (elem !== undefined) {
+          resolve({
+            "role": "teacher",
+            "id": elem.ID,
+            "name": elem.NAME,
+            "surname": elem.SURNAME,
+            "email": elem.EMAIL
+          });
+        } else {
+          resolve({}); // Neither student nor teacher found
+        }
+      }
+    };
+
+    const findStudent = () => {
+      db.get(findStudentQuery, [auth0.payload.sub], (err, elem) => {
+        handleStudentQueryResult(err, elem);
+      });
+    };
+
+    const findTeacher = () => {
+      db.get(findTeacherQuery, [auth0.payload.sub], (err, elem) => {
+        handleTeacherQueryResult(err, elem);
+      });
+    };
+
+
+    // Main logic
+    findStudent();
+  });
+};
 exports.getThesisTeacher = (ID, date) => {
   return new Promise((resolve, reject) => {
     const sql = 'SELECT DISTINCT T.ID_THESIS as ID, TS.STATE AS status,  T.TITLE AS title, T.NOTES as notes, T.EXPIRATION_DATE AS date, T.DESCRIPTION AS description , T.REQUIRED_KNOWLEDGE AS req_know, TE.NAME AS sup_name, TE.SURNAME AS sup_surname FROM THESIS T JOIN TEACHER TE ON T.SUPERVISOR == TE.ID JOIN THESIS_STATUS TS ON TS.THESIS == T.ID_THESIS WHERE TE.ID = ? ';
