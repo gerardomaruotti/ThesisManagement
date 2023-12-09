@@ -644,6 +644,43 @@ app.post('/api/delete/thesis', [
 	}
 });
 
+//Archive thesis proposal
+app.post('/api/archive/thesis', [
+	check('thesisID').isInt().custom(value => value > 0),
+
+], checkJwt, async (req, res) => {
+	try {
+		
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			return res.status(422).json({ errors: errors.array() });
+		}
+		let thesis = req.body.thesisID;
+		let getRole = await db.getRole(req.auth);
+		if (getRole.role != "teacher") {
+			return res.status(401).json({ error: "Unauthorized" })
+		}
+
+		const supervisor = await db.getThesisSupervisor(thesis);
+		if (getRole.id != supervisor) {
+			return res.status(400).json({ error: 'The teacher does not have the permission to archive the thesis' });
+		}
+		
+		let getThesisExistance = await db.checkExistenceThesis(thesis);
+		if (getThesisExistance.available == 1 && getThesisExistance.data.state == 1) {
+			await db.archiveThesis(thesis)
+			await db.cancelPendingApplications(thesis)
+
+			return res.status(200).json("Thesis archived successfully");
+		} else {
+			return res.status(400).json({ error: 'The thesis is already archived or deleted' })
+		}
+	} catch (err) {
+		console.log(err)
+		return res.status(503).json({ error: "Error in archiving the thesis" });
+	}
+});
+
 
 module.exports = { app, port, transporter};
 

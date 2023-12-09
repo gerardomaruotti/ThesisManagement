@@ -927,3 +927,16 @@ exports.cancelApplicationsByThesis = (thesis) => {
   });
 };
 
+exports.cancelPendingApplications = (thesis) => {
+  return new Promise((resolve, reject) => {
+    const sql = 'UPDATE THESIS_APPLICATION SET STATE = 3 WHERE THESIS = ? AND STATE = 0';
+    db.run(sql, [thesis], function (err) {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve("Canceled");
+    });
+  });
+};
+
