@@ -78,6 +78,17 @@ const applicationBody = {
     studentID: "id1"
 };
 
+const deleteThesisBody ={ 
+    thesisID: 1 
+};
+
+const thesisExist = {
+    available: "1",
+    data: {
+        id: "1",
+        state : "1"
+    }
+}
 
 jest.mock('../db');
 jest.mock('express-oauth2-jwt-bearer', () => ({
@@ -308,7 +319,7 @@ describe('POST Thesis', () => {
             filters: {
                 keyword: ["keyword1"],
                 type: ["type1"],
-                cosupervisor: { name: "name1", surname: "surname1", email: "email1" },
+                cosupervisor: ["email1"],
                 supervisor: "supervisor2",
                 group: ["group1", "group2"],
                 exp_date: "19/03/2025"
@@ -322,7 +333,7 @@ describe('POST Thesis', () => {
         db.getThesisStudent.mockResolvedValueOnce(thesis);
         db.getKeywordsbyId.mockResolvedValue(["keyword1", "keyword2"]);
         db.getTypesbyId.mockResolvedValue(["type1", "type2"]);
-        db.getCoSupervisorsEmail.mockResolvedValue(["email1, email2"]);
+        db.getCoSupervisorsEmail.mockResolvedValue(["email1", "email2"]);
         db.getThesisSupervisor.mockResolvedValueOnce("supervisor1");
         db.getThesisSupervisor.mockResolvedValueOnce("supervisor2");
         db.getGroup.mockResolvedValue(["group1", "group2"]);
@@ -1293,7 +1304,7 @@ describe('PUT Edit Thesis', () => {
         expect(db.checkExistenceAcceptedApplicationForThesis).toHaveBeenCalledTimes(0);
         expect(db.editThesis).toHaveBeenCalledTimes(0);
         expect(res.status).toBe(503);
-        expect(res.body).toEqual({ error: 'Errore in the update of the thesis' });
+        expect(res.body).toEqual({ error: 'Error in the update of the thesis' });
     });
 
     test('should return a 422 when there is any issue in the body', async () => {
@@ -1392,5 +1403,75 @@ describe('PUT VC Off', () => {
         expect(db.setVirtualDate).toHaveBeenCalledWith(null);
         expect(res.status).toBe(503);
         expect(res.body).toEqual({ error: "Update error" });
+    });
+});
+
+describe('POST Delete Thesis', () => {
+    test('should delete a thesis', async () => {
+
+        db.getRole.mockResolvedValueOnce(teacher);
+        db.checkExistenceThesis.mockResolvedValueOnce(thesisExist);
+        db.setStatusDeleted.mockResolvedValueOnce();
+        db.cancelApplicationsByThesis.mockResolvedValueOnce();
+
+        const res = await request(app).post('/api/delete/thesis').send(deleteThesisBody);
+
+        expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.checkExistenceThesis).toHaveBeenCalledTimes(1);
+        expect(db.checkExistenceThesis).toHaveBeenCalledWith(deleteThesisBody.thesisID);
+        expect(db.setStatusDeleted).toHaveBeenCalledTimes(1);
+        expect(db.setStatusDeleted).toHaveBeenCalledWith(deleteThesisBody.thesisID);
+        expect(db.cancelApplicationsByThesis).toHaveBeenCalledTimes(1);
+        expect(db.cancelApplicationsByThesis).toHaveBeenCalledWith(deleteThesisBody.thesisID);
+        expect(res.status).toBe(200);
+        expect(res.body).toEqual("Thesis deleted succesfully");
+    });
+
+    test('should return a 422 error when the id parameter is not a number', async () => {
+        const res = await request(app).post('/api/delete/thesis');
+
+        expect(db.getRole).toHaveBeenCalledTimes(0);
+        expect(db.checkExistenceThesis).toHaveBeenCalledTimes(0);
+        expect(db.setStatusDeleted).toHaveBeenCalledTimes(0);
+        expect(res.status).toBe(422);
+        expect(res.body.errors).toHaveLength(2);
+    });
+
+    test('should return a 401 error when the user is not a teacher', async () => {
+        db.getRole.mockResolvedValueOnce(student);
+
+        const res = await request(app).post('/api/delete/thesis').send(deleteThesisBody);
+
+        expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.checkExistenceThesis).toHaveBeenCalledTimes(0);
+        expect(db.setStatusDeleted).toHaveBeenCalledTimes(0);
+        expect(res.status).toBe(401);
+        expect(res.body).toEqual({ error: 'Unauthorized' });
+    });
+
+    test('should return a 400 error when the application does not exist', async () => {
+        db.getRole.mockResolvedValueOnce(teacher);
+        db.checkExistenceThesis.mockResolvedValueOnce(0);
+
+        const res = await request(app).post('/api/delete/thesis').send(deleteThesisBody);
+
+        expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.checkExistenceThesis).toHaveBeenCalledTimes(1);
+        expect(db.checkExistenceThesis).toHaveBeenCalledWith(deleteThesisBody.thesisID);
+        expect(db.setStatusDeleted).toHaveBeenCalledTimes(0);
+        expect(res.status).toBe(400);
+        expect(res.body).toEqual({ error: 'Application does not exist' });
+    });
+
+    test('should return a 503 error when an error occurs', async () => {
+        db.getRole.mockRejectedValueOnce(new Error('Internal server error'));
+
+        const res = await request(app).post('/api/delete/thesis').send(deleteThesisBody);
+
+        expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.checkExistenceThesis).toHaveBeenCalledTimes(0);
+        expect(db.setStatusDeleted).toHaveBeenCalledTimes(0);
+        expect(res.status).toBe(503);
+        expect(res.body).toEqual({ error: 'Error in the deletion of the thesis' });
     });
 });

@@ -616,7 +616,7 @@ app.put('/api/edit/thesis/:id',
 				return res.status(401).json({ error: 'Unauthorized user' });
 			}
 		} catch (err) {
-			return res.status(503).json({ error: 'Errore in the update of the thesis' });
+			return res.status(503).json({ error: 'Error in the update of the thesis' });
 		}
 	}
 );
@@ -699,7 +699,7 @@ app.post('/api/delete/thesis', [
 		}
 	} catch (err) {
 		console.log(err)
-		return res.status(503).json({ error: "Error while awhile accepting the application" });
+		return res.status(503).json({ error: "Error in the deletion of the thesis" });
 	}
 });
 
