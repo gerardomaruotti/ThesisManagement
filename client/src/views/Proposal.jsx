@@ -1,5 +1,5 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Row, Col, Card, Image, Button, Container, Toast, ToastContainer, Offcanvas } from 'react-bootstrap';
+import { Row, Col, Card, Image, Button, Container, Toast, Form, Offcanvas, Modal } from 'react-bootstrap';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import API from '../API.jsx';
@@ -14,6 +14,8 @@ function Proposal(props) {
 	const [showDetails, setShowDetails] = useState(false);
 	const { id } = useParams();
 	const location = useLocation();
+	const [showModal, setShowModal] = useState(false);
+	const [cv, setCv] = useState(null);
 
 	const handleClose = () => setShowDetails(false);
 	const handleShow = () => setShowDetails(true);
@@ -35,7 +37,8 @@ function Proposal(props) {
 	}, [props.accessToken]);
 
 	function apply() {
-		props.setShowModal(false);
+		setShowModal(false);
+		console.log(cv);
 		API.ThesisApply(id, props.accessToken)
 			.then(() => {
 				props.handleSuccess('Application accepted');
@@ -56,12 +59,6 @@ function Proposal(props) {
 		}
 	}
 
-	function showModal(event) {
-		event.stopPropagation();
-		props.setShowModal(true);
-		props.setMsgModal({ header: 'Apply', body: 'Are you sure you want to apply to this thesis?', method: apply });
-	}
-
 	return loading ? (
 		<Loading />
 	) : (
@@ -74,7 +71,7 @@ function Proposal(props) {
 								<DetailsProposalLeftBar
 									id={id}
 									thesis={thesis}
-									apply={showModal}
+									apply={() => setShowModal(true)}
 									isProfessor={props.isProfessor}
 									applications={props.applications}
 									hasApplied={props.hasApplied}
@@ -132,9 +129,35 @@ function Proposal(props) {
 					<Offcanvas.Title>Details</Offcanvas.Title>
 				</Offcanvas.Header>
 				<Offcanvas.Body>
-					<DetailsProposalLeftBar id={id} thesis={thesis} apply={showModal} isProfessor={props.isProfessor} applications={props.applications} />
+					<DetailsProposalLeftBar id={id} thesis={thesis} apply={() => setShowModal(true)} isProfessor={props.isProfessor} applications={props.applications} />
 				</Offcanvas.Body>
 			</Offcanvas>
+
+			<Modal show={showModal} onHide={() => setShowModal(false)} centered>
+				<Modal.Header closeButton>
+					<Modal.Title>Apply</Modal.Title>
+				</Modal.Header>
+				<Modal.Body>
+					<div>
+						Are you sure you want to apply to this proposal?
+					</div>
+					<div>
+						<br />
+						<Form.Group controlId="formFile" className="mb-3">
+							<Form.Label>Upload your cv (optional)</Form.Label>
+							<Form.Control type="file" accept='application/pdf' onChange={(e) => setCv(e.target.files[0])} />
+						</Form.Group>
+					</div>
+				</Modal.Body>
+				<Modal.Footer>
+					<Button variant="outline-secondary" onClick={() => { setShowModal(false); }}>
+						No
+					</Button>
+					<Button variant="outline-primary" onClick={apply}>
+						Yes
+					</Button>
+				</Modal.Footer>
+			</Modal >
 		</>
 	);
 }

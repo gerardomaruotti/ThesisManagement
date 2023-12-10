@@ -1,17 +1,21 @@
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import { Row, Col, Card, Image, Button } from 'react-bootstrap';
+import { Row, Col, Card, Image, Button, Form, Modal } from 'react-bootstrap';
 import { Color } from '../constants/colors.js';
 import Avatar from '../assets/avatar.svg';
 import { useNavigate } from 'react-router-dom';
 import API from '../API.jsx';
 import randomcolor from 'randomcolor';
 import EditingButtons from './EditingButtons.jsx';
+import { useState } from 'react';
 
 function ProposalCard(props) {
 	const navigate = useNavigate();
+	const [cv, setCv] = useState(null);
+	const [showModal, setShowModal] = useState(false);
 
 	function apply(event) {
-		props.setShowModal(false);
+		setShowModal(false);
+		console.log(cv);
 		API.ThesisApply(props.thesis.ID, props.accessToken)
 			.then(() => {
 				props.handleSuccess('Application accepted');
@@ -50,13 +54,9 @@ function ProposalCard(props) {
 			});
 	}
 
-	function showModal(event) {
-		event.stopPropagation();
-		props.setShowModal(true);
-		props.setMsgModal({ header: 'Apply', body: 'Are you sure you want to apply to this thesis?', method: apply });
-	}
-
 	return (
+
+		<>
 		<Col lg={6} sm={12} style={{ marginTop: 25 }}>
 			<Card style={{ padding: 20 }} className='custom-card'>
 				<div
@@ -161,34 +161,136 @@ function ProposalCard(props) {
 					props.state == 0 ? (
 						<div style={{ marginTop: 20, textAlign: 'center' }}>
 							<span
+								key={index}
 								className='badge'
 								style={{
-									backgroundColor: 'rgba(164, 161, 141, 0.2)',
-									color: 'rgba(164, 161, 141)',
-									padding: '1em 1em',
+									backgroundColor: randomcolor({ seed: keyword, luminosity: 'bright', format: 'rgba', alpha: 1 }).replace(/1(?=\))/, '0.1'),
+									color: randomcolor({ seed: keyword, luminosity: 'bright', format: 'rgba', alpha: 1 }),
+									padding: '0.5em 1.2em',
 									borderRadius: '0.25rem',
 									marginRight: 10,
 								}}
 							>
-								<i className='bi bi-hourglass-split' style={{ fontSize: '16px' }}></i>
+								{keyword}
 							</span>
+						))}
+					</div>
 
-							<span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>Pending</span>
-						</div>
+					<Row style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15, height: 30 }}>
+						<Col style={{ display: 'flex', alignItems: 'center' }}>
+							<Image style={{ height: 35, width: 35 }} src={Avatar} roundedCircle />
+							<span style={{ color: 'rgba(0, 0, 0, 0.8)', paddingLeft: 8 }}>{props.thesis.sup_name + ' ' + props.thesis.sup_surname}</span>
+						</Col>
+						{props.thesis.types.filter((type) => type == 'IN COMPANY').length > 0 ? (
+							<>
+								<Col style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+									<span
+										className='badge'
+										style={{ backgroundColor: 'rgba(230, 120, 43, 0.1)', color: Color.secondary, padding: '1em 1em', borderRadius: '0.25rem' }}
+									>
+										<i className='bi bi-building-check' style={{ fontSize: '16px' }}></i>
+									</span>
+									<span className='d-none d-md-flex' style={{ color: 'rgba(0, 0, 0, 0.5)', paddingLeft: 8 }}>
+										Company
+									</span>
+								</Col>
+							</>
+						) : null}
+						{props.thesis.types.filter((type) => type == 'ABROAD').length > 0 ? (
+							<>
+								<Col style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+									<span
+										className='badge'
+										style={{ backgroundColor: 'rgba(230, 120, 43, 0.1)', color: Color.secondary, padding: '1em 1em', borderRadius: '0.25rem' }}
+									>
+										<i className='bi bi-globe-americas' style={{ fontSize: '16px' }}></i>
+									</span>
+									<span className='d-none d-md-flex' style={{ color: 'rgba(0, 0, 0, 0.5)', paddingLeft: 8 }}>
+										Abroad
+									</span>
+								</Col>
+							</>
+						) : null}
+					</Row>
+					<div
+						style={{
+							fontWeight: 'regular',
+							fontSize: 16,
+							marginTop: 20,
+							minHeight: 72,
+							color: 'rgba(0, 0, 0, 0.8)',
+							display: '-webkit-box',
+							WebkitBoxOrient: 'vertical',
+							WebkitLineClamp: '3',
+							overflow: 'hidden',
+							whiteSpace: 'pre-line'
+						}}
+					>
+						{props.thesis.description}
+					</div>
+					{props.isProfessor != 1 ? (
+						props.state == 0 ? (
+							<div style={{ marginTop: 20, textAlign: 'center' }}>
+								<span
+									className='badge'
+									style={{
+										backgroundColor: 'rgba(164, 161, 141, 0.2)',
+										color: 'rgba(164, 161, 141)',
+										padding: '1em 1em',
+										borderRadius: '0.25rem',
+										marginRight: 10,
+									}}
+								>
+									<i className='bi bi-hourglass-split' style={{ fontSize: '16px' }}></i>
+								</span>
+
+								<span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>Pending</span>
+							</div>
+						) : (
+							<div style={{ marginTop: 20, textAlign: 'center' }}>
+								<Button variant='primary' disabled={props.hasApplied} style={{ width: 130 }} onClick={() => setShowModal(true)}>
+									Apply
+								</Button>
+							</div>
+						)
 					) : (
-						<div style={{ marginTop: 20, textAlign: 'center' }}>
-							<Button variant='primary' disabled={props.hasApplied} style={{ width: 130 }} onClick={showModal}>
-								Apply
-							</Button>
+						<div style={{ marginTop: 20, textAlign: 'right' }}>
+							<EditingButtons disabled={!props.isEditable} id={props.thesis.ID} />
 						</div>
 					)
 				) : (
 					<div style={{ marginTop: 20, textAlign: 'right' }}>
 						<EditingButtons disabled={!props.isEditable} editProposal={editProposal} deleteProposal={deleteProposal} />
 					</div>
-				)}
-			</Card>
-		</Col>
+)}
+				</Card>
+			</Col >
+
+			<Modal show={showModal} onHide={() => setShowModal(false)} centered>
+				<Modal.Header closeButton>
+					<Modal.Title>Apply</Modal.Title>
+				</Modal.Header>
+				<Modal.Body>
+					<div>
+						Are you sure you want to apply to this proposal?
+					</div>
+					<div>
+						<br />
+						<Form.Group controlId="formFile" className="mb-3">
+							<Form.Label>Upload your cv (optional)</Form.Label>
+							<Form.Control type="file" accept='application/pdf' onChange={(e) => setCv(e.target.files[0])} />
+						</Form.Group>
+				</Modal.Body>
+				<Modal.Footer>
+					<Button variant="outline-secondary" onClick={() => { setShowModal(false); }}>
+						No
+					</Button>
+					<Button variant="outline-primary" onClick={apply}>
+						Yes
+					</Button>
+				</Modal.Footer>
+			</Modal >
+		</>
 	);
 }
 
