@@ -80,15 +80,15 @@ const applicationBody = {
     studentID: "id1"
 };
 
-const deleteThesisBody ={ 
-    thesisID: 1 
+const deleteThesisBody = {
+    thesisID: 1
 };
 
 const thesisExist = {
     available: "1",
     data: {
         id: "1",
-        state : "1"
+        state: "1"
     }
 }
 
@@ -98,9 +98,9 @@ jest.mock('express-oauth2-jwt-bearer', () => ({
 }));
 jest.mock('nodemailer', () => ({
     createTransport: jest.fn(() => ({
-      sendMail: jest.fn(),
+        sendMail: jest.fn(),
     })),
-  }));
+}));
 
 beforeEach(() => {
     jest.clearAllMocks();
@@ -134,7 +134,7 @@ describe('GET Keywords', () => {
 
         expect(db.getKeywords).toHaveBeenCalledTimes(1);
         expect(res.status).toBe(503);
-        expect(res.body).toEqual({ error: 'getKeywords error'});
+        expect(res.body).toEqual({ error: 'getKeywords error' });
 
     });
 });
@@ -167,7 +167,7 @@ describe('GET Types', () => {
 
         expect(db.getTypes).toHaveBeenCalledTimes(1);
         expect(res.status).toBe(503);
-        expect(res.body).toEqual({ error: 'getTypes error'});
+        expect(res.body).toEqual({ error: 'getTypes error' });
 
     });
 });
@@ -201,7 +201,7 @@ describe('GET Teachers', () => {
 
         expect(db.getTeachers).toHaveBeenCalledTimes(1);
         expect(res.status).toBe(503);
-        expect(res.body).toEqual({error: "getTeachers error"});
+        expect(res.body).toEqual({ error: "getTeachers error" });
 
     });
 });
@@ -234,7 +234,7 @@ describe('GET Cds', () => {
 
         expect(db.getCdS).toHaveBeenCalledTimes(1);
         expect(res.status).toBe(503);
-        expect(res.body).toEqual({error: "getCds error"});
+        expect(res.body).toEqual({ error: "getCds error" });
 
     });
 });
@@ -304,34 +304,15 @@ describe('POST Thesis', () => {
         expect(res.body).toEqual(thesis);
     });
 
-    test('should get all thesis of the departement of the student using Virtual Clock', async () => {
-        const thesis = [thesis1, thesis2];
+    
 
-        db.getRole.mockResolvedValueOnce(student);
-        db.getVirtualDate.mockResolvedValueOnce(date);
-        db.getThesisStudent.mockResolvedValueOnce(thesis);
-        db.getKeywordsbyId.mockResolvedValueOnce(["keyword1", "keyword2"]);
-        db.getTypesbyId.mockResolvedValueOnce(["type1", "type2"]);
-        const res = await request(app).post('/api/thesis');
-
-        expect(db.getRole).toHaveBeenCalledTimes(1);
-        expect(db.getThesisStudent).toHaveBeenCalledTimes(1);
-        expect(db.getThesisStudent).toHaveBeenCalledWith(student.id, date);
-        expect(db.getKeywordsbyId).toHaveBeenCalledTimes(2);
-        expect(db.getTypesbyId).toHaveBeenCalledTimes(2);
-        expect(db.checkExistenceApplicationForThesis).toHaveBeenCalledTimes(0);
-        expect(res.status).toBe(200);
-        expect(res.body).toEqual(thesis);
-    });
-
-    test('should get all thesis of the departement of the student with filters', async () => {
+    test('should get all thesis of the departement of the student with filters and Virtual Clock', async () => {
         const body = {
             filters: {
                 keyword: ["keyword1", "keyword3"],
                 cosupervisor: ["email1"],
                 supervisor: ["supervisor1"],
                 group: ["group1", "group2"],
-                exp_date: date
             }
         }
 
@@ -340,13 +321,13 @@ describe('POST Thesis', () => {
         db.getRole.mockResolvedValueOnce(student);
         db.getVirtualDate.mockResolvedValueOnce(date);
         db.getThesisStudent.mockResolvedValueOnce(thesis);
-        db.getKeywordsbyId.mockResolvedValue(["keyword1", "keyword2"]);
-        db.getTypesbyId.mockResolvedValue(["type1", "type2"]);
+        db.getKeywordsbyId.mockResolvedValue(thesis1.keywords);
+        db.getTypesbyId.mockResolvedValue(thesis1.types);
         db.getCoSupervisorsEmail.mockResolvedValue(["email1"]);
-        db.getThesisSupervisor.mockResolvedValue(thesis1.supervisor);
-        db.getGroup.mockResolvedValue(["group1"]);
-        db.getThesisExpDate.mockResolvedValueOnce(date);
-        db.getThesisExpDate.mockResolvedValueOnce("2024-01-01");
+        db.getThesisSupervisor.mockResolvedValueOnce(thesis1.supervisor);
+        db.getThesisSupervisor.mockResolvedValueOnce(thesis2.supervisor);
+        db.getGroup.mockResolvedValue(thesis1.groups);
+        db.getThesisExpDate.mockResolvedValue(date);
         const res = await request(app).post('/api/thesis').send(body);
 
         expect(db.getRole).toHaveBeenCalledTimes(1);
@@ -391,7 +372,7 @@ describe('GET User Info', () => {
 
         expect(db.getRole).toHaveBeenCalledTimes(1);
         expect(res.status).toBe(503);
-        expect(res.body).toEqual({"error": "error retrieving user info"});
+        expect(res.body).toEqual({ "error": "error retrieving user info" });
 
     });
 });
@@ -427,7 +408,7 @@ describe('GET Groups', () => {
 
         expect(db.getGroups).toHaveBeenCalledTimes(1);
         expect(res.status).toBe(503);
-        expect(res.body).toEqual({"error": "getGroups error"});
+        expect(res.body).toEqual({ "error": "getGroups error" });
 
     });
 });
@@ -1328,7 +1309,7 @@ describe('PUT Edit Thesis', () => {
 describe('GET VC Date', () => {
     test('should return the date when the Virtual Clock is active', async () => {
         db.getVirtualDate.mockResolvedValueOnce(date);
-        
+
         const res = await request(app).get('/api/virtualClockStatus');
 
         expect(db.getVirtualDate).toHaveBeenCalledTimes(1);
@@ -1499,6 +1480,8 @@ describe('POST Archive Thesis', () => {
         expect(db.checkExistenceThesis).toHaveBeenCalledTimes(1);
         expect(db.archiveThesis).toHaveBeenCalledTimes(1);
         expect(db.cancelPendingApplications).toHaveBeenCalledTimes(1);
+        expect(db.archiveThesis).toHaveBeenCalledWith(deleteThesisBody.thesisID);
+        expect(db.cancelPendingApplications).toHaveBeenCalledWith(deleteThesisBody.thesisID);
         expect(res.status).toBe(200);
         expect(res.body).toEqual("Thesis archived successfully");
     });
@@ -1561,7 +1544,7 @@ describe('POST Archive Thesis', () => {
     test('hould return a 400 when called on a thesis already archived', async () => {
         db.getRole.mockResolvedValueOnce(teacher);
         db.getThesisSupervisor.mockResolvedValueOnce(teacher.id);
-        db.checkExistenceThesis.mockResolvedValueOnce({available: 1, data: {state: 0}});
+        db.checkExistenceThesis.mockResolvedValueOnce({ available: 1, data: { state: 0 } });
 
 
         const res = await request(app).post('/api/archive/thesis').send(deleteThesisBody);

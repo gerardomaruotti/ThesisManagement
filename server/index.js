@@ -104,12 +104,12 @@ app.post('/api/thesis', checkJwt, async (req, res) => {
   });
 
   async function processTeacherThesis(teacherId, date, getRole) {
-	let thesis = await db.getThesisTeacher(teacherId, (date == 0) ? currentDate.format('YYYY-MM-DD') : date);
+	let thesis = await db.getThesisTeacher(teacherId, date);
 	return processThesisDetails(thesis, getRole);
   }
 	
   async function processStudentThesis(studentId, date, filters, getRole) {
-	let thesis = await db.getThesisStudent(studentId, (date == 0) ? currentDate.format('YYYY-MM-DD') : date);
+	let thesis = await db.getThesisStudent(studentId, date);
 	thesis = await processThesisDetails(thesis, getRole);
 	if (!filters) {
 	  return thesis;
