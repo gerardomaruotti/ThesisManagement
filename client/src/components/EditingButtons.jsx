@@ -8,7 +8,7 @@ function EditingButtons(props) {
 
 	return (
 		<>
-			<Button variant='primary' disabled={disabled} onClick={copyProposal} style={{ marginRight: 10 }} size='sm'>
+			<Button variant='primary' onClick={copyProposal} style={{ marginRight: 10 }} size='sm'>
 				<i className='bi bi-copy'></i>
 			</Button>
 			<Button variant='primary' disabled={disabled} onClick={editProposal} style={{ marginRight: 10 }} size='sm'>

@@ -63,6 +63,7 @@ function ProfessorHome(props) {
 								thesis={thesis}
 								setDirty={props.setDirty}
 								handleError={props.handleError}
+								handleSuccess={props.handleSuccess}
 								accessToken={props.accessToken}
 								isEditable={!props.applications.some((app) => app.id == thesis.ID && app.state == 1)}
 								isArchived={thesis.status == 0}

@@ -192,6 +192,7 @@ function App() {
 								thesis={thesis}
 								applications={applicationsThesis}
 								handleError={handleError}
+								handleSuccess={handleSuccess}
 								accessToken={accessToken}
 								setDirty={setDirty}
 								setCopiedProposal={setCopiedProposal}

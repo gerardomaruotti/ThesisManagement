@@ -34,14 +34,12 @@ function ProposalCard(props) {
 
 	function copyProposal(event) {
 		event.stopPropagation();
-		setLoading(true);
 		API.getThesisByID(props.thesis.ID, props.accessToken)
 			.then((thesis) => {
-				setLoading(false);
 				props.setCopiedProposal(thesis);
+				props.handleSuccess('Proposal copied correctly');
 			})
 			.catch((err) => {
-				setLoading(false);
 				props.handleError(err);
 			});
 	}

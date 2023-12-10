@@ -164,7 +164,17 @@ function ProposalForm(props) {
 		setDescription(props.copiedProposal.description);
 		setRequiredKnowledge(props.copiedProposal.requiredKnowledge);
 		setNotes(props.copiedProposal.notes);
-		setSelectedCoSupervisors(props.copiedProposal.coSupervisors);
+		setSelectedCoSupervisors(
+			props.copiedProposal.coSupervisors.map((cosupervisor) => {
+				return {
+					value: cosupervisor.email,
+					label: cosupervisor.name + ' ' + cosupervisor.surname,
+					email: cosupervisor.email,
+					name: cosupervisor.name,
+					surname: cosupervisor.surname,
+				};
+			})
+		);
 		setselectedTypes(
 			props.copiedProposal.types.map((type) => {
 				return { value: type, label: type };
