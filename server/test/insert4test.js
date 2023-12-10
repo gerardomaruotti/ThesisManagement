@@ -119,7 +119,7 @@ exports.createTestDb = async () => {
         "data"	VARCHAR(50)
     )`
         ];
-
+        
         db.serialize(() => {
             tables.forEach(sql => {
                 db.run(sql, (err) => {
@@ -129,8 +129,14 @@ exports.createTestDb = async () => {
                 });
             });
         });
-        dbModule.init(db);
-        resolve();
+        db.run('INSERT INTO "VIRTUAL_CLOCK" ("data") VALUES (null)', function (err) {
+            if (err) {
+              console.error(err.message);
+            } else {
+                dbModule.init(db);
+                resolve();
+            }
+          })
     });
 }
 
@@ -152,7 +158,7 @@ exports.insertDegree = (n) => {
 exports.insertGroup = (n) => {
     return new Promise((resolve, reject) => {
         const query = `INSERT INTO "GROUP" ("COD_GROUP","NAME") VALUES (?, ?)`;
-        db.run(query, ["cod_group" + n, "name" + n], function (err) {
+        db.run(query, ["cod_g" + n, "name" + n], function (err) {
             if (err) {
                 console.error("Errore durante l'inserimento:", err);
                 reject(err);
@@ -180,7 +186,21 @@ exports.insertDepartment = (n) => {
 exports.insertStudent = (n) => {
     return new Promise((resolve, reject) => {
         const query = `INSERT INTO "STUDENT" ("ID","NAME","SURNAME","GENDER","NATIONALITY","EMAIL","ENROLLMENT_YEAR","COD_DEGREE") VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
-        db.run(query, ["id" + n, "name" + n, "surname" + n, "gender" + n, "nationaliy" + n, "enrollament_y" + n, "cod_d" + n], function (err) {
+        db.run(query, ["s" + n, "name" + n, "surname" + n, "gender" + n, "nationaliy" + n, "email"+n, "enrollament_y" + n, "cod_d" + n], function (err) {
+            if (err) {
+                console.error("Errore durante l'inserimento:", err);
+                reject(err);
+            } else {
+                resolve();
+            }
+        });
+    });
+}
+
+exports.insertStudentAuth = (auth0) => {
+    return new Promise((resolve, reject) => {
+        const query = `INSERT INTO "STUD_AUTH0" ("ID", "ID_AUTH0") VALUES (?, ?)`;
+        db.run(query, ["s0", auth0], function (err) {
             if (err) {
                 console.error("Errore durante l'inserimento:", err);
                 reject(err);
@@ -194,7 +214,7 @@ exports.insertStudent = (n) => {
 exports.insertCarrer = (n, date) => {
     return new Promise((resolve, reject) => {
         const query = `INSERT INTO "CAREER" ("ID","COD_COURSE","TITLE_COURSE","CFU","GRADE","DATE") VALUES (?, ?, ?, ?, ?, ?)`;
-        db.run(query, ["id" + n, "cod_c" + n, "title_c" + n, "cfu" + n, n, date], function (err) {
+        db.run(query, ["s" + n, "cod_c" + n, "title_c" + n, "cfu" + n, n, date], function (err) {
             if (err) {
                 console.error("Errore durante l'inserimento:", err);
                 reject(err);
@@ -205,10 +225,10 @@ exports.insertCarrer = (n, date) => {
     });
 }
 
-exports.insertThesis = (n, date) => {
+exports.insertThesis = (n, deg, sup, date) => {
     return new Promise((resolve, reject) => {
         const query = `INSERT INTO "THESIS" ("ID_THESIS","TITLE","DESCRIPTION","REQUIRED_KNOWLEDGE","NOTES","EXPIRATION_DATE","LEVEL","DEGREE","SUPERVISOR") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-        db.run(query, [n, "title" + n, "description" + n, "req_know" + n, "notes" + n, date, "level" + n, "degree" + n, "supervisor" + n], function (err) {
+        db.run(query, [n, "title" + n, "description" + n, "req_know" + n, "notes" + n, date, "level" + n, deg, sup], function (err) {
             if (err) {
                 console.error("Errore durante l'inserimento:", err);
                 reject(err);
@@ -222,7 +242,7 @@ exports.insertThesis = (n, date) => {
 exports.insertThesisAppliation = (n, state, date) => {
     return new Promise((resolve, reject) => {
         const query = `INSERT INTO "THESIS_APPLICATION" ("ID_APPLICATION","STUDENT","THESIS","STATE","APPLICATION_DATE") VALUES (?, ?, ?, ? ,?)`;
-        db.run(query, [n, "student" + n, n, state, date], function (err) {
+        db.run(query, [n, "s" + n, n, state, date], function (err) {
             if (err) {
                 console.error("Errore durante l'inserimento:", err);
                 reject(err);
@@ -294,9 +314,38 @@ exports.insertTeacher = (n) => {
     return new Promise((resolve, reject) => {
         const query = `INSERT INTO "TEACHER" ("ID","NAME","SURNAME","EMAIL","COD_GROUP","COD_DEPARTMENT") VALUES (?, ?, ?, ?, ?, ?)`;
 
-        db.run(query, [n, "name" + n, "surname" + n, "email" + n, "cod_g" + n, "cod_d" + n], function (err) {
+        db.run(query, ["d"+n, "name" + n, "surname" + n, "email" + n, "cod_g" + n, "cod_d" + n], function (err) {
             if (err) {
                 console.error("Errore durante l'inserimento:", err);
+                reject(err);
+            } else {
+                resolve();
+            }
+        });
+    });
+}
+
+exports.insertTeacherAuth = (auth0) => {
+    return new Promise((resolve, reject) => {
+        const query = `INSERT INTO "TEACHER_AUTH0" ("ID", "ID_AUTH0") VALUES (?, ?)`;
+        db.run(query, ["d0", auth0], function (err) {
+            if (err) {
+                console.error("Errore durante l'inserimento:", err);
+                reject(err);
+            } else {
+                resolve();
+            }
+        });
+    });
+}
+
+exports.deleteTableContent = (tableName) => {
+    return new Promise((resolve, reject) => {
+        const query = `DELETE FROM "${tableName}"`;
+
+        db.run(query, function (err) {
+            if (err) {
+                console.error(`Errore nell'eliminazione nella tabella ${tableName}:`, err);
                 reject(err);
             } else {
                 resolve();
