@@ -18,6 +18,7 @@ import ProfessorApplicationsThesis from './views/ProfessorApplicationsThesis.jsx
 import GenericModal from './components/GenericModal.jsx';
 import EditProposal from './views/EditProposal.jsx';
 import Settings from './views/Settings.jsx';
+import StudentApplicationInfo from './views/StudentApplicationInfo.jsx';
 
 function App() {
 	const { user, isAuthenticated, getAccessTokenSilently, isLoading, loginWithRedirect } = useAuth0();
@@ -294,6 +295,17 @@ function App() {
 							setMsgModal={setMsgModal}
 							setShowModal={setShowModal}
 							date={dateVirtualClock}
+							setDirty={setDirty}
+						/>
+					}
+				/>
+				<Route
+					path='/applications/proposal/:id/student/:idStudent'
+					element={
+						<StudentApplicationInfo
+							accessToken={accessToken}
+							handleError={handleError}
+							handleSuccess={handleSuccess}
 							setDirty={setDirty}
 						/>
 					}

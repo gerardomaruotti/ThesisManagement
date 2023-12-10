@@ -206,60 +206,60 @@ function ProfessorApplicationsThesis(props) {
 											<tbody>
 												{applicationsThesis != []
 													? applicationsThesis.map((app, index) => (
-															<tr key={index}>
-																<td>{app.student}</td>
-																<td>{app.name}</td>
-																<td>{app.surname}</td>
-																<td>{app.email}</td>
-																<td>
-																	<Button variant='light'>
-																		<i className='bi bi-file-earmark-text'></i>
-																	</Button>
-																</td>
-																<td>
-																	{app.state == 1 ? (
-																		<span className='badge custom-badge-success'>Assigned</span>
-																	) : app.state == 2 ? (
-																		<span className='badge custom-badge-danger'>Rejected</span>
-																	) : app.state == 3 ? (
-																		<span className='badge custom-badge-warning'>Cancelled</span>
-																	) : (
-																		<div>
-																			<Button
-																				variant='outline-success'
-																				style={{ borderRadius: 100 }}
-																				size='sm'
-																				onClick={() => {
-																					props.setShowModal(true);
-																					props.setMsgModal({
-																						header: 'Accept application',
-																						body: `Are you sure you want to accept the application of student ${app.student}? The other pending application will be cancelled`,
-																						method: () => acceptApplication(app.student),
-																					});
-																				}}
-																			>
-																				<i className='bi bi-check2'></i>
-																			</Button>
-																			<Button
-																				variant='outline-danger'
-																				style={{ borderRadius: 100, marginLeft: 8 }}
-																				size='sm'
-																				onClick={() => {
-																					props.setShowModal(true);
-																					props.setMsgModal({
-																						header: 'Reject Application',
-																						body: `Are you sure you want to reject the application of student ${app.student}?`,
-																						method: () => rejectApplication(app.student),
-																					});
-																				}}
-																			>
-																				<i className='bi bi-x-lg'></i>
-																			</Button>
-																		</div>
-																	)}
-																</td>
-															</tr>
-													  ))
+														<tr key={index}>
+															<td>{app.student}</td>
+															<td>{app.name}</td>
+															<td>{app.surname}</td>
+															<td>{app.email}</td>
+															<td>
+																<Button variant='light' onClick={() => navigate('/applications/proposal/' + id + '/student/' + app.student)}>
+																	<i className='bi bi-file-earmark-text'></i>
+																</Button>
+															</td>
+															<td>
+																{app.state == 1 ? (
+																	<span className='badge custom-badge-success'>Assigned</span>
+																) : app.state == 2 ? (
+																	<span className='badge custom-badge-danger'>Rejected</span>
+																) : app.state == 3 ? (
+																	<span className='badge custom-badge-warning'>Cancelled</span>
+																) : (
+																	<div>
+																		<Button
+																			variant='outline-success'
+																			style={{ borderRadius: 100 }}
+																			size='sm'
+																			onClick={() => {
+																				props.setShowModal(true);
+																				props.setMsgModal({
+																					header: 'Accept application',
+																					body: `Are you sure you want to accept the application of student ${app.student}? The other pending application will be cancelled`,
+																					method: () => acceptApplication(app.student),
+																				});
+																			}}
+																		>
+																			<i className='bi bi-check2'></i>
+																		</Button>
+																		<Button
+																			variant='outline-danger'
+																			style={{ borderRadius: 100, marginLeft: 8 }}
+																			size='sm'
+																			onClick={() => {
+																				props.setShowModal(true);
+																				props.setMsgModal({
+																					header: 'Reject Application',
+																					body: `Are you sure you want to reject the application of student ${app.student}?`,
+																					method: () => rejectApplication(app.student),
+																				});
+																			}}
+																		>
+																			<i className='bi bi-x-lg'></i>
+																		</Button>
+																	</div>
+																)}
+															</td>
+														</tr>
+													))
 													: null}
 											</tbody>
 										</Table>
