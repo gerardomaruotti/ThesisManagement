@@ -1228,7 +1228,7 @@ describe('PUT Edit Thesis', () => {
         expect(res.body).toEqual({ error: 'Unauthorized user' });
     });
 
-    test('should return a 400 when called on a thesis for which the teacher is not the supervisor.', async () => {
+    test('should return a 400 when called on a thesis for which the teacher is not the supervisor', async () => {
 
         db.getRole.mockResolvedValueOnce(teacher);
         db.getThesisSupervisor.mockResolvedValueOnce("NotuserId");
@@ -1482,3 +1482,110 @@ describe('POST Delete Thesis', () => {
         expect(res.body).toEqual({ error: 'Error in the deletion of the thesis' });
     });
 });
+
+describe('POST Archive Thesis', () => {
+    test('should archive a thesis correctly', async () => {
+        db.getRole.mockResolvedValueOnce(teacher);
+        db.getThesisSupervisor.mockResolvedValueOnce(teacher.id);
+        db.checkExistenceThesis.mockResolvedValueOnce(thesisExist);
+        db.archiveThesis.mockResolvedValueOnce();
+        db.cancelPendingApplications.mockResolvedValueOnce();
+
+        const res = await request(app).post('/api/archive/thesis').send(deleteThesisBody);
+
+        expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.getThesisSupervisor).toHaveBeenCalledTimes(1);
+        expect(db.getThesisSupervisor).toHaveBeenCalledWith(deleteThesisBody.thesisID);
+        expect(db.checkExistenceThesis).toHaveBeenCalledTimes(1);
+        expect(db.archiveThesis).toHaveBeenCalledTimes(1);
+        expect(db.cancelPendingApplications).toHaveBeenCalledTimes(1);
+        expect(res.status).toBe(200);
+        expect(res.body).toEqual("Thesis archived successfully");
+    });
+
+    test('should return a 422 error when the id parameter is not a number', async () => {
+        const res = await request(app).post('/api/archive/thesis');
+
+        expect(db.getRole).toHaveBeenCalledTimes(0);
+        expect(db.archiveThesis).toHaveBeenCalledTimes(0);
+        expect(res.status).toBe(422);
+        expect(res.body.errors).toHaveLength(2);
+    });
+
+    test('should return a 401 error when the user is not a teacher', async () => {
+        db.getRole.mockResolvedValueOnce(student);
+
+        const res = await request(app).post('/api/archive/thesis').send(deleteThesisBody);
+
+        expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.getThesisSupervisor).toHaveBeenCalledTimes(0);
+        expect(db.archiveThesis).toHaveBeenCalledTimes(0);
+        expect(res.status).toBe(401);
+        expect(res.body).toEqual({ error: "Unauthorized" });
+    });
+
+    test('hould return a 400 when called on a thesis for which the teacher is not the supervisor', async () => {
+        db.getRole.mockResolvedValueOnce(teacher);
+        db.getThesisSupervisor.mockResolvedValueOnce("notSupervisor");
+
+        const res = await request(app).post('/api/archive/thesis').send(deleteThesisBody);
+
+        expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.getThesisSupervisor).toHaveBeenCalledTimes(1);
+        expect(db.getThesisSupervisor).toHaveBeenCalledWith(deleteThesisBody.thesisID);
+        expect(db.checkExistenceThesis).toHaveBeenCalledTimes(0);
+        expect(db.archiveThesis).toHaveBeenCalledTimes(0);
+        expect(res.status).toBe(400);
+        expect(res.body).toEqual({ error: 'The teacher does not have the permission to archive the thesis' });
+    });
+
+    test('hould return a 400 when called on a thesis deleted', async () => {
+        db.getRole.mockResolvedValueOnce(teacher);
+        db.getThesisSupervisor.mockResolvedValueOnce(teacher.id);
+        db.checkExistenceThesis.mockResolvedValueOnce({});
+
+
+        const res = await request(app).post('/api/archive/thesis').send(deleteThesisBody);
+
+        expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.getThesisSupervisor).toHaveBeenCalledTimes(1);
+        expect(db.getThesisSupervisor).toHaveBeenCalledWith(deleteThesisBody.thesisID);
+        expect(db.checkExistenceThesis).toHaveBeenCalledTimes(1);
+        expect(db.checkExistenceThesis).toHaveBeenCalledWith(deleteThesisBody.thesisID);
+        expect(db.archiveThesis).toHaveBeenCalledTimes(0);
+        expect(db.cancelPendingApplications).toHaveBeenCalledTimes(0);
+        expect(res.status).toBe(400);
+        expect(res.body).toEqual({ error: 'The thesis is already archived or deleted' });
+    });
+
+    test('hould return a 400 when called on a thesis already archived', async () => {
+        db.getRole.mockResolvedValueOnce(teacher);
+        db.getThesisSupervisor.mockResolvedValueOnce(teacher.id);
+        db.checkExistenceThesis.mockResolvedValueOnce({available: 1, data: {state: 0}});
+
+
+        const res = await request(app).post('/api/archive/thesis').send(deleteThesisBody);
+
+        expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.getThesisSupervisor).toHaveBeenCalledTimes(1);
+        expect(db.getThesisSupervisor).toHaveBeenCalledWith(deleteThesisBody.thesisID);
+        expect(db.checkExistenceThesis).toHaveBeenCalledTimes(1);
+        expect(db.checkExistenceThesis).toHaveBeenCalledWith(deleteThesisBody.thesisID);
+        expect(db.archiveThesis).toHaveBeenCalledTimes(0);
+        expect(db.cancelPendingApplications).toHaveBeenCalledTimes(0);
+        expect(res.status).toBe(400);
+        expect(res.body).toEqual({ error: 'The thesis is already archived or deleted' });
+    });
+
+    test('should return a 503 error when an error occurs', async () => {
+        db.getRole.mockRejectedValueOnce(new Error('Internal server error'));
+
+        const res = await request(app).post('/api/archive/thesis').send(deleteThesisBody);
+
+        expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.getThesisSupervisor).toHaveBeenCalledTimes(0);
+        expect(db.archiveThesis).toHaveBeenCalledTimes(0);
+        expect(res.status).toBe(503);
+        expect(res.body).toEqual({ error: "Error in archiving the thesis" });
+    });
+})
