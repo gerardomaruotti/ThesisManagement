@@ -7,24 +7,44 @@ import API from '../API.jsx';
 import randomcolor from 'randomcolor';
 import EditingButtons from './EditingButtons.jsx';
 import { useState } from 'react';
+import { useLoading } from '../LoadingContext.jsx';
 
 function ProposalCard(props) {
 	const navigate = useNavigate();
 	const [cv, setCv] = useState(null);
 	const [showModal, setShowModal] = useState(false);
+	const { setLoading } = useLoading();
 
 	function apply(event) {
 		setShowModal(false);
 		console.log(cv);
+		setLoading(true);
 		API.ThesisApply(props.thesis.ID, props.accessToken)
 			.then(() => {
 				props.handleSuccess('Application accepted');
 				props.setDirty(true);
+				setLoading(false);
 			})
 			.catch((err) => {
+				setLoading(false);
 				props.handleError(err);
 			});
 		event.stopPropagation();
+	}
+
+	function copyProposal(event) {
+		event.stopPropagation();
+		setLoading(true);
+		API.getThesisByID(props.thesis.ID, props.accessToken)
+			.then((thesis) => {
+				setLoading(false);
+				props.setCopiedProposal(thesis);
+				navigate('/proposals/add');
+			})
+			.catch((err) => {
+				setLoading(false);
+				props.handleError(err);
+			});
 	}
 
 	function editProposal(event) {
@@ -37,11 +57,14 @@ function ProposalCard(props) {
 		const thesis = {
 			thesisID: props.thesis.ID,
 		};
+		setLoading(true);
 		API.archiveProposal(props.accessToken, thesis)
 			.then((res) => {
+				setLoading(false);
 				props.setDirty(true);
 			})
 			.catch((err) => {
+				setLoading(false);
 				props.handleError(err.toString());
 			});
 	}
@@ -51,17 +74,16 @@ function ProposalCard(props) {
 		const thesis = {
 			thesisID: props.thesis.ID,
 		};
+		setLoading(true);
 		API.deleteProposal(props.accessToken, thesis)
 			.then(() => {
+				setLoading(false);
 				props.setDirty(true);
 			})
 			.catch((err) => {
+				setLoading(false);
 				props.handleError(err.toString());
 			});
-	}
-
-	function copyProposal(event) {
-		event.stopPropagation();
 	}
 
 	return (

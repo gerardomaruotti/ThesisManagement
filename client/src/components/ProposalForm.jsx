@@ -205,7 +205,7 @@ function ProposalForm(props) {
 			keywords: keywordsValues,
 		};
 
-		if (props.thesis) {
+		if (props.editProposal) {
 			props.editProposal(thesisObject);
 		} else {
 			props.createProposal(thesisObject);

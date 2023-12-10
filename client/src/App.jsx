@@ -30,6 +30,7 @@ function App() {
 	const [hasApplied, setHasApplied] = useState(false);
 	const [applications, setApplications] = useState([]);
 	const [applicationsThesis, setApplicationsThesis] = useState([]);
+	const [copiedProposal, setCopiedProposal] = useState(null);
 
 	const { setLoading } = useLoading();
 
@@ -71,17 +72,6 @@ function App() {
 				color: '#fff',
 			},
 		});
-	}
-
-	function unionForid(array) {
-		return array.reduce(function (acc, object) {
-			const key = object.id;
-			if (!acc[key]) {
-				acc[key] = [];
-			}
-			acc[key].push(object);
-			return acc;
-		}, {});
 	}
 
 	useEffect(() => {
@@ -204,6 +194,7 @@ function App() {
 								handleError={handleError}
 								accessToken={accessToken}
 								setDirty={setDirty}
+								setCopiedProposal={setCopiedProposal}
 							/>
 						) : isStudent ? (
 							<StudentHome
@@ -257,7 +248,14 @@ function App() {
 					path='/proposals/add'
 					element={
 						isProfessor ? (
-							<InsertProposal accessToken={accessToken} setDirty={setDirty} user={userData} handleError={handleError} date={dateVirtualClock} />
+							<InsertProposal
+								accessToken={accessToken}
+								setDirty={setDirty}
+								user={userData}
+								handleError={handleError}
+								date={dateVirtualClock}
+								copiedProposal={copiedProposal}
+							/>
 						) : isStudent ? (
 							<NotFound />
 						) : null

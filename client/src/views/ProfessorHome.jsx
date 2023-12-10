@@ -66,6 +66,7 @@ function ProfessorHome(props) {
 								accessToken={props.accessToken}
 								isEditable={!props.applications.some((app) => app.id == thesis.ID && app.state == 1)}
 								isArchived={thesis.status == 0}
+								setCopiedProposal={props.setCopiedProposal}
 							/>
 						))
 					) : (
@@ -74,7 +75,15 @@ function ProfessorHome(props) {
 						</Col>
 					)}
 				</Row>
-				<Button variant='primary' className='insert-proposal' style={{ borderRadius: 50 }} onClick={() => navigate('/proposals/add')}>
+				<Button
+					variant='primary'
+					className='insert-proposal'
+					style={{ borderRadius: 50 }}
+					onClick={() => {
+						props.setCopiedProposal(null);
+						navigate('/proposals/add');
+					}}
+				>
 					<i className='bi bi-plus' style={{ fontSize: '1.5rem' }}></i>
 				</Button>
 			</Container>
