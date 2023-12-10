@@ -369,7 +369,7 @@ exports.getThesisTeacher = (ID, date) => {
             sup_name: elem.sup_name,
             sup_surname: elem.sup_surname,
             notes: elem.notes,
-            status : (elem.status && ((date <= elem.date) ? 1 : 0)),
+            status : ((date > elem.date) ? 0 : elem.status),
             count: 0,
             keywords: [],
             types: [], 
@@ -916,7 +916,7 @@ exports.setStatusDeleted = (thesis) => {
 
 exports.cancelApplicationsByThesis = (thesis) => {
   return new Promise((resolve, reject) => {
-    const sql = 'UPDATE THESIS_APPLICATION SET STATE = 3 WHERE THESIS = ?';
+    const sql = 'UPDATE THESIS_APPLICATION SET STATE = 3 WHERE STATE = 0 AND THESIS = ?';
     db.run(sql, [thesis], function (err) {
       if (err) {
         reject(err);

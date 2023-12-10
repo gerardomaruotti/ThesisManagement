@@ -628,18 +628,16 @@ app.post('/api/delete/thesis', [
 		if (getRole.role != "teacher") {
 			return res.status(401).json({ error: "Unauthorized" })
 		}
-		
+
 		let getThesisExistance = await db.checkExistenceThesis(thesis);
 		if (getThesisExistance.available == 1 && getThesisExistance.data.state == 1) {
 			await db.setStatusDeleted(thesis)
 			await db.cancelApplicationsByThesis(thesis)
-
 			return res.status(200).json("Thesis deleted successfully");
 		} else {
-			return res.status(400).json({ error: 'Application does not exist' })
+			return res.status(400).json({ error: 'Thesis proposal does not exist' })
 		}
 	} catch (err) {
-		console.log(err)
 		return res.status(503).json({ error: "Error in the deletion of the thesis" });
 	}
 });
