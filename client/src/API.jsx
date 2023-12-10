@@ -7,8 +7,8 @@ const URL = 'http://localhost:3001/api';
 function callAPI(endpoint, accessToken, method, body) {
 	let options = {
 		headers: {
-			Authorization: `Bearer ${accessToken}`
-		}
+			Authorization: `Bearer ${accessToken}`,
+		},
 	};
 
 	if (method == 'POST' || method == 'PUT') {
@@ -23,13 +23,15 @@ function callAPI(endpoint, accessToken, method, body) {
 		fetch(URL + endpoint, options)
 			.then((response) => {
 				if (response.ok) {
-					response.json()
+					response
+						.json()
 						.then((res) => resolve(res))
 						.catch(() => {
 							reject({ error: 'Cannot parse server response.' });
 						});
 				} else {
-					response.json() // analyze the cause of error
+					response
+						.json() // analyze the cause of error
 						.then((message) => {
 							reject(message);
 						}) // error message in the response body
@@ -43,9 +45,6 @@ function callAPI(endpoint, accessToken, method, body) {
 			}); // connection errors
 	});
 }
-
-
-
 
 function getAllKeywords(accessToken) {
 	return callAPI('/keywords', accessToken, 'GET', null);
@@ -103,6 +102,10 @@ function editProposal(accessToken, thesis, id) {
 	return callAPI(`/edit/thesis/${id}`, accessToken, 'PUT', thesis);
 }
 
+function deleteProposal(accessToken, thesis) {
+	return callAPI(`/delete/thesis`, accessToken, 'POST', thesis);
+}
+
 function getStatusVirtualClock(accessToken) {
 	return callAPI('/virtualClockStatus', accessToken, 'GET', null);
 }
@@ -130,8 +133,9 @@ const API = {
 	acceptApplication,
 	rejectApplication,
 	editProposal,
+	deleteProposal,
 	getStatusVirtualClock,
 	resetVirtualClock,
-	setVirtualClock
+	setVirtualClock,
 };
 export default API;
