@@ -159,6 +159,37 @@ function ProposalForm(props) {
 			.catch((err) => handleError(err));
 	}, [selectedLevel]);
 
+	function handlePaste() {
+		setTitle(props.copiedProposal.title);
+		setDescription(props.copiedProposal.description);
+		setRequiredKnowledge(props.copiedProposal.requiredKnowledge);
+		setNotes(props.copiedProposal.notes);
+		setSelectedCoSupervisors(
+			props.copiedProposal.coSupervisors.map((cosupervisor) => {
+				return {
+					value: cosupervisor.email,
+					label: cosupervisor.name + ' ' + cosupervisor.surname,
+					email: cosupervisor.email,
+					name: cosupervisor.name,
+					surname: cosupervisor.surname,
+				};
+			})
+		);
+		setselectedTypes(
+			props.copiedProposal.types.map((type) => {
+				return { value: type, label: type };
+			})
+		);
+		setSelectedLevel({ value: props.copiedProposal.level, label: props.copiedProposal.level });
+		setSelectedCds({ value: props.copiedProposal.codeDegree, label: props.copiedProposal.cds });
+		setSelectedKeywords(
+			props.copiedProposal.keywords.map((keyword) => {
+				return { value: keyword, label: keyword };
+			})
+		);
+		setExpirationDate(dayjs(props.copiedProposal.expirationDate).format('YYYY-MM-DD'));
+	}
+
 	function handleSelectedKeywords(selectedOptions) {
 		setSelectedKeywords(selectedOptions);
 	}
@@ -205,7 +236,7 @@ function ProposalForm(props) {
 			keywords: keywordsValues,
 		};
 
-		if (props.thesis) {
+		if (props.editProposal) {
 			props.editProposal(thesisObject);
 		} else {
 			props.createProposal(thesisObject);
@@ -303,6 +334,11 @@ function ProposalForm(props) {
 				<Button variant='primary' className='form-button' type='submit'>
 					{props.editProposal ? 'Edit Proposal' : 'Insert Proposal'}
 				</Button>
+				{props.copiedProposal ? (
+					<Button variant='primary' className='form-button' onClick={handlePaste}>
+						Paste
+					</Button>
+				) : null}
 			</Container>
 		</Form>
 	);

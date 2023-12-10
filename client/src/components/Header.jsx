@@ -42,7 +42,7 @@ function Header(props) {
 
 	return (
 		<>
-			<Navbar collapseOnSelect expand='md' fixed='top' style={{ backgroundColor: Color.primary, position: 'sticky' }} variant='dark'>
+			<Navbar collapseOnSelect expand='md' style={{ backgroundColor: Color.primary }} variant='dark'>
 				<Container fluid>
 					<Navbar.Brand style={{ paddingLeft: '20px', paddingRight: 20 }} onClick={() => navigate('/')}>
 						<img src={logo_white} alt='Logo' style={{ height: '40px' }} />
@@ -58,17 +58,7 @@ function Header(props) {
 								</div>
 							</Nav.Link>
 						) : null}
-						<Dropdown align='end' className='d-none d-md-flex'>
-							<Dropdown.Toggle variant='primary' id='dropdown-custom' style={{ height: 53 }}>
-								<i className='bi bi-bell' style={{ fontSize: '20px' }}></i>
-							</Dropdown.Toggle>
 
-							<Dropdown.Menu>
-								<Dropdown.Item>Notifica 1</Dropdown.Item>
-								<Dropdown.Item>Notifica 2</Dropdown.Item>
-								<Dropdown.Item>Notifica 3</Dropdown.Item>
-							</Dropdown.Menu>
-						</Dropdown>
 						<Dropdown align='end' className='d-none d-md-flex'>
 							<Dropdown.Toggle variant='primary' id='dropdown-custom'>
 								<Container className='d-flex justify-content-between align-items-center'>

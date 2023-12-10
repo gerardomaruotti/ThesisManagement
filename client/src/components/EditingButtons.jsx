@@ -4,10 +4,13 @@ import { useNavigate } from 'react-router-dom';
 import API from '../API';
 
 function EditingButtons(props) {
-	const { disabled, isArchived, editProposal, deleteProposal, archiveProposal } = props;
+	const { disabled, isArchived, copyProposal, editProposal, deleteProposal, archiveProposal } = props;
 
 	return (
 		<>
+			<Button variant='primary' onClick={copyProposal} style={{ marginRight: 10 }} size='sm'>
+				<i className='bi bi-copy'></i>
+			</Button>
 			<Button variant='primary' disabled={disabled} onClick={editProposal} style={{ marginRight: 10 }} size='sm'>
 				<i className='bi bi-pencil'></i>
 			</Button>
