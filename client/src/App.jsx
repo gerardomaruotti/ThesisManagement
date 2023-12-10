@@ -255,6 +255,7 @@ function App() {
 								handleError={handleError}
 								date={dateVirtualClock}
 								copiedProposal={copiedProposal}
+								setThesis={setThesis}
 							/>
 						) : isStudent ? (
 							<NotFound />

@@ -39,7 +39,6 @@ function ProposalCard(props) {
 			.then((thesis) => {
 				setLoading(false);
 				props.setCopiedProposal(thesis);
-				navigate('/proposals/add');
 			})
 			.catch((err) => {
 				setLoading(false);

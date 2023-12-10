@@ -80,7 +80,6 @@ function ProfessorHome(props) {
 					className='insert-proposal'
 					style={{ borderRadius: 50 }}
 					onClick={() => {
-						props.setCopiedProposal(null);
 						navigate('/proposals/add');
 					}}
 				>

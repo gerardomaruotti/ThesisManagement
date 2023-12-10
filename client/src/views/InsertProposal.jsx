@@ -28,7 +28,7 @@ function InsertProposal(props) {
 				handleError={handleError}
 				createProposal={createProposal}
 				date={props.date}
-				thesis={props.copiedProposal}
+				copiedProposal={props.copiedProposal}
 			/>
 		</Container>
 	);
