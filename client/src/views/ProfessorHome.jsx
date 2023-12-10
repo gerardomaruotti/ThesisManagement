@@ -61,6 +61,8 @@ function ProfessorHome(props) {
 								key={thesis.ID}
 								isProfessor={1}
 								thesis={thesis}
+								handleError={props.handleError}
+								accessToken={props.accessToken}
 								isEditable={!props.applications.some((app) => app.id == thesis.ID && app.state == 1)}
 							/>
 						))
