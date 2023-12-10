@@ -11,7 +11,7 @@ import Loading from '../components/Loading.jsx';
 function ProfessorHome(props) {
 	const navigate = useNavigate();
 	const { loginWithRedirect, isAuthenticated, isLoading } = useAuth0();
-	const { loading, setLoading } = useLoading();
+	const { loading } = useLoading();
 	const [rapidFilter, setRapidFilter] = useState('active');
 	const [filteredThesis, setFilteredThesis] = useState([]);
 
@@ -61,9 +61,11 @@ function ProfessorHome(props) {
 								key={thesis.ID}
 								isProfessor={1}
 								thesis={thesis}
+								setDirty={props.setDirty}
 								handleError={props.handleError}
 								accessToken={props.accessToken}
 								isEditable={!props.applications.some((app) => app.id == thesis.ID && app.state == 1)}
+								isArchived={thesis.status == 0}
 							/>
 						))
 					) : (

@@ -106,6 +106,10 @@ function deleteProposal(accessToken, thesis) {
 	return callAPI(`/delete/thesis`, accessToken, 'POST', thesis);
 }
 
+function archiveProposal(accessToken, thesis) {
+	return callAPI(`/archive/thesis`, accessToken, 'POST', thesis);
+}
+
 function getStatusVirtualClock(accessToken) {
 	return callAPI('/virtualClockStatus', accessToken, 'GET', null);
 }
@@ -134,6 +138,7 @@ const API = {
 	rejectApplication,
 	editProposal,
 	deleteProposal,
+	archiveProposal,
 	getStatusVirtualClock,
 	resetVirtualClock,
 	setVirtualClock,

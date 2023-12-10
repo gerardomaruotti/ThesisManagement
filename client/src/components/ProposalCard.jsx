@@ -34,6 +34,16 @@ function ProposalCard(props) {
 
 	function archiveProposal(event) {
 		event.stopPropagation();
+		const thesis = {
+			thesisID: props.thesis.ID,
+		};
+		API.archiveProposal(props.accessToken, thesis)
+			.then((res) => {
+				props.setDirty(true);
+			})
+			.catch((err) => {
+				props.handleError(err.toString());
+			});
 	}
 
 	function deleteProposal(event) {
@@ -46,7 +56,7 @@ function ProposalCard(props) {
 				props.setDirty(true);
 			})
 			.catch((err) => {
-				props.handleError(err);
+				props.handleError(err.toString());
 			});
 	}
 
@@ -179,7 +189,13 @@ function ProposalCard(props) {
 						)
 					) : (
 						<div style={{ marginTop: 20, textAlign: 'right' }}>
-							<EditingButtons disabled={!props.isEditable} editProposal={editProposal} deleteProposal={deleteProposal} />
+							<EditingButtons
+								disabled={!props.isEditable}
+								isArchived={props.isArchived}
+								editProposal={editProposal}
+								deleteProposal={deleteProposal}
+								archiveProposal={archiveProposal}
+							/>
 						</div>
 					)}
 				</Card>

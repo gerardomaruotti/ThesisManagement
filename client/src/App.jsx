@@ -198,7 +198,13 @@ function App() {
 					path='/'
 					element={
 						isProfessor ? (
-							<ProfessorHome thesis={thesis} applications={applicationsThesis} handleError={handleError} accessToken={accessToken} />
+							<ProfessorHome
+								thesis={thesis}
+								applications={applicationsThesis}
+								handleError={handleError}
+								accessToken={accessToken}
+								setDirty={setDirty}
+							/>
 						) : isStudent ? (
 							<StudentHome
 								isProfessor={isProfessor}
