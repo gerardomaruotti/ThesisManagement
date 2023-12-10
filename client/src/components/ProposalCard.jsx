@@ -60,6 +60,10 @@ function ProposalCard(props) {
 			});
 	}
 
+	function copyProposal(event) {
+		event.stopPropagation();
+	}
+
 	return (
 		<>
 			<Col lg={6} sm={12} style={{ marginTop: 25 }}>
@@ -192,6 +196,7 @@ function ProposalCard(props) {
 							<EditingButtons
 								disabled={!props.isEditable}
 								isArchived={props.isArchived}
+								copyProposal={copyProposal}
 								editProposal={editProposal}
 								deleteProposal={deleteProposal}
 								archiveProposal={archiveProposal}
