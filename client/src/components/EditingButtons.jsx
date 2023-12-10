@@ -4,12 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import API from '../API';
 
 function EditingButtons(props) {
-	const { disabled, id, editProposal, deleteProposal } = props;
-	const nagigate = useNavigate();
-
-	function archiveProposal(event) {
-		event.stopPropagation();
-	}
+	const { disabled, editProposal, deleteProposal, archiveProposal } = props;
 
 	return (
 		<>

@@ -184,7 +184,7 @@ function ProposalCard(props) {
 					)
 				) : (
 					<div style={{ marginTop: 20, textAlign: 'right' }}>
-						<EditingButtons disabled={!props.isEditable} id={props.thesis.ID} editProposal={editProposal} deleteProposal={deleteProposal} />
+						<EditingButtons disabled={!props.isEditable} editProposal={editProposal} deleteProposal={deleteProposal} />
 					</div>
 				)}
 			</Card>
