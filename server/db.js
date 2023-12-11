@@ -544,7 +544,7 @@ exports.insertApplication = (userId, idThesis, date) => {
 
 exports.getTeacherApplications = (teacherId,date) => {
   return new Promise((resolve, reject) => {
-    const sql = 'SELECT ID_THESIS,TITLE,EXPIRATION_DATE,LEVEL, DEGREE, STUDENT, S.NAME as NAME, S.SURNAME as SURNAME, S.EMAIL as EMAIL, STATE FROM THESIS T, TEACHER TE, THESIS_APPLICATION TA, STUDENT S WHERE T.SUPERVISOR=TE.ID AND T.ID_THESIS=TA.THESIS AND TA.STUDENT=S.ID AND TE.ID=?';
+    const sql = 'SELECT ID_THESIS, ID_APPLICATION, TITLE,EXPIRATION_DATE,LEVEL, DEGREE, STUDENT, S.NAME as NAME, S.SURNAME as SURNAME, S.EMAIL as EMAIL, STATE FROM THESIS T, TEACHER TE, THESIS_APPLICATION TA, STUDENT S WHERE T.SUPERVISOR=TE.ID AND T.ID_THESIS=TA.THESIS AND TA.STUDENT=S.ID AND TE.ID=?';
     db.all(sql, [teacherId], (err,rows) => {
       if (err) {
         reject(err);
@@ -552,6 +552,7 @@ exports.getTeacherApplications = (teacherId,date) => {
       } else{
         const applications=rows.map((elem)=>({
           id: elem.ID_THESIS,
+          id_application: elem.ID_APPLICATION,
           title: elem.TITLE,
           expirationDate: elem.EXPIRATION_DATE,
           level: elem.LEVEL,
@@ -624,6 +625,7 @@ exports.checkExistenceApplication= (thesis, student)=> {
     });
   });
 }
+
 
 exports.checkExistenceThesis= (thesis)=> {
   return new Promise((resolve, reject) => {
@@ -783,7 +785,7 @@ exports.checkExistenceApplicationForThesis= (thesis)=> {
         if (row == undefined)
           resolve(0)
         else{
-          resolve(1)
+          resolve(row.ID_APPLICATION)
         }
       }
     });
@@ -940,3 +942,112 @@ exports.cancelPendingApplications = (thesis) => {
   });
 };
 
+
+exports.insertCv = (applId, filename, path) => {
+  return new Promise((resolve, reject) => {
+    const sql = 'INSERT INTO PDF_TABLE (ID_APPLICATION, FILENAME, PATH) VALUES (?,?,?)';
+    db.run(sql, [applId,filename,path], function (err) {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve("Cv uploaded");
+    });
+  });
+}
+
+
+exports.getStudentInfo = (studentId) => {
+  return new Promise((resolve, reject) => {
+    const sql = 'SELECT ID, NAME, SURNAME, EMAIL FROM STUDENT WHERE ID=?';
+    db.get(sql, [studentId], (err,row) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      if(row == undefined){
+        resolve({});
+      } else{
+
+        let info = {
+          id: row.ID,
+          name: row.NAME,
+          surname: row.SURNAME,
+          email: row.EMAIL,
+          exams: [],
+          cv: null
+        }
+
+        resolve(info);
+      }
+      
+    });
+  });
+}
+
+exports.getStudentExams = (studentId) => {
+  return new Promise((resolve, reject) => {
+    const sql = 'SELECT COD_COURSE, TITLE_COURSE, CFU, GRADE, DATE FROM CAREER WHERE ID=?';
+    db.all(sql, [studentId], (err,rows) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+    
+        let exams = rows.map((elem) => ({
+          cod_course: elem.COD_COURSE,
+          title_course: elem.TITLE_COURSE,
+          cfu: elem.CFU,
+          grade: elem.GRADE,
+          date: elem.DATE
+
+        }));
+
+        resolve(exams);
+      
+    });
+  });
+}
+
+
+exports.getCv = (applId) => {
+  return new Promise((resolve, reject) => {
+    const sql = 'SELECT FILENAME, PATH FROM PDF_TABLE WHERE ID_APPLICATION=?';
+    db.get(sql, [applId], (err,row) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      if(row == undefined){
+        resolve({})
+      } else{
+        let cv = {
+          filename: row.filename,
+          path: row.path
+        }
+
+        resolve(cv);
+      }     
+    });
+  });
+}
+
+
+exports.checkExistenceApplicationById= (idApplication)=> {
+  return new Promise((resolve, reject) => {
+    const sql = 'SELECT * FROM THESIS_APPLICATION WHERE ID_APPLICATION = ?';
+    db.get(sql, [idApplication], (err, row) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      else {
+        if (row == undefined)
+          resolve(0)
+        else{
+          resolve(1)
+        }
+      }
+    });
+  });
+}

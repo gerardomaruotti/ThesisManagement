@@ -10,6 +10,8 @@ const dayjs = require('dayjs');
 const currentDate = dayjs();
 const nodemailer = require('nodemailer');
 const sgTransport = require('nodemailer-sendgrid-transport');
+const multer = require('multer');
+const fs = require('fs');
 require('dotenv').config();
 
 app.use(express.json());
@@ -32,6 +34,17 @@ const transporter = nodemailer.createTransport(
 		},
 	})
 );
+
+const storage= multer.diskStorage({
+	destination: function(req,file, cb) {
+		return cb(null, "./files")
+	},
+	filename:	function (req, file, cb) {
+		return cb(null, `${Date.now()}_${file.originalname}`)
+	}
+})
+
+const upload = multer ({storage});
 
 app.get('/api/keywords', checkJwt, (req, res) => {
 	db.getKeywords()
@@ -304,7 +317,7 @@ app.get('/api/thesis/:id', checkJwt, async (req, res) => {
 	}
 });
 
-app.post('/api/thesis/:id/apply', checkJwt, async (req, res) => {
+app.post('/api/thesis/:id/apply', upload.single('file'), checkJwt, async (req, res) => {
 	try {
 		let thesisId = req.params.id;
 		if (isNaN(thesisId) || thesisId <= 0) {
@@ -326,11 +339,14 @@ app.post('/api/thesis/:id/apply', checkJwt, async (req, res) => {
 			return res.status(400).json({ error: 'Pending or accepted application already exists' })
 		}
 
-		if (userRole.role == 'student') {
-			await db.insertApplication(userRole.id, thesisId, (date == 0) ? currentDate.format('YYYY-MM-DD') : date);
-		} else {
-			return res.status(401).json({ error: 'Unauthorized user' });
+		if (userRole.role != 'student') return res.status(401).json({ error: 'Unauthorized user' });
+
+		let applId=await db.insertApplication(userRole.id, thesisId, (date == 0) ? currentDate.format('YYYY-MM-DD') : date);
+
+		if(req.file) {
+			await db.insertCv(applId, req.file.filename, req.file.path);
 		}
+		
 		let getMailTeacher = await db.getMailTeacher(thesis_info.supervisor);
 
 		const mailOptions = {
@@ -678,6 +694,57 @@ app.post('/api/archive/thesis', [
 		return res.status(503).json({ error: "Error in archiving the thesis" });
 	}
 });
+
+
+app.get('/api/applications/thesis/:idThesis/students/:idStudent', checkJwt, async(req,res) => {
+
+	try{
+		let thesisId=req.params.idThesis;
+		let studentId=req.params.idStudent;
+		let applId= req.body.idApplication;
+		let getRole = await db.getRole(req.auth);
+
+		if (getRole.role != "teacher") {
+			return res.status(401).json({ error: "Unauthorized" })
+		}
+
+		let getApplication = await db.checkExistenceApplicationById(applId);
+		if (getApplication != 1) return res.status(400).json({error: "Application does not exists"})
+
+		let studentInfo = await db.getStudentInfo(studentId);
+		studentInfo.exams = await db.getStudentExams(studentId);
+		
+		let studentCv = await db.getCv(applId);
+		if(studentCv.filename != null){
+			const filePath = path.join(__dirname, 'files', studentCv.filename);
+
+			fs.readFile(filePath, (err, data) => {
+				if (err) {
+					console.error('Error reading file:', err);
+					res.status(500).json({ error: 'Internal Server Error' });
+				} else {
+					console.log(data)
+				}
+			});
+
+			//studentInfo.cv = data;
+		}
+		
+		return res.status(200).json("Student details ok")
+
+
+
+
+
+
+	} catch(err){
+
+
+
+	}
+
+
+})
 
 
 module.exports = { app, port, transporter};
