@@ -14,7 +14,7 @@ function callAPI(endpoint, accessToken, method, body) {
 	if (method == 'POST' || method == 'PUT') {
 		options.method = method;
 		if (body != null) {
-			if (cv instanceof FormData) {
+			if (body instanceof FormData) {
 				options.headers['enctype'] = 'multipart/form-data';
 			}
 			else {
