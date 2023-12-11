@@ -36,15 +36,18 @@ function Proposal(props) {
 		}
 	}, [props.accessToken]);
 
-	function apply() {
+	function apply(event) {
 		setShowModal(false);
-		console.log(cv);
-		API.ThesisApply(id, props.accessToken)
+		const formData = new FormData();
+		formData.append('file', cv);
+		API.ThesisApply(id, props.accessToken, cv ? formData : null)
 			.then(() => {
+				setCv(null);
 				props.handleSuccess('Application accepted');
 				props.setDirty(true);
 			})
 			.catch((err) => {
+				setCv(null);
 				props.handleError(err);
 			});
 	}

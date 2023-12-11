@@ -15,7 +15,7 @@ function callAPI(endpoint, accessToken, method, body) {
 		options.method = method;
 		if (body != null) {
 			options.headers['Content-Type'] = 'application/json';
-			options.body = JSON.stringify(body);
+			options.body = body;
 		}
 	}
 
@@ -51,7 +51,7 @@ function getAllKeywords(accessToken) {
 }
 
 function getAllThesis(accessToken, filters) {
-	return callAPI('/thesis', accessToken, 'POST', filters);
+	return callAPI('/thesis', accessToken, 'POST', JSON.stringify(filters));
 }
 
 function getAllTypes(accessToken) {
@@ -75,11 +75,11 @@ function getThesisByID(id, accessToken) {
 }
 
 function insertThesis(accessToken, thesis) {
-	return callAPI('/insert/thesis', accessToken, 'POST', thesis);
+	return callAPI('/insert/thesis', accessToken, 'POST', JSON.stringify(thesis));
 }
 
-function ThesisApply(id, accessToken) {
-	return callAPI(`/thesis/${id}/apply`, accessToken, 'POST', null);
+function ThesisApply(id, accessToken, cv) {
+	return callAPI(`/thesis/${id}/apply`, accessToken, 'POST', cv);
 }
 
 function getUser(accessToken) {
@@ -91,23 +91,23 @@ function getApplications(accessToken) {
 }
 
 function acceptApplication(parameters, accessToken) {
-	return callAPI('/accept/application', accessToken, 'POST', parameters);
+	return callAPI('/accept/application', accessToken, 'POST', JSON.stringify(parameters));
 }
 
 function rejectApplication(parameters, accessToken) {
-	return callAPI('/reject/application', accessToken, 'POST', parameters);
+	return callAPI('/reject/application', accessToken, 'POST', JSON.stringify(parameters));
 }
 
 function editProposal(accessToken, thesis, id) {
-	return callAPI(`/edit/thesis/${id}`, accessToken, 'PUT', thesis);
+	return callAPI(`/edit/thesis/${id}`, accessToken, 'PUT', JSON.stringify(thesis));
 }
 
 function deleteProposal(accessToken, thesis) {
-	return callAPI(`/delete/thesis`, accessToken, 'POST', thesis);
+	return callAPI(`/delete/thesis`, accessToken, 'POST', JSON.stringify(thesis));
 }
 
 function archiveProposal(accessToken, thesis) {
-	return callAPI(`/archive/thesis`, accessToken, 'POST', thesis);
+	return callAPI(`/archive/thesis`, accessToken, 'POST', JSON.stringify(thesis));
 }
 
 function getStatusVirtualClock(accessToken) {
@@ -119,7 +119,7 @@ function resetVirtualClock(accessToken) {
 }
 
 function setVirtualClock(accessToken, date) {
-	return callAPI('/virtualClockOn', accessToken, 'PUT', { date: date });
+	return callAPI('/virtualClockOn', accessToken, 'PUT', JSON.stringify({ date: date }));
 }
 
 const API = {

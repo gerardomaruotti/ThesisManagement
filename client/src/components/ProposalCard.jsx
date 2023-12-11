@@ -19,13 +19,17 @@ function ProposalCard(props) {
 		setShowModal(false);
 		console.log(cv);
 		setLoading(true);
-		API.ThesisApply(props.thesis.ID, props.accessToken)
+		const formData = new FormData();
+		formData.append('file', cv);
+		API.ThesisApply(props.thesis.ID, props.accessToken, cv ? formData : null)
 			.then(() => {
+				setCv(null);
 				props.handleSuccess('Application accepted');
 				props.setDirty(true);
 				setLoading(false);
 			})
 			.catch((err) => {
+				setCv(null);
 				setLoading(false);
 				props.handleError(err);
 			});
