@@ -14,7 +14,12 @@ function callAPI(endpoint, accessToken, method, body) {
 	if (method == 'POST' || method == 'PUT') {
 		options.method = method;
 		if (body != null) {
-			options.headers['Content-Type'] = 'application/json';
+			if (cv instanceof FormData) {
+				options.headers['enctype'] = 'multipart/form-data';
+			}
+			else {
+				options.headers['Content-Type'] = 'application/json';
+			}
 			options.body = body;
 		}
 	}
@@ -79,6 +84,7 @@ function insertThesis(accessToken, thesis) {
 }
 
 function ThesisApply(id, accessToken, cv) {
+	console.log();
 	return callAPI(`/thesis/${id}/apply`, accessToken, 'POST', cv);
 }
 
