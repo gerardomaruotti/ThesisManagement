@@ -68,6 +68,8 @@ function ProfessorHome(props) {
 								isEditable={!props.applications.some((app) => app.id == thesis.ID && app.state == 1)}
 								isArchived={thesis.status == 0}
 								setCopiedProposal={props.setCopiedProposal}
+								setGenericModal={props.setShowModal}
+								setMsgModal={props.setMsgModal}
 							/>
 						))
 					) : (

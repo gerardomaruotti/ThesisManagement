@@ -197,6 +197,8 @@ function App() {
 								accessToken={accessToken}
 								setDirty={setDirty}
 								setCopiedProposal={setCopiedProposal}
+								setShowModal={setShowModal}
+								setMsgModal={setMsgModal}
 							/>
 						) : isStudent ? (
 							<StudentHome

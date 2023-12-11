@@ -55,6 +55,16 @@ function ProposalCard(props) {
 
 	function archiveProposal(event) {
 		event.stopPropagation();
+		props.setGenericModal(true);
+		props.setMsgModal({
+			header: 'Archive proposal',
+			body: `Are you sure you want to archive this proposal?`,
+			method: () => archiveProposalMethod(),
+		});
+	}
+
+	function archiveProposalMethod() {
+		props.setGenericModal(false);
 		const thesis = {
 			thesisID: props.thesis.ID,
 		};
@@ -62,6 +72,7 @@ function ProposalCard(props) {
 		API.archiveProposal(props.accessToken, thesis)
 			.then((res) => {
 				setLoading(false);
+				props.handleSuccess('Proposal archived correctly');
 				props.setDirty(true);
 			})
 			.catch((err) => {
@@ -72,6 +83,16 @@ function ProposalCard(props) {
 
 	function deleteProposal(event) {
 		event.stopPropagation();
+		props.setGenericModal(true);
+		props.setMsgModal({
+			header: 'Delete proposal',
+			body: `Are you sure you want to delete this proposal?`,
+			method: () => deleteProposalMethod(),
+		});
+	}
+
+	function deleteProposalMethod() {
+		props.setGenericModal(false);
 		const thesis = {
 			thesisID: props.thesis.ID,
 		};
@@ -79,6 +100,7 @@ function ProposalCard(props) {
 		API.deleteProposal(props.accessToken, thesis)
 			.then(() => {
 				setLoading(false);
+				props.handleSuccess('Proposal deleted correctly');
 				props.setDirty(true);
 			})
 			.catch((err) => {
