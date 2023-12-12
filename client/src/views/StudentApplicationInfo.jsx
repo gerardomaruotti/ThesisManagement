@@ -15,66 +15,7 @@ const StudentApplicationInfo = (props) => {
     const { loading, setLoading } = useLoading();
     const { id, idApplication } = useParams();
     const [studentInfo, setStudentInfo] = useState(null);
-
-    let studentMock = {
-        name: 'Andrea',
-        surname: 'Scamporrino',
-        email: 's318927@studenti.polito.it',
-        studentID: 's318927',
-        applicationStatus: 0,
-        exams: [
-            {
-                cod: '01TXYOV',
-                name: 'Analisi Matematica 1',
-                date: '2021-06-30',
-                cfu: 12,
-                mark: 30,
-            },
-            {
-                cod: '01TXYOV',
-                name: 'Analisi Matematica 1',
-                date: '2021-06-30',
-                cfu: 12,
-                mark: 30,
-            },
-            {
-                cod: '01TXYOV',
-                name: 'Analisi Matematica 1',
-                date: '2021-06-30',
-                cfu: 12,
-                mark: 30,
-            },
-            {
-                cod: '01TXYOV',
-                name: 'Analisi Matematica 1',
-                date: '2021-06-30',
-                cfu: 12,
-                mark: 30,
-            },
-            {
-                cod: '01TXYOV',
-                name: 'Analisi Matematica 1',
-                date: '2021-06-30',
-                cfu: 12,
-                mark: 30,
-            },
-            {
-                cod: '01TXYOV',
-                name: 'Analisi Matematica 1',
-                date: '2021-06-30',
-                cfu: 12,
-                mark: 30,
-            },
-            {
-                cod: '01TXYOV',
-                name: 'Analisi Matematica 1',
-                date: '2021-06-30',
-                cfu: 12,
-                mark: 30,
-            },
-        ],
-        cv: 'https://www.africau.edu/images/default/sample.pdf',
-    }
+    const [dirty, setDirty] = useState(false);
 
 
     function acceptApplication(idStudent) {
@@ -82,6 +23,7 @@ const StudentApplicationInfo = (props) => {
         const parameters = { thesisID: id, studentID: idStudent };
         API.acceptApplication(parameters, props.accessToken)
             .then(() => {
+                setDirty(true);
                 props.setDirty(true);
                 props.handleSuccess('Application accepted');
             })
@@ -95,6 +37,7 @@ const StudentApplicationInfo = (props) => {
         const parameters = { thesisID: id, studentID: idStudent };
         API.rejectApplication(parameters, props.accessToken)
             .then(() => {
+                setDirty(true);
                 props.setDirty(true);
                 props.handleError('Application rejected');
             })
@@ -124,13 +67,7 @@ const StudentApplicationInfo = (props) => {
                     setLoading(false);
                 });
         }
-        // let cfu = 0;
-        // let avg = 0;
-        // studentMock.exams.forEach(exam => { cfu += exam.cfu; avg += exam.mark * exam.cfu; });
-        // studentMock.cfu = cfu;
-        // studentMock.avg = Number((avg / cfu).toFixed(2));
-        // setStudentInfo(studentMock);
-    }, [props.accessToken]);
+    }, [props.accessToken, dirty]);
 
 
     const LeftBarDetails = () => {
@@ -239,8 +176,8 @@ const StudentApplicationInfo = (props) => {
                                         props.setShowModal(true);
                                         props.setMsgModal({
                                             header: 'Accept application',
-                                            body: `Are you sure you want to accept the application of student ${studentInfo.studentID}? The other pending application will be cancelled`,
-                                            method: () => acceptApplication(studentInfo.studentID),
+                                            body: `Are you sure you want to accept the application of student ${studentInfo.id}? The other pending application will be cancelled`,
+                                            method: () => acceptApplication(studentInfo.id),
                                         });
                                     }}>
                                     <i className="bi bi-check2" style={{ paddingRight: 5 }}></i>
@@ -253,8 +190,8 @@ const StudentApplicationInfo = (props) => {
                                         props.setShowModal(true);
                                         props.setMsgModal({
                                             header: 'Reject Application',
-                                            body: `Are you sure you want to reject the application of student ${studentInfo.studentID}?`,
-                                            method: () => rejectApplication(studentInfo.studentID),
+                                            body: `Are you sure you want to reject the application of student ${studentInfo.id}?`,
+                                            method: () => rejectApplication(studentInfo.id),
                                         });
                                     }}>
                                     <i className="bi bi-x-lg" style={{ paddingRight: 5 }}></i>
@@ -332,7 +269,7 @@ const StudentApplicationInfo = (props) => {
                                     </Col>
                                 </Row>
                                 {studentInfo.cv == null ? (<p>No CV uploaded</p>) :
-                                    <embed src={'http://localhost:3001/files/1702380838463_CV_Scamporrino_English.pdf'} type="application/pdf" height={'500px'} />
+                                    <embed src={studentInfo.cv} type="application/pdf" height={'500px'} />
                                 }
                             </Card>
                         </Col>
