@@ -57,7 +57,6 @@ const StudentApplicationInfo = (props) => {
                     studentInfo.exams.forEach(exam => { cfu += Number(exam.cfu); avg += Number(exam.grade) * Number(exam.cfu); });
                     studentInfo.cfu = cfu;
                     studentInfo.avg = (avg / cfu).toFixed(2);
-                    console.log(studentInfo);
                     setStudentInfo(studentInfo);
                 })
                 .catch((err) => {
@@ -269,7 +268,7 @@ const StudentApplicationInfo = (props) => {
                                     </Col>
                                 </Row>
                                 {studentInfo.cv == null ? (<p>No CV uploaded</p>) :
-                                    <embed src={studentInfo.cv} type="application/pdf" height={'500px'} />
+                                    <embed src={`http://localhost:3001/${studentInfo.cv}?${new Date().getTime()}`} type="application/pdf" height={'500px'} />
                                 }
                             </Card>
                         </Col>
