@@ -42,7 +42,7 @@ function App() {
 	const [selectedKeywords, setSelectedKeywords] = useState([]);
 	const [selectedTypes, setSelectedTypes] = useState([]);
 	const [selectedGroups, setSelectedGroups] = useState([]);
-	const [expirationDate, setexpirationDate] = useState('all');
+	const [expirationDate, setExpirationDate] = useState('all');
 
 	//GenericModal
 	const [showModal, setShowModal] = useState(false);
@@ -219,7 +219,7 @@ function App() {
 								selectedGroups={selectedGroups}
 								setSelectedGroups={setSelectedGroups}
 								expirationDate={expirationDate}
-								setExpirationDate={setexpirationDate}
+								setExpirationDate={setExpirationDate}
 								handleError={handleError}
 								handleSuccess={handleSuccess}
 								setMsgModal={setMsgModal}
