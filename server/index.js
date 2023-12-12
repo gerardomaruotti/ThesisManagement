@@ -697,12 +697,23 @@ app.post('/api/archive/thesis', [
 });
 
 
-app.post('/api/applications/details', async(req,res) => {
-
+app.post('/api/applications/details', checkJwt, [
+	check('idApplication').isInt().custom(value => value>0)
+],
+async(req,res) => {
+	
 	try{
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			return res.status(422).json({ errors: errors.array() });
+		}
+		
 		let applId= req.body.idApplication;
 		
-
+		let getRole = await db.getRole(req.auth);
+		if (getRole.role != "teacher") {
+			return res.status(401).json({ error: "Unauthorized" })
+		}
 		let getStudentApplication = await db.checkExistenceApplicationById(applId);
 		if (getStudentApplication == 0) return res.status(400).json({error: "Application does not exists"})
 
