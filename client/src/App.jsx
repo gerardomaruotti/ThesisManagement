@@ -195,6 +195,7 @@ function App() {
 								handleError={handleError}
 								handleSuccess={handleSuccess}
 								accessToken={accessToken}
+								dirty={dirty}
 								setDirty={setDirty}
 								setCopiedProposal={setCopiedProposal}
 								setShowModal={setShowModal}
@@ -202,7 +203,6 @@ function App() {
 							/>
 						) : isStudent ? (
 							<StudentHome
-								isProfessor={isProfessor}
 								thesis={thesis}
 								setThesis={setThesis}
 								accessToken={accessToken}

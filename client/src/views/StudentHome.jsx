@@ -10,14 +10,40 @@ import { useAuth0 } from '@auth0/auth0-react';
 import { useLoading } from '../LoadingContext.jsx';
 import API from '../API.jsx';
 import Loading from '../components/Loading.jsx';
+import PropTypes from 'prop-types';
 
-function StudentHome(props) {
+function StudentHome({
+	thesis,
+	setThesis,
+	applications,
+	handleError,
+	handleSuccess,
+	accessToken,
+	setDirty,
+	setShowModal,
+	setMsgModal,
+	activatedFilters,
+	setActivatedFilters,
+	selectedSupervisor,
+	setSelectedSupervisor,
+	selectedCoSupervisors,
+	setSelectedCoSupervisors,
+	selectedKeywords,
+	setSelectedKeywords,
+	selectedTypes,
+	setSelectedTypes,
+	selectedGroups,
+	setSelectedGroups,
+	expirationDate,
+	setExpirationDate,
+	hasApplied,
+	date,
+}) {
 	const { loginWithRedirect, isAuthenticated, isLoading } = useAuth0();
 	const { loading, setLoading } = useLoading();
 	const [filtersShow, setFiltersShow] = useState(false);
-	const navigate = useNavigate();
 	const [search, setSearch] = useState('');
-	const [filteredThesis, setFilteredThesis] = useState(props.thesis);
+	const [filteredThesis, setFilteredThesis] = useState(thesis);
 	const [rapidFilter, setRapidFilter] = useState('all');
 
 	function handleRapidFilters(filter) {
@@ -36,7 +62,7 @@ function StudentHome(props) {
 
 	useEffect(() => {
 		if (rapidFilter === 'all') {
-			let filtered = props.thesis.filter((thesis) => {
+			let filtered = thesis.filter((thesis) => {
 				return (
 					thesis.title.toLowerCase().includes(search.toLowerCase()) ||
 					thesis.description.toLowerCase().includes(search.toLowerCase()) ||
@@ -47,7 +73,7 @@ function StudentHome(props) {
 			});
 			setFilteredThesis(filtered);
 		} else if (rapidFilter === 'company') {
-			let filtered = props.thesis.filter((thesis) => {
+			let filtered = thesis.filter((thesis) => {
 				return (
 					(thesis.title.toLowerCase().includes(search.toLowerCase()) ||
 						thesis.description.toLowerCase().includes(search.toLowerCase()) ||
@@ -59,7 +85,7 @@ function StudentHome(props) {
 			});
 			setFilteredThesis(filtered);
 		} else if (rapidFilter === 'abroad') {
-			let filtered = props.thesis.filter((thesis) => {
+			let filtered = thesis.filter((thesis) => {
 				return (
 					(thesis.title.toLowerCase().includes(search.toLowerCase()) ||
 						thesis.description.toLowerCase().includes(search.toLowerCase()) ||
@@ -74,8 +100,8 @@ function StudentHome(props) {
 	}, [rapidFilter, search]);
 
 	useEffect(() => {
-		setFilteredThesis(props.thesis);
-	}, [props.thesis]);
+		setFilteredThesis(thesis);
+	}, [thesis]);
 
 	useEffect(() => {
 		if (!isAuthenticated && !isLoading) {
@@ -85,17 +111,17 @@ function StudentHome(props) {
 
 	function resetFilters() {
 		setLoading(true);
-		API.getAllThesis(props.accessToken)
+		API.getAllThesis(accessToken)
 			.then((thesis) => {
-				props.setThesis(thesis);
+				setThesis(thesis);
 			})
 			.catch((err) => {
-				props.handleError(err);
+				handleError(err);
 			})
 			.finally(() => {
 				setLoading(false);
 			});
-		props.setActivatedFilters(false);
+		setActivatedFilters(false);
 		setRapidFilter('all');
 	}
 
@@ -121,7 +147,7 @@ function StudentHome(props) {
 						</Col>
 					</Row>
 					<Row style={{ marginTop: 25, paddingBottom: 10 }}>
-						<Col md="auto" style={{ paddingBottom: 10, overflowX: 'auto' }}>
+						<Col md='auto' style={{ paddingBottom: 10, overflowX: 'auto' }}>
 							<Nav variant='pills' activeKey={rapidFilter} style={{ display: 'flex', flexWrap: 'nowrap' }}>
 								<Nav.Item>
 									<Nav.Link eventKey='all' className='buttons-rapid-filter' onClick={() => handleRapidFilters('all')}>
@@ -141,7 +167,7 @@ function StudentHome(props) {
 							</Nav>
 						</Col>
 						<Col style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 10 }}>
-							{props.activatedFilters ? (
+							{activatedFilters ? (
 								<Button variant='outline-secondary' style={{ borderRadius: 50, float: 'right', width: 150, marginRight: 8 }} onClick={resetFilters}>
 									Reset filters
 								</Button>
@@ -153,29 +179,29 @@ function StudentHome(props) {
 						</Col>
 					</Row>
 				</Container>
-			</div >
+			</div>
 			<FiltersModal
 				show={filtersShow}
-				thesis={props.thesis}
-				setThesis={props.setThesis}
+				thesis={thesis}
+				setThesis={setThesis}
 				onHide={() => setFiltersShow(false)}
-				accessToken={props.accessToken}
-				activatedFilters={props.activatedFilters}
-				setActivatedFilters={props.setActivatedFilters}
-				selectedSupervisor={props.selectedSupervisor}
-				setSelectedSupervisor={props.setSelectedSupervisor}
-				selectedCoSupervisors={props.selectedCoSupervisors}
-				setSelectedCoSupervisors={props.setSelectedCoSupervisors}
-				selectedKeywords={props.selectedKeywords}
-				setSelectedKeywords={props.setSelectedKeywords}
-				selectedTypes={props.selectedTypes}
-				setSelectedTypes={props.setSelectedTypes}
-				selectedGroups={props.selectedGroups}
-				setSelectedGroups={props.setSelectedGroups}
-				expirationDate={props.expirationDate}
-				setExpirationDate={props.setExpirationDate}
-				handleError={props.handleError}
-				date={props.date}
+				accessToken={accessToken}
+				activatedFilters={activatedFilters}
+				setActivatedFilters={setActivatedFilters}
+				selectedSupervisor={selectedSupervisor}
+				setSelectedSupervisor={setSelectedSupervisor}
+				selectedCoSupervisors={selectedCoSupervisors}
+				setSelectedCoSupervisors={setSelectedCoSupervisors}
+				selectedKeywords={selectedKeywords}
+				setSelectedKeywords={setSelectedKeywords}
+				selectedTypes={selectedTypes}
+				setSelectedTypes={setSelectedTypes}
+				selectedGroups={selectedGroups}
+				setSelectedGroups={setSelectedGroups}
+				expirationDate={expirationDate}
+				setExpirationDate={setExpirationDate}
+				handleError={handleError}
+				date={date}
 			/>
 			<Container>
 				<Row style={{ marginBottom: 25 }}>
@@ -186,18 +212,18 @@ function StudentHome(props) {
 								<ProposalCard
 									key={thesis.ID}
 									thesis={thesis}
-									accessToken={props.accessToken}
-									setMsgModal={props.setMsgModal}
-									setShowModal={props.setShowModal}
-									handleError={props.handleError}
-									handleSuccess={props.handleSuccess}
-									setDirty={props.setDirty}
+									accessToken={accessToken}
+									setMsgModal={setMsgModal}
+									setShowModal={setShowModal}
+									handleError={handleError}
+									handleSuccess={handleSuccess}
+									setDirty={setDirty}
 									state={
-										props.applications.find((app) => app.id === thesis.ID && app.state != 2)
-											? props.applications.find((app) => app.id === thesis.ID && app.state != 2).state
+										applications.find((app) => app.id === thesis.ID && app.state != 2)
+											? applications.find((app) => app.id === thesis.ID && app.state != 2).state
 											: null
 									}
-									hasApplied={props.hasApplied}
+									hasApplied={hasApplied}
 								/>
 							))
 					) : (
@@ -210,5 +236,33 @@ function StudentHome(props) {
 		</>
 	);
 }
+
+StudentHome.propTypes = {
+	thesis: PropTypes.array.isRequired,
+	setThesis: PropTypes.func.isRequired,
+	applications: PropTypes.array.isRequired,
+	handleError: PropTypes.func.isRequired,
+	handleSuccess: PropTypes.func.isRequired,
+	accessToken: PropTypes.string.isRequired,
+	setDirty: PropTypes.func.isRequired,
+	setShowModal: PropTypes.func.isRequired,
+	setMsgModal: PropTypes.func.isRequired,
+	activatedFilters: PropTypes.bool.isRequired,
+	setActivatedFilters: PropTypes.func.isRequired,
+	selectedSupervisor: PropTypes.array.isRequired,
+	setSelectedSupervisor: PropTypes.func.isRequired,
+	selectedCoSupervisors: PropTypes.array.isRequired,
+	setSelectedCoSupervisors: PropTypes.func.isRequired,
+	selectedKeywords: PropTypes.array.isRequired,
+	setSelectedKeywords: PropTypes.func.isRequired,
+	selectedTypes: PropTypes.array.isRequired,
+	setSelectedTypes: PropTypes.func.isRequired,
+	selectedGroups: PropTypes.array.isRequired,
+	setSelectedGroups: PropTypes.func.isRequired,
+	expirationDate: PropTypes.string.isRequired,
+	setExpirationDate: PropTypes.func.isRequired,
+	hasApplied: PropTypes.bool.isRequired,
+	date: PropTypes.object,
+};
 
 export default StudentHome;
