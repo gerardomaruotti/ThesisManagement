@@ -724,17 +724,13 @@ app.post('/api/applications/details', checkJwt, [
 			
 			let getApplication = await db.checkExistenceApplicationById(applId);
 			if (getApplication == 0) return res.status(400).json({ error: "Application does not exists" })
-
 			let studentInfo = await db.getStudentInfo(getApplication.student);
-			
 			studentInfo.exams = await db.getStudentExams(getApplication.student);
 			studentInfo.state = getApplication.state;
-
 			let studentCv = await db.getCv(applId);
 			if (studentCv.filename != null) {
 				studentInfo.cv=studentCv.path;
 			}
-			console.log(studentInfo)
 			
 			return res.status(200).json(studentInfo)
 

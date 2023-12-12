@@ -80,6 +80,13 @@ const applicationBody = {
     studentID: "id1"
 };
 
+const detailBody = {
+    idApplication: 1
+};
+
+const tmpApp = {student: "id1", state: 1}
+const exams = [{id: 1, grade: 30}, {id: 2, grade: 27}];
+
 const deleteThesisBody = {
     thesisID: 1
 };
@@ -91,6 +98,8 @@ const thesisExist = {
         state: "1"
     }
 }
+
+const genericError = new Error('Internal server error');
 
 jest.mock('../db');
 jest.mock('express-oauth2-jwt-bearer', () => ({
@@ -129,7 +138,7 @@ describe('GET Keywords', () => {
     });
 
     test('should return a 503 error when an error occurs', async () => {
-        db.getKeywords.mockRejectedValueOnce(new Error('Internal server error'));
+        db.getKeywords.mockRejectedValueOnce(genericError);
         const res = await request(app).get('/api/keywords');
 
         expect(db.getKeywords).toHaveBeenCalledTimes(1);
@@ -162,7 +171,7 @@ describe('GET Types', () => {
     });
 
     test('should return a 503 error when an error occurs', async () => {
-        db.getTypes.mockRejectedValueOnce(new Error('Internal server error'));
+        db.getTypes.mockRejectedValueOnce(genericError);
         const res = await request(app).get('/api/types');
 
         expect(db.getTypes).toHaveBeenCalledTimes(1);
@@ -196,7 +205,7 @@ describe('GET Teachers', () => {
     });
 
     test('should return a 503 error when an error occurs', async () => {
-        db.getTeachers.mockRejectedValueOnce(new Error('Internal server error'));
+        db.getTeachers.mockRejectedValueOnce(genericError);
         const res = await request(app).get('/api/teachers');
 
         expect(db.getTeachers).toHaveBeenCalledTimes(1);
@@ -229,7 +238,7 @@ describe('GET Cds', () => {
     });
 
     test('should return a 503 error when an error occurs', async () => {
-        db.getCdS.mockRejectedValueOnce(new Error('Internal server error'));
+        db.getCdS.mockRejectedValueOnce(genericError);
         const res = await request(app).get('/api/cds');
 
         expect(db.getCdS).toHaveBeenCalledTimes(1);
@@ -344,7 +353,7 @@ describe('POST Thesis', () => {
     });
 
     test('should return a 500 error if error occurs', async () => {
-        db.getRole.mockRejectedValueOnce(new Error('Internal server error'));
+        db.getRole.mockRejectedValueOnce(genericError);
         const res = await request(app).post('/api/thesis');
 
         expect(db.getRole).toHaveBeenCalledTimes(1);
@@ -367,7 +376,7 @@ describe('GET User Info', () => {
     });
 
     test('should return a 503 error when an error occurs', async () => {
-        db.getRole.mockRejectedValueOnce(new Error('Internal server error'));
+        db.getRole.mockRejectedValueOnce(genericError);
         const res = await request(app).get('/api/user');
 
         expect(db.getRole).toHaveBeenCalledTimes(1);
@@ -403,7 +412,7 @@ describe('GET Groups', () => {
     });
 
     test('should return a 503 error when an error occurs', async () => {
-        db.getGroups.mockRejectedValueOnce(new Error('Internal server error'));
+        db.getGroups.mockRejectedValueOnce(genericError);
         const res = await request(app).get('/api/groups');
 
         expect(db.getGroups).toHaveBeenCalledTimes(1);
@@ -427,7 +436,7 @@ describe('GET Supervisors Groups', () => {
     });
 
     test('should return a 503 error when an error occurs', async () => {
-        db.getGroupSupervisorAndCoSupervisor.mockRejectedValueOnce(new Error('Internal server error'));
+        db.getGroupSupervisorAndCoSupervisor.mockRejectedValueOnce(genericError);
         const res = await request(app).get('/api/thesis/1/groups');
 
         expect(db.getGroupSupervisorAndCoSupervisor).toHaveBeenCalledTimes(1);
@@ -525,7 +534,7 @@ describe('Insert Thesis', () => {
 
     test('should return a 503 error when an error occurs while inserting new thesis in db', async () => {
         db.getRole.mockResolvedValueOnce(teacher);
-        db.insertThesis.mockRejectedValueOnce(new Error('Internal server error'));
+        db.insertThesis.mockRejectedValueOnce(genericError);
         const res = await request(app).post('/api/insert/thesis').send(thesis1);
 
         expect(db.getRole).toHaveBeenCalledTimes(1);
@@ -592,7 +601,7 @@ describe('GET Thesis by ID', () => {
     });
 
     test('should return a 500 if error occurs', async () => {
-        db.getThesis.mockRejectedValueOnce(new Error('Internal server error'));
+        db.getThesis.mockRejectedValueOnce(genericError);
         const res = await request(app).get('/api/thesis/1');
 
         expect(db.getThesis).toHaveBeenCalledTimes(1);
@@ -731,7 +740,7 @@ describe('Apply for Proposal', () => {
     });
 
     test('should return a 500 if error occurs', async () => {
-        db.getRole.mockRejectedValueOnce(new Error('Internal server error'));
+        db.getRole.mockRejectedValueOnce(genericError);
 
         const res = await request(app).post('/api/thesis/5/apply');
 
@@ -832,7 +841,7 @@ describe('GET Theacher and Student Application', () => {
     });
 
     test('should return a 503 error when an error occurs', async () => {
-        db.getRole.mockRejectedValueOnce(new Error('Internal server error'));
+        db.getRole.mockRejectedValueOnce(genericError);
         const res = await request(app).get('/api/thesis/applications/browse');
 
         expect(db.getRole).toHaveBeenCalledTimes(1);
@@ -943,7 +952,7 @@ describe('POST Accept Application', () => {
     });
 
     test('should return a 503 when an error occurs', async () => {
-        db.getRole.mockRejectedValueOnce(new Error('Internal server error'))
+        db.getRole.mockRejectedValueOnce(genericError)
 
         const res = await request(app).post('/api/accept/application').send(applicationBody);
 
@@ -1065,7 +1074,7 @@ describe('POST Reject Application', () => {
     });
 
     test('should return a 503 when an error occurs', async () => {
-        db.getRole.mockRejectedValueOnce(new Error('Internal server error'))
+        db.getRole.mockRejectedValueOnce(genericError)
 
         const res = await request(app).post('/api/reject/application').send(applicationBody);
 
@@ -1284,7 +1293,7 @@ describe('PUT Edit Thesis', () => {
     });
 
     test('should return a 503 when an error occurs', async () => {
-        db.getRole.mockRejectedValueOnce(new Error('Internal server error'));
+        db.getRole.mockRejectedValueOnce(genericError);
 
         const res = await request(app).put('/api/edit/thesis/1').send(thesis1);
 
@@ -1318,7 +1327,7 @@ describe('GET VC Date', () => {
     });
 
     test('should return a 503 when an error occurs', async () => {
-        db.getVirtualDate.mockRejectedValueOnce(new Error('Internal server error'));
+        db.getVirtualDate.mockRejectedValueOnce(genericError);
 
         const res = await request(app).get('/api/virtualClockStatus');
 
@@ -1341,7 +1350,7 @@ describe('PUT VC On', () => {
     });
 
     test('should return a 503 error when an error occurs', async () => {
-        db.setVirtualDate.mockRejectedValueOnce(new Error('Internal server error'));
+        db.setVirtualDate.mockRejectedValueOnce(genericError);
 
         const res = await request(app).put('/api/virtualClockOn').send(vcBody);
 
@@ -1383,7 +1392,7 @@ describe('PUT VC Off', () => {
     });
 
     test('should return a 503 error when an error occurs', async () => {
-        db.setVirtualDate.mockRejectedValueOnce(new Error('Internal server error'));
+        db.setVirtualDate.mockRejectedValueOnce(genericError);
 
         const res = await request(app).put('/api/virtualClockOff');
 
@@ -1448,11 +1457,11 @@ describe('POST Delete Thesis', () => {
         expect(db.checkExistenceThesis).toHaveBeenCalledWith(deleteThesisBody.thesisID);
         expect(db.setStatusDeleted).toHaveBeenCalledTimes(0);
         expect(res.status).toBe(400);
-        expect(res.body).toEqual({ error: 'Application does not exist' });
+        expect(res.body).toEqual({ error: 'Thesis proposal does not exist' });
     });
 
     test('should return a 503 error when an error occurs', async () => {
-        db.getRole.mockRejectedValueOnce(new Error('Internal server error'));
+        db.getRole.mockRejectedValueOnce(genericError);
 
         const res = await request(app).post('/api/delete/thesis').send(deleteThesisBody);
 
@@ -1561,7 +1570,7 @@ describe('POST Archive Thesis', () => {
     });
 
     test('should return a 503 error when an error occurs', async () => {
-        db.getRole.mockRejectedValueOnce(new Error('Internal server error'));
+        db.getRole.mockRejectedValueOnce(genericError);
 
         const res = await request(app).post('/api/archive/thesis').send(deleteThesisBody);
 
@@ -1570,5 +1579,100 @@ describe('POST Archive Thesis', () => {
         expect(db.archiveThesis).toHaveBeenCalledTimes(0);
         expect(res.status).toBe(503);
         expect(res.body).toEqual({ error: "Error in archiving the thesis" });
+    });
+})
+
+describe('POST Application Details', () => {
+    test(`should retrive student'info correctly without the cv`, async () => {
+        db.getRole.mockResolvedValueOnce(teacher);
+        db.checkExistenceApplicationById.mockResolvedValueOnce(tmpApp);
+        db.getStudentInfo.mockResolvedValueOnce(student);
+        db.getStudentExams.mockResolvedValueOnce(exams);
+        db.getCv.mockResolvedValueOnce({filename: null});
+
+        const res = await request(app).post('/api/applications/details').send(detailBody);
+
+        expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.checkExistenceApplicationById).toHaveBeenCalledTimes(1);
+        expect(db.checkExistenceApplicationById).toHaveBeenCalledWith(detailBody.idApplication);
+        expect(db.getStudentInfo).toHaveBeenCalledTimes(1);
+        expect(db.getStudentInfo).toHaveBeenCalledWith(tmpApp.student);
+        expect(db.getStudentExams).toHaveBeenCalledTimes(1);
+        expect(db.getStudentExams).toHaveBeenCalledWith(tmpApp.student);
+        expect(db.getCv).toHaveBeenCalledTimes(1);
+        expect(db.getCv).toHaveBeenCalledWith(detailBody.idApplication);
+        expect(res.status).toBe(200);
+        expect(res.body).toEqual({"exams": exams, "id": student.id, "role": student.role, "state":tmpApp.state})
+    });
+    test(`should retrive student'info correctly with the cv`, async () => {
+        db.getRole.mockResolvedValueOnce(teacher);
+        db.checkExistenceApplicationById.mockResolvedValueOnce(tmpApp);
+        db.getStudentInfo.mockResolvedValueOnce(student);
+        db.getStudentExams.mockResolvedValueOnce(exams);
+        db.getCv.mockResolvedValueOnce({filename: "notNull", path: "path"});
+
+        const res = await request(app).post('/api/applications/details').send(detailBody);
+
+        expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.checkExistenceApplicationById).toHaveBeenCalledTimes(1);
+        expect(db.checkExistenceApplicationById).toHaveBeenCalledWith(detailBody.idApplication);
+        expect(db.getStudentInfo).toHaveBeenCalledTimes(1);
+        expect(db.getStudentInfo).toHaveBeenCalledWith(tmpApp.student);
+        expect(db.getStudentExams).toHaveBeenCalledTimes(1);
+        expect(db.getStudentExams).toHaveBeenCalledWith(tmpApp.student);
+        expect(db.getCv).toHaveBeenCalledTimes(1);
+        expect(db.getCv).toHaveBeenCalledWith(detailBody.idApplication);
+        expect(res.status).toBe(200);
+        expect(res.body).toEqual({"cv": "path", "exams": exams, "id": student.id, "role": student.role, "state": tmpApp.state})
+    });
+
+    test(`should return a 422 error when the idApplication is not a number`, async () => {
+        const res = await request(app).post('/api/applications/details');
+
+        expect(db.getRole).toHaveBeenCalledTimes(0);
+        expect(db.getStudentExams).toHaveBeenCalledTimes(0);
+        expect(db.getCv).toHaveBeenCalledTimes(0);
+        expect(res.status).toBe(422);
+        expect(res.body.errors).toHaveLength(2);
+    });
+
+    test(`should return a 401 error when the user is not a teacher`, async () => {
+        db.getRole.mockResolvedValueOnce(student);
+
+        const res = await request(app).post('/api/applications/details').send(detailBody);
+
+        expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.checkExistenceApplicationById).toHaveBeenCalledTimes(0);
+        expect(db.getStudentExams).toHaveBeenCalledTimes(0);
+        expect(db.getCv).toHaveBeenCalledTimes(0);
+        expect(res.status).toBe(401);
+        expect(res.body).toEqual({ error: "Unauthorized" });
+    });
+
+    test(`should return a 400 error when the application does not exist`, async () => {
+        db.getRole.mockResolvedValueOnce(teacher);
+        db.checkExistenceApplicationById.mockResolvedValueOnce(0);
+
+        const res = await request(app).post('/api/applications/details').send(detailBody);
+
+        expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.checkExistenceApplicationById).toHaveBeenCalledTimes(1);
+        expect(db.getStudentExams).toHaveBeenCalledTimes(0);
+        expect(db.getCv).toHaveBeenCalledTimes(0);
+        expect(res.status).toBe(400);
+        expect(res.body).toEqual({ error: "Application does not exists" });
+    });
+
+    test(`should return a 503 error when an error occurs`, async () => {
+        db.getRole.mockRejectedValueOnce(genericError);
+
+        const res = await request(app).post('/api/applications/details').send(detailBody);
+
+        expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.checkExistenceApplicationById).toHaveBeenCalledTimes(0);
+        expect(db.getStudentExams).toHaveBeenCalledTimes(0);
+        expect(db.getCv).toHaveBeenCalledTimes(0);
+        expect(res.status).toBe(503);
+        expect(res.body).toEqual({error: "GetStudentInfo error"});
     });
 })
