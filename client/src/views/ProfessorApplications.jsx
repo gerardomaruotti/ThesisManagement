@@ -57,7 +57,7 @@ function ProfessorApplications(props) {
             const filter = { ...applicationsThesis };
             for (const id in applicationsThesis) {
                 for (const app in applicationsThesis[id]) {
-                    if (applicationsThesis[id][app].state == 1 || dayjs(applicationsThesis[id][app].expirationDate).isBefore(props.date ? dayjs(props.date) : dayjs())) {
+                    if (applicationsThesis[id][app].state == 1 || applicationsThesis[id][app].t_state == 0 || dayjs(applicationsThesis[id][app].expirationDate).isBefore(props.date ? dayjs(props.date) : dayjs())) {
                         delete filter[id];
                     }
                 }
