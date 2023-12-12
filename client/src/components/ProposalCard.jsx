@@ -17,7 +17,6 @@ function ProposalCard(props) {
 
 	function apply(event) {
 		setShowModal(false);
-		console.log(cv);
 		setLoading(true);
 		const formData = new FormData();
 		formData.append('file', cv);

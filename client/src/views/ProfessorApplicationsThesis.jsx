@@ -206,13 +206,13 @@ function ProfessorApplicationsThesis(props) {
 											<tbody>
 												{applicationsThesis != []
 													? applicationsThesis.map((app, index) => (
-														<tr key={index}>
+														<tr key={app.id_application}>
 															<td>{app.student}</td>
 															<td>{app.name}</td>
 															<td>{app.surname}</td>
 															<td>{app.email}</td>
 															<td>
-																<Button variant='light' onClick={() => navigate('/applications/proposal/' + id + '/student/' + app.student)}>
+																<Button variant='light' onClick={() => navigate('/applications/proposal/' + id + '/applications/' + app.id_application)}>
 																	<i className='bi bi-file-earmark-text'></i>
 																</Button>
 															</td>

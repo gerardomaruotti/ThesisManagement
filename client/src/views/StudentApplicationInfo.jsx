@@ -1,199 +1,355 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Container, Card, Row, Col, Image, Button, Table, Offcanvas } from 'react-bootstrap';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useLoading } from '../LoadingContext.jsx';
 import Loading from '../components/Loading.jsx';
 import image from '../assets/default_image_profile.jpg';
 import { Color } from '../constants/colors.js';
-import pdf from '../assets/cv_format_it_europeo.pdf';
+import API from '../API.jsx';
 
-const StudentApplicationInfo = () => {
+const StudentApplicationInfo = (props) => {
     const [showDetails, setShowDetails] = useState(false);
     const handleClose = () => setShowDetails(false);
     const handleShow = () => setShowDetails(true);
     const navigate = useNavigate();
     const { loading, setLoading } = useLoading();
-    const { id, idStudent } = useParams();
+    const { id, idApplication } = useParams();
+    const [studentInfo, setStudentInfo] = useState(null);
+
+    let studentMock = {
+        name: 'Andrea',
+        surname: 'Scamporrino',
+        email: 's318927@studenti.polito.it',
+        studentID: 's318927',
+        applicationStatus: 0,
+        exams: [
+            {
+                cod: '01TXYOV',
+                name: 'Analisi Matematica 1',
+                date: '2021-06-30',
+                cfu: 12,
+                mark: 30,
+            },
+            {
+                cod: '01TXYOV',
+                name: 'Analisi Matematica 1',
+                date: '2021-06-30',
+                cfu: 12,
+                mark: 30,
+            },
+            {
+                cod: '01TXYOV',
+                name: 'Analisi Matematica 1',
+                date: '2021-06-30',
+                cfu: 12,
+                mark: 30,
+            },
+            {
+                cod: '01TXYOV',
+                name: 'Analisi Matematica 1',
+                date: '2021-06-30',
+                cfu: 12,
+                mark: 30,
+            },
+            {
+                cod: '01TXYOV',
+                name: 'Analisi Matematica 1',
+                date: '2021-06-30',
+                cfu: 12,
+                mark: 30,
+            },
+            {
+                cod: '01TXYOV',
+                name: 'Analisi Matematica 1',
+                date: '2021-06-30',
+                cfu: 12,
+                mark: 30,
+            },
+            {
+                cod: '01TXYOV',
+                name: 'Analisi Matematica 1',
+                date: '2021-06-30',
+                cfu: 12,
+                mark: 30,
+            },
+        ],
+        cv: 'https://www.africau.edu/images/default/sample.pdf',
+    }
+
+
+    function acceptApplication(idStudent) {
+        props.setShowModal(false);
+        const parameters = { thesisID: id, studentID: idStudent };
+        API.acceptApplication(parameters, props.accessToken)
+            .then(() => {
+                props.setDirty(true);
+                props.handleSuccess('Application accepted');
+            })
+            .catch((err) => {
+                props.handleError(err);
+            });
+    }
+
+    function rejectApplication(idStudent) {
+        props.setShowModal(false);
+        const parameters = { thesisID: id, studentID: idStudent };
+        API.rejectApplication(parameters, props.accessToken)
+            .then(() => {
+                props.setDirty(true);
+                props.handleError('Application rejected');
+            })
+            .catch((err) => {
+                props.handleError(err);
+            });
+    }
+
+
+    useEffect(() => {
+        if (props.accessToken != null) {
+            setLoading(true);
+            API.getStudentApplicationInfo(props.accessToken, idApplication)
+                .then((studentInfo) => {
+                    let cfu = 0;
+                    let avg = 0;
+                    studentInfo.exams.forEach(exam => { cfu += Number(exam.cfu); avg += Number(exam.grade) * Number(exam.cfu); });
+                    studentInfo.cfu = cfu;
+                    studentInfo.avg = (avg / cfu).toFixed(2);
+                    console.log(studentInfo);
+                    setStudentInfo(studentInfo);
+                })
+                .catch((err) => {
+                    props.handleError(err);
+                })
+                .finally(() => {
+                    setLoading(false);
+                });
+        }
+        // let cfu = 0;
+        // let avg = 0;
+        // studentMock.exams.forEach(exam => { cfu += exam.cfu; avg += exam.mark * exam.cfu; });
+        // studentMock.cfu = cfu;
+        // studentMock.avg = Number((avg / cfu).toFixed(2));
+        // setStudentInfo(studentMock);
+    }, [props.accessToken]);
 
 
     const LeftBarDetails = () => {
         return (
-            <>
-                <div style={{ textAlign: 'center' }}>
-                    <Image src={image} rounded style={{ width: 150 }} />
-                </div>
-                <div style={{ textAlign: 'center', marginTop: 15 }}>
-                    <div style={{ fontWeight: 'medium', fontSize: 17 }}>Name Surname</div>
-                </div>
-                <Row style={{ marginTop: 25 }}>
-                    <Col>
-                        <div className='d-flex align-items-center'>
-                            <div className='text-center' style={{ float: 'right' }}>
-                                <span
-                                    className='badge'
-                                    style={{
-                                        backgroundColor: 'rgba(230, 120, 43, 0.1)',
-                                        color: Color.secondary,
-                                        padding: '1em 1em',
-                                        borderRadius: '0.25rem',
-                                    }}
-                                >
-                                    <i className='bi bi-building-check' style={{ fontSize: '16px' }}></i>
-                                </span>
-                            </div>
-                            <div style={{ paddingLeft: 8 }}>
-                                <div style={{ fontSize: 15 }}>CFU</div>
-                                <div style={{ fontSize: 12 }} className='text-muted'>90/120</div>
-                            </div>
-                        </div>
-                    </Col>
-                    <Col>
-                        <div className='d-flex align-items-center'>
-                            <div className='text-center'>
-                                <span
-                                    className='badge'
-                                    style={{
-                                        backgroundColor: 'rgba(230, 120, 43, 0.1)',
-                                        color: Color.secondary,
-                                        padding: '1em 1em',
-                                        borderRadius: '0.25rem',
-                                    }}
-                                >
-                                    <i className='bi bi-building-check' style={{ fontSize: '16px' }}></i>
-                                </span>
-                            </div>
-                            <div style={{ paddingLeft: 8 }}>
-                                <div style={{ fontSize: 15 }}>AVG</div>
-                                <div style={{ fontSize: 12 }} className='text-muted'>29.5</div>
-                            </div>
+            studentInfo == null ? null : (
+                <>
 
-                        </div>
-                    </Col>
+                    <div style={{ textAlign: 'center' }}>
+                        <Image src={image} rounded style={{ width: 150 }} />
+                    </div>
+                    <div style={{ textAlign: 'center', marginTop: 15 }}>
+                        <div style={{ fontWeight: 'medium', fontSize: 17 }}>{studentInfo.name + " " + studentInfo.surname}</div>
+                    </div>
+                    <Row style={{ marginTop: 25 }}>
+                        <Col style={{ textAlign: 'center' }}>
+                            <div className='d-flex align-items-center justify-content-center'>
+                                <div className='text-center' style={{ float: 'right' }}>
+                                    <span
+                                        className='badge'
+                                        style={{
+                                            backgroundColor: 'rgba(230, 120, 43, 0.1)',
+                                            color: Color.secondary,
+                                            padding: '1em 1em',
+                                            borderRadius: '0.25rem',
+                                        }}
+                                    >
+                                        <i className='bi bi-building-check' style={{ fontSize: '16px' }}></i>
+                                    </span>
+                                </div>
+                                <div style={{ paddingLeft: 8, textAlign: 'left' }}>
+                                    <div style={{ fontSize: 15 }}>CFU</div>
+                                    <div style={{ fontSize: 12 }} className='text-muted'>{studentInfo.cfu}</div>
+                                </div>
+                            </div>
+                        </Col>
+                        <Col style={{ textAlign: 'center' }}>
+                            <div className='d-flex align-items-center justify-content-center'>
+                                <div className='text-center'>
+                                    <span
+                                        className='badge'
+                                        style={{
+                                            backgroundColor: 'rgba(230, 120, 43, 0.1)',
+                                            color: Color.secondary,
+                                            padding: '1em 1em',
+                                            borderRadius: '0.25rem',
+                                        }}
+                                    >
+                                        <i className='bi bi-building-check' style={{ fontSize: '16px' }}></i>
+                                    </span>
+                                </div>
+                                <div style={{ paddingLeft: 8, textAlign: 'left' }}>
+                                    <div style={{ fontSize: 15 }}>AVG</div>
+                                    <div style={{ fontSize: 12 }} className='text-muted'>{studentInfo.avg}</div>
+                                </div>
 
-                </Row>
+                            </div>
+                        </Col>
 
-                <div style={{ marginTop: 25 }}>
-                    <div style={{ fontWeight: 'medium', fontSize: 17 }}>Details</div>
-                    <hr />
-                </div>
-                <div >
-                    <span style={{ fontSize: 15, marginRight: 8 }}>Student ID:</span>
-                    <span style={{ fontSize: 14, }} className='text-muted'>
-                        s318927
-                    </span>
-                </div>
-                <div >
-                    <span style={{ fontSize: 15, marginRight: 8 }}>Name:</span>
-                    <span style={{ fontSize: 14, }} className='text-muted'>
-                        Andrea
-                    </span>
-                </div>
-                <div >
-                    <span style={{ fontSize: 15, marginRight: 8 }}>Surname:</span>
-                    <span style={{ fontSize: 14, }} className='text-muted'>
-                        Scamporrino
-                    </span>
-                </div>
-                <div >
-                    <span style={{ fontSize: 15, marginRight: 8 }}>Email:</span>
-                    <span style={{ fontSize: 14, }} className='text-muted'>
-                        s318927@studenti.polito.it
-                    </span>
-                </div>
-                <div >
-                    <span style={{ fontSize: 15, marginRight: 8 }}>Application status:</span>
-                    <span style={{ fontSize: 14, }} className='text-muted'>
-                        <span className='badge custom-badge-warning'>Cancelled</span>
-                    </span>
-                </div>
-                <Row style={{ marginTop: 25, textAlign: 'center' }}>
-                    <Col xs={6}>
-                        <Button variant="outline-success" style={{ borderRadius: 20 }}>
-                            <i className="bi bi-check2" style={{ paddingRight: 5 }}></i>
-                            Accept
-                        </Button>
-                    </Col>
-                    <Col xs={6}>
-                        <Button variant="outline-danger" style={{ borderRadius: 20 }}>
-                            <i className="bi bi-x-lg" style={{ paddingRight: 5 }}></i>
-                            Reject
-                        </Button>
-                    </Col>
-                </Row>
-            </>
+                    </Row>
+
+                    <div style={{ marginTop: 25 }}>
+                        <div style={{ fontWeight: 'medium', fontSize: 17 }}>Details</div>
+                        <hr />
+                    </div>
+                    <div >
+                        <span style={{ fontSize: 15, marginRight: 8 }}>Student ID:</span>
+                        <span style={{ fontSize: 14, }} className='text-muted'>
+                            {studentInfo.id}
+                        </span>
+                    </div>
+                    <div >
+                        <span style={{ fontSize: 15, marginRight: 8 }}>Name:</span>
+                        <span style={{ fontSize: 14, }} className='text-muted'>
+                            {studentInfo.name}
+                        </span>
+                    </div>
+                    <div >
+                        <span style={{ fontSize: 15, marginRight: 8 }}>Surname:</span>
+                        <span style={{ fontSize: 14, }} className='text-muted'>
+                            {studentInfo.surname}
+                        </span>
+                    </div>
+                    <div >
+                        <span style={{ fontSize: 15, marginRight: 8 }}>Email:</span>
+                        <span style={{ fontSize: 14, }} className='text-muted'>
+                            {studentInfo.email}
+                        </span>
+                    </div>
+                    <div >
+                        <span style={{ fontSize: 15, marginRight: 8 }}>Application status:</span>
+                        {studentInfo.state == 0 ? (
+                            <span className='badge custom-badge-pending'>Pending</span>
+                        ) : studentInfo.state == 1 ? (
+                            <span className='badge custom-badge-success'>Assigned</span>
+                        ) : studentInfo.state == 2 ? (
+                            <span className='badge custom-badge-danger'>Rejected</span>
+                        ) : studentInfo.state == 3 ? (
+                            <span className='badge custom-badge-warning'>Cancelled</span>
+                        ) : null}
+                    </div>
+                    {studentInfo.state == 0 ? (
+                        <Row style={{ marginTop: 25, textAlign: 'center' }}>
+                            <Col xs={6}>
+                                <Button variant="outline-success" style={{ borderRadius: 20 }}
+                                    onClick={() => {
+                                        props.setShowModal(true);
+                                        props.setMsgModal({
+                                            header: 'Accept application',
+                                            body: `Are you sure you want to accept the application of student ${studentInfo.studentID}? The other pending application will be cancelled`,
+                                            method: () => acceptApplication(studentInfo.studentID),
+                                        });
+                                    }}>
+                                    <i className="bi bi-check2" style={{ paddingRight: 5 }}></i>
+                                    Accept
+                                </Button>
+                            </Col>
+                            <Col xs={6}>
+                                <Button variant="outline-danger" style={{ borderRadius: 20 }}
+                                    onClick={() => {
+                                        props.setShowModal(true);
+                                        props.setMsgModal({
+                                            header: 'Reject Application',
+                                            body: `Are you sure you want to reject the application of student ${studentInfo.studentID}?`,
+                                            method: () => rejectApplication(studentInfo.studentID),
+                                        });
+                                    }}>
+                                    <i className="bi bi-x-lg" style={{ paddingRight: 5 }}></i>
+                                    Reject
+                                </Button>
+                            </Col>
+                        </Row>
+                    ) : null}
+                </>
+            )
         )
     }
 
     return loading ? (
         <Loading />
     ) : (
-        <>
-            <Container style={{ marginTop: 25, marginBottom: 25 }}>
-                <Row style={{ display: 'flex', alignItems: 'start' }}>
-                    <Col md={4} style={{ position: 'sticky', top: 95 }} >
-                        <Card style={{ padding: 20 }} className='custom-card d-none d-md-flex'>
-                            <LeftBarDetails />
-                        </Card>
-                    </Col>
-                    <Col md={8}>
-                        <Card style={{ padding: 20 }} className='custom-card'>
-                            <Row>
-                                <Col xs={6}>
-                                    <Button variant='outline-primary' style={{ borderRadius: 50, width: 75 }} onClick={() => navigate('/applications/proposal/' + id)}>
-                                        <i className='bi bi-arrow-left'></i>
-                                    </Button>
-                                </Col>
-                                <Col xs={6} className='d-md-none' >
-                                    <Button variant='primary' onClick={handleShow} style={{ float: 'right' }}>
-                                        Show more details
-                                    </Button>
-                                </Col>
-                            </Row>
-                            <Row style={{ marginTop: 32 }}>
-                                <Col>
-                                    <div style={{ fontWeight: 'bold', fontSize: 20 }}> List of exams: </div>
-                                </Col>
-                            </Row>
-                            <Table responsive hover>
-                                <thead>
-                                    <tr>
-                                        <th>Course name</th>
-                                        <th>Date</th>
-                                        <th>CFU</th>
-                                        <th>Mark</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>Programmazione di sistema</td>
-                                        <td>24/12/2022</td>
-                                        <td>10</td>
-                                        <td>27</td>
-                                    </tr>
-                                </tbody>
+        studentInfo == null ? null : (
+            <>
+                <Container style={{ marginTop: 25, marginBottom: 25 }}>
+                    <Row style={{ display: 'flex', alignItems: 'start' }}>
+                        <Col md={4} style={{ position: 'sticky', top: 25 }} >
+                            <Card style={{ padding: 20 }} className='custom-card d-none d-md-flex'>
+                                <LeftBarDetails />
+                            </Card>
+                        </Col>
+                        <Col md={8}>
+                            <Card style={{ padding: 20 }} className='custom-card'>
+                                <Row>
+                                    <Col xs={6}>
+                                        <Button variant='outline-primary' style={{ borderRadius: 50, width: 75 }} onClick={() => navigate('/applications/proposal/' + id)}>
+                                            <i className='bi bi-arrow-left'></i>
+                                        </Button>
+                                    </Col>
+                                    <Col xs={6} className='d-md-none' >
+                                        <Button variant='primary' onClick={handleShow} style={{ float: 'right' }}>
+                                            Show more details
+                                        </Button>
+                                    </Col>
+                                </Row>
+                                <Row style={{ marginTop: 32 }}>
+                                    <Col>
+                                        <div style={{ fontWeight: 'bold', fontSize: 20 }}> List of exams: </div>
+                                    </Col>
+                                </Row>
+                                {studentInfo.exams.length != 0
+                                    ? (
+                                        <Table responsive hover>
+                                            <thead>
+                                                <tr>
+                                                    <th>Course code</th>
+                                                    <th>Course name</th>
+                                                    <th>Date</th>
+                                                    <th>CFU</th>
+                                                    <th>Mark</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {studentInfo.exams.map((exam, index) => (
+                                                    <tr key={index}>
+                                                        <td>{exam.cod_course}</td>
+                                                        <td>{exam.title_course}</td>
+                                                        <td>{exam.date}</td>
+                                                        <td>{exam.cfu}</td>
+                                                        <td>{exam.grade}</td>
 
-                            </Table>
 
-                            <Row style={{ marginTop: 32 }}>
-                                <Col>
-                                    <div style={{ fontWeight: 'bold', fontSize: 20 }}> Curriculum vitae: </div>
-                                </Col>
-                            </Row>
-                            <embed src={pdf} type="application/pdf" height={'500px'} />
-                        </Card>
-                    </Col>
-                </Row>
-            </Container >
+                                                    </tr>))}
+                                            </tbody>
 
-            <Offcanvas show={showDetails} onHide={handleClose}>
-                <Offcanvas.Header closeButton>
-                    <Offcanvas.Title>Details</Offcanvas.Title>
-                </Offcanvas.Header>
-                <Offcanvas.Body>
-                    <LeftBarDetails />
-                </Offcanvas.Body>
-            </Offcanvas>
-        </>
+                                        </Table>) : (<p>No exams passed</p>)}
+
+                                <Row style={{ marginTop: 32 }}>
+                                    <Col>
+                                        <div style={{ fontWeight: 'bold', fontSize: 20 }}> Curriculum vitae: </div>
+                                    </Col>
+                                </Row>
+                                {studentInfo.cv == null ? (<p>No CV uploaded</p>) :
+                                    <embed src={'http://localhost:3001/files/1702380838463_CV_Scamporrino_English.pdf'} type="application/pdf" height={'500px'} />
+                                }
+                            </Card>
+                        </Col>
+                    </Row>
+                </Container >
+
+                <Offcanvas show={showDetails} onHide={handleClose}>
+                    <Offcanvas.Header closeButton>
+                        <Offcanvas.Title>Details</Offcanvas.Title>
+                    </Offcanvas.Header>
+                    <Offcanvas.Body>
+                        <LeftBarDetails />
+                    </Offcanvas.Body>
+                </Offcanvas>
+
+            </>
+        )
     );
 }
 

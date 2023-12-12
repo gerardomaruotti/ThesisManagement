@@ -81,3 +81,9 @@ h1 {
 	color: rgba(255, 159, 64, 1) !important;
 	border-radius: 20px !important;
 }
+
+.custom-badge-pending {
+	background-color: rgba(164, 161, 141, 0.2) !important;
+	color: rgba(0, 0, 0, 0.5) !important;
+	border-radius: 20px !important;
+}

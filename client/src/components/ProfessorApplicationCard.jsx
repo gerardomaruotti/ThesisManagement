@@ -70,17 +70,25 @@ function ProfessorApplicationCard(props) {
 							</span>
 							<span style={{ color: 'rgba(0, 0, 0, 0.5)', paddingLeft: 8 }}>Expired</span>
 						</Col>
-					) : (
+					) : props.applications.filter((app) => app.t_state == 0).length > 0 ? (
 						<Col>
 							<span
 								className='badge'
-								style={{ backgroundColor: 'rgba(164, 161, 141, 0.2)', color: 'rgba(164, 161, 141, 1)', padding: '1em 1em', borderRadius: '0.25rem' }}
+								style={{ backgroundColor: 'rgba(234, 84, 85, 0.2)', color: 'rgba(234, 84, 85)', padding: '1em 1em', borderRadius: '0.25rem' }}
 							>
-								<i className='bi bi-hourglass-split' style={{ fontSize: '16px' }}></i>
+								<i className='bi bi-calendar-x' style={{ fontSize: '16px' }}></i>
 							</span>
-							<span style={{ color: 'rgba(0, 0, 0, 0.5)', paddingLeft: 8 }}>Pending</span>
+							<span style={{ color: 'rgba(0, 0, 0, 0.5)', paddingLeft: 8 }}>Archived</span>
 						</Col>
-					)}
+					) : (<Col>
+						<span
+							className='badge'
+							style={{ backgroundColor: 'rgba(164, 161, 141, 0.2)', color: 'rgba(164, 161, 141, 1)', padding: '1em 1em', borderRadius: '0.25rem' }}
+						>
+							<i className='bi bi-hourglass-split' style={{ fontSize: '16px' }}></i>
+						</span>
+						<span style={{ color: 'rgba(0, 0, 0, 0.5)', paddingLeft: 8 }}>Pending</span>
+					</Col>)}
 					<Col>
 						<span
 							className='badge'

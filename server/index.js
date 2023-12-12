@@ -12,7 +12,7 @@ const nodemailer = require('nodemailer');
 const sgTransport = require('nodemailer-sendgrid-transport');
 const multer = require('multer');
 const fs = require('fs');
-const path=require('path')
+const path = require('path')
 require('dotenv').config();
 
 app.use(express.json());
@@ -35,23 +35,28 @@ const transporter = nodemailer.createTransport(
 		},
 	})
 );
+const dir = './files';
 
-const storage= multer.diskStorage({
-	destination: function(req,file, cb) {
-		return cb(null, "./files")
+if (!fs.existsSync(dir)) {
+	fs.mkdirSync(dir, { recursive: true });
+}
+
+const storage = multer.diskStorage({
+	destination: function (req, file, cb) {
+		cb(null, dir)
 	},
-	filename:	function (req, file, cb) {
-		return cb(null, `${Date.now()}_${file.originalname}`)
+	filename: function (req, file, cb) {
+		cb(null, `${Date.now()}_${file.originalname}`)
 	}
-})
+});
 
-const upload = multer ({storage});
+const upload = multer({ storage });
 
 app.get('/api/keywords', checkJwt, (req, res) => {
 	db.getKeywords()
 		.then((keywords) => res.status(200).json(keywords))
 		.catch((err) => {
-			res.status(503).json({ error: 'getKeywords error'});
+			res.status(503).json({ error: 'getKeywords error' });
 		});
 });
 
@@ -59,7 +64,7 @@ app.get('/api/user', checkJwt, (req, res) => {
 	db.getRole(req.auth)
 		.then((userInfo) => res.status(200).json(userInfo))
 		.catch((err) => {
-			res.status(503).json({ error: 'error retrieving user info'});
+			res.status(503).json({ error: 'error retrieving user info' });
 		});
 });
 
@@ -67,7 +72,7 @@ app.get('/api/types', checkJwt, (req, res) => {
 	db.getTypes()
 		.then((types) => res.status(200).json(types))
 		.catch((err) => {
-			res.status(503).json({ error: 'getTypes error'});
+			res.status(503).json({ error: 'getTypes error' });
 		});
 });
 
@@ -75,7 +80,7 @@ app.get('/api/teachers', checkJwt, (req, res) => {
 	db.getTeachers()
 		.then((teachers) => res.status(200).json(teachers))
 		.catch((err) => {
-			res.status(503).json({ error: 'getTeachers error'});
+			res.status(503).json({ error: 'getTeachers error' });
 		});
 });
 
@@ -83,7 +88,7 @@ app.get('/api/groups', checkJwt, (req, res) => {
 	db.getGroups()
 		.then((groups) => res.status(200).json(groups))
 		.catch((err) => {
-			res.status(503).json({ error: 'getGroups error'});
+			res.status(503).json({ error: 'getGroups error' });
 		});
 });
 
@@ -91,7 +96,7 @@ app.get('/api/cds', checkJwt, (req, res) => {
 	db.getCdS()
 		.then((cds) => res.status(200).json(cds))
 		.catch((err) => {
-			res.status(503).json({ error: 'getCds error'});
+			res.status(503).json({ error: 'getCds error' });
 		});
 });
 //METODI API
@@ -102,58 +107,58 @@ app.get('/api/cds', checkJwt, (req, res) => {
 //return all thesis of the department of the student/professor 
 app.post('/api/thesis', checkJwt, async (req, res) => {
 	try {
-	  const getRole = await db.getRole(req.auth);
-	  const date = await db.getVirtualDate();
-	  if (getRole.role == 'teacher') {
-		const thesis = await processTeacherThesis(getRole.id, (date == 0) ? currentDate.format('YYYY-MM-DD') : date, getRole);
-		res.status(200).json(thesis);
-	  } else if (getRole.role == 'student') {
-		const thesis = await processStudentThesis(getRole.id, (date == 0) ? currentDate.format('YYYY-MM-DD') : date, req.body.filters, getRole);
-		res.status(200).json(thesis);
-	  }
-  
-	} catch (err) {
-	  res.status(500).end();
-	}
-  });
+		const getRole = await db.getRole(req.auth);
+		const date = await db.getVirtualDate();
+		if (getRole.role == 'teacher') {
+			const thesis = await processTeacherThesis(getRole.id, (date == 0) ? currentDate.format('YYYY-MM-DD') : date, getRole);
+			res.status(200).json(thesis);
+		} else if (getRole.role == 'student') {
+			const thesis = await processStudentThesis(getRole.id, (date == 0) ? currentDate.format('YYYY-MM-DD') : date, req.body.filters, getRole);
+			res.status(200).json(thesis);
+		}
 
-  async function processTeacherThesis(teacherId, date, getRole) {
+	} catch (err) {
+		res.status(500).end();
+	}
+});
+
+async function processTeacherThesis(teacherId, date, getRole) {
 	let thesis = await db.getThesisTeacher(teacherId, date);
 	return processThesisDetails(thesis, getRole);
-  }
-	
-  async function processStudentThesis(studentId, date, filters, getRole) {
+}
+
+async function processStudentThesis(studentId, date, filters, getRole) {
 	let thesis = await db.getThesisStudent(studentId, date);
 	thesis = await processThesisDetails(thesis, getRole);
 	if (!filters) {
-	  return thesis;
+		return thesis;
 	}
-  
+
 	return await filterThesis(thesis, filters);
-  }
-  
-  async function processThesisDetails(thesis,getRole) {
+}
+
+async function processThesisDetails(thesis, getRole) {
 	for (let i = 0; i < thesis.length; i++) {
-	  thesis[i].keywords = await db.getKeywordsbyId(thesis[i].ID);
-	  thesis[i].types = await db.getTypesbyId(thesis[i].ID);
-	  if(getRole.role == 'teacher') thesis[i].applications = await db.checkExistenceApplicationForThesis(thesis[i].ID);
+		thesis[i].keywords = await db.getKeywordsbyId(thesis[i].ID);
+		thesis[i].types = await db.getTypesbyId(thesis[i].ID);
+		if (getRole.role == 'teacher') thesis[i].applications = await db.checkExistenceApplicationForThesis(thesis[i].ID);
 	}
 	return thesis;
-  }
-  
-  async function filterThesis(thesis, filters) {
+}
+
+async function filterThesis(thesis, filters) {
 	const validThesis = [];
 	for (let i = 0; i < thesis.length; i++) {
-	  const isValid = await validateThesis(thesis[i], filters);
-	  if (isValid) {
-		validThesis.push(thesis[i]);
-	  }
+		const isValid = await validateThesis(thesis[i], filters);
+		if (isValid) {
+			validThesis.push(thesis[i]);
+		}
 	}
 	return validThesis;
-  }
-  
-  async function validateThesis(thesis, filters) {
-	let totFilters = {value: 0};
+}
+
+async function validateThesis(thesis, filters) {
+	let totFilters = { value: 0 };
 	let cosupervisors = await db.getCoSupervisorsEmail(thesis.ID);
 	let sup = await db.getThesisSupervisor(thesis.ID);
 	let allGroups = await db.getGroup(thesis.ID);
@@ -168,34 +173,34 @@ app.post('/api/thesis', checkJwt, async (req, res) => {
 	thesis.count = totFilters.value;
 	// Example: Require at least one valid filter
 	return keywordValid && typeValid && cosupervisorValid && groupValid && supervisorValid && expDateValid;
-  }
-  
-  function validateFilter(filterName, filterValues, thesisValues, totFilters) {
-	if (filterValues && filterValues.length > 0) {
-	  let count = 0;
-	  filterValues.forEach(value => {
-		if (thesisValues.includes(value)) {
-		  count++;
-		}
-	  });
-	  totFilters.value += count;
-	  return count > 0;
-	}
-	return true; // No filter, consider it valid
-  }
-  
-  function validateExpDate(filterExpDate, thesisExpDate, totFilters) {
-	if (filterExpDate !== undefined) {
-	  const filterExpDateTmp = new Date(filterExpDate);
-	  const thesisExpDateTmp = new Date(thesisExpDate);
-  
-	  if (thesisExpDateTmp <= filterExpDateTmp) totFilters.value++;
+}
 
-	  return thesisExpDateTmp <= filterExpDateTmp
+function validateFilter(filterName, filterValues, thesisValues, totFilters) {
+	if (filterValues && filterValues.length > 0) {
+		let count = 0;
+		filterValues.forEach(value => {
+			if (thesisValues.includes(value)) {
+				count++;
+			}
+		});
+		totFilters.value += count;
+		return count > 0;
 	}
 	return true; // No filter, consider it valid
-  }
-  
+}
+
+function validateExpDate(filterExpDate, thesisExpDate, totFilters) {
+	if (filterExpDate !== undefined) {
+		const filterExpDateTmp = new Date(filterExpDate);
+		const thesisExpDateTmp = new Date(thesisExpDate);
+
+		if (thesisExpDateTmp <= filterExpDateTmp) totFilters.value++;
+
+		return thesisExpDateTmp <= filterExpDateTmp
+	}
+	return true; // No filter, consider it valid
+}
+
 
 //gestione degli inserimenti nelle varie tabelle secondarie (keyword etc..)
 //GRUPPI --> aggiungo la tesi ai gruppi di cui fa parte il professore e tutti i co-supervisori che sono professori
@@ -342,12 +347,12 @@ app.post('/api/thesis/:id/apply', upload.single('file'), checkJwt, async (req, r
 
 		if (userRole.role != 'student') return res.status(401).json({ error: 'Unauthorized user' });
 
-		let applId=await db.insertApplication(userRole.id, thesisId, (date == 0) ? currentDate.format('YYYY-MM-DD') : date);
+		let applId = await db.insertApplication(userRole.id, thesisId, (date == 0) ? currentDate.format('YYYY-MM-DD') : date);
 
-		if(req.file) {
+		if (req.file) {
 			await db.insertCv(applId, req.file.filename, req.file.path);
 		}
-		
+
 		let getMailTeacher = await db.getMailTeacher(thesis_info.supervisor);
 
 		const mailOptions = {
@@ -412,8 +417,8 @@ app.post('/api/accept/application', [
 		let student = req.body.studentID;
 
 		let getMailStudent = await db.getMailStudent(student);
-		
-        let thesis_info = await db.getThesis(thesis);
+
+		let thesis_info = await db.getThesis(thesis);
 		let getRole = await db.getRole(req.auth);
 		if (getRole.role != "teacher") {
 			return res.status(401).json({ error: "Unauthorized" })
@@ -494,91 +499,91 @@ app.post('/api/reject/application', [
 });
 
 app.put('/api/edit/thesis/:id',
-  [
-    check('title').isString().trim().isLength({ min: 1 }),
-    check('description').isString().trim().isLength({ min: 1 }),
-    check('required_knowledge').isString(),
-    check('notes').isString(),
-    check('expiration_date').isString().trim().isLength({ min: 10, max: 10 }),
-    check('level').isString().trim().isLength({ min: 1 }),
-    check('degree').isString().trim().isLength({ min: 1 }),
-    check('co_supervisors').isArray(),
-    check('keywords').isArray(),
-    check('types').isArray(),
-  ],
-  checkJwt,
-  async (req, res) => {
-    const thesisId = req.params.id;
-    if (isNaN(thesisId) || thesisId <= 0) {
-      return res.status(400).json({ error: 'Invalid thesis Id.' });
-    }
+	[
+		check('title').isString().trim().isLength({ min: 1 }),
+		check('description').isString().trim().isLength({ min: 1 }),
+		check('required_knowledge').isString(),
+		check('notes').isString(),
+		check('expiration_date').isString().trim().isLength({ min: 10, max: 10 }),
+		check('level').isString().trim().isLength({ min: 1 }),
+		check('degree').isString().trim().isLength({ min: 1 }),
+		check('co_supervisors').isArray(),
+		check('keywords').isArray(),
+		check('types').isArray(),
+	],
+	checkJwt,
+	async (req, res) => {
+		const thesisId = req.params.id;
+		if (isNaN(thesisId) || thesisId <= 0) {
+			return res.status(400).json({ error: 'Invalid thesis Id.' });
+		}
 
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(422).json({ errors: errors.array() });
-    }
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			return res.status(422).json({ errors: errors.array() });
+		}
 
-    try {
-      const userRole = await db.getRole(req.auth);
+		try {
+			const userRole = await db.getRole(req.auth);
 
-      if (userRole.role != 'teacher') {
-        return res.status(401).json({ error: 'Unauthorized user' });
-      }
+			if (userRole.role != 'teacher') {
+				return res.status(401).json({ error: 'Unauthorized user' });
+			}
 
-      const supervisor = await db.getThesisSupervisor(thesisId);
-      if (userRole.id != supervisor) {
-        return res.status(400).json({ error: 'The teacher does not have the permission to modify the thesis' });
-      }
+			const supervisor = await db.getThesisSupervisor(thesisId);
+			if (userRole.id != supervisor) {
+				return res.status(400).json({ error: 'The teacher does not have the permission to modify the thesis' });
+			}
 
-      const date = await db.getVirtualDate();
-      const checkApplications = await db.checkExistenceAcceptedApplicationForThesis(thesisId);
-      if (checkApplications == 1) {
-        return res.status(400).json({ error: 'The thesis has accepted applications and cannot be modified' });
-      }
+			const date = await db.getVirtualDate();
+			const checkApplications = await db.checkExistenceAcceptedApplicationForThesis(thesisId);
+			if (checkApplications == 1) {
+				return res.status(400).json({ error: 'The thesis has accepted applications and cannot be modified' });
+			}
 
-      const expirationDate = req.body.expiration_date;
-      if (dayjs(expirationDate).isBefore((date == 0) ? currentDate.format("YYYY-MM-DD") : date)) {
-        return res.status(400).json({ error: 'The expiration date is not valid, change the expiration date' });
-      }
+			const expirationDate = req.body.expiration_date;
+			if (dayjs(expirationDate).isBefore((date == 0) ? currentDate.format("YYYY-MM-DD") : date)) {
+				return res.status(400).json({ error: 'The expiration date is not valid, change the expiration date' });
+			}
 
-      const checkStatus = await db.checkThesisActive(thesisId, (date == 0) ? currentDate.format("YYYY-MM-DD") : date);
+			const checkStatus = await db.checkThesisActive(thesisId, (date == 0) ? currentDate.format("YYYY-MM-DD") : date);
 
-      await processCoSupervisors(thesisId, req.body.co_supervisors);
-      await processKeywords(thesisId, req.body.keywords);
-      await processTypes(thesisId, req.body.types);
+			await processCoSupervisors(thesisId, req.body.co_supervisors);
+			await processKeywords(thesisId, req.body.keywords);
+			await processTypes(thesisId, req.body.types);
 
-      if (checkStatus == '0') {
-        await db.activateThesis(thesisId);
-      }
+			if (checkStatus == '0') {
+				await db.activateThesis(thesisId);
+			}
 
-      await db.editThesis(thesisId, req.body.title, req.body.description, req.body.required_knowledge, req.body.notes, expirationDate, req.body.level, req.body.degree);
+			await db.editThesis(thesisId, req.body.title, req.body.description, req.body.required_knowledge, req.body.notes, expirationDate, req.body.level, req.body.degree);
 
-      return res.status(200).json(thesisId);
-    } catch (err) {
-      return res.status(503).json({ error: 'Error in the update of the thesis' });
-    }
-  }
+			return res.status(200).json(thesisId);
+		} catch (err) {
+			return res.status(503).json({ error: 'Error in the update of the thesis' });
+		}
+	}
 );
 
 async function processCoSupervisors(thesisId, coSupervisors) {
-  await db.deleteCoSupervisor(thesisId);
-  for (let i = 0; i < coSupervisors.length; i++) {
-    await db.insertCoSupervisor(thesisId, coSupervisors[i].name, coSupervisors[i].surname, coSupervisors[i].email);
-  }
+	await db.deleteCoSupervisor(thesisId);
+	for (let i = 0; i < coSupervisors.length; i++) {
+		await db.insertCoSupervisor(thesisId, coSupervisors[i].name, coSupervisors[i].surname, coSupervisors[i].email);
+	}
 }
 
 async function processKeywords(thesisId, keywords) {
-  await db.deleteKeyword(thesisId);
-  for (let i = 0; i < keywords.length; i++) {
-    await db.insertKeyword(thesisId, keywords[i]);
-  }
+	await db.deleteKeyword(thesisId);
+	for (let i = 0; i < keywords.length; i++) {
+		await db.insertKeyword(thesisId, keywords[i]);
+	}
 }
 
 async function processTypes(thesisId, types) {
-  await db.deleteType(thesisId);
-  for (let i = 0; i < types.length; i++) {
-    await db.insertType(thesisId, types[i]);
-  }
+	await db.deleteType(thesisId);
+	for (let i = 0; i < types.length; i++) {
+		await db.insertType(thesisId, types[i]);
+	}
 }
 
 
@@ -635,7 +640,7 @@ app.post('/api/delete/thesis', [
 
 ], checkJwt, async (req, res) => {
 	try {
-		
+
 		const errors = validationResult(req);
 		if (!errors.isEmpty()) {
 			return res.status(422).json({ errors: errors.array() });
@@ -665,7 +670,7 @@ app.post('/api/archive/thesis', [
 
 ], checkJwt, async (req, res) => {
 	try {
-		
+
 		const errors = validationResult(req);
 		if (!errors.isEmpty()) {
 			return res.status(422).json({ errors: errors.array() });
@@ -680,7 +685,7 @@ app.post('/api/archive/thesis', [
 		if (getRole.id != supervisor) {
 			return res.status(400).json({ error: 'The teacher does not have the permission to archive the thesis' });
 		}
-		
+
 		let getThesisExistance = await db.checkExistenceThesis(thesis);
 		if (getThesisExistance.available == 1 && getThesisExistance.data.state == 1) {
 			await db.archiveThesis(thesis)
@@ -698,48 +703,48 @@ app.post('/api/archive/thesis', [
 
 
 app.post('/api/applications/details', checkJwt, [
-	check('idApplication').isInt().custom(value => value>0)
+	check('idApplication').isInt().custom(value => value > 0)
 ],
-async(req,res) => {
-	
-	try{
-		const errors = validationResult(req);
-		if (!errors.isEmpty()) {
-			return res.status(422).json({ errors: errors.array() });
+	async (req, res) => {
+
+		try {
+			const errors = validationResult(req);
+			if (!errors.isEmpty()) {
+				return res.status(422).json({ errors: errors.array() });
+			}
+
+			let applId = req.body.idApplication;
+
+			let getRole = await db.getRole(req.auth);
+			if (getRole.role != "teacher") {
+				return res.status(401).json({ error: "Unauthorized" })
+			}
+			let getApplication = await db.checkExistenceApplicationById(applId);
+			if (getApplication == 0) return res.status(400).json({ error: "Application does not exists" })
+
+			let studentInfo = await db.getStudentInfo(getApplication.student);
+			studentInfo.exams = await db.getStudentExams(getApplication.student);
+			studentInfo.state = getApplication.state;
+			let studentCv = await db.getCv(applId);
+			if (studentCv.filename != null) {
+				console.log("Ciao")
+				const filePath = path.join(__dirname, 'files', studentCv.filename);
+				studentInfo.cv = filePath;
+			}
+			return res.status(200).json(studentInfo)
+
+
+		} catch (err) {
+
+
+
 		}
 
-		let applId = req.body.idApplication;
-		
-		let getRole = await db.getRole(req.auth);
-		if (getRole.role != "teacher") {
-			return res.status(401).json({ error: "Unauthorized" })
-		}
-		let getApplication = await db.checkExistenceApplicationById(applId);
-		if (getApplication == 0) return res.status(400).json({error: "Application does not exists"})
 
-		let studentInfo = await db.getStudentInfo(getApplication.student);
-		studentInfo.exams = await db.getStudentExams(getApplication.student);
-		studentInfo.state = getApplication.state;
-		let studentCv = await db.getCv(applId);
-		if(studentCv.filename != null){
-			console.log("Ciao")
-			const filePath = path.join(__dirname, 'files', studentCv.filename);
-			studentInfo.cv = filePath;
-		}
-		return res.status(200).json(studentInfo)
+	})
 
 
-	} catch(err){
-
-
-
-	}
-
-
-})
-
-
-module.exports = { app, port, transporter};
+module.exports = { app, port, transporter };
 
 
 

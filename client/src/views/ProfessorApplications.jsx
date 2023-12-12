@@ -31,8 +31,17 @@ function ProfessorApplications(props) {
         API.getApplications(props.accessToken)
             .then((app) => {
                 const appthesis = unionForid(app);
-                setApplicationsThesis(appthesis);
-                setFilteredApplications(appthesis);
+                let filtered = Object.fromEntries(
+                    Object.entries(appthesis).map(([id, apps]) => [
+                        id,
+                        apps.filter(app => app.t_state !== 2)
+                    ])
+                );
+                filtered = Object.fromEntries(
+                    Object.entries(filtered).filter(([id, apps]) => apps.length > 0)
+                );
+                setApplicationsThesis(filtered);
+                setFilteredApplications(filtered);
                 setLoading(false);
             })
             .catch((err) => {

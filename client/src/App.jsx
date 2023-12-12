@@ -302,13 +302,15 @@ function App() {
 					}
 				/>
 				<Route
-					path='/applications/proposal/:id/student/:idStudent'
+					path='/applications/proposal/:id/applications/:idApplication'
 					element={
 						<StudentApplicationInfo
 							accessToken={accessToken}
 							handleError={handleError}
 							handleSuccess={handleSuccess}
 							setDirty={setDirty}
+							setShowModal={setShowModal}
+							setMsgModal={setMsgModal}
 						/>
 					}
 				/>

@@ -23,7 +23,6 @@ function callAPI(endpoint, accessToken, method, body) {
 			options.body = body;
 		}
 	}
-
 	return new Promise((resolve, reject) => {
 		fetch(URL + endpoint, options)
 			.then((response) => {
@@ -41,7 +40,7 @@ function callAPI(endpoint, accessToken, method, body) {
 							reject(message);
 						}) // error message in the response body
 						.catch(() => {
-							reject({ error: 'Cannot parse server response.' });
+							reject({ error: 'Cannot parse server response2.' });
 						});
 				}
 			})
@@ -84,7 +83,6 @@ function insertThesis(accessToken, thesis) {
 }
 
 function ThesisApply(id, accessToken, cv) {
-	console.log();
 	return callAPI(`/thesis/${id}/apply`, accessToken, 'POST', cv);
 }
 
@@ -128,6 +126,10 @@ function setVirtualClock(accessToken, date) {
 	return callAPI('/virtualClockOn', accessToken, 'PUT', JSON.stringify({ date: date }));
 }
 
+function getStudentApplicationInfo(accessToken, idApplication) {
+	return callAPI('/applications/details', accessToken, 'POST', JSON.stringify({ idApplication: idApplication }));
+}
+
 const API = {
 	getAllKeywords,
 	getAllTypes,
@@ -148,5 +150,6 @@ const API = {
 	getStatusVirtualClock,
 	resetVirtualClock,
 	setVirtualClock,
+	getStudentApplicationInfo
 };
 export default API;
