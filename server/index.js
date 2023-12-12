@@ -727,7 +727,10 @@ app.post('/api/applications/details', checkJwt, [
 			let studentInfo = await db.getStudentInfo(getApplication.student);
 			studentInfo.exams = await db.getStudentExams(getApplication.student);
 			studentInfo.state = getApplication.state;
-			
+			if (studentCv.filename != null) {
+				studentInfo.cv=studentCv.path;
+			}
+			console.log(studentInfo)
 			return res.status(200).json(studentInfo)
 
 
@@ -740,37 +743,7 @@ app.post('/api/applications/details', checkJwt, [
 
 	})
 
-	app.post('/api/applications/cv', [
-		check('idApplication').isInt().custom(value => value > 0)
-	],
-		async (req, res) => {
-	
-			try {
-				const errors = validationResult(req);
-				if (!errors.isEmpty()) {
-					return res.status(422).json({ errors: errors.array() });
-				}
-	
-				let applId = req.body.idApplication;
-	
-				
-				let getApplication = await db.checkExistenceApplicationById(applId);
-				if (getApplication == 0) return res.status(400).json({ error: "Application does not exists" })
-	
-				let studentCv = await db.getCv(applId)
-				if(studentCv.filename != null) {
-					res.sendFile(path.join(__dirname, 'files', studentCv.filename));
-				}
-	
-			} catch (err) {
-	
-				res.status(503).json({error: "GetStudentInfo error"})
-	
-			}
-	
-	
-		})
-	
+
 module.exports = { app, port, transporter };
 
 
