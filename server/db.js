@@ -1039,7 +1039,7 @@ exports.getCv = (applId) => {
 
 exports.checkExistenceApplicationById= (idApplication)=> {
   return new Promise((resolve, reject) => {
-    const sql = 'SELECT STUDENT FROM THESIS_APPLICATION WHERE ID_APPLICATION = ?';
+    const sql = 'SELECT STUDENT, STATE FROM THESIS_APPLICATION WHERE ID_APPLICATION = ?';
     db.get(sql, [idApplication], (err, row) => {
       if (err) {
         reject(err);
@@ -1049,7 +1049,12 @@ exports.checkExistenceApplicationById= (idApplication)=> {
         if (row == undefined)
           resolve(0)
         else{
-          resolve(row.STUDENT)
+          let appl = {
+            student: row.STUDENT,
+            state: row.STATE
+          }
+          
+          resolve(appl)
         }
       }
     });

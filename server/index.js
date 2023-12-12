@@ -707,19 +707,19 @@ async(req,res) => {
 		if (!errors.isEmpty()) {
 			return res.status(422).json({ errors: errors.array() });
 		}
-		
-		let applId= req.body.idApplication;
+
+		let applId = req.body.idApplication;
 		
 		let getRole = await db.getRole(req.auth);
 		if (getRole.role != "teacher") {
 			return res.status(401).json({ error: "Unauthorized" })
 		}
-		let getStudentApplication = await db.checkExistenceApplicationById(applId);
-		if (getStudentApplication == 0) return res.status(400).json({error: "Application does not exists"})
+		let getApplication = await db.checkExistenceApplicationById(applId);
+		if (getApplication == 0) return res.status(400).json({error: "Application does not exists"})
 
-		let studentInfo = await db.getStudentInfo(getStudentApplication);
-		studentInfo.exams = await db.getStudentExams(getStudentApplication);
-		
+		let studentInfo = await db.getStudentInfo(getApplication.student);
+		studentInfo.exams = await db.getStudentExams(getApplication.student);
+		studentInfo.state = getApplication.state;
 		let studentCv = await db.getCv(applId);
 		if(studentCv.filename != null){
 			console.log("Ciao")
