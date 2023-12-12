@@ -544,7 +544,7 @@ exports.insertApplication = (userId, idThesis, date) => {
 
 exports.getTeacherApplications = (teacherId,date) => {
   return new Promise((resolve, reject) => {
-    const sql = 'SELECT ID_THESIS, ID_APPLICATION, TITLE,EXPIRATION_DATE,LEVEL, DEGREE, STUDENT, S.NAME as NAME, S.SURNAME as SURNAME, S.EMAIL as EMAIL, STATE FROM THESIS T, TEACHER TE, THESIS_APPLICATION TA, STUDENT S WHERE T.SUPERVISOR=TE.ID AND T.ID_THESIS=TA.THESIS AND TA.STUDENT=S.ID AND TE.ID=?';
+    const sql = 'SELECT ID_THESIS, ID_APPLICATION, TITLE,EXPIRATION_DATE,LEVEL, DEGREE, STUDENT, S.NAME as NAME, S.SURNAME as SURNAME, S.EMAIL as EMAIL, TA.STATE AS STATE, TS.STATE AS TSTATE TS FROM THESIS T, TEACHER TE, THESIS_APPLICATION TA, THESIS_STATUS TS, STUDENT S WHERE T.SUPERVISOR=TE.ID AND T.ID_THESIS=TA.THESIS AND TA.STUDENT=S.ID AND T.ID_THESIS=TS.THESIS AND TE.ID=?';
     db.all(sql, [teacherId], (err,rows) => {
       if (err) {
         reject(err);
@@ -553,6 +553,7 @@ exports.getTeacherApplications = (teacherId,date) => {
         const applications=rows.map((elem)=>({
           id: elem.ID_THESIS,
           id_application: elem.ID_APPLICATION,
+          t_state: elem.TSTATE,
           title: elem.TITLE,
           expirationDate: elem.EXPIRATION_DATE,
           level: elem.LEVEL,
@@ -1019,11 +1020,14 @@ exports.getCv = (applId) => {
         return;
       }
       if(row == undefined){
-        resolve({})
+        resolve({
+          filename: null,
+          path: null
+        })
       } else{
         let cv = {
-          filename: row.filename,
-          path: row.path
+          filename: row.FILENAME,
+          path: row.PATH
         }
 
         resolve(cv);
@@ -1035,7 +1039,7 @@ exports.getCv = (applId) => {
 
 exports.checkExistenceApplicationById= (idApplication)=> {
   return new Promise((resolve, reject) => {
-    const sql = 'SELECT * FROM THESIS_APPLICATION WHERE ID_APPLICATION = ?';
+    const sql = 'SELECT STUDENT FROM THESIS_APPLICATION WHERE ID_APPLICATION = ?';
     db.get(sql, [idApplication], (err, row) => {
       if (err) {
         reject(err);
@@ -1045,7 +1049,7 @@ exports.checkExistenceApplicationById= (idApplication)=> {
         if (row == undefined)
           resolve(0)
         else{
-          resolve(1)
+          resolve(row.STUDENT)
         }
       }
     });

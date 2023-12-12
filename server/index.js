@@ -12,6 +12,7 @@ const nodemailer = require('nodemailer');
 const sgTransport = require('nodemailer-sendgrid-transport');
 const multer = require('multer');
 const fs = require('fs');
+const path=require('path')
 require('dotenv').config();
 
 app.use(express.json());
@@ -696,45 +697,25 @@ app.post('/api/archive/thesis', [
 });
 
 
-app.get('/api/applications/thesis/:idThesis/students/:idStudent', checkJwt, async(req,res) => {
+app.post('/api/applications/details', async(req,res) => {
 
 	try{
-		let thesisId=req.params.idThesis;
-		let studentId=req.params.idStudent;
 		let applId= req.body.idApplication;
-		let getRole = await db.getRole(req.auth);
+		
 
-		if (getRole.role != "teacher") {
-			return res.status(401).json({ error: "Unauthorized" })
-		}
+		let getStudentApplication = await db.checkExistenceApplicationById(applId);
+		if (getStudentApplication == 0) return res.status(400).json({error: "Application does not exists"})
 
-		let getApplication = await db.checkExistenceApplicationById(applId);
-		if (getApplication != 1) return res.status(400).json({error: "Application does not exists"})
-
-		let studentInfo = await db.getStudentInfo(studentId);
-		studentInfo.exams = await db.getStudentExams(studentId);
+		let studentInfo = await db.getStudentInfo(getStudentApplication);
+		studentInfo.exams = await db.getStudentExams(getStudentApplication);
 		
 		let studentCv = await db.getCv(applId);
 		if(studentCv.filename != null){
+			console.log("Ciao")
 			const filePath = path.join(__dirname, 'files', studentCv.filename);
-
-			fs.readFile(filePath, (err, data) => {
-				if (err) {
-					console.error('Error reading file:', err);
-					res.status(500).json({ error: 'Internal Server Error' });
-				} else {
-					console.log(data)
-				}
-			});
-
-			//studentInfo.cv = data;
+			studentInfo.cv = filePath;
 		}
-		
-		return res.status(200).json("Student details ok")
-
-
-
-
+		return res.status(200).json(studentInfo)
 
 
 	} catch(err){
