@@ -64,6 +64,11 @@
   - request parameters: none.
   - request body content: thesis identifier.
   - response body content: a message indicating the outcome of the archiving process.
+- POST `/api/applications/details`
+  - request parameters: none.
+  - request body content: application identifier.
+  - response body content: an object containing the student's information: list of exams, the state and eventually a related cv.
+
 
 ## API Virtual Clock 
 - GET `/api/virtualClockStatus`
