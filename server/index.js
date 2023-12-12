@@ -740,7 +740,7 @@ app.post('/api/applications/details', checkJwt, [
 
 	})
 
-	app.get('/api/applications/cv', [
+	app.post('/api/applications/cv', [
 		check('idApplication').isInt().custom(value => value > 0)
 	],
 		async (req, res) => {
