@@ -976,7 +976,8 @@ exports.getStudentInfo = (studentId) => {
           surname: row.SURNAME,
           email: row.EMAIL,
           exams: [],
-          state: 0
+          state: 0,
+          cv: null
         }
 
         resolve(info);
