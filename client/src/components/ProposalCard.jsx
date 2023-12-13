@@ -1,5 +1,5 @@
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import { Row, Col, Card, Image, Button, Form, Modal } from 'react-bootstrap';
+import { Row, Col, Card, Image, Button } from 'react-bootstrap';
 import { Color } from '../constants/colors.js';
 import Avatar from '../assets/avatar.svg';
 import { useNavigate } from 'react-router-dom';
