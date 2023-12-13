@@ -1,5 +1,5 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Row, Col, Card, Image, Button, Container } from 'react-bootstrap';
+import { Row, Col, Card, Image, Button } from 'react-bootstrap';
 import { Color } from '../constants/colors.js';
 import Avatar from '../assets/avatar.svg';
 import randomcolor from 'randomcolor';
@@ -65,7 +65,9 @@ function StudentApplicationCard(props) {
 								>
 									<i className='bi bi-building-check' style={{ fontSize: '16px' }}></i>
 								</span>
-								<span className='d-none d-md-flex' style={{ color: 'rgba(0, 0, 0, 0.5)', paddingLeft: 8 }}>Company</span>
+								<span className='d-none d-md-flex' style={{ color: 'rgba(0, 0, 0, 0.5)', paddingLeft: 8 }}>
+									Company
+								</span>
 							</Col>
 						</>
 					) : null}
@@ -78,7 +80,9 @@ function StudentApplicationCard(props) {
 								>
 									<i className='bi bi-globe-americas' style={{ fontSize: '16px' }}></i>
 								</span>
-								<span className='d-none d-md-flex' style={{ color: 'rgba(0, 0, 0, 0.5)', paddingLeft: 8 }}>Abroad</span>
+								<span className='d-none d-md-flex' style={{ color: 'rgba(0, 0, 0, 0.5)', paddingLeft: 8 }}>
+									Abroad
+								</span>
 							</Col>
 						</>
 					) : null}

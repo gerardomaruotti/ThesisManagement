@@ -280,7 +280,7 @@ function App() {
 					path='/applications'
 					element={
 						isProfessor ? (
-							<ProfessorApplications accessToken={accessToken} handleError={handleError} isProfessor={isProfessor} date={dateVirtualClock} />
+							<ProfessorApplications accessToken={accessToken} handleError={handleError} isProfessor={isProfessor} dateInput={dateVirtualClock} />
 						) : isStudent ? (
 							<StudentApplications accessToken={accessToken} handleError={handleError} />
 						) : null

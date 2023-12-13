@@ -72,10 +72,10 @@ function ProfessorApplications({ accessToken, handleError, date }) {
 			setFilteredApplications(filter);
 		} else if (rapidFilter === 'expired') {
 			const filter = { ...applicationsThesis };
-			const date = date ? dayjs(date) : dayjs();
+			const dateCmp = date ? dayjs(date) : dayjs();
 			for (const id in applicationsThesis) {
 				for (const app in applicationsThesis[id]) {
-					if (applicationsThesis[id][app].state == 1 || date.isBefore(dayjs(applicationsThesis[id][app].expirationDate))) {
+					if (applicationsThesis[id][app].state == 1 || dateCmp.isBefore(dayjs(applicationsThesis[id][app].expirationDate))) {
 						delete filter[id];
 					}
 				}
