@@ -1,5 +1,5 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Container, Row, Col, Button, Form, InputGroup, Nav, Toast, ToastContainer } from 'react-bootstrap';
+import { Container, Row, Col, Button, Form, InputGroup, Nav } from 'react-bootstrap';
 import '../constants/custom-styles.scss';
 import { Color } from '../constants/colors.js';
 import ProposalCard from '../components/ProposalCard.jsx';

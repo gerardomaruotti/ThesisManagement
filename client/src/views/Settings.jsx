@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 
 function Settings({ accessToken, handleError, handleSuccess, setDirty, virtualClock, setVirtualClock, dateVirtualClock, setDateVirtualClock }) {
 	const { loading } = useLoading();
-	const [date, setDate] = useState(dateVirtualClock ? dateVirtualClock : null);
+	const [date, setDate] = useState(dateVirtualClock);
 
 	useEffect(() => {
 		if (dateVirtualClock == null) {
@@ -21,7 +21,7 @@ function Settings({ accessToken, handleError, handleSuccess, setDirty, virtualCl
 	}, [dateVirtualClock]);
 
 	const handleSwitchChange = (event) => {
-		if (event.target.checked == false) {
+		if (!event.target.checked) {
 			API.resetVirtualClock(accessToken)
 				.then(() => {
 					setDirty(true);

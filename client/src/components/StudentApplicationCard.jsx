@@ -4,8 +4,9 @@ import { Color } from '../constants/colors.js';
 import Avatar from '../assets/avatar.svg';
 import randomcolor from 'randomcolor';
 import { useNavigate } from 'react-router-dom';
+import PropTypes from 'prop-types';
 
-function StudentApplicationCard(props) {
+function StudentApplicationCard({ application }) {
 	const navigate = useNavigate();
 	return (
 		<Col lg={6} sm={12} style={{ marginTop: 25 }}>
@@ -21,7 +22,7 @@ function StudentApplicationCard(props) {
 						overflow: 'hidden',
 					}}
 				>
-					{props.application.title}
+					{application.title}
 				</div>
 				<div
 					className='hide-scrollbar'
@@ -35,7 +36,7 @@ function StudentApplicationCard(props) {
 						msOverflowStyle: 'none' /* For Internet Explorer and Edge */,
 					}}
 				>
-					{props.application.keywords.map((keyword, index) => (
+					{application.keywords.map((keyword, index) => (
 						<span
 							key={index}
 							className='badge'
@@ -54,9 +55,9 @@ function StudentApplicationCard(props) {
 				<Row style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15, height: 30 }}>
 					<Col style={{ display: 'flex', alignItems: 'center' }}>
 						<Image style={{ height: 35, width: 35 }} src={Avatar} roundedCircle />
-						<span style={{ color: 'rgba(0, 0, 0, 0.8)', paddingLeft: 8 }}>{props.application.name + ' ' + props.application.surname}</span>
+						<span style={{ color: 'rgba(0, 0, 0, 0.8)', paddingLeft: 8 }}>{application.name + ' ' + application.surname}</span>
 					</Col>
-					{props.application.types.filter((type) => type == 'IN COMPANY').length > 0 ? (
+					{application.types.filter((type) => type == 'IN COMPANY').length > 0 ? (
 						<>
 							<Col style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
 								<span
@@ -71,7 +72,7 @@ function StudentApplicationCard(props) {
 							</Col>
 						</>
 					) : null}
-					{props.application.types.filter((type) => type == 'ABROAD').length > 0 ? (
+					{application.types.filter((type) => type == 'ABROAD').length > 0 ? (
 						<>
 							<Col style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
 								<span
@@ -89,7 +90,7 @@ function StudentApplicationCard(props) {
 				</Row>
 				<Row>
 					<Col>
-						{props.application.state === 1 ? (
+						{application.state === 1 ? (
 							<div style={{ display: 'flex', alignItems: 'center', float: 'left', marginTop: 20 }}>
 								<Col style={{ display: 'flex', alignItems: 'center', float: 'left' }}>
 									<span
@@ -109,7 +110,7 @@ function StudentApplicationCard(props) {
 								</Col>
 							</div>
 						) : null}
-						{props.application.state === 2 ? (
+						{application.state === 2 ? (
 							<div style={{ display: 'flex', alignItems: 'center', float: 'left', marginTop: 20 }}>
 								<Col style={{ display: 'flex', alignItems: 'center', float: 'left' }}>
 									<span
@@ -129,7 +130,7 @@ function StudentApplicationCard(props) {
 								</Col>
 							</div>
 						) : null}
-						{props.application.state === 0 ? (
+						{application.state === 0 ? (
 							<div style={{ display: 'flex', alignItems: 'center', float: 'left', marginTop: 20 }}>
 								<Col style={{ display: 'flex', alignItems: 'center', float: 'left' }}>
 									<span
@@ -149,7 +150,7 @@ function StudentApplicationCard(props) {
 								</Col>
 							</div>
 						) : null}
-						{props.application.state === 3 ? (
+						{application.state === 3 ? (
 							<div style={{ display: 'flex', alignItems: 'center', float: 'left', marginTop: 20 }}>
 								<Col style={{ display: 'flex', alignItems: 'center', float: 'left' }}>
 									<span
@@ -172,7 +173,7 @@ function StudentApplicationCard(props) {
 					</Col>
 					<Col>
 						<div style={{ marginTop: 20, marginRight: 10, textAlign: 'right' }}>
-							<Button variant='primary' onClick={() => navigate('/proposal/' + props.application.id, { state: { fromHome: true } })}>
+							<Button variant='primary' onClick={() => navigate('/proposal/' + application.id, { state: { fromHome: true } })}>
 								<i className='bi bi-arrow-right' style={{ fontSize: '16px' }}></i>
 							</Button>
 						</div>
@@ -182,5 +183,9 @@ function StudentApplicationCard(props) {
 		</Col>
 	);
 }
+
+StudentApplicationCard.propTypes = {
+	application: PropTypes.object.isRequired,
+};
 
 export default StudentApplicationCard;

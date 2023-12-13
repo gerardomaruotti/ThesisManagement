@@ -1,5 +1,5 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Row, Col, Card, Image, Button, Container, Toast, Form, Offcanvas, Modal } from 'react-bootstrap';
+import { Row, Col, Card, Button, Container, Form, Offcanvas, Modal } from 'react-bootstrap';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import API from '../API.jsx';
@@ -54,7 +54,7 @@ function Proposal({ accessToken, handleError, handleSuccess, isProfessor, applic
 	}
 
 	function handleRedirect() {
-		const fromHome = location.state && location.state.fromHome;
+		const fromHome = location.state?.fromHome;
 
 		if (fromHome) {
 			navigate(-1);
