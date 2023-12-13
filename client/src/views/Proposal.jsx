@@ -1,5 +1,5 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Row, Col, Card, Button, Container, Form, Offcanvas, Modal } from 'react-bootstrap';
+import { Row, Col, Card, Button, Container, Offcanvas } from 'react-bootstrap';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import API from '../API.jsx';
