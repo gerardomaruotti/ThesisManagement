@@ -6,8 +6,9 @@ import API from '../API.jsx';
 import ProposalForm from '../components/ProposalForm.jsx';
 import Loading from '../components/Loading.jsx';
 import { useLoading } from '../LoadingContext.jsx';
+import PropTypes from 'prop-types';
 
-function EditProposal(props) {
+function EditProposal({ accessToken, user, handleError, setDirty, date }) {
 	const { id } = useParams();
 	const navigate = useNavigate();
 	const [thesis, setThesis] = useState(null);
@@ -15,12 +16,12 @@ function EditProposal(props) {
 
 	useEffect(() => {
 		setLoading(true);
-		API.getThesisByID(id, props.accessToken)
+		API.getThesisByID(id, accessToken)
 			.then((thesis) => {
 				setThesis(thesis);
 			})
 			.catch((err) => {
-				props.handleError(err);
+				handleError(err);
 			})
 			.finally(() => {
 				setLoading(false);
@@ -28,13 +29,13 @@ function EditProposal(props) {
 	}, [id]);
 
 	function editProposal(thesis) {
-		API.editProposal(props.accessToken, thesis, id)
+		API.editProposal(accessToken, thesis, id)
 			.then(() => {
-				props.setDirty(true);
+				setDirty(true);
 				navigate('/proposal/' + id);
 			})
 			.catch((err) => {
-				props.handleError(err);
+				handleError(err);
 			});
 	}
 
@@ -43,16 +44,17 @@ function EditProposal(props) {
 	) : (
 		<Container>
 			<h2 style={{ textAlign: 'center', marginTop: 20 }}>Edit Proposal</h2>
-			<ProposalForm
-				thesis={thesis}
-				accessToken={props.accessToken}
-				user={props.user}
-				handleError={props.handleError}
-				editProposal={editProposal}
-				date={props.date}
-			/>
+			<ProposalForm thesis={thesis} accessToken={accessToken} user={user} handleError={handleError} editProposal={editProposal} date={date} />
 		</Container>
 	);
 }
+
+EditProposal.propTypes = {
+	accessToken: PropTypes.string.isRequired,
+	user: PropTypes.object.isRequired,
+	handleError: PropTypes.func.isRequired,
+	setDirty: PropTypes.func.isRequired,
+	date: PropTypes.string,
+};
 
 export default EditProposal;

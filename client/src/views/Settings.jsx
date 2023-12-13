@@ -6,31 +6,30 @@ import Loading from '../components/Loading.jsx';
 import { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
 import API from '../API.jsx';
+import PropTypes from 'prop-types';
 
-function Settings(props) {
-	const { loading, setLoading } = useLoading();
-	const { virtualClock, setVirtualClock, dateVirtualClock, setDateVirtualClock } = props;
+function Settings({ accessToken, handleError, handleSuccess, setDirty, virtualClock, setVirtualClock, dateVirtualClock, setDateVirtualClock }) {
+	const { loading } = useLoading();
 	const [date, setDate] = useState(dateVirtualClock ? dateVirtualClock : null);
 
 	useEffect(() => {
 		if (dateVirtualClock == null) {
 			setVirtualClock(false);
-		}
-		else {
-			setDate(dateVirtualClock)
+		} else {
+			setDate(dateVirtualClock);
 		}
 	}, [dateVirtualClock]);
 
 	const handleSwitchChange = (event) => {
 		if (event.target.checked == false) {
-			API.resetVirtualClock(props.accessToken)
+			API.resetVirtualClock(accessToken)
 				.then(() => {
-					props.setDirty(true);
+					setDirty(true);
 					setDateVirtualClock(null);
 					setDate(null);
 				})
 				.catch((err) => {
-					props.handleError(err);
+					handleError(err);
 				});
 		}
 		setVirtualClock(event.target.checked);
@@ -42,17 +41,17 @@ function Settings(props) {
 
 	const handleDateVirtualClock = () => {
 		if (date == null) {
-			props.handleError('Please select a date');
+			handleError('Please select a date');
 			return;
 		}
 		setDateVirtualClock(date);
-		API.setVirtualClock(props.accessToken, date)
+		API.setVirtualClock(accessToken, date)
 			.then((res) => {
-				props.handleSuccess(`Date set to ${dayjs(date).format('DD/MM/YYYY')}`);
-				props.setDirty(true);
+				handleSuccess(`Date set to ${dayjs(date).format('DD/MM/YYYY')}`);
+				setDirty(true);
 			})
 			.catch((err) => {
-				props.handleError(err);
+				handleError(err);
 			});
 	};
 
@@ -101,5 +100,16 @@ function Settings(props) {
 		</Container>
 	);
 }
+
+Settings.propTypes = {
+	accessToken: PropTypes.string,
+	handleError: PropTypes.func.isRequired,
+	handleSuccess: PropTypes.func.isRequired,
+	setDirty: PropTypes.func.isRequired,
+	virtualClock: PropTypes.bool.isRequired,
+	setVirtualClock: PropTypes.func.isRequired,
+	dateVirtualClock: PropTypes.string,
+	setDateVirtualClock: PropTypes.func.isRequired,
+};
 
 export default Settings;

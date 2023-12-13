@@ -5,21 +5,22 @@ import { Container, Row } from 'react-bootstrap';
 import { useLoading } from '../LoadingContext';
 import Loading from '../components/Loading.jsx';
 import API from '../API.jsx';
+import PropTypes from 'prop-types';
 
 //Status: 0 pending, 1 accepted, 2 rejected, 3 canceled
-function StudentApplications(props) {
+function StudentApplications({ accessToken, handleError }) {
 	const { loading, setLoading } = useLoading();
 	const [applications, setApplications] = useState([]);
 
 	useEffect(() => {
 		setLoading(true);
-		API.getApplications(props.accessToken)
+		API.getApplications(accessToken)
 			.then((app) => {
 				setApplications(app);
 				setLoading(false);
 			})
 			.catch((err) => {
-				props.handleError(err);
+				handleError(err);
 				setLoading(false);
 			});
 	}, []);
@@ -42,5 +43,10 @@ function StudentApplications(props) {
 		</Container>
 	);
 }
+
+StudentApplications.propTypes = {
+	accessToken: PropTypes.string.isRequired,
+	handleError: PropTypes.func.isRequired,
+};
 
 export default StudentApplications;

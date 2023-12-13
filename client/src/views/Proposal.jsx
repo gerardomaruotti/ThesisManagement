@@ -6,8 +6,9 @@ import API from '../API.jsx';
 import { useLoading } from '../LoadingContext.jsx';
 import Loading from '../components/Loading.jsx';
 import DetailsProposalLeftBar from '../components/DetailsProposalLeftBar.jsx';
+import PropTypes from 'prop-types';
 
-function Proposal(props) {
+function Proposal({ accessToken, handleError, handleSuccess, isProfessor, applications, hasApplied, setDirty }) {
 	const { loading, setLoading } = useLoading();
 	const navigate = useNavigate();
 	const [thesis, setThesis] = useState(null);
@@ -21,34 +22,34 @@ function Proposal(props) {
 	const handleShow = () => setShowDetails(true);
 
 	useEffect(() => {
-		if (props.accessToken != null) {
+		if (accessToken != null) {
 			setLoading(true);
-			API.getThesisByID(id, props.accessToken)
+			API.getThesisByID(id, accessToken)
 				.then((thesis) => {
 					setThesis(thesis);
 				})
 				.catch((err) => {
-					props.handleError(err);
+					handleError(err);
 				})
 				.finally(() => {
 					setLoading(false);
 				});
 		}
-	}, [props.accessToken]);
+	}, [accessToken]);
 
 	function apply(event) {
 		setShowModal(false);
 		const formData = new FormData();
 		formData.append('file', cv);
-		API.ThesisApply(id, props.accessToken, cv ? formData : null)
+		API.ThesisApply(id, accessToken, cv ? formData : null)
 			.then(() => {
 				setCv(null);
-				props.handleSuccess('Application accepted');
-				props.setDirty(true);
+				handleSuccess('Application accepted');
+				setDirty(true);
 			})
 			.catch((err) => {
 				setCv(null);
-				props.handleError(err);
+				handleError(err);
 			});
 	}
 
@@ -75,9 +76,9 @@ function Proposal(props) {
 									id={id}
 									thesis={thesis}
 									apply={() => setShowModal(true)}
-									isProfessor={props.isProfessor}
-									applications={props.applications}
-									hasApplied={props.hasApplied}
+									isProfessor={isProfessor}
+									applications={applications}
+									hasApplied={hasApplied}
 								/>
 							</Card>
 						</Col>
@@ -104,7 +105,6 @@ function Proposal(props) {
 										<Col md={12}>
 											<div style={{ fontWeight: 'bold', fontSize: 15, marginTop: 15, color: '#E6782B' }}> Required Knowledge </div>
 											<div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15, whiteSpace: 'pre-line' }}>{thesis.requiredKnowledge}</div>
-
 										</Col>
 									</Row>
 								)}
@@ -132,7 +132,7 @@ function Proposal(props) {
 					<Offcanvas.Title>Details</Offcanvas.Title>
 				</Offcanvas.Header>
 				<Offcanvas.Body>
-					<DetailsProposalLeftBar id={id} thesis={thesis} apply={() => setShowModal(true)} isProfessor={props.isProfessor} applications={props.applications} />
+					<DetailsProposalLeftBar id={id} thesis={thesis} apply={() => setShowModal(true)} isProfessor={isProfessor} applications={applications} />
 				</Offcanvas.Body>
 			</Offcanvas>
 
@@ -141,28 +141,41 @@ function Proposal(props) {
 					<Modal.Title>Apply</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
-					<div>
-						Are you sure you want to apply to this proposal?
-					</div>
+					<div>Are you sure you want to apply to this proposal?</div>
 					<div>
 						<br />
-						<Form.Group controlId="formFile" className="mb-3">
+						<Form.Group controlId='formFile' className='mb-3'>
 							<Form.Label>Upload your cv (optional)</Form.Label>
-							<Form.Control type="file" accept='application/pdf' onChange={(e) => setCv(e.target.files[0])} />
+							<Form.Control type='file' accept='application/pdf' onChange={(e) => setCv(e.target.files[0])} />
 						</Form.Group>
 					</div>
 				</Modal.Body>
 				<Modal.Footer>
-					<Button variant="outline-secondary" onClick={() => { setShowModal(false); }}>
+					<Button
+						variant='outline-secondary'
+						onClick={() => {
+							setShowModal(false);
+						}}
+					>
 						No
 					</Button>
-					<Button variant="outline-primary" onClick={apply}>
+					<Button variant='outline-primary' onClick={apply}>
 						Yes
 					</Button>
 				</Modal.Footer>
-			</Modal >
+			</Modal>
 		</>
 	);
 }
+
+Proposal.propTypes = {
+	accessToken: PropTypes.string,
+	handleError: PropTypes.func.isRequired,
+	handleSuccess: PropTypes.func.isRequired,
+	isProfessor: PropTypes.bool.isRequired,
+	applications: PropTypes.array.isRequired,
+	hasApplied: PropTypes.bool.isRequired,
+	setDirty: PropTypes.func.isRequired,
+};
 
 export default Proposal;

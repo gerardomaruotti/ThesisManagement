@@ -297,6 +297,7 @@ function App() {
 							setMsgModal={setMsgModal}
 							setShowModal={setShowModal}
 							date={dateVirtualClock}
+							dirty={dirty}
 							setDirty={setDirty}
 						/>
 					}
@@ -308,7 +309,7 @@ function App() {
 							accessToken={accessToken}
 							handleError={handleError}
 							handleSuccess={handleSuccess}
-							setDirty={setDirty}
+							setDirtyParent={setDirty}
 							setShowModal={setShowModal}
 							setMsgModal={setMsgModal}
 						/>
