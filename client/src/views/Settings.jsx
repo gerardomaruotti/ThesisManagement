@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 
 function Settings({ accessToken, handleError, handleSuccess, setDirty, virtualClock, setVirtualClock, dateVirtualClock, setDateVirtualClock }) {
 	const { loading } = useLoading();
-	const [date, setDate] = useState(dateVirtualClock);
+	const [date, setDate] = useState(dateVirtualClock ? dateVirtualClock : null);
 
 	useEffect(() => {
 		if (dateVirtualClock == null) {
