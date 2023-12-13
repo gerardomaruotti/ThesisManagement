@@ -261,7 +261,7 @@ StudentHome.propTypes = {
 	expirationDate: PropTypes.string.isRequired,
 	setExpirationDate: PropTypes.func.isRequired,
 	hasApplied: PropTypes.bool.isRequired,
-	date: PropTypes.object,
+	date: PropTypes.string,
 };
 
 export default StudentHome;
