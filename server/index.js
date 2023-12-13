@@ -50,7 +50,12 @@ const storage = multer.diskStorage({
 	}
 });
 
-const upload = multer({ storage });
+const upload = multer({ 
+	storage: storage,
+  	limits: {
+    	fileSize: 8000000 
+  	}
+ });
 
 app.use('/files', express.static(path.join(__dirname, 'files')));
 
