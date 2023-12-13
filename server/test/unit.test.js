@@ -99,6 +99,9 @@ const thesisExist = {
     }
 }
 
+const testFileContent = 'This is the content of the fake file.'
+const testFileName = 'test-file.txt'
+
 const genericError = new Error('Internal server error');
 
 jest.mock('../db');
@@ -642,18 +645,19 @@ describe('Apply for Proposal', () => {
         expect(res.body).toEqual('Insertion Succesful');
     });
 
-    test('should insert an apply for a proposal using Virtual Clock', async () => {
+    test('should insert an apply for a proposal using Virtual Clock and Cv', async () => {
 
         db.getVirtualDate.mockResolvedValueOnce(date);
         db.getRole.mockResolvedValueOnce(student);
         db.getThesis.mockResolvedValueOnce(thesis1);
         db.checkThesisActive.mockResolvedValueOnce(1);
         db.getStudentApplications.mockResolvedValueOnce([]);
-        db.insertApplication.mockResolvedValueOnce();
+        db.insertApplication.mockResolvedValueOnce(1);
         db.getMailTeacher.mockResolvedValueOnce("d111111@polito.it");
+        db.insertCv.mockResolvedValueOnce();
         transporter.sendMail.mockResolvedValueOnce();
 
-        const res = await request(app).post('/api/thesis/5/apply');
+        const res = await request(app).post('/api/thesis/5/apply').attach('file', Buffer.from(testFileContent), { filename: testFileName });
 
         expect(db.getVirtualDate).toHaveBeenCalledTimes(1);
         expect(db.getRole).toHaveBeenCalledTimes(1);
@@ -667,6 +671,7 @@ describe('Apply for Proposal', () => {
         expect(db.insertApplication).toHaveBeenCalledWith(student.id, "5", date);
         expect(db.getMailTeacher).toHaveBeenCalledTimes(1);
         expect(db.getMailTeacher).toHaveBeenCalledWith(thesis1.supervisor);
+        expect(db.insertCv).toHaveBeenCalledTimes(1);
         expect(transporter.sendMail).toHaveBeenCalledTimes(1);
         expect(res.status).toBe(200);
         expect(res.body).toEqual('Insertion Succesful');
