@@ -6,7 +6,7 @@ WORKDIR .
 # Install app dependencies
 COPY package*.json ./
 
-RUN npm install --ignore-scripts
+RUN npm install
 
 # Bundle app source
 COPY . .
