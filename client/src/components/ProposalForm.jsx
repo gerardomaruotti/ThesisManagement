@@ -8,34 +8,33 @@ import { useNavigate } from 'react-router-dom';
 import { colorStyles } from '../constants/colors.js';
 import API from '../API.jsx';
 import dayjs from 'dayjs';
+import PropTypes from 'prop-types';
 
-function ProposalForm(props) {
+function ProposalForm({ accessToken, handleError, thesis, createProposal, editProposal, user, date, copiedProposal }) {
 	const navigate = useNavigate();
-	const { accessToken, user, handleError } = props;
-
-	const [title, setTitle] = useState(props.thesis ? props.thesis.title : '');
-	const [requiredKnowledge, setRequiredKnowledge] = useState(props.thesis ? props.thesis.requiredKnowledge : '');
-	const [description, setDescription] = useState(props.thesis ? props.thesis.description : '');
-	const [notes, setNotes] = useState(props.thesis ? props.thesis.notes : '');
+	const [title, setTitle] = useState(thesis ? thesis.title : '');
+	const [requiredKnowledge, setRequiredKnowledge] = useState(thesis ? thesis.requiredKnowledge : '');
+	const [description, setDescription] = useState(thesis ? thesis.description : '');
+	const [notes, setNotes] = useState(thesis ? thesis.notes : '');
 	const [keywords, setKeywords] = useState([]);
 	const [coSupervisors, setCoSupervisors] = useState([]);
 	const [cds, setCds] = useState('');
 	const [type, setType] = useState([]);
-	const [expirationDate, setExpirationDate] = useState(props.thesis ? dayjs(props.thesis.expirationDate).format('YYYY-MM-DD') : '');
+	const [expirationDate, setExpirationDate] = useState(thesis ? dayjs(thesis.expirationDate).format('YYYY-MM-DD') : '');
 	const levels = [
 		{ value: 'BSc', label: 'BSc' },
 		{ value: 'MSc', label: 'MSc' },
 	];
 	const [selectedKeywords, setSelectedKeywords] = useState(
-		props.thesis
-			? props.thesis.keywords.map((keyword) => {
+		thesis
+			? thesis.keywords.map((keyword) => {
 					return { value: keyword, label: keyword };
 			  })
 			: []
 	);
 	const [selectedCoSupervisors, setSelectedCoSupervisors] = useState(
-		props.thesis
-			? props.thesis.coSupervisors
+		thesis
+			? thesis.coSupervisors
 					.filter((cosupervisor) => cosupervisor.ID !== user.id)
 					.map((cosupervisor) => {
 						return {
@@ -49,23 +48,23 @@ function ProposalForm(props) {
 			: []
 	);
 	const [selectedTypes, setselectedTypes] = useState(
-		props.thesis
-			? props.thesis.types.map((type) => {
+		thesis
+			? thesis.types.map((type) => {
 					return { value: type, label: type };
 			  })
 			: []
 	);
-	const [selectedLevel, setSelectedLevel] = useState(props.thesis ? { value: props.thesis.level, label: props.thesis.level } : '');
-	const [selectedCds, setSelectedCds] = useState(props.thesis ? { value: props.thesis.codeDegree, label: props.thesis.cds } : '');
+	const [selectedLevel, setSelectedLevel] = useState(thesis ? { value: thesis.level, label: thesis.level } : '');
+	const [selectedCds, setSelectedCds] = useState(thesis ? { value: thesis.codeDegree, label: thesis.cds } : '');
 
 	useEffect(() => {
-		if (props.thesis) {
-			setTitle(props.thesis.title);
-			setDescription(props.thesis.description);
-			setRequiredKnowledge(props.thesis.requiredKnowledge);
-			setNotes(props.thesis.notes);
+		if (thesis) {
+			setTitle(thesis.title);
+			setDescription(thesis.description);
+			setRequiredKnowledge(thesis.requiredKnowledge);
+			setNotes(thesis.notes);
 			setSelectedCoSupervisors(
-				props.thesis.coSupervisors
+				thesis.coSupervisors
 					.filter((cosupervisor) => cosupervisor.ID !== user.id)
 					.map((cosupervisor) => {
 						return {
@@ -78,20 +77,20 @@ function ProposalForm(props) {
 					})
 			);
 			setselectedTypes(
-				props.thesis.types.map((type) => {
+				thesis.types.map((type) => {
 					return { value: type, label: type };
 				})
 			);
-			setSelectedLevel({ value: props.thesis.level, label: props.thesis.level });
-			setSelectedCds({ value: props.thesis.codeDegree, label: props.thesis.cds });
+			setSelectedLevel({ value: thesis.level, label: thesis.level });
+			setSelectedCds({ value: thesis.codeDegree, label: thesis.cds });
 			setSelectedKeywords(
-				props.thesis.keywords.map((keyword) => {
+				thesis.keywords.map((keyword) => {
 					return { value: keyword, label: keyword };
 				})
 			);
-			setExpirationDate(dayjs(props.thesis.expirationDate).format('YYYY-MM-DD'));
+			setExpirationDate(dayjs(thesis.expirationDate).format('YYYY-MM-DD'));
 		}
-	}, [props.thesis]);
+	}, [thesis]);
 
 	useEffect(() => {
 		setCds([
@@ -135,7 +134,7 @@ function ProposalForm(props) {
 				);
 			})
 			.catch((err) => handleError(err));
-	}, [props.thesis]);
+	}, [thesis]);
 
 	useEffect(() => {
 		if (selectedLevel === null) {
@@ -158,6 +157,37 @@ function ProposalForm(props) {
 			})
 			.catch((err) => handleError(err));
 	}, [selectedLevel]);
+
+	function handlePaste() {
+		setTitle(copiedProposal.title);
+		setDescription(copiedProposal.description);
+		setRequiredKnowledge(copiedProposal.requiredKnowledge);
+		setNotes(copiedProposal.notes);
+		setSelectedCoSupervisors(
+			copiedProposal.coSupervisors.map((cosupervisor) => {
+				return {
+					value: cosupervisor.email,
+					label: cosupervisor.name + ' ' + cosupervisor.surname,
+					email: cosupervisor.email,
+					name: cosupervisor.name,
+					surname: cosupervisor.surname,
+				};
+			})
+		);
+		setselectedTypes(
+			copiedProposal.types.map((type) => {
+				return { value: type, label: type };
+			})
+		);
+		setSelectedLevel({ value: copiedProposal.level, label: copiedProposal.level });
+		setSelectedCds({ value: copiedProposal.codeDegree, label: copiedProposal.cds });
+		setSelectedKeywords(
+			copiedProposal.keywords.map((keyword) => {
+				return { value: keyword, label: keyword };
+			})
+		);
+		setExpirationDate(dayjs(copiedProposal.expirationDate).format('YYYY-MM-DD'));
+	}
 
 	function handleSelectedKeywords(selectedOptions) {
 		setSelectedKeywords(selectedOptions);
@@ -205,10 +235,10 @@ function ProposalForm(props) {
 			keywords: keywordsValues,
 		};
 
-		if (props.thesis) {
-			props.editProposal(thesisObject);
+		if (editProposal) {
+			editProposal(thesisObject);
 		} else {
-			props.createProposal(thesisObject);
+			createProposal(thesisObject);
 		}
 	}
 
@@ -248,7 +278,7 @@ function ProposalForm(props) {
 						<Form.Control
 							type='date'
 							value={expirationDate}
-							min={dayjs(props.date).format('YYYY-MM-DD')}
+							min={dayjs(date).format('YYYY-MM-DD')}
 							required
 							onChange={(event) => setExpirationDate(event.target.value)}
 						/>
@@ -301,11 +331,27 @@ function ProposalForm(props) {
 					Cancel
 				</Button>
 				<Button variant='primary' className='form-button' type='submit'>
-					{props.editProposal ? 'Edit Proposal' : 'Insert Proposal'}
+					{editProposal ? 'Edit Proposal' : 'Insert Proposal'}
 				</Button>
+				{copiedProposal ? (
+					<Button variant='primary' className='form-button' onClick={handlePaste}>
+						Paste
+					</Button>
+				) : null}
 			</Container>
 		</Form>
 	);
 }
+
+ProposalForm.propTypes = {
+	accessToken: PropTypes.string.isRequired,
+	handleError: PropTypes.func.isRequired,
+	thesis: PropTypes.object,
+	createProposal: PropTypes.func,
+	editProposal: PropTypes.func,
+	user: PropTypes.object,
+	date: PropTypes.string,
+	copiedProposal: PropTypes.object,
+};
 
 export default ProposalForm;

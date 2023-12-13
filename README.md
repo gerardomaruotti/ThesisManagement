@@ -21,8 +21,8 @@
 - GET `/api/cds`
   - request parameters: none.
   - response body content: list of cds identified with the code of the degree and the related title.
-- GET `/api/thesis`
-  - request parameters: none.
+- POST `/api/thesis`
+  - request parameters: an object containing filters.
   - request body content: an object that may containing filters: a list of keywords, a list of types, a supervisor, a list of co-supervisors, a list of groups and an expiration date. 
   - response body content: list of thesis identified with an identifier, a title, a description, required knowledge, notes, expiration date, the level, related degree, a list containing the related types and a list containing the related keywords.
 - GET `/api/thesis/:id/groups`
@@ -34,10 +34,10 @@
 - GET `/api/thesis/:id`
   - request parameters: thesis identifier.
   - response body content: an object including all the data related to a thesis: a title, a description, required knowledge, notes, expiration date, the level, related degree, the supervisor and a list of co-supervisors, the list of groups to which the supervisors belong, a list of related keywords and a list of related types.
-- POST `/api/thesis/:id/proposal`
+- POST `/api/thesis/:id/apply`
   - request parameters: thesis identifier.
   - request body content: none.
-  - response body content: successful message. 
+  - response body content: a message indicating the outcome of the application process. 
 - GET `/api/thesis/applications/browse`
   - request parameters: none.
   - response body content: 
@@ -56,6 +56,21 @@
   - request parameters: thesis identifier.
   - request body content: an object including all the data necessary to update a thesis: a title, a description, required knowledge, notes, expiration date, the level, related degree, a list of co-supervisors, a list of related keywords and a list of related types.
   - response body content: the identifier of the just modified thesis.
+- POST `/api/delete/thesis`
+  - request parameters: none.
+  - request body content: thesis identifier.
+  - response body content: a message indicating the outcome of the deleting process.
+- POST `/api/archive/thesis`
+  - request parameters: none.
+  - request body content: thesis identifier.
+  - response body content: a message indicating the outcome of the archiving process.
+- POST `/api/applications/details`
+  - request parameters: none.
+  - request body content: application identifier.
+  - response body content: an object containing the student's information: list of exams, the state and eventually a related cv.
+
+
+## API Virtual Clock 
 - GET `/api/virtualClockStatus`
   - request parameters: none.
   - response body content: 

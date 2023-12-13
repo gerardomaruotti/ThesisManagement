@@ -5,9 +5,9 @@ import randomcolor from 'randomcolor';
 import { Row, Col, Image, Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
+import PropsTypes from 'prop-types';
 
-function DetailsProposalLeftBar(props) {
-	const { thesis, apply } = props;
+function DetailsProposalLeftBar({ thesis, apply, id, isProfessor, applications, hasApplied, setDirty, fromApplication }) {
 	const navigate = useNavigate();
 	return (
 		<Row>
@@ -129,20 +129,20 @@ function DetailsProposalLeftBar(props) {
 					<span style={{ marginLeft: 8, color: 'rgba(0, 0, 0, 0.5)' }}>{dayjs(thesis.expirationDate).format('DD/MM/YYYY')}</span>
 				</div>
 			</Col>
-			{props.isProfessor && props.fromApplication ? (
+			{isProfessor && fromApplication ? (
 				<Col md={12} className='d-flex justify-content-center'>
 					<div style={{ marginTop: 20, textAlign: 'center' }}>
-						<Button variant='primary' onClick={() => navigate('/proposal/' + props.id, { state: { fromHome: true } })}>
+						<Button variant='primary' onClick={() => navigate('/proposal/' + id, { state: { fromHome: true } })}>
 							Show thesis details
 						</Button>
 					</div>
 				</Col>
 			) : null}
-			{props.isProfessor ? null : (
+			{isProfessor ? null : (
 				<Col md={12} className='d-flex justify-content-center'>
 					<div style={{ marginTop: 20, textAlign: 'center' }}>
-						{props.applications.find((app) => app.id == props.id && app.state != 2) ? (
-							props.applications.find((app) => app.id == props.id && app.state != 2).state == 0 ? (
+						{applications.find((app) => app.id == id && app.state != 2) ? (
+							applications.find((app) => app.id == id && app.state != 2).state == 0 ? (
 								<>
 									<span
 										className='badge'
@@ -158,7 +158,7 @@ function DetailsProposalLeftBar(props) {
 									</span>
 									<span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>Pending</span>
 								</>
-							) : props.applications.find((app) => app.id == props.id && app.state != 2).state == 1 ? (
+							) : applications.find((app) => app.id == id && app.state != 2).state == 1 ? (
 								<>
 									<span
 										className='badge'
@@ -174,7 +174,7 @@ function DetailsProposalLeftBar(props) {
 									</span>
 									<span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>Accepted</span>
 								</>
-							) : props.applications.find((app) => app.id == props.id && app.state != 2).state == 3 ? (
+							) : applications.find((app) => app.id == id && app.state != 2).state == 3 ? (
 								<>
 									<span
 										className='badge'
@@ -191,12 +191,12 @@ function DetailsProposalLeftBar(props) {
 									<span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>Canceled</span>
 								</>
 							) : (
-								<Button variant='primary' disabled={props.hasApplied} style={{ width: 130 }} onClick={apply}>
+								<Button variant='primary' disabled={hasApplied} style={{ width: 130 }} onClick={apply}>
 									Apply
 								</Button>
 							)
 						) : (
-							<Button variant='primary' disabled={props.hasApplied} style={{ width: 130 }} onClick={apply}>
+							<Button variant='primary' disabled={hasApplied} style={{ width: 130 }} onClick={apply}>
 								Apply
 							</Button>
 						)}
@@ -206,5 +206,16 @@ function DetailsProposalLeftBar(props) {
 		</Row>
 	);
 }
+
+DetailsProposalLeftBar.propTypes = {
+	thesis: PropsTypes.object,
+	apply: PropsTypes.func,
+	id: PropsTypes.string,
+	isProfessor: PropsTypes.bool.isRequired,
+	applications: PropsTypes.array,
+	hasApplied: PropsTypes.bool,
+	setDirty: PropsTypes.func,
+	fromApplication: PropsTypes.bool,
+};
 
 export default DetailsProposalLeftBar;
