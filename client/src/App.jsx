@@ -42,7 +42,7 @@ function App() {
 	const [selectedKeywords, setSelectedKeywords] = useState([]);
 	const [selectedTypes, setSelectedTypes] = useState([]);
 	const [selectedGroups, setSelectedGroups] = useState([]);
-	const [expirationDate, setexpirationDate] = useState('all');
+	const [expirationDate, setExpirationDate] = useState('all');
 
 	//GenericModal
 	const [showModal, setShowModal] = useState(false);
@@ -195,6 +195,7 @@ function App() {
 								handleError={handleError}
 								handleSuccess={handleSuccess}
 								accessToken={accessToken}
+								dirty={dirty}
 								setDirty={setDirty}
 								setCopiedProposal={setCopiedProposal}
 								setShowModal={setShowModal}
@@ -202,7 +203,6 @@ function App() {
 							/>
 						) : isStudent ? (
 							<StudentHome
-								isProfessor={isProfessor}
 								thesis={thesis}
 								setThesis={setThesis}
 								accessToken={accessToken}
@@ -219,7 +219,7 @@ function App() {
 								selectedGroups={selectedGroups}
 								setSelectedGroups={setSelectedGroups}
 								expirationDate={expirationDate}
-								setExpirationDate={setexpirationDate}
+								setExpirationDate={setExpirationDate}
 								handleError={handleError}
 								handleSuccess={handleSuccess}
 								setMsgModal={setMsgModal}
@@ -297,6 +297,7 @@ function App() {
 							setMsgModal={setMsgModal}
 							setShowModal={setShowModal}
 							date={dateVirtualClock}
+							dirty={dirty}
 							setDirty={setDirty}
 						/>
 					}
@@ -308,7 +309,7 @@ function App() {
 							accessToken={accessToken}
 							handleError={handleError}
 							handleSuccess={handleSuccess}
-							setDirty={setDirty}
+							setDirtyParent={setDirty}
 							setShowModal={setShowModal}
 							setMsgModal={setMsgModal}
 						/>

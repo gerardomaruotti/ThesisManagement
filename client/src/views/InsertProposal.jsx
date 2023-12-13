@@ -1,21 +1,21 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container } from 'react-bootstrap';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import API from '../API.jsx';
 import ProposalForm from '../components/ProposalForm.jsx';
+import PropsType from 'prop-types';
 
-function InsertProposal(props) {
+function InsertProposal({ accessToken, user, handleError, setDirty, date, copiedProposal }) {
 	const navigate = useNavigate();
-	const { accessToken, user, handleError } = props;
 
 	function createProposal(thesis) {
 		API.insertThesis(accessToken, thesis)
 			.then((thesisID) => {
-				props.setDirty(true);
+				setDirty(true);
 				navigate('/proposal/' + thesisID);
 			})
 			.catch((err) => {
-				props.handleError(err);
+				handleError(err);
 			});
 	}
 
@@ -27,11 +27,20 @@ function InsertProposal(props) {
 				user={user}
 				handleError={handleError}
 				createProposal={createProposal}
-				date={props.date}
-				copiedProposal={props.copiedProposal}
+				date={date}
+				copiedProposal={copiedProposal}
 			/>
 		</Container>
 	);
 }
+
+InsertProposal.propTypes = {
+	accessToken: PropsType.string.isRequired,
+	user: PropsType.object.isRequired,
+	handleError: PropsType.func.isRequired,
+	setDirty: PropsType.func.isRequired,
+	date: PropsType.string,
+	copiedProposal: PropsType.object,
+};
 
 export default InsertProposal;

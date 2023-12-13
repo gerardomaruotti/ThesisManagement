@@ -6,8 +6,9 @@ import { Color } from '../constants/colors.js';
 import Avatar from '../assets/avatar.svg';
 import { useNavigate, useLocation } from 'react-router-dom';
 import dayjs from 'dayjs';
+import PropsTypes from 'prop-types';
 
-function Header(props) {
+function Header({ date, userData }) {
 	const { isAuthenticated, loginWithRedirect, logout } = useAuth0();
 	const navigate = useNavigate();
 	let location = useLocation();
@@ -50,11 +51,11 @@ function Header(props) {
 
 					<Navbar.Collapse className='d-none d-md-flex'>{navElement()}</Navbar.Collapse>
 					<Nav className='d-flex flex-row'>
-						{props.date ? (
+						{date ? (
 							<Nav.Link eventKey='/settings' onClick={() => navigate('/settings')} style={{ height: 53, paddingRight: 8 }}>
 								<div className='d-flex align-items-center justify-content-center' style={{ marginTop: '7px' }}>
 									<i className='bi bi-calendar3' style={{ marginRight: 10 }}></i>
-									{dayjs(props.date).format('DD MMM YYYY')}
+									{dayjs(date).format('DD MMM YYYY')}
 								</div>
 							</Nav.Link>
 						) : null}
@@ -63,8 +64,8 @@ function Header(props) {
 							<Dropdown.Toggle variant='primary' id='dropdown-custom'>
 								<Container className='d-flex justify-content-between align-items-center'>
 									<div style={{ marginRight: 15 }}>
-										<div style={{ fontSize: 15 }}>{props.userData ? props.userData.name + ' ' + props.userData.surname : null}</div>
-										<div style={{ color: 'rgba(255,255,255,0.5)', float: 'right', fontSize: 12 }}>{props.userData ? props.userData.id : null}</div>
+										<div style={{ fontSize: 15 }}>{userData ? userData.name + ' ' + userData.surname : null}</div>
+										<div style={{ color: 'rgba(255,255,255,0.5)', float: 'right', fontSize: 12 }}>{userData ? userData.id : null}</div>
 									</div>
 									<div className='text-center'>
 										<Image style={{ height: 33, width: 33 }} src={Avatar} roundedCircle />
@@ -103,5 +104,10 @@ function Header(props) {
 		</>
 	);
 }
+
+Header.propTypes = {
+	date: PropsTypes.string,
+	userData: PropsTypes.object,
+};
 
 export default Header;

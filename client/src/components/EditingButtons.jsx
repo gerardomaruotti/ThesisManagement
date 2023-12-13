@@ -1,11 +1,8 @@
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import { Button } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
-import API from '../API';
+import PropsTypes from 'prop-types';
 
-function EditingButtons(props) {
-	const { disabled, isArchived, copyProposal, editProposal, deleteProposal, archiveProposal } = props;
-
+function EditingButtons({ disabled, isArchived, copyProposal, editProposal, deleteProposal, archiveProposal }) {
 	return (
 		<>
 			<Button variant='primary' onClick={copyProposal} style={{ marginRight: 10 }} size='sm'>
@@ -23,5 +20,14 @@ function EditingButtons(props) {
 		</>
 	);
 }
+
+EditingButtons.propTypes = {
+	disabled: PropsTypes.bool,
+	isArchived: PropsTypes.bool,
+	copyProposal: PropsTypes.func,
+	editProposal: PropsTypes.func,
+	deleteProposal: PropsTypes.func,
+	archiveProposal: PropsTypes.func,
+};
 
 export default EditingButtons;

@@ -8,8 +8,23 @@ import randomcolor from 'randomcolor';
 import EditingButtons from './EditingButtons.jsx';
 import { useState } from 'react';
 import { useLoading } from '../LoadingContext.jsx';
+import PropsTypes from 'prop-types';
 
-function ProposalCard(props) {
+function ProposalCard({
+	accessToken,
+	handleError,
+	handleSuccess,
+	thesis,
+	isProfessor,
+	isEditable,
+	isArchived,
+	setGenericModal,
+	setMsgModal,
+	setCopiedProposal,
+	setDirty,
+	state,
+	hasApplied,
+}) {
 	const navigate = useNavigate();
 	const [cv, setCv] = useState(null);
 	const [showModal, setShowModal] = useState(false);
@@ -20,42 +35,42 @@ function ProposalCard(props) {
 		setLoading(true);
 		const formData = new FormData();
 		formData.append('file', cv);
-		API.ThesisApply(props.thesis.ID, props.accessToken, cv ? formData : null)
+		API.ThesisApply(thesis.ID, accessToken, cv ? formData : null)
 			.then(() => {
 				setCv(null);
-				props.handleSuccess('Application accepted');
-				props.setDirty(true);
+				handleSuccess('Application accepted');
+				setDirty(true);
 				setLoading(false);
 			})
 			.catch((err) => {
 				setCv(null);
 				setLoading(false);
-				props.handleError(err);
+				handleError(err);
 			});
 		event.stopPropagation();
 	}
 
 	function copyProposal(event) {
 		event.stopPropagation();
-		API.getThesisByID(props.thesis.ID, props.accessToken)
+		API.getThesisByID(thesis.ID, accessToken)
 			.then((thesis) => {
-				props.setCopiedProposal(thesis);
-				props.handleSuccess('Proposal copied correctly');
+				setCopiedProposal(thesis);
+				handleSuccess('Proposal copied correctly');
 			})
 			.catch((err) => {
-				props.handleError(err);
+				handleError(err);
 			});
 	}
 
 	function editProposal(event) {
-		navigate('/proposals/edit/' + props.thesis.ID, { state: { fromHome: true } });
+		navigate('/proposals/edit/' + thesis.ID, { state: { fromHome: true } });
 		event.stopPropagation();
 	}
 
 	function archiveProposal(event) {
 		event.stopPropagation();
-		props.setGenericModal(true);
-		props.setMsgModal({
+		setGenericModal(true);
+		setMsgModal({
 			header: 'Archive proposal',
 			body: `Are you sure you want to archive this proposal?`,
 			method: () => archiveProposalMethod(),
@@ -63,27 +78,27 @@ function ProposalCard(props) {
 	}
 
 	function archiveProposalMethod() {
-		props.setGenericModal(false);
-		const thesis = {
-			thesisID: props.thesis.ID,
+		setGenericModal(false);
+		const thesisObj = {
+			thesisID: thesis.ID,
 		};
 		setLoading(true);
-		API.archiveProposal(props.accessToken, thesis)
-			.then((res) => {
+		API.archiveProposal(accessToken, thesisObj)
+			.then(() => {
 				setLoading(false);
-				props.handleSuccess('Proposal archived correctly');
-				props.setDirty(true);
+				handleSuccess('Proposal archived correctly');
+				setDirty(true);
 			})
 			.catch((err) => {
 				setLoading(false);
-				props.handleError(err.toString());
+				handleError(err.toString());
 			});
 	}
 
 	function deleteProposal(event) {
 		event.stopPropagation();
-		props.setGenericModal(true);
-		props.setMsgModal({
+		setGenericModal(true);
+		setMsgModal({
 			header: 'Delete proposal',
 			body: `Are you sure you want to delete this proposal?`,
 			method: () => deleteProposalMethod(),
@@ -91,20 +106,20 @@ function ProposalCard(props) {
 	}
 
 	function deleteProposalMethod() {
-		props.setGenericModal(false);
-		const thesis = {
-			thesisID: props.thesis.ID,
+		setGenericModal(false);
+		const thesisObj = {
+			thesisID: thesis.ID,
 		};
 		setLoading(true);
-		API.deleteProposal(props.accessToken, thesis)
+		API.deleteProposal(accessToken, thesisObj)
 			.then(() => {
 				setLoading(false);
-				props.handleSuccess('Proposal deleted correctly');
-				props.setDirty(true);
+				handleSuccess('Proposal deleted correctly');
+				setDirty(true);
 			})
 			.catch((err) => {
 				setLoading(false);
-				props.handleError(err.toString());
+				handleError(err.toString());
 			});
 	}
 
@@ -112,13 +127,14 @@ function ProposalCard(props) {
 		<>
 			<Col lg={6} sm={12} style={{ marginTop: 25 }}>
 				<Card style={{ padding: 20 }} className='custom-card'>
-					<div
+					<Button
 						className='title'
-						onClick={() => navigate('/proposal/' + props.thesis.ID, { state: { fromHome: true } })}
+						variant='link'
+						onClick={() => navigate('/proposal/' + thesis.ID, { state: { fromHome: true } })}
 						style={{
 							fontWeight: 'medium',
 							fontSize: 18,
-							height: 55,
+							height: 57,
 							display: '-webkit-box',
 							WebkitBoxOrient: 'vertical',
 							WebkitLineClamp: '2',
@@ -126,8 +142,8 @@ function ProposalCard(props) {
 							cursor: 'pointer',
 						}}
 					>
-						{props.thesis.title}
-					</div>
+						{thesis.title}
+					</Button>
 					<div
 						className='hide-scrollbar'
 						style={{
@@ -141,7 +157,7 @@ function ProposalCard(props) {
 							msOverflowStyle: 'none' /* For Internet Explorer and Edge */,
 						}}
 					>
-						{props.thesis.keywords.map((keyword, index) => (
+						{thesis.keywords.map((keyword, index) => (
 							<span
 								key={index}
 								className='badge'
@@ -161,9 +177,9 @@ function ProposalCard(props) {
 					<Row style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15, height: 30 }}>
 						<Col style={{ display: 'flex', alignItems: 'center' }}>
 							<Image style={{ height: 35, width: 35 }} src={Avatar} roundedCircle />
-							<span style={{ color: 'rgba(0, 0, 0, 0.8)', paddingLeft: 8 }}>{props.thesis.sup_name + ' ' + props.thesis.sup_surname}</span>
+							<span style={{ color: 'rgba(0, 0, 0, 0.8)', paddingLeft: 8 }}>{thesis.sup_name + ' ' + thesis.sup_surname}</span>
 						</Col>
-						{props.thesis.types.filter((type) => type == 'IN COMPANY').length > 0 ? (
+						{thesis.types.filter((type) => type == 'IN COMPANY').length > 0 ? (
 							<>
 								<Col style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
 									<span
@@ -178,7 +194,7 @@ function ProposalCard(props) {
 								</Col>
 							</>
 						) : null}
-						{props.thesis.types.filter((type) => type == 'ABROAD').length > 0 ? (
+						{thesis.types.filter((type) => type == 'ABROAD').length > 0 ? (
 							<>
 								<Col style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
 									<span
@@ -208,10 +224,10 @@ function ProposalCard(props) {
 							whiteSpace: 'pre-line',
 						}}
 					>
-						{props.thesis.description}
+						{thesis.description}
 					</div>
-					{props.isProfessor != 1 ? (
-						props.state == 0 ? (
+					{isProfessor != 1 ? (
+						state == 0 ? (
 							<div style={{ marginTop: 20, textAlign: 'center' }}>
 								<span
 									className='badge'
@@ -230,7 +246,7 @@ function ProposalCard(props) {
 							</div>
 						) : (
 							<div style={{ marginTop: 20, textAlign: 'center' }}>
-								<Button variant='primary' disabled={props.hasApplied} style={{ width: 130 }} onClick={() => setShowModal(true)}>
+								<Button variant='primary' disabled={hasApplied} style={{ width: 130 }} onClick={() => setShowModal(true)}>
 									Apply
 								</Button>
 							</div>
@@ -238,8 +254,8 @@ function ProposalCard(props) {
 					) : (
 						<div style={{ marginTop: 20, textAlign: 'right' }}>
 							<EditingButtons
-								disabled={!props.isEditable}
-								isArchived={props.isArchived}
+								disabled={!isEditable}
+								isArchived={isArchived}
 								copyProposal={copyProposal}
 								editProposal={editProposal}
 								deleteProposal={deleteProposal}
@@ -280,5 +296,21 @@ function ProposalCard(props) {
 		</>
 	);
 }
+
+ProposalCard.propTypes = {
+	accessToken: PropsTypes.string,
+	handleError: PropsTypes.func,
+	handleSuccess: PropsTypes.func,
+	thesis: PropsTypes.object,
+	isProfessor: PropsTypes.number,
+	isEditable: PropsTypes.bool,
+	isArchived: PropsTypes.bool,
+	setGenericModal: PropsTypes.func,
+	setMsgModal: PropsTypes.func,
+	setCopiedProposal: PropsTypes.func,
+	setDirty: PropsTypes.func,
+	state: PropsTypes.number,
+	hasApplied: PropsTypes.bool,
+};
 
 export default ProposalCard;

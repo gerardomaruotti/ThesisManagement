@@ -16,8 +16,7 @@ function callAPI(endpoint, accessToken, method, body) {
 		if (body != null) {
 			if (body instanceof FormData) {
 				options.headers['enctype'] = 'multipart/form-data';
-			}
-			else {
+			} else {
 				options.headers['Content-Type'] = 'application/json';
 			}
 			options.body = body;
@@ -31,7 +30,7 @@ function callAPI(endpoint, accessToken, method, body) {
 						.json()
 						.then((res) => resolve(res))
 						.catch(() => {
-							reject({ error: 'Cannot parse server response.' });
+							reject(new Error('Cannot parse server response.'));
 						});
 				} else {
 					response
@@ -40,12 +39,12 @@ function callAPI(endpoint, accessToken, method, body) {
 							reject(message);
 						}) // error message in the response body
 						.catch(() => {
-							reject({ error: 'Cannot parse server response2.' });
+							reject(new Error('Cannot parse server response2.'));
 						});
 				}
 			})
 			.catch(() => {
-				reject({ error: 'Cannot communicate with the server.' });
+				reject(new Error('Cannot communicate with the server.'));
 			}); // connection errors
 	});
 }
@@ -150,6 +149,6 @@ const API = {
 	getStatusVirtualClock,
 	resetVirtualClock,
 	setVirtualClock,
-	getStudentApplicationInfo
+	getStudentApplicationInfo,
 };
 export default API;
