@@ -5,7 +5,6 @@ import { Color } from '../constants/colors.js';
 import ProposalCard from '../components/ProposalCard.jsx';
 import FiltersModal from '../components/FiltersModal.jsx';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useAuth0 } from '@auth0/auth0-react';
 import { useLoading } from '../LoadingContext.jsx';
 import API from '../API.jsx';
