@@ -186,3 +186,105 @@ Steps:
 4. Insert at least: one co-supervisor, one keyword and one type between the ones already present in the database and then creating a new keyword and type.
 5. Click `Cancel`.
 6. Ensure that the thesis proposal is not present on screen.
+
+### [9] Notify Application Decision
+
+In this section, we have verified that a student receive a notification when his applications get rejected or accepted.
+
+#### Test 1
+Steps:
+1. Login as a teacher
+2. Click on `Applications` in the navbar, in the top left corner.
+3. Click on `Pending`.
+4. Click on `Show applications` of the first thesis.
+5. Click on the accept button in the status column.
+6. Login in Politecnico mail server as the student that has sent the application.
+7. Ensure that he has received the confirmation email.
+
+#### Test 2
+Steps:
+1. Login as a teacher
+2. Click on `Applications` in the navbar, in the top left corner.
+3. Click on `Pending`.
+4. Click on `Show applications` of the first thesis.
+5. Click on the reject button in the status column.
+6. Login in Politecnico mail server as the student that has sent the application.
+7. Ensure that he has received the rejection email.
+
+### [10] Delete Proposal
+
+In this section, we have verified that a teacher can delete his proposal.
+
+#### Test 1
+Steps:
+1. Login as a teacher.
+2. Click on the delete button of the first thesis proposal.
+3. Confirm the operation.
+4. Ensure that the deleted proposal is no more on the screen.
+
+#### Test 2
+Steps:
+1. Login as a teacher.
+2. Click on `Archived`, in the top left corner.
+2. Click on the delete button of an assigned thesis proposal.
+3. Ensure that the delete button is disabled.
+
+### [11] Copy Proposal
+
+In this section, we have verified that a teacher can copy his proposal so he can create a new proposal from an existing one.
+
+#### Test 1
+Steps:
+1. Login as a teacher.
+2. Click on the copy button of the first thesis proposal.
+3. Click on the `+` in the bottom righ corner for inserting a new proposal.
+4. Click on `Paste`.
+5. Ensure that inserted info are the same as the copied proposal.
+
+#### Test 2
+Steps:
+1. Login as a teacher.
+3. Click on the `+` in the bottom righ corner for inserting a new proposal.
+4. Ensure that the `Paste` button is not dsplayed.
+
+#### Test 3
+Steps:
+1. Login as a teacher.
+2. Click on `Archived`, in the top left corner.
+3. Click on the copy button of the first thesis proposal.
+4. Click on the `+` in the bottom righ corner for inserting a new proposal.
+5. Click on `Paste`.
+6. Ensure that inserted info are the same as the copied proposal.
+
+### [12] Archive Proposal
+
+In this section, we have verified that a teacher can archive his proposal.
+
+#### Test 1
+Steps:
+1. Login as a teacher.
+2. Click on the archive button of the first thesis proposal.
+3. Confirm the operation.
+4. Ensure that the archived proposal is no more on the screen.
+5. Click on `Archived`, in the top left corner.
+6. Ensure that the archived thesis is present.
+
+#### Test 2
+Steps:
+1. Login as a teacher.
+2. Click on `Archived`, in the top left corner.
+3. Click on the archive button of an assigned thesis proposal.
+4. Ensure that the archive button is disabled.
+
+### [14] Notify Application Decision
+
+In this section, we have verified that a teacher receive a notification when his thesis get an application.
+
+#### Test 1
+Steps:
+1. Login as a student.
+2. Ensure that the proposals displayed are related to my Cds.
+3. Click `Apply` on the first proposal in the list.
+4. Ensure that a green popup with the text 'Application successful' is displayed on the screen.
+6. Login in Politecnico mail server as the teacher of the thesis.
+7. Ensure that he has received the confirmation email.
