@@ -359,8 +359,7 @@ app.post('/api/thesis/:id/apply', upload.single('file'), checkJwt, async (req, r
 
 		const mailOptions = {
 			from: 's313373@studenti.polito.it',
-			//to: `${getMailTeacher}`,  //da sostituire, la mai 317977 è per test
-			to: 's313373@studenti.polito.it',
+			to: `${getMailTeacher}`,  //da sostituire, la mai 317977 è per test
 			text: `You received a Thesis Application for ${thesis_info.title} from student ${userRole.id}`,
 			subject: 'Thesis Application',
 		};

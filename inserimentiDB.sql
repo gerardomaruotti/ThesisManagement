@@ -157,7 +157,7 @@ INSERT INTO "TEACHER" ("ID","NAME","SURNAME","EMAIL","COD_GROUP","COD_DEPARTMENT
  ('d123457','Anna Filomena','Carbone','d123457@polito.it','GR-05','DISAT'),
  ('d123458','Lorenzo','Casalino','d123458@polito.it','AA-02','DIMEAS'),
  ('d123459','Silvia','Chiusano','d123459@polito.it','GR-04','DAUIN'),
- ('d111111','Marco','Sangermano','d111111@polito.it','AA-01','DISAT'),
+ ('d111111','Marco','Sangermano','s315327@studenti.polito.it','AA-01','DISAT'),
  ('d123461','Carlo','Rafele','d123461@polito.it','RESLOG','DIGEP'),
  ('d123462','Fulvio','Corno','d123462@polito.it','GR-10','DAUIN'),
  ('d123463','Antonio','Vetrò','d123463@polito.it','GR-16','DAUIN');
