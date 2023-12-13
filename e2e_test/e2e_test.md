@@ -276,6 +276,19 @@ Steps:
 3. Click on the archive button of an assigned thesis proposal.
 4. Ensure that the archive button is disabled.
 
+### [13] Access Appliant CV
+
+In this section, we have verified that the teacher can access appliant cv.
+
+#### Test 1
+Steps:
+1. Login as a teacher.
+2. Click on `Applications` in the navbar, in the top left corner.
+3. Click on `Pending`.
+4. Click on the first application of the list.
+5. Click on the cv button in the student detail column.
+6. Ensure that it is displayed correctly if present.
+
 ### [14] Notify Application Decision
 
 In this section, we have verified that a teacher receive a notification when his thesis get an application.
