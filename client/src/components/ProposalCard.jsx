@@ -127,14 +127,14 @@ function ProposalCard({
 		<>
 			<Col lg={6} sm={12} style={{ marginTop: 25 }}>
 				<Card style={{ padding: 20 }} className='custom-card'>
-					<div
+					<Button
 						className='title'
-						onKeyDown={() => navigate('/proposal/' + thesis.ID, { state: { fromHome: true } })}
+						variant='link'
 						onClick={() => navigate('/proposal/' + thesis.ID, { state: { fromHome: true } })}
 						style={{
 							fontWeight: 'medium',
 							fontSize: 18,
-							height: 55,
+							height: 57,
 							display: '-webkit-box',
 							WebkitBoxOrient: 'vertical',
 							WebkitLineClamp: '2',
@@ -143,7 +143,7 @@ function ProposalCard({
 						}}
 					>
 						{thesis.title}
-					</div>
+					</Button>
 					<div
 						className='hide-scrollbar'
 						style={{

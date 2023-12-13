@@ -11,12 +11,13 @@ function ProfessorApplicationCard({ applications, date }) {
 	return (
 		<Col lg={6} sm={12} style={{ marginTop: 25 }}>
 			<Card style={{ padding: 20 }} className='custom-card'>
-				<div
+				<Button
+					variant='link'
 					className='title'
 					style={{
 						fontWeight: 'medium',
 						fontSize: 18,
-						height: 55,
+						height: 57,
 						display: '-webkit-box',
 						WebkitBoxOrient: 'vertical',
 						WebkitLineClamp: '2',
@@ -24,10 +25,9 @@ function ProfessorApplicationCard({ applications, date }) {
 						cursor: 'pointer',
 					}}
 					onClick={() => navigate('/proposal/' + applications[0].id, { state: { fromHome: true } })}
-					onKeyDown={() => navigate('/proposal/' + applications[0].id, { state: { fromHome: true } })}
 				>
 					{applications[0].title}
-				</div>
+				</Button>
 				<div
 					style={{
 						fontWeight: 'regular',
