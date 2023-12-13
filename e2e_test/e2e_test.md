@@ -187,6 +187,30 @@ Steps:
 5. Click `Cancel`.
 6. Ensure that the thesis proposal is not present on screen.
 
+### [9] Notify Application Decision
+
+In this section, we have verified that a student receive a notification when his applications get rejected or accepted.
+
+#### Test 1
+Steps:
+1. Login as a teacher
+2. Click on `Applications` in the navbar, in the top left corner.
+3. Click on `Pending`.
+4. Click on `Show applications` of the first thesis.
+5. Click on the accept button in the status column.
+6. Login in Politecnico mail server as the student that has sent the application.
+7. Ensure that he has received the confirmation email.
+
+#### Test 2
+Steps:
+1. Login as a teacher
+2. Click on `Applications` in the navbar, in the top left corner.
+3. Click on `Pending`.
+4. Click on `Show applications` of the first thesis.
+5. Click on the reject button in the status column.
+6. Login in Politecnico mail server as the student that has sent the application.
+7. Ensure that he has received the rejection email.
+
 ### [10] Delete Proposal
 
 In this section, we have verified that a teacher can delete his proposal.
@@ -249,5 +273,18 @@ Steps:
 Steps:
 1. Login as a teacher.
 2. Click on `Archived`, in the top left corner.
-2. Click on the archive button of an assigned thesis proposal.
-3. Ensure that the archive button is disabled.
+3. Click on the archive button of an assigned thesis proposal.
+4. Ensure that the archive button is disabled.
+
+### [14] Notify Application Decision
+
+In this section, we have verified that a teacher receive a notification when his thesis get an application.
+
+#### Test 1
+Steps:
+1. Login as a student.
+2. Ensure that the proposals displayed are related to my Cds.
+3. Click `Apply` on the first proposal in the list.
+4. Ensure that a green popup with the text 'Application successful' is displayed on the screen.
+6. Login in Politecnico mail server as the teacher of the thesis.
+7. Ensure that he has received the confirmation email.
