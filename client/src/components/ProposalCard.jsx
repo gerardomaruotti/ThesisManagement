@@ -129,6 +129,7 @@ function ProposalCard({
 				<Card style={{ padding: 20 }} className='custom-card'>
 					<div
 						className='title'
+						onKeyDown={() => navigate('/proposal/' + thesis.ID, { state: { fromHome: true } })}
 						onClick={() => navigate('/proposal/' + thesis.ID, { state: { fromHome: true } })}
 						style={{
 							fontWeight: 'medium',

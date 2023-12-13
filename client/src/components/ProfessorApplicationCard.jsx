@@ -24,6 +24,7 @@ function ProfessorApplicationCard({ applications, date }) {
 						cursor: 'pointer',
 					}}
 					onClick={() => navigate('/proposal/' + applications[0].id, { state: { fromHome: true } })}
+					onKeyDown={() => navigate('/proposal/' + applications[0].id, { state: { fromHome: true } })}
 				>
 					{applications[0].title}
 				</div>
@@ -112,7 +113,7 @@ function ProfessorApplicationCard({ applications, date }) {
 }
 
 ProfessorApplicationCard.propTypes = {
-	applications: PropsTypes.array,
+	applications: PropsTypes.array.isRequired,
 	date: PropsTypes.string,
 };
 
