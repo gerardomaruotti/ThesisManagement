@@ -85,7 +85,7 @@ function FiltersModal({
 	}, [accessToken]);
 
 	useEffect(() => {
-		if (activatedFilters == false) {
+		if (!activatedFilters) {
 			setSelectedSupervisor([]);
 			setSelectedCoSupervisors([]);
 			setSelectedKeywords([]);
