@@ -21,7 +21,7 @@ function EditingButtons({ disabled, isArchived, copyProposal, editProposal, dele
 			>
 				<i className='bi bi-archive'></i>
 			</Button>
-			<Button variant='danger' disabled={disabled} onClick={deleteProposal} size='sm' title='Delete Proposal'>
+			<Button variant='danger' disabled={disabled || isArchived} onClick={deleteProposal} size='sm' title='Delete Proposal'>
 				<i className='bi bi-trash3'></i>
 			</Button>
 		</>
