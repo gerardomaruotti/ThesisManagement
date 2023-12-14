@@ -173,13 +173,13 @@ function ProfessorApplicationsThesis({ accessToken, handleError, handleSuccess, 
 												<span
 													className='badge'
 													style={{
-														backgroundColor: 'rgba(234, 84, 85, 0.2)',
-														color: 'rgba(234, 84, 85)',
+														backgroundColor: 'rgba(35, 85, 110, 0.2)',
+														color: 'rgba(35, 85, 110)',
 														padding: '1em 1em',
 														borderRadius: '0.25rem',
 													}}
 												>
-													<i className='bi bi-calendar-x' style={{ fontSize: '16px' }}></i>
+													<i className='bi bi-archive-fill' style={{ fontSize: '16px' }}></i>
 												</span>
 												<span style={{ color: 'rgba(0, 0, 0, 0.5)', paddingLeft: 8 }}>Archived</span>
 											</Col>
@@ -222,63 +222,63 @@ function ProfessorApplicationsThesis({ accessToken, handleError, handleSuccess, 
 											<tbody>
 												{applicationsThesis != []
 													? applicationsThesis.map((app, index) => (
-														<tr key={app.id_application}>
-															<td>{app.student}</td>
-															<td>{app.name}</td>
-															<td>{app.surname}</td>
-															<td>{app.email}</td>
-															<td>
-																<Button
-																	variant='light'
-																	onClick={() => navigate('/applications/proposal/' + id + '/applications/' + app.id_application)}
-																>
-																	<i className='bi bi-file-earmark-text'></i>
-																</Button>
-															</td>
-															<td>
-																{app.state == 1 ? (
-																	<span className='badge custom-badge-success'>Assigned</span>
-																) : app.state == 2 ? (
-																	<span className='badge custom-badge-danger'>Rejected</span>
-																) : app.state == 3 ? (
-																	<span className='badge custom-badge-warning'>Cancelled</span>
-																) : (
-																	<div>
-																		<Button
-																			variant='outline-success'
-																			style={{ borderRadius: 100 }}
-																			size='sm'
-																			onClick={() => {
-																				setShowModal(true);
-																				setMsgModal({
-																					header: 'Accept application',
-																					body: `Are you sure you want to accept the application of student ${app.student}? The other pending application will be cancelled`,
-																					method: () => acceptApplication(app.student),
-																				});
-																			}}
-																		>
-																			<i className='bi bi-check2'></i>
-																		</Button>
-																		<Button
-																			variant='outline-danger'
-																			style={{ borderRadius: 100, marginLeft: 8 }}
-																			size='sm'
-																			onClick={() => {
-																				setShowModal(true);
-																				setMsgModal({
-																					header: 'Reject Application',
-																					body: `Are you sure you want to reject the application of student ${app.student}?`,
-																					method: () => rejectApplication(app.student),
-																				});
-																			}}
-																		>
-																			<i className='bi bi-x-lg'></i>
-																		</Button>
-																	</div>
-																)}
-															</td>
-														</tr>
-													))
+															<tr key={app.id_application}>
+																<td>{app.student}</td>
+																<td>{app.name}</td>
+																<td>{app.surname}</td>
+																<td>{app.email}</td>
+																<td>
+																	<Button
+																		variant='light'
+																		onClick={() => navigate('/applications/proposal/' + id + '/applications/' + app.id_application)}
+																	>
+																		<i className='bi bi-file-earmark-text'></i>
+																	</Button>
+																</td>
+																<td>
+																	{app.state == 1 ? (
+																		<span className='badge custom-badge-success'>Assigned</span>
+																	) : app.state == 2 ? (
+																		<span className='badge custom-badge-danger'>Rejected</span>
+																	) : app.state == 3 ? (
+																		<span className='badge custom-badge-warning'>Cancelled</span>
+																	) : (
+																		<div>
+																			<Button
+																				variant='outline-success'
+																				style={{ borderRadius: 100 }}
+																				size='sm'
+																				onClick={() => {
+																					setShowModal(true);
+																					setMsgModal({
+																						header: 'Accept application',
+																						body: `Are you sure you want to accept the application of student ${app.student}? The other pending application will be cancelled`,
+																						method: () => acceptApplication(app.student),
+																					});
+																				}}
+																			>
+																				<i className='bi bi-check2'></i>
+																			</Button>
+																			<Button
+																				variant='outline-danger'
+																				style={{ borderRadius: 100, marginLeft: 8 }}
+																				size='sm'
+																				onClick={() => {
+																					setShowModal(true);
+																					setMsgModal({
+																						header: 'Reject Application',
+																						body: `Are you sure you want to reject the application of student ${app.student}?`,
+																						method: () => rejectApplication(app.student),
+																					});
+																				}}
+																			>
+																				<i className='bi bi-x-lg'></i>
+																			</Button>
+																		</div>
+																	)}
+																</td>
+															</tr>
+													  ))
 													: null}
 											</tbody>
 										</Table>

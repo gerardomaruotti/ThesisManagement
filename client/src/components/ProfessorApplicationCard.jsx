@@ -74,9 +74,9 @@ function ProfessorApplicationCard({ applications, date }) {
 						<Col>
 							<span
 								className='badge'
-								style={{ backgroundColor: 'rgba(234, 84, 85, 0.2)', color: 'rgba(234, 84, 85)', padding: '1em 1em', borderRadius: '0.25rem' }}
+								style={{ backgroundColor: 'rgba(35, 85, 110, 0.2)', color: 'rgba(35, 85, 110)', padding: '1em 1em', borderRadius: '0.25rem' }}
 							>
-								<i className='bi bi-calendar-x' style={{ fontSize: '16px' }}></i>
+								<i className='bi bi-archive-fill' style={{ fontSize: '16px' }}></i>
 							</span>
 							<span style={{ color: 'rgba(0, 0, 0, 0.5)', paddingLeft: 8 }}>Archived</span>
 						</Col>
