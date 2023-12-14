@@ -7,21 +7,33 @@ import { useAuth0 } from '@auth0/auth0-react';
 import { useEffect, useState } from 'react';
 import { useLoading } from '../LoadingContext.jsx';
 import Loading from '../components/Loading.jsx';
+import PropTypes from 'prop-types';
 
-function ProfessorHome(props) {
+function ProfessorHome({
+	thesis,
+	applications,
+	handleError,
+	handleSuccess,
+	accessToken,
+	dirty,
+	setDirty,
+	setCopiedProposal,
+	setShowModal,
+	setMsgModal,
+}) {
 	const navigate = useNavigate();
 	const { loginWithRedirect, isAuthenticated, isLoading } = useAuth0();
-	const { loading, setLoading } = useLoading();
+	const { loading } = useLoading();
 	const [rapidFilter, setRapidFilter] = useState('active');
 	const [filteredThesis, setFilteredThesis] = useState([]);
 
 	useEffect(() => {
 		if (rapidFilter === 'active') {
-			setFilteredThesis(props.thesis.filter((thesis) => thesis.status == 1));
+			setFilteredThesis(thesis.filter((thesis) => thesis.status == 1));
 		} else {
-			setFilteredThesis(props.thesis.filter((thesis) => thesis.status == 0));
+			setFilteredThesis(thesis.filter((thesis) => thesis.status == 0));
 		}
-	}, [rapidFilter, props.thesis, props.applications, props.dirty]);
+	}, [rapidFilter, thesis, applications, dirty]);
 
 	useEffect(() => {
 		if (!isAuthenticated && !isLoading) {
@@ -61,7 +73,15 @@ function ProfessorHome(props) {
 								key={thesis.ID}
 								isProfessor={1}
 								thesis={thesis}
-								isEditable={!props.applications.some((app) => app.id == thesis.ID && app.state == 1)}
+								setDirty={setDirty}
+								handleError={handleError}
+								handleSuccess={handleSuccess}
+								accessToken={accessToken}
+								isEditable={!applications.some((app) => app.id == thesis.ID && app.state == 1)}
+								isArchived={thesis.status == 0}
+								setCopiedProposal={setCopiedProposal}
+								setGenericModal={setShowModal}
+								setMsgModal={setMsgModal}
 							/>
 						))
 					) : (
@@ -70,12 +90,31 @@ function ProfessorHome(props) {
 						</Col>
 					)}
 				</Row>
-				<Button variant='primary' className='insert-proposal' style={{ borderRadius: 50 }} onClick={() => navigate('/proposals/add')}>
+				<Button
+					variant='primary'
+					className='insert-proposal'
+					style={{ borderRadius: 50 }}
+					onClick={() => {
+						navigate('/proposals/add');
+					}}
+				>
 					<i className='bi bi-plus' style={{ fontSize: '1.5rem' }}></i>
 				</Button>
 			</Container>
 		</>
 	);
 }
+ProfessorHome.propTypes = {
+	thesis: PropTypes.array.isRequired,
+	applications: PropTypes.array.isRequired,
+	handleError: PropTypes.func.isRequired,
+	handleSuccess: PropTypes.func.isRequired,
+	accessToken: PropTypes.string.isRequired,
+	dirty: PropTypes.bool.isRequired,
+	setDirty: PropTypes.func.isRequired,
+	setCopiedProposal: PropTypes.func.isRequired,
+	setShowModal: PropTypes.func.isRequired,
+	setMsgModal: PropTypes.func.isRequired,
+};
 
 export default ProfessorHome;

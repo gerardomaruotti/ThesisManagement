@@ -9,8 +9,6 @@ h1 {
 	font-weight: 700;
 }
 
-
-
 /* Student home */
 .buttons-rapid-filter {
 	border: 1px solid #001e38 !important;
@@ -36,8 +34,13 @@ h1 {
 	box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
 }
 
+.title {
+	text-align: left !important;
+	text-decoration: none !important;
+}
+
 .title:hover {
-	text-decoration: underline;
+	text-decoration: underline !important;
 }
 
 /* Header */
@@ -79,5 +82,11 @@ h1 {
 .custom-badge-warning {
 	background-color: rgba(255, 159, 64, 0.2) !important;
 	color: rgba(255, 159, 64, 1) !important;
+	border-radius: 20px !important;
+}
+
+.custom-badge-pending {
+	background-color: rgba(164, 161, 141, 0.2) !important;
+	color: rgba(0, 0, 0, 0.5) !important;
 	border-radius: 20px !important;
 }

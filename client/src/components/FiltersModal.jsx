@@ -6,9 +6,31 @@ import { useEffect, useState } from 'react';
 import API from '../API.jsx';
 import dayjs from 'dayjs';
 import { useLoading } from '../LoadingContext.jsx';
+import PropTypes from 'prop-types';
 
-function FiltersModal(props) {
-	const { loading, setLoading } = useLoading();
+function FiltersModal({
+	show,
+	onHide,
+	accessToken,
+	handleError,
+	setThesis,
+	activatedFilters,
+	setActivatedFilters,
+	selectedSupervisor,
+	setSelectedSupervisor,
+	selectedCoSupervisors,
+	setSelectedCoSupervisors,
+	selectedKeywords,
+	setSelectedKeywords,
+	selectedTypes,
+	setSelectedTypes,
+	selectedGroups,
+	setSelectedGroups,
+	expirationDate,
+	setExpirationDate,
+	date,
+}) {
+	const { setLoading } = useLoading();
 	const [keywords, setKeywords] = useState([]);
 	const [types, setTypes] = useState([]);
 	const [supervisors, setSupervisors] = useState([]);
@@ -16,10 +38,10 @@ function FiltersModal(props) {
 	const [groups, setGroups] = useState([]);
 
 	useEffect(() => {
-		if (props.accessToken == null) {
+		if (accessToken == null) {
 			return;
 		}
-		API.getAllKeywords(props.accessToken)
+		API.getAllKeywords(accessToken)
 			.then((keywords) => {
 				setKeywords(
 					keywords.map((keyword) => {
@@ -27,8 +49,8 @@ function FiltersModal(props) {
 					})
 				);
 			})
-			.catch((err) => props.handleError(err));
-		API.getAllTypes(props.accessToken)
+			.catch((err) => handleError(err));
+		API.getAllTypes(accessToken)
 			.then((types) => {
 				setTypes(
 					types.map((type) => {
@@ -36,8 +58,8 @@ function FiltersModal(props) {
 					})
 				);
 			})
-			.catch((err) => props.handleError(err));
-		API.getAllSupervisors(props.accessToken)
+			.catch((err) => handleError(err));
+		API.getAllSupervisors(accessToken)
 			.then((supervisors) => {
 				setSupervisors(
 					supervisors.map((supervisor) => {
@@ -50,8 +72,8 @@ function FiltersModal(props) {
 					})
 				);
 			})
-			.catch((err) => props.handleError(err));
-		API.getAllGroups(props.accessToken)
+			.catch((err) => handleError(err));
+		API.getAllGroups(accessToken)
 			.then((groups) => {
 				setGroups(
 					groups.map((group) => {
@@ -59,60 +81,60 @@ function FiltersModal(props) {
 					})
 				);
 			})
-			.catch((err) => props.handleError(err));
-	}, [props.accessToken]);
+			.catch((err) => handleError(err));
+	}, [accessToken]);
 
 	useEffect(() => {
-		if (props.activatedFilters == false) {
-			props.setSelectedSupervisor([]);
-			props.setSelectedCoSupervisors([]);
-			props.setSelectedKeywords([]);
-			props.setSelectedTypes([]);
-			props.setSelectedGroups([]);
-			props.setExpirationDate('all');
+		if (!activatedFilters) {
+			setSelectedSupervisor([]);
+			setSelectedCoSupervisors([]);
+			setSelectedKeywords([]);
+			setSelectedTypes([]);
+			setSelectedGroups([]);
+			setExpirationDate('all');
 		}
-	}, [props.activatedFilters]);
+	}, [activatedFilters]);
 
 	function handleExpirationDate(event) {
-		props.setExpirationDate(event.target.value);
+		setExpirationDate(event.target.value);
 	}
 
 	function handleSupervisor(event) {
-		props.setSelectedSupervisor(event);
+		setSelectedSupervisor(event);
 	}
 
 	function handleCoSupervisors(event) {
-		props.setSelectedCoSupervisors(event);
+		setSelectedCoSupervisors(event);
 	}
 
 	function handleKeywords(event) {
-		props.setSelectedKeywords(event);
+		setSelectedKeywords(event);
 	}
 
 	function handleTypes(event) {
-		props.setSelectedTypes(event);
+		setSelectedTypes(event);
 	}
 
 	function handleGroups(event) {
-		props.setSelectedGroups(event);
+		setSelectedGroups(event);
 	}
 
 	function handleFilters(event) {
 		event.preventDefault();
 
-		const formattedSupervisor = props.selectedSupervisor.map((supervisor) => supervisor.value);
-		const formattedCoSupervisors = props.selectedCoSupervisors.map((cosupervisor) => cosupervisor.value);
-		const formattedKeywords = props.selectedKeywords.map((keyword) => keyword.value);
-		const formattedTypes = props.selectedTypes.map((type) => type.value);
-		const formattedGroups = props.selectedGroups.map((group) => group.value);
-		let today = props.date ? dayjs(props.date) : dayjs();
-		if (props.expirationDate === 'all') {
+		const formattedSupervisor = selectedSupervisor.map((supervisor) => supervisor.value);
+		const formattedCoSupervisors = selectedCoSupervisors.map((cosupervisor) => cosupervisor.value);
+		const formattedKeywords = selectedKeywords.map((keyword) => keyword.value);
+		const formattedTypes = selectedTypes.map((type) => type.value);
+		const formattedGroups = selectedGroups.map((group) => group.value);
+		let today = date ? dayjs(date) : dayjs();
+		if (expirationDate === 'all') {
 			today = undefined;
-		} else if (props.expirationDate === 'thisWeek') {
+		} else if (expirationDate === 'thisWeek') {
 			today = today.add(1, 'week');
-		} else if (props.expirationDate === 'thisMonth') {
+		} else if (expirationDate === 'thisMonth') {
 			today = today.add(1, 'month');
-		} else if (props.expirationDate === 'thisYear') {
+		} else if (expirationDate === 'thisYear') {
 			today = today.add(1, 'year');
 		}
 		let body = {
@@ -127,20 +149,20 @@ function FiltersModal(props) {
 		};
 
 		setLoading(true);
-		API.getAllThesis(props.accessToken, body)
+		API.getAllThesis(accessToken, body)
 			.then((thesis) => {
-				props.setThesis(thesis);
+				setThesis(thesis);
 			})
 			.catch((err) => {
-				props.handleError(err);
+				handleError(err);
 			})
 			.finally(() => setLoading(false));
-		props.onHide();
-		props.setActivatedFilters(true);
+		onHide();
+		setActivatedFilters(true);
 	}
 
 	return (
-		<Modal show={props.show} onHide={props.onHide} size='lg' aria-labelledby='contained-modal-title-vcenter' centered>
+		<Modal show={show} onHide={onHide} size='lg' aria-labelledby='contained-modal-title-vcenter' centered>
 			<Modal.Header closeButton>
 				<Modal.Title id='contained-modal-title-vcenter'>Filters of search</Modal.Title>
 			</Modal.Header>
@@ -151,25 +173,25 @@ function FiltersModal(props) {
 							<Col md={6}>
 								<Form.Group className='mb-3' controlId='formCoSupervisors'>
 									<Form.Label>Supervisors</Form.Label>
-									<Select isMulti options={supervisors} value={props.selectedSupervisor} styles={colorStyles} onChange={handleSupervisor} />
+									<Select isMulti options={supervisors} value={selectedSupervisor} styles={colorStyles} onChange={handleSupervisor} />
 								</Form.Group>
 								<Form.Group className='mb-3' controlId='formCoSupervisors'>
 									<Form.Label>Co-supervisors</Form.Label>
-									<Select isMulti options={coSupervisors} value={props.selectedCoSupervisors} styles={colorStyles} onChange={handleCoSupervisors} />
+									<Select isMulti options={coSupervisors} value={selectedCoSupervisors} styles={colorStyles} onChange={handleCoSupervisors} />
 								</Form.Group>
 								<Form.Group className='mb-3' controlId='formKeywords'>
 									<Form.Label>Keywords</Form.Label>
-									<Select isMulti options={keywords} value={props.selectedKeywords} styles={colorStyles} onChange={handleKeywords} />
+									<Select isMulti options={keywords} value={selectedKeywords} styles={colorStyles} onChange={handleKeywords} />
 								</Form.Group>
 								<Form.Group className='mb-3' controlId='formGroups'>
 									<Form.Label>Groups</Form.Label>
-									<Select isMulti options={groups} value={props.selectedGroups} styles={colorStyles} onChange={handleGroups} />
+									<Select isMulti options={groups} value={selectedGroups} styles={colorStyles} onChange={handleGroups} />
 								</Form.Group>
 							</Col>
 							<Col md={6}>
 								<Form.Group className='mb-3' controlId='formTypes'>
 									<Form.Label>Types</Form.Label>
-									<Select isMulti options={types} value={props.selectedTypes} styles={colorStyles} onChange={handleTypes} />
+									<Select isMulti options={types} value={selectedTypes} styles={colorStyles} onChange={handleTypes} />
 								</Form.Group>
 								<Form.Label>Expiration date:</Form.Label>
 								<div className='mb-3'>
@@ -178,7 +200,7 @@ function FiltersModal(props) {
 										name='expirationDate'
 										type='radio'
 										value='all'
-										checked={props.expirationDate === 'all'}
+										checked={expirationDate === 'all'}
 										onChange={handleExpirationDate}
 										id='all'
 									/>
@@ -187,7 +209,7 @@ function FiltersModal(props) {
 										name='expirationDate'
 										type='radio'
 										value='thisWeek'
-										checked={props.expirationDate === 'thisWeek'}
+										checked={expirationDate === 'thisWeek'}
 										onChange={handleExpirationDate}
 										id='thisWeek'
 									/>
@@ -196,7 +218,7 @@ function FiltersModal(props) {
 										name='expirationDate'
 										type='radio'
 										value='thisMonth'
-										checked={props.expirationDate === 'thisMonth'}
+										checked={expirationDate === 'thisMonth'}
 										onChange={handleExpirationDate}
 										id='thisMonth'
 									/>
@@ -205,7 +227,7 @@ function FiltersModal(props) {
 										name='expirationDate'
 										type='radio'
 										value='thisYear'
-										checked={props.expirationDate === 'thisYear'}
+										checked={expirationDate === 'thisYear'}
 										onChange={handleExpirationDate}
 										id='thisYear'
 									/>
@@ -218,11 +240,31 @@ function FiltersModal(props) {
 					</Form>
 				</Container>
 			</Modal.Body>
-			{/* <Modal.Footer>
-				<Button onClick={props.onHide}>Apply filters</Button>
-			</Modal.Footer> */}
 		</Modal>
 	);
 }
+
+FiltersModal.propTypes = {
+	show: PropTypes.bool,
+	onHide: PropTypes.func,
+	accessToken: PropTypes.string,
+	handleError: PropTypes.func,
+	setThesis: PropTypes.func,
+	activatedFilters: PropTypes.bool,
+	setActivatedFilters: PropTypes.func,
+	selectedSupervisor: PropTypes.array,
+	setSelectedSupervisor: PropTypes.func,
+	selectedCoSupervisors: PropTypes.array,
+	setSelectedCoSupervisors: PropTypes.func,
+	selectedKeywords: PropTypes.array,
+	setSelectedKeywords: PropTypes.func,
+	selectedTypes: PropTypes.array,
+	setSelectedTypes: PropTypes.func,
+	selectedGroups: PropTypes.array,
+	setSelectedGroups: PropTypes.func,
+	expirationDate: PropTypes.string,
+	setExpirationDate: PropTypes.func,
+	date: PropTypes.string,
+};
 
 export default FiltersModal;

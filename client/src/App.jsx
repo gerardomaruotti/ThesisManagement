@@ -18,6 +18,7 @@ import ProfessorApplicationsThesis from './views/ProfessorApplicationsThesis.jsx
 import GenericModal from './components/GenericModal.jsx';
 import EditProposal from './views/EditProposal.jsx';
 import Settings from './views/Settings.jsx';
+import StudentApplicationInfo from './views/StudentApplicationInfo.jsx';
 
 function App() {
 	const { user, isAuthenticated, getAccessTokenSilently, isLoading, loginWithRedirect } = useAuth0();
@@ -30,6 +31,7 @@ function App() {
 	const [hasApplied, setHasApplied] = useState(false);
 	const [applications, setApplications] = useState([]);
 	const [applicationsThesis, setApplicationsThesis] = useState([]);
+	const [copiedProposal, setCopiedProposal] = useState(null);
 
 	const { setLoading } = useLoading();
 
@@ -40,7 +42,7 @@ function App() {
 	const [selectedKeywords, setSelectedKeywords] = useState([]);
 	const [selectedTypes, setSelectedTypes] = useState([]);
 	const [selectedGroups, setSelectedGroups] = useState([]);
-	const [expirationDate, setexpirationDate] = useState('all');
+	const [expirationDate, setExpirationDate] = useState('all');
 
 	//GenericModal
 	const [showModal, setShowModal] = useState(false);
@@ -71,17 +73,6 @@ function App() {
 				color: '#fff',
 			},
 		});
-	}
-
-	function unionForid(array) {
-		return array.reduce(function (acc, object) {
-			const key = object.id;
-			if (!acc[key]) {
-				acc[key] = [];
-			}
-			acc[key].push(object);
-			return acc;
-		}, {});
 	}
 
 	useEffect(() => {
@@ -198,10 +189,20 @@ function App() {
 					path='/'
 					element={
 						isProfessor ? (
-							<ProfessorHome thesis={thesis} applications={applicationsThesis} />
+							<ProfessorHome
+								thesis={thesis}
+								applications={applicationsThesis}
+								handleError={handleError}
+								handleSuccess={handleSuccess}
+								accessToken={accessToken}
+								dirty={dirty}
+								setDirty={setDirty}
+								setCopiedProposal={setCopiedProposal}
+								setShowModal={setShowModal}
+								setMsgModal={setMsgModal}
+							/>
 						) : isStudent ? (
 							<StudentHome
-								isProfessor={isProfessor}
 								thesis={thesis}
 								setThesis={setThesis}
 								accessToken={accessToken}
@@ -218,7 +219,7 @@ function App() {
 								selectedGroups={selectedGroups}
 								setSelectedGroups={setSelectedGroups}
 								expirationDate={expirationDate}
-								setExpirationDate={setexpirationDate}
+								setExpirationDate={setExpirationDate}
 								handleError={handleError}
 								handleSuccess={handleSuccess}
 								setMsgModal={setMsgModal}
@@ -251,7 +252,15 @@ function App() {
 					path='/proposals/add'
 					element={
 						isProfessor ? (
-							<InsertProposal accessToken={accessToken} setDirty={setDirty} user={userData} handleError={handleError} date={dateVirtualClock} />
+							<InsertProposal
+								accessToken={accessToken}
+								setDirty={setDirty}
+								user={userData}
+								handleError={handleError}
+								date={dateVirtualClock}
+								copiedProposal={copiedProposal}
+								setThesis={setThesis}
+							/>
 						) : isStudent ? (
 							<NotFound />
 						) : null
@@ -288,7 +297,21 @@ function App() {
 							setMsgModal={setMsgModal}
 							setShowModal={setShowModal}
 							date={dateVirtualClock}
+							dirty={dirty}
 							setDirty={setDirty}
+						/>
+					}
+				/>
+				<Route
+					path='/applications/proposal/:id/applications/:idApplication'
+					element={
+						<StudentApplicationInfo
+							accessToken={accessToken}
+							handleError={handleError}
+							handleSuccess={handleSuccess}
+							setDirtyParent={setDirty}
+							setShowModal={setShowModal}
+							setMsgModal={setMsgModal}
 						/>
 					}
 				/>

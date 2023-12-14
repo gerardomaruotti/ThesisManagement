@@ -5,11 +5,13 @@ const crypto = require('crypto');
 const { Console } = require('console');
 
 
-const db = new sqlite.Database('thesis_management.db', (err) => {
+let db = new sqlite.Database('thesis_management.db', (err) => {
   if (err) throw err;
 });
 
-
+exports.init = (database) => {
+  db = database;
+}
 
 exports.getKeywords = () => {
   return new Promise((resolve, reject) => {
@@ -293,35 +295,62 @@ exports.getGroup = (idThesis) => {
 
 exports.getRole = (auth0) => {
   return new Promise((resolve, reject) => {
-    const sql = 'SELECT S.ID AS ID, S.NAME AS NAME, S.SURNAME AS SURNAME, S.EMAIL AS EMAIL FROM STUD_AUTH0 SA JOIN STUDENT S ON S.ID == SA.ID  WHERE ID_AUTH0=? ';
-    db.get(sql, [auth0.payload.sub], (err, elem) => {
+    const findStudentQuery = 'SELECT S.ID AS ID, S.NAME AS NAME, S.SURNAME AS SURNAME, S.EMAIL AS EMAIL FROM STUD_AUTH0 SA JOIN STUDENT S ON S.ID == SA.ID  WHERE ID_AUTH0=? ';
+    const findTeacherQuery = 'SELECT T.ID AS ID, T.NAME AS NAME, T.SURNAME AS SURNAME, T.EMAIL AS EMAIL FROM TEACHER T JOIN TEACHER_AUTH0 TA ON T.ID == TA.ID WHERE ID_AUTH0=? ';
+
+    const handleStudentQueryResult = (err, elem) => {
       if (err) {
         reject(err);
-        return;
-      }
-      else {
-        if (elem != undefined)
-          resolve({ "role": "student", "id": elem.ID, "name":elem.NAME, "surname": elem.SURNAME, "email": elem.EMAIL})
-        else {
-          const sql2 = 'SELECT T.ID AS ID, T.NAME AS NAME, T.SURNAME AS SURNAME, T.EMAIL AS EMAIL FROM TEACHER T JOIN TEACHER_AUTH0 TA ON T.ID == TA.ID WHERE ID_AUTH0=? ';
-          db.get(sql2, [auth0.payload.sub], (err, elem) => {
-            if (err) {
-              reject(err);
-              return;
-            }
-            else {
-              if (elem != undefined)
-                resolve({ "role": "teacher", "id": elem.ID , "name":elem.NAME, "surname": elem.SURNAME, "email": elem.EMAIL})
-              else
-                resolve({})//non ritorna nulla se non è autenticato, ma qua non entra
-            }
+      } else {
+        if (elem !== undefined) {
+          resolve({
+            "role": "student",
+            "id": elem.ID,
+            "name": elem.NAME,
+            "surname": elem.SURNAME,
+            "email": elem.EMAIL
           });
+        } else {
+          findTeacher(); // If not a student, check if it's a teacher
         }
       }
-    });
-  });
-}
+    };
 
+    const handleTeacherQueryResult = (err, elem) => {
+      if (err) {
+        reject(err);
+      } else {
+        if (elem !== undefined) {
+          resolve({
+            "role": "teacher",
+            "id": elem.ID,
+            "name": elem.NAME,
+            "surname": elem.SURNAME,
+            "email": elem.EMAIL
+          });
+        } else {
+          resolve({}); // Neither student nor teacher found
+        }
+      }
+    };
+
+    const findStudent = () => {
+      db.get(findStudentQuery, [auth0.payload.sub], (err, elem) => {
+        handleStudentQueryResult(err, elem);
+      });
+    };
+
+    const findTeacher = () => {
+      db.get(findTeacherQuery, [auth0.payload.sub], (err, elem) => {
+        handleTeacherQueryResult(err, elem);
+      });
+    };
+
+
+    // Main logic
+    findStudent();
+  });
+};
 exports.getThesisTeacher = (ID, date) => {
   return new Promise((resolve, reject) => {
     const sql = 'SELECT DISTINCT T.ID_THESIS as ID, TS.STATE AS status,  T.TITLE AS title, T.NOTES as notes, T.EXPIRATION_DATE AS date, T.DESCRIPTION AS description , T.REQUIRED_KNOWLEDGE AS req_know, TE.NAME AS sup_name, TE.SURNAME AS sup_surname FROM THESIS T JOIN TEACHER TE ON T.SUPERVISOR == TE.ID JOIN THESIS_STATUS TS ON TS.THESIS == T.ID_THESIS WHERE TE.ID = ? ';
@@ -340,7 +369,7 @@ exports.getThesisTeacher = (ID, date) => {
             sup_name: elem.sup_name,
             sup_surname: elem.sup_surname,
             notes: elem.notes,
-            status : (elem.status && ((date <= elem.date) ? 1 : 0)),
+            status : ((date > elem.date) ? 0 : elem.status),
             count: 0,
             keywords: [],
             types: [], 
@@ -515,7 +544,7 @@ exports.insertApplication = (userId, idThesis, date) => {
 
 exports.getTeacherApplications = (teacherId,date) => {
   return new Promise((resolve, reject) => {
-    const sql = 'SELECT ID_THESIS,TITLE,EXPIRATION_DATE,LEVEL, DEGREE, STUDENT, S.NAME as NAME, S.SURNAME as SURNAME, S.EMAIL as EMAIL, STATE FROM THESIS T, TEACHER TE, THESIS_APPLICATION TA, STUDENT S WHERE T.SUPERVISOR=TE.ID AND T.ID_THESIS=TA.THESIS AND TA.STUDENT=S.ID AND TE.ID=?';
+    const sql = 'SELECT ID_THESIS, ID_APPLICATION, TITLE,EXPIRATION_DATE,LEVEL, DEGREE, STUDENT, S.NAME as NAME, S.SURNAME as SURNAME, S.EMAIL as EMAIL, TA.STATE AS STATE, TS.STATE AS TSTATE FROM THESIS T, TEACHER TE, THESIS_APPLICATION TA, THESIS_STATUS TS, STUDENT S WHERE T.SUPERVISOR=TE.ID AND T.ID_THESIS=TA.THESIS AND TA.STUDENT=S.ID AND T.ID_THESIS=TS.THESIS AND TE.ID=?';
     db.all(sql, [teacherId], (err,rows) => {
       if (err) {
         reject(err);
@@ -523,6 +552,8 @@ exports.getTeacherApplications = (teacherId,date) => {
       } else{
         const applications=rows.map((elem)=>({
           id: elem.ID_THESIS,
+          id_application: elem.ID_APPLICATION,
+          t_state: elem.TSTATE,
           title: elem.TITLE,
           expirationDate: elem.EXPIRATION_DATE,
           level: elem.LEVEL,
@@ -597,6 +628,28 @@ exports.checkExistenceApplication= (thesis, student)=> {
 }
 
 
+exports.checkExistenceThesis= (thesis)=> {
+  return new Promise((resolve, reject) => {
+    const sql = 'SELECT TS.STATE AS STATE FROM THESIS T JOIN THESIS_STATUS TS ON T.ID_THESIS = TS.THESIS WHERE T.ID_THESIS = ?';
+    db.get(sql, [thesis], (err, row) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      else {
+        if (row == undefined)
+          resolve({"available":0, data:""})
+        else{
+          let thesis_status = {
+            id:thesis,
+            state : row.STATE
+          };
+          resolve({"available":1, data:thesis_status})
+        }
+      }
+    });
+  });
+}
 
 
 exports.acceptApplication = (thesis, student) => {
@@ -733,7 +786,7 @@ exports.checkExistenceApplicationForThesis= (thesis)=> {
         if (row == undefined)
           resolve(0)
         else{
-          resolve(1)
+          resolve(row.ID_APPLICATION)
         }
       }
     });
@@ -813,6 +866,198 @@ exports.deleteFutureApplications = (date)=> {
         return;
       }
       resolve(1)
+    });
+  });
+}
+
+exports.getMailStudent = (studentID) => {
+  return new Promise((resolve, reject) => {
+    const sql = 'SELECT EMAIL FROM STUDENT  WHERE ID=?';
+    db.get(sql, [studentID], (err, row) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      else {
+        resolve(row.EMAIL)
+      }
+    });
+  });
+}
+
+
+exports.getMailTeacher = (teacherId) => {
+  return new Promise((resolve, reject) => {
+    const sql = 'SELECT EMAIL FROM TEACHER WHERE ID=?';
+    db.get(sql, [teacherId], (err, row) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      else {
+        resolve(row.EMAIL)
+      }
+    });
+  });
+}
+
+
+exports.setStatusDeleted = (thesis) => {
+  return new Promise((resolve, reject) => {
+    const sql = 'UPDATE THESIS_STATUS SET STATE = 2 WHERE THESIS = ?';
+    db.run(sql, [thesis], function (err) {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve("updated");
+    });
+  });
+
+};
+
+
+exports.cancelApplicationsByThesis = (thesis) => {
+  return new Promise((resolve, reject) => {
+    const sql = 'UPDATE THESIS_APPLICATION SET STATE = 3 WHERE STATE = 0 AND THESIS = ?';
+    db.run(sql, [thesis], function (err) {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve("Canceled");
+    });
+  });
+};
+
+exports.cancelPendingApplications = (thesis) => {
+  return new Promise((resolve, reject) => {
+    const sql = 'UPDATE THESIS_APPLICATION SET STATE = 3 WHERE THESIS = ? AND STATE = 0';
+    db.run(sql, [thesis], function (err) {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve("Canceled");
+    });
+  });
+};
+
+
+exports.insertCv = (applId, filename, path) => {
+  return new Promise((resolve, reject) => {
+    const sql = 'INSERT INTO PDF_TABLE (ID_APPLICATION, FILENAME, PATH) VALUES (?,?,?)';
+    db.run(sql, [applId,filename,path], function (err) {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve("Cv uploaded");
+    });
+  });
+}
+
+
+exports.getStudentInfo = (studentId) => {
+  return new Promise((resolve, reject) => {
+    const sql = 'SELECT ID, NAME, SURNAME, EMAIL FROM STUDENT WHERE ID=?';
+    db.get(sql, [studentId], (err,row) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      if(row == undefined){
+        resolve({});
+      } else{
+
+        let info = {
+          id: row.ID,
+          name: row.NAME,
+          surname: row.SURNAME,
+          email: row.EMAIL,
+          exams: [],
+          state: 0,
+          cv: null
+        }
+
+        resolve(info);
+      }
+      
+    });
+  });
+}
+
+exports.getStudentExams = (studentId) => {
+  return new Promise((resolve, reject) => {
+    const sql = 'SELECT COD_COURSE, TITLE_COURSE, CFU, GRADE, DATE FROM CAREER WHERE ID=?';
+    db.all(sql, [studentId], (err,rows) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+    
+        let exams = rows.map((elem) => ({
+          cod_course: elem.COD_COURSE,
+          title_course: elem.TITLE_COURSE,
+          cfu: elem.CFU,
+          grade: elem.GRADE,
+          date: elem.DATE
+
+        }));
+
+        resolve(exams);
+      
+    });
+  });
+}
+
+
+exports.getCv = (applId) => {
+  return new Promise((resolve, reject) => {
+    const sql = 'SELECT FILENAME, PATH FROM PDF_TABLE WHERE ID_APPLICATION=?';
+    db.get(sql, [applId], (err,row) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      if(row == undefined){
+        resolve({
+          filename: null,
+          path: null
+        })
+      } else{
+        let cv = {
+          filename: row.FILENAME,
+          path: row.PATH
+        }
+
+        resolve(cv);
+      }     
+    });
+  });
+}
+
+
+exports.checkExistenceApplicationById= (idApplication)=> {
+  return new Promise((resolve, reject) => {
+    const sql = 'SELECT STUDENT, STATE FROM THESIS_APPLICATION WHERE ID_APPLICATION = ?';
+    db.get(sql, [idApplication], (err, row) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      else {
+        if (row == undefined)
+          resolve(0)
+        else{
+          let appl = {
+            student: row.STUDENT,
+            state: row.STATE
+          }
+          
+          resolve(appl)
+        }
+      }
     });
   });
 }

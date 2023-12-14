@@ -1,30 +1,17 @@
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import { Button } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
+import PropsTypes from 'prop-types';
 
-function EditingButtons(props) {
-	const { disabled, id } = props;
-	const nagigate = useNavigate();
-
-	function editProposal(event) {
-		nagigate('/proposals/edit/' + id, { state: { fromHome: true } });
-		event.stopPropagation();
-	}
-
-	function archiveProposal(event) {
-		event.stopPropagation();
-	}
-
-	function deleteProposal(event) {
-		event.stopPropagation();
-	}
-
+function EditingButtons({ disabled, isArchived, copyProposal, editProposal, deleteProposal, archiveProposal }) {
 	return (
 		<>
+			<Button variant='primary' onClick={copyProposal} style={{ marginRight: 10 }} size='sm'>
+				<i className='bi bi-copy'></i>
+			</Button>
 			<Button variant='primary' disabled={disabled} onClick={editProposal} style={{ marginRight: 10 }} size='sm'>
 				<i className='bi bi-pencil'></i>
 			</Button>
-			<Button variant='primary' disabled={disabled} onClick={archiveProposal} style={{ marginRight: 10 }} size='sm'>
+			<Button variant='primary' disabled={disabled || isArchived} onClick={archiveProposal} style={{ marginRight: 10 }} size='sm'>
 				<i className='bi bi-archive'></i>
 			</Button>
 			<Button variant='danger' disabled={disabled} onClick={deleteProposal} size='sm'>
@@ -33,5 +20,14 @@ function EditingButtons(props) {
 		</>
 	);
 }
+
+EditingButtons.propTypes = {
+	disabled: PropsTypes.bool,
+	isArchived: PropsTypes.bool,
+	copyProposal: PropsTypes.func,
+	editProposal: PropsTypes.func,
+	deleteProposal: PropsTypes.func,
+	archiveProposal: PropsTypes.func,
+};
 
 export default EditingButtons;

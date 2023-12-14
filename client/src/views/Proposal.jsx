@@ -1,65 +1,67 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Row, Col, Card, Image, Button, Container, Toast, ToastContainer, Offcanvas } from 'react-bootstrap';
+import { Row, Col, Card, Button, Container, Offcanvas } from 'react-bootstrap';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import API from '../API.jsx';
 import { useLoading } from '../LoadingContext.jsx';
 import Loading from '../components/Loading.jsx';
 import DetailsProposalLeftBar from '../components/DetailsProposalLeftBar.jsx';
+import PropTypes from 'prop-types';
+import ModalWithUpload from '../components/ModalWithUpload.jsx';
 
-function Proposal(props) {
+function Proposal({ accessToken, handleError, handleSuccess, isProfessor, applications, hasApplied, setDirty }) {
 	const { loading, setLoading } = useLoading();
 	const navigate = useNavigate();
 	const [thesis, setThesis] = useState(null);
 	const [showDetails, setShowDetails] = useState(false);
 	const { id } = useParams();
 	const location = useLocation();
+	const [showModal, setShowModal] = useState(false);
+	const [cv, setCv] = useState(null);
 
 	const handleClose = () => setShowDetails(false);
 	const handleShow = () => setShowDetails(true);
 
 	useEffect(() => {
-		if (props.accessToken != null) {
+		if (accessToken != null) {
 			setLoading(true);
-			API.getThesisByID(id, props.accessToken)
+			API.getThesisByID(id, accessToken)
 				.then((thesis) => {
 					setThesis(thesis);
 				})
 				.catch((err) => {
-					props.handleError(err);
+					handleError(err);
 				})
 				.finally(() => {
 					setLoading(false);
 				});
 		}
-	}, [props.accessToken]);
+	}, [accessToken]);
 
-	function apply() {
-		props.setShowModal(false);
-		API.ThesisApply(id, props.accessToken)
+	function apply(event) {
+		setShowModal(false);
+		const formData = new FormData();
+		formData.append('file', cv);
+		API.ThesisApply(id, accessToken, cv ? formData : null)
 			.then(() => {
-				props.handleSuccess('Application accepted');
-				props.setDirty(true);
+				setCv(null);
+				handleSuccess('Application accepted');
+				setDirty(true);
 			})
 			.catch((err) => {
-				props.handleError(err);
+				setCv(null);
+				handleError(err);
 			});
 	}
 
 	function handleRedirect() {
-		const fromHome = location.state && location.state.fromHome;
+		const fromHome = location.state?.fromHome;
 
 		if (fromHome) {
 			navigate(-1);
 		} else {
 			navigate('/');
 		}
-	}
-
-	function showModal(event) {
-		event.stopPropagation();
-		props.setShowModal(true);
-		props.setMsgModal({ header: 'Apply', body: 'Are you sure you want to apply to this thesis?', method: apply });
 	}
 
 	return loading ? (
@@ -74,10 +76,10 @@ function Proposal(props) {
 								<DetailsProposalLeftBar
 									id={id}
 									thesis={thesis}
-									apply={showModal}
-									isProfessor={props.isProfessor}
-									applications={props.applications}
-									hasApplied={props.hasApplied}
+									apply={() => setShowModal(true)}
+									isProfessor={isProfessor}
+									applications={applications}
+									hasApplied={hasApplied}
 								/>
 							</Card>
 						</Col>
@@ -104,7 +106,6 @@ function Proposal(props) {
 										<Col md={12}>
 											<div style={{ fontWeight: 'bold', fontSize: 15, marginTop: 15, color: '#E6782B' }}> Required Knowledge </div>
 											<div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15, whiteSpace: 'pre-line' }}>{thesis.requiredKnowledge}</div>
-
 										</Col>
 									</Row>
 								)}
@@ -132,11 +133,28 @@ function Proposal(props) {
 					<Offcanvas.Title>Details</Offcanvas.Title>
 				</Offcanvas.Header>
 				<Offcanvas.Body>
-					<DetailsProposalLeftBar id={id} thesis={thesis} apply={showModal} isProfessor={props.isProfessor} applications={props.applications} />
+					<DetailsProposalLeftBar id={id} thesis={thesis} apply={() => setShowModal(true)} isProfessor={isProfessor} applications={applications} />
 				</Offcanvas.Body>
 			</Offcanvas>
+
+			<ModalWithUpload
+				showModal={showModal}
+				setShowModal={setShowModal}
+				apply={apply}
+				setCv={setCv}
+			/>
 		</>
 	);
 }
+
+Proposal.propTypes = {
+	accessToken: PropTypes.string,
+	handleError: PropTypes.func.isRequired,
+	handleSuccess: PropTypes.func.isRequired,
+	isProfessor: PropTypes.bool.isRequired,
+	applications: PropTypes.array.isRequired,
+	hasApplied: PropTypes.bool.isRequired,
+	setDirty: PropTypes.func.isRequired,
+};
 
 export default Proposal;

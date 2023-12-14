@@ -112,6 +112,16 @@ CREATE TABLE IF NOT EXISTS "TYPE" (
 CREATE TABLE IF NOT EXISTS "VIRTUAL_CLOCK" (
 	"data"	VARCHAR(50)
 );
+
+CREATE TABLE IF NOT EXISTS "PDF_TABLE" (
+	"ID_APPLICATION" INTEGER NOT NULL,
+	"FILENAME" VARCHAR (50),
+	"PATH" TEXT,
+	FOREIGN KEY ("ID_APPLICATION") REFERENCES THESIS_APPLICATION("ID_APPLICATION"),
+	PRIMARY KEY ("ID_APPLICATION")
+
+);
+
 INSERT INTO "DEGREE" ("COD_DEGREE","TITLE_DEGREE") VALUES ('LM-53','Laurea magistrale in Ingegneria Dei Materiali'),
  ('LM-29','Laurea magistrale in Ingegneria Elettronica'),
  ('LM-31','Laurea magistrale in Ingegneria Gestionale'),
@@ -147,7 +157,7 @@ INSERT INTO "TEACHER" ("ID","NAME","SURNAME","EMAIL","COD_GROUP","COD_DEPARTMENT
  ('d123457','Anna Filomena','Carbone','d123457@polito.it','GR-05','DISAT'),
  ('d123458','Lorenzo','Casalino','d123458@polito.it','AA-02','DIMEAS'),
  ('d123459','Silvia','Chiusano','d123459@polito.it','GR-04','DAUIN'),
- ('d111111','Marco','Sangermano','d111111@polito.it','AA-01','DISAT'),
+ ('d111111','Marco','Sangermano','s315327@studenti.polito.it','AA-01','DISAT'),
  ('d123461','Carlo','Rafele','d123461@polito.it','RESLOG','DIGEP'),
  ('d123462','Fulvio','Corno','d123462@polito.it','GR-10','DAUIN'),
  ('d123463','Antonio','Vetrò','d123463@polito.it','GR-16','DAUIN');
