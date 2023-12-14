@@ -1478,6 +1478,18 @@ describe('POST Delete Thesis', () => {
     });
 });
 
+const performCommonAssertionsArchive = (res) => {
+    expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.getThesisSupervisor).toHaveBeenCalledTimes(1);
+        expect(db.getThesisSupervisor).toHaveBeenCalledWith(deleteThesisBody.thesisID);
+        expect(db.checkExistenceThesis).toHaveBeenCalledTimes(1);
+        expect(db.checkExistenceThesis).toHaveBeenCalledWith(deleteThesisBody.thesisID);
+        expect(db.archiveThesis).toHaveBeenCalledTimes(0);
+        expect(db.cancelPendingApplications).toHaveBeenCalledTimes(0);
+        expect(res.status).toBe(400);
+        expect(res.body).toEqual({ error: 'The thesis is already archived or deleted' });
+};
+
 describe('POST Archive Thesis', () => {
     test('should archive a thesis correctly', async () => {
         db.getRole.mockResolvedValueOnce(teacher);
@@ -1544,15 +1556,7 @@ describe('POST Archive Thesis', () => {
 
         const res = await request(app).post('/api/archive/thesis').send(deleteThesisBody);
 
-        expect(db.getRole).toHaveBeenCalledTimes(1);
-        expect(db.getThesisSupervisor).toHaveBeenCalledTimes(1);
-        expect(db.getThesisSupervisor).toHaveBeenCalledWith(deleteThesisBody.thesisID);
-        expect(db.checkExistenceThesis).toHaveBeenCalledTimes(1);
-        expect(db.checkExistenceThesis).toHaveBeenCalledWith(deleteThesisBody.thesisID);
-        expect(db.archiveThesis).toHaveBeenCalledTimes(0);
-        expect(db.cancelPendingApplications).toHaveBeenCalledTimes(0);
-        expect(res.status).toBe(400);
-        expect(res.body).toEqual({ error: 'The thesis is already archived or deleted' });
+        performCommonAssertionsArchive(res);
     });
 
     test('hould return a 400 when called on a thesis already archived', async () => {
@@ -1563,15 +1567,7 @@ describe('POST Archive Thesis', () => {
 
         const res = await request(app).post('/api/archive/thesis').send(deleteThesisBody);
 
-        expect(db.getRole).toHaveBeenCalledTimes(1);
-        expect(db.getThesisSupervisor).toHaveBeenCalledTimes(1);
-        expect(db.getThesisSupervisor).toHaveBeenCalledWith(deleteThesisBody.thesisID);
-        expect(db.checkExistenceThesis).toHaveBeenCalledTimes(1);
-        expect(db.checkExistenceThesis).toHaveBeenCalledWith(deleteThesisBody.thesisID);
-        expect(db.archiveThesis).toHaveBeenCalledTimes(0);
-        expect(db.cancelPendingApplications).toHaveBeenCalledTimes(0);
-        expect(res.status).toBe(400);
-        expect(res.body).toEqual({ error: 'The thesis is already archived or deleted' });
+        performCommonAssertionsArchive(res);
     });
 
     test('should return a 503 error when an error occurs', async () => {
@@ -1595,40 +1591,33 @@ const setupAppMocks = (cvData) => {
     db.getCv.mockResolvedValueOnce(cvData);
 };
 
+const performCommonAssertionsAppDetails = (res, expectedBody) => {
+    expect(db.getRole).toHaveBeenCalledTimes(1);
+    expect(db.checkExistenceApplicationById).toHaveBeenCalledTimes(1);
+    expect(db.checkExistenceApplicationById).toHaveBeenCalledWith(detailBody.idApplication);
+    expect(db.getStudentInfo).toHaveBeenCalledTimes(1);
+    expect(db.getStudentInfo).toHaveBeenCalledWith(tmpApp.student);
+    expect(db.getStudentExams).toHaveBeenCalledTimes(1);
+    expect(db.getStudentExams).toHaveBeenCalledWith(tmpApp.student);
+    expect(db.getCv).toHaveBeenCalledTimes(1);
+    expect(db.getCv).toHaveBeenCalledWith(detailBody.idApplication);
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual(expectedBody);
+};
+
 describe('POST Application Details', () => {
     test(`should retrive student'info correctly without the cv`, async () => {
         setupAppMocks({ filename: null })
 
         const res = await request(app).post('/api/applications/details').send(detailBody);
-
-        expect(db.getRole).toHaveBeenCalledTimes(1);
-        expect(db.checkExistenceApplicationById).toHaveBeenCalledTimes(1);
-        expect(db.checkExistenceApplicationById).toHaveBeenCalledWith(detailBody.idApplication);
-        expect(db.getStudentInfo).toHaveBeenCalledTimes(1);
-        expect(db.getStudentInfo).toHaveBeenCalledWith(tmpApp.student);
-        expect(db.getStudentExams).toHaveBeenCalledTimes(1);
-        expect(db.getStudentExams).toHaveBeenCalledWith(tmpApp.student);
-        expect(db.getCv).toHaveBeenCalledTimes(1);
-        expect(db.getCv).toHaveBeenCalledWith(detailBody.idApplication);
-        expect(res.status).toBe(200);
-        expect(res.body).toEqual({"exams": exams, "id": student.id, "role": student.role, "state":tmpApp.state})
+        performCommonAssertionsAppDetails(res, {"exams": exams, "id": student.id, "role": student.role, "state":tmpApp.state});
     });
+
     test(`should retrive student'info correctly with the cv`, async () => {
         setupAppMocks({ filename: "notNull", path: "path" });
 
         const res = await request(app).post('/api/applications/details').send(detailBody);
-
-        expect(db.getRole).toHaveBeenCalledTimes(1);
-        expect(db.checkExistenceApplicationById).toHaveBeenCalledTimes(1);
-        expect(db.checkExistenceApplicationById).toHaveBeenCalledWith(detailBody.idApplication);
-        expect(db.getStudentInfo).toHaveBeenCalledTimes(1);
-        expect(db.getStudentInfo).toHaveBeenCalledWith(tmpApp.student);
-        expect(db.getStudentExams).toHaveBeenCalledTimes(1);
-        expect(db.getStudentExams).toHaveBeenCalledWith(tmpApp.student);
-        expect(db.getCv).toHaveBeenCalledTimes(1);
-        expect(db.getCv).toHaveBeenCalledWith(detailBody.idApplication);
-        expect(res.status).toBe(200);
-        expect(res.body).toEqual({"cv": "path", "exams": exams, "id": student.id, "role": student.role, "state": tmpApp.state})
+        performCommonAssertionsAppDetails(res, {"cv": "path", "exams": exams, "id": student.id, "role": student.role, "state": tmpApp.state});
     });
 
     test(`should return a 422 error when the idApplication is not a number`, async () => {
