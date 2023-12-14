@@ -50,12 +50,12 @@ const storage = multer.diskStorage({
 	}
 });
 
-const upload = multer({ 
+const upload = multer({
 	storage: storage,
-  	limits: {
-    	fileSize: 8000000 
-  	}
- });
+	limits: {
+		fileSize: 8000000
+	}
+});
 
 app.use('/files', express.static(path.join(__dirname, 'files')));
 
@@ -126,7 +126,7 @@ app.post('/api/thesis', checkJwt, async (req, res) => {
 		res.status(401).json({ error: 'Unauthorized user' })
 
 	} catch (err) {
-		res.status(500).end();
+		return res.status(500).end();
 	}
 });
 
@@ -726,7 +726,7 @@ app.post('/api/applications/details', checkJwt, [
 			if (getRole.role != "teacher") {
 				return res.status(401).json({ error: "Unauthorized" })
 			}
-			
+
 			let getApplication = await db.checkExistenceApplicationById(applId);
 			if (getApplication == 0) return res.status(400).json({ error: "Application does not exists" })
 			let studentInfo = await db.getStudentInfo(getApplication.student);
@@ -734,15 +734,15 @@ app.post('/api/applications/details', checkJwt, [
 			studentInfo.state = getApplication.state;
 			let studentCv = await db.getCv(applId);
 			if (studentCv.filename != null) {
-				studentInfo.cv=studentCv.path;
+				studentInfo.cv = studentCv.path;
 			}
-			
+
 			return res.status(200).json(studentInfo)
 
 
 		} catch (err) {
 
-			res.status(503).json({error: "GetStudentInfo error"})
+			res.status(503).json({ error: "GetStudentInfo error" })
 
 		}
 
