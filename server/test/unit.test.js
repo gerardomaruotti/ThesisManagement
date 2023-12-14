@@ -1587,13 +1587,17 @@ describe('POST Archive Thesis', () => {
     });
 })
 
+const setupAppMocks = (cvData) => {
+    db.getRole.mockResolvedValueOnce(teacher);
+    db.checkExistenceApplicationById.mockResolvedValueOnce(tmpApp);
+    db.getStudentInfo.mockResolvedValueOnce(student);
+    db.getStudentExams.mockResolvedValueOnce(exams);
+    db.getCv.mockResolvedValueOnce(cvData);
+};
+
 describe('POST Application Details', () => {
     test(`should retrive student'info correctly without the cv`, async () => {
-        db.getRole.mockResolvedValueOnce(teacher);
-        db.checkExistenceApplicationById.mockResolvedValueOnce(tmpApp);
-        db.getStudentInfo.mockResolvedValueOnce(student);
-        db.getStudentExams.mockResolvedValueOnce(exams);
-        db.getCv.mockResolvedValueOnce({filename: null});
+        setupAppMocks({ filename: null })
 
         const res = await request(app).post('/api/applications/details').send(detailBody);
 
@@ -1610,11 +1614,7 @@ describe('POST Application Details', () => {
         expect(res.body).toEqual({"exams": exams, "id": student.id, "role": student.role, "state":tmpApp.state})
     });
     test(`should retrive student'info correctly with the cv`, async () => {
-        db.getRole.mockResolvedValueOnce(teacher);
-        db.checkExistenceApplicationById.mockResolvedValueOnce(tmpApp);
-        db.getStudentInfo.mockResolvedValueOnce(student);
-        db.getStudentExams.mockResolvedValueOnce(exams);
-        db.getCv.mockResolvedValueOnce({filename: "notNull", path: "path"});
+        setupAppMocks({ filename: "notNull", path: "path" });
 
         const res = await request(app).post('/api/applications/details').send(detailBody);
 
