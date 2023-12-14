@@ -123,6 +123,7 @@ app.post('/api/thesis', checkJwt, async (req, res) => {
 			const thesis = await processStudentThesis(getRole.id, (date == 0) ? currentDate.format('YYYY-MM-DD') : date, req.body.filters, getRole);
 			res.status(200).json(thesis);
 		}
+		res.status(401).json({ error: 'Unauthorized user' })
 
 	} catch (err) {
 		res.status(500).end();
