@@ -50,12 +50,12 @@ const storage = multer.diskStorage({
 	}
 });
 
-const upload = multer({ 
+const upload = multer({
 	storage: storage,
-  	limits: {
-    	fileSize: 8000000 
-  	}
- });
+	limits: {
+		fileSize: 8000000
+	}
+});
 
 app.use('/files', express.static(path.join(__dirname, 'files')));
 
@@ -112,22 +112,23 @@ app.get('/api/cds', checkJwt, (req, res) => {
 
 
 //return all thesis of the department of the student/professor 
-app.post('/api/thesis', checkJwt, async (req, res) => {
-	try {
-		const getRole = await db.getRole(req.auth);
-		const date = await db.getVirtualDate();
-		if (getRole.role == 'teacher') {
-			const thesis = await processTeacherThesis(getRole.id, (date == 0) ? currentDate.format('YYYY-MM-DD') : date, getRole);
-			res.status(200).json(thesis);
-		} else if (getRole.role == 'student') {
-			const thesis = await processStudentThesis(getRole.id, (date == 0) ? currentDate.format('YYYY-MM-DD') : date, req.body.filters, getRole);
-			res.status(200).json(thesis);
-		}
-		res.status(401).json({ error: 'Unauthorized user' })
+app.post('/api/thesis', checkJwt, (req, res) => {
+	(async () => {
+		try {
+			const getRole = await db.getRole(req.auth);
+			const date = await db.getVirtualDate();
+			if (getRole.role == 'teacher') {
+				const thesis = await processTeacherThesis(getRole.id, (date == 0) ? currentDate.format('YYYY-MM-DD') : date, getRole);
+				return res.status(200).json(thesis);
+			} else if (getRole.role == 'student') {
+				const thesis = await processStudentThesis(getRole.id, (date == 0) ? currentDate.format('YYYY-MM-DD') : date, req.body.filters, getRole);
+				return res.status(200).json(thesis);
+			}
 
-	} catch (err) {
-		res.status(500).end();
-	}
+		} catch (err) {
+			return res.status(500).end();
+		}
+	});
 });
 
 async function processTeacherThesis(teacherId, date, getRole) {
@@ -726,7 +727,7 @@ app.post('/api/applications/details', checkJwt, [
 			if (getRole.role != "teacher") {
 				return res.status(401).json({ error: "Unauthorized" })
 			}
-			
+
 			let getApplication = await db.checkExistenceApplicationById(applId);
 			if (getApplication == 0) return res.status(400).json({ error: "Application does not exists" })
 			let studentInfo = await db.getStudentInfo(getApplication.student);
@@ -734,15 +735,15 @@ app.post('/api/applications/details', checkJwt, [
 			studentInfo.state = getApplication.state;
 			let studentCv = await db.getCv(applId);
 			if (studentCv.filename != null) {
-				studentInfo.cv=studentCv.path;
+				studentInfo.cv = studentCv.path;
 			}
-			
+
 			return res.status(200).json(studentInfo)
 
 
 		} catch (err) {
 
-			res.status(503).json({error: "GetStudentInfo error"})
+			res.status(503).json({ error: "GetStudentInfo error" })
 
 		}
 
