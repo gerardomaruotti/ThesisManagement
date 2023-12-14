@@ -135,7 +135,7 @@ function ProposalCard({
 						style={{
 							fontWeight: 'medium',
 							fontSize: 18,
-							height: 57,
+							height: 60,
 							display: '-webkit-box',
 							WebkitBoxOrient: 'vertical',
 							WebkitLineClamp: '2',
@@ -266,12 +266,7 @@ function ProposalCard({
 					)}
 				</Card>
 			</Col>
-			<ModalWithUpload
-				showModal={showModal}
-				setShowModal={setShowModal}
-				apply={apply}
-				setCv={setCv}
-			/>
+			<ModalWithUpload showModal={showModal} setShowModal={setShowModal} apply={apply} setCv={setCv} />
 		</>
 	);
 }

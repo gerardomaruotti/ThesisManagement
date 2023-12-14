@@ -37,6 +37,7 @@ h1 {
 .title {
 	text-align: left !important;
 	text-decoration: none !important;
+	padding: 0 !important;
 }
 
 .title:hover {

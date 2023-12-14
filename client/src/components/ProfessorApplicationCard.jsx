@@ -17,7 +17,7 @@ function ProfessorApplicationCard({ applications, date }) {
 					style={{
 						fontWeight: 'medium',
 						fontSize: 18,
-						height: 57,
+						height: 60,
 						display: '-webkit-box',
 						WebkitBoxOrient: 'vertical',
 						WebkitLineClamp: '2',
