@@ -140,14 +140,17 @@ exports.createTestDb = async () => {
     });
 }
 
+function handleError(err) {
+    console.error("Errore durante l'inserimento:", err);
+    reject(err);
+}
 
 exports.insertDegree = (n) => {
     return new Promise((resolve, reject) => {
         const query = `INSERT INTO "DEGREE" ("COD_DEGREE","TITLE_DEGREE") VALUES (?, ?)`;
         db.run(query, ["cod_deg" + n, "title" + n], function (err) {
             if (err) {
-                console.error("Errore durante l'inserimento:", err);
-                reject(err);
+                handleError(err);
             } else {
                 resolve();
             }
@@ -160,8 +163,7 @@ exports.insertGroup = (n) => {
         const query = `INSERT INTO "GROUP" ("COD_GROUP","NAME") VALUES (?, ?)`;
         db.run(query, ["cod_g" + n, "name" + n], function (err) {
             if (err) {
-                console.error("Errore durante l'inserimento:", err);
-                reject(err);
+                handleError(err);
             } else {
                 resolve();
             }
@@ -174,8 +176,7 @@ exports.insertDepartment = (n) => {
         const query = `INSERT INTO "DEPARTMENT" ("COD_DEPARTMENT","NAME") VALUES (?, ?)`;
         db.run(query, ["cod_dep" + n, "name" + n], function (err) {
             if (err) {
-                console.error("Errore durante l'inserimento:", err);
-                reject(err);
+                handleError(err);
             } else {
                 resolve();
             }
@@ -188,8 +189,7 @@ exports.insertStudent = (n) => {
         const query = `INSERT INTO "STUDENT" ("ID","NAME","SURNAME","GENDER","NATIONALITY","EMAIL","ENROLLMENT_YEAR","COD_DEGREE") VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
         db.run(query, ["s" + n, "name" + n, "surname" + n, "gender" + n, "nationaliy" + n, "email"+n, "enrollament_y" + n, "cod_d" + n], function (err) {
             if (err) {
-                console.error("Errore durante l'inserimento:", err);
-                reject(err);
+                handleError(err);
             } else {
                 resolve();
             }
@@ -202,8 +202,7 @@ exports.insertStudentAuth = (auth0) => {
         const query = `INSERT INTO "STUD_AUTH0" ("ID", "ID_AUTH0") VALUES (?, ?)`;
         db.run(query, ["s0", auth0], function (err) {
             if (err) {
-                console.error("Errore durante l'inserimento:", err);
-                reject(err);
+                handleError(err);
             } else {
                 resolve();
             }
@@ -216,8 +215,7 @@ exports.insertCarrer = (n, date) => {
         const query = `INSERT INTO "CAREER" ("ID","COD_COURSE","TITLE_COURSE","CFU","GRADE","DATE") VALUES (?, ?, ?, ?, ?, ?)`;
         db.run(query, ["s" + n, "cod_c" + n, "title_c" + n, "cfu" + n, n, date], function (err) {
             if (err) {
-                console.error("Errore durante l'inserimento:", err);
-                reject(err);
+                handleError(err);
             } else {
                 resolve();
             }
@@ -230,8 +228,7 @@ exports.insertThesis = (n, deg, sup, date) => {
         const query = `INSERT INTO "THESIS" ("ID_THESIS","TITLE","DESCRIPTION","REQUIRED_KNOWLEDGE","NOTES","EXPIRATION_DATE","LEVEL","DEGREE","SUPERVISOR") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
         db.run(query, [n, "title" + n, "description" + n, "req_know" + n, "notes" + n, date, "level" + n, deg, sup], function (err) {
             if (err) {
-                console.error("Errore durante l'inserimento:", err);
-                reject(err);
+                handleError(err);
             } else {
                 resolve();
             }
@@ -244,8 +241,7 @@ exports.insertThesisAppliation = (n, state, date) => {
         const query = `INSERT INTO "THESIS_APPLICATION" ("ID_APPLICATION","STUDENT","THESIS","STATE","APPLICATION_DATE") VALUES (?, ?, ?, ? ,?)`;
         db.run(query, [n, "s" + n, n, state, date], function (err) {
             if (err) {
-                console.error("Errore durante l'inserimento:", err);
-                reject(err);
+                handleError(err);
             } else {
                 resolve();
             }
@@ -258,8 +254,7 @@ exports.insertCoSupervisor = (n) => {
         const query = `INSERT INTO "CO_SUPERVISOR" ("THESIS","NAME","SURNAME","EMAIL") VALUES (?, ?, ?, ?)`;
         db.run(query, [n, "name" + n, "surname" + n, "email" + n], function (err) {
             if (err) {
-                console.error("Errore durante l'inserimento:", err);
-                reject(err);
+                handleError(err);
             } else {
                 resolve();
             }
@@ -272,8 +267,7 @@ exports.insertThesisStatus = (n, state) => {
         const query = `INSERT INTO "THESIS_STATUS" ("THESIS","STATE") VALUES (?, ?)`;
         db.run(query, [n, state], function (err) {
             if (err) {
-                console.error("Errore durante l'inserimento:", err);
-                reject(err);
+                handleError(err);
             } else {
                 resolve();
             }
@@ -286,8 +280,7 @@ exports.insertType = (n) => {
         const query = `INSERT INTO "TYPE" ("THESIS","TYPE") VALUES (?, ?)`;
         db.run(query, [n, "type" + n], function (err) {
             if (err) {
-                console.error("Errore durante l'inserimento:", err);
-                reject(err);
+                handleError(err);
             } else {
                 resolve();
             }
@@ -301,8 +294,7 @@ exports.insertKeyword = (n) => {
 
         db.run(query, [n, "keyword" + n], function (err) {
             if (err) {
-                console.error("Errore durante l'inserimento:", err);
-                reject(err);
+                handleError(err);
             } else {
                 resolve();
             }
@@ -316,8 +308,7 @@ exports.insertTeacher = (n) => {
 
         db.run(query, ["d"+n, "name" + n, "surname" + n, "email" + n, "cod_g" + n, "cod_d" + n], function (err) {
             if (err) {
-                console.error("Errore durante l'inserimento:", err);
-                reject(err);
+                handleError(err);
             } else {
                 resolve();
             }
@@ -330,8 +321,7 @@ exports.insertTeacherAuth = (auth0) => {
         const query = `INSERT INTO "TEACHER_AUTH0" ("ID", "ID_AUTH0") VALUES (?, ?)`;
         db.run(query, ["d0", auth0], function (err) {
             if (err) {
-                console.error("Errore durante l'inserimento:", err);
-                reject(err);
+                handleError(err);
             } else {
                 resolve();
             }
@@ -345,8 +335,7 @@ exports.deleteTableContent = (tableName) => {
 
         db.run(query, function (err) {
             if (err) {
-                console.error(`Errore nell'eliminazione nella tabella ${tableName}:`, err);
-                reject(err);
+                handleError(err);
             } else {
                 resolve();
             }
