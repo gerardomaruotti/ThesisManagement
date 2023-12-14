@@ -112,22 +112,24 @@ app.get('/api/cds', checkJwt, (req, res) => {
 
 
 //return all thesis of the department of the student/professor 
-app.post('/api/thesis', checkJwt, async (req, res) => {
-	try {
-		const getRole = await db.getRole(req.auth);
-		const date = await db.getVirtualDate();
-		if (getRole.role == 'teacher') {
-			const thesis = await processTeacherThesis(getRole.id, (date == 0) ? currentDate.format('YYYY-MM-DD') : date, getRole);
-			res.status(200).json(thesis);
-		} else if (getRole.role == 'student') {
-			const thesis = await processStudentThesis(getRole.id, (date == 0) ? currentDate.format('YYYY-MM-DD') : date, req.body.filters, getRole);
-			res.status(200).json(thesis);
-		}
-		res.status(401).json({ error: 'Unauthorized user' })
+app.post('/api/thesis', checkJwt,(req, res) => {
+	(async () => {
+		try {
+			const getRole = await db.getRole(req.auth);
+			const date = await db.getVirtualDate();
+			if (getRole.role == 'teacher') {
+				const thesis = await processTeacherThesis(getRole.id, (date == 0) ? currentDate.format('YYYY-MM-DD') : date, getRole);
+				res.status(200).json(thesis);
+			} else if (getRole.role == 'student') {
+				const thesis = await processStudentThesis(getRole.id, (date == 0) ? currentDate.format('YYYY-MM-DD') : date, req.body.filters, getRole);
+				res.status(200).json(thesis);
+			}
+			res.status(401).json({ error: 'Unauthorized user' })
 
-	} catch (err) {
-		return res.status(500).end();
-	}
+		} catch (err) {
+			return res.status(500).end();
+		}
+	})();
 });
 
 async function processTeacherThesis(teacherId, date, getRole) {
@@ -215,19 +217,19 @@ function validateExpDate(filterExpDate, thesisExpDate, totFilters) {
 app.get('/api/thesis/:id/groups', checkJwt,(req, res) => {
 	(async () => {
 		const thesisID = req.params.id;
-	  
+
 		if (isNaN(thesisID) || thesisID <= 0) {
-		  return res.status(400).json({ error: 'Invalid thesis ID.' });
+			return res.status(400).json({ error: 'Invalid thesis ID.' });
 		}
-	  
+
 		try {
-		  // I need groups of supervisor and co-supervisor of the thesis
-		  const groups = await db.getGroupSupervisorAndCoSupervisor(thesisID);
-		  return res.status(200).json(groups);
+			// I need groups of supervisor and co-supervisor of the thesis
+			const groups = await db.getGroupSupervisorAndCoSupervisor(thesisID);
+			return res.status(200).json(groups);
 		} catch (err) {
-		  return res.status(503).json({ error: 'Errore nella restituzione dei gruppi' });
+			return res.status(503).json({ error: 'Errore nella restituzione dei gruppi' });
 		}
-	  })();
+	})();
 });
 
 app.post(
@@ -245,266 +247,275 @@ app.post(
 		check('types').isArray(),
 	],
 	checkJwt,
-	async (req, res) => {
-
-		const errors = validationResult(req);
-		if (!errors.isEmpty()) {
-			return res.status(422).json({ errors: errors.array() });
-		}
-
-		const title = req.body.title;
-		const description = req.body.description;
-		const req_know = req.body.required_knowledge;
-		const notes = req.body.notes;
-		const exp_date = req.body.expiration_date;
-		const level = req.body.level;
-		const degree = req.body.degree;
-		const types = req.body.types;
-		const co_supervisors = req.body.co_supervisors;
-		const keywords = req.body.keywords;
-
-		try {
-			//i need groups of supervisor and co-supervisor of the thesis
-			const userRole = await db.getRole(req.auth);
-			const date = await db.getVirtualDate();
-			if (userRole.role == 'teacher') {
-				const supervisor = userRole.id;
-				if (dayjs(exp_date).isBefore((date == 0) ? currentDate.format("YYYY-MM-DD") : date)) return res.status(400).json({ error: 'The expiration date is not valid, change the expiration date' });
-				const thesisId = await db.insertThesis(title, description, req_know, notes, exp_date, level, degree, supervisor);
-				for (let i = 0; i < co_supervisors.length; i++) {
-					await db.insertCoSupervisor(thesisId, co_supervisors[i].name, co_supervisors[i].surname, co_supervisors[i].email);
-				}
-
-				for (let i = 0; i < keywords.length; i++) {
-					await db.insertKeyword(thesisId, keywords[i]);
-				}
-
-				for (let i = 0; i < types.length; i++) {
-					await db.insertType(thesisId, types[i]);
-				}
-
-				await db.insertThesisStatus(thesisId);
-				return res.status(200).json(thesisId);
-			} else {
-				return res.status(401).json({ error: 'Unauthorized user' });
+	(req, res) => {
+		(async () => {
+			const errors = validationResult(req);
+			if (!errors.isEmpty()) {
+				return res.status(422).json({ errors: errors.array() });
 			}
-		} catch (err) {
-			return res.status(503).json({ error: 'Error in the insertion' });
-		}
-	}
-);
+
+			const title = req.body.title;
+			const description = req.body.description;
+			const req_know = req.body.required_knowledge;
+			const notes = req.body.notes;
+			const exp_date = req.body.expiration_date;
+			const level = req.body.level;
+			const degree = req.body.degree;
+			const types = req.body.types;
+			const co_supervisors = req.body.co_supervisors;
+			const keywords = req.body.keywords;
+
+			try {
+				//i need groups of supervisor and co-supervisor of the thesis
+				const userRole = await db.getRole(req.auth);
+				const date = await db.getVirtualDate();
+				if (userRole.role == 'teacher') {
+					const supervisor = userRole.id;
+					if (dayjs(exp_date).isBefore((date == 0) ? currentDate.format("YYYY-MM-DD") : date)) return res.status(400).json({ error: 'The expiration date is not valid, change the expiration date' });
+					const thesisId = await db.insertThesis(title, description, req_know, notes, exp_date, level, degree, supervisor);
+					for (let i = 0; i < co_supervisors.length; i++) {
+						await db.insertCoSupervisor(thesisId, co_supervisors[i].name, co_supervisors[i].surname, co_supervisors[i].email);
+					}
+
+					for (let i = 0; i < keywords.length; i++) {
+						await db.insertKeyword(thesisId, keywords[i]);
+					}
+
+					for (let i = 0; i < types.length; i++) {
+						await db.insertType(thesisId, types[i]);
+					}
+
+					await db.insertThesisStatus(thesisId);
+					return res.status(200).json(thesisId);
+				} else {
+					return res.status(401).json({ error: 'Unauthorized user' });
+				}
+			} catch (err) {
+				return res.status(503).json({ error: 'Error in the insertion' });
+			}
+		})();
+});
 
 //ritorniamo le liste di campi necessari per la visualizzazione intera della thesi
-app.get('/api/thesis/:id', checkJwt, async (req, res) => {
+app.get('/api/thesis/:id', checkJwt,(req, res) => {
 	//fare il check se l'utente può effettivamente vedere la tesi, tramite access token controllo corso di laurea dell'utente se studente
-	const thesisID = req.params.id;
+	(async () => {
+		const thesisID = req.params.id;
 
-	if (isNaN(thesisID) || thesisID <= 0) {
-		return res.status(400).json({ error: 'Invalid thesis ID.' });
-	}
-
-	try {
-		const infoThesis = await db.getThesis(thesisID);
-		const titleDegree = await db.getTitleDegree(infoThesis.cds);
-		const supervisor = await db.getTeacher(infoThesis.supervisor);
-		const keywords = await db.getKeywordsbyId(thesisID);
-		const types = await db.getTypesbyId(thesisID);
-		const groups = await db.getGroupSupervisorAndCoSupervisor(thesisID);
-		const coSupervisors = await db.getCoSupervisors(thesisID);
-
-		let thesis = {
-			title: infoThesis.title,
-			description: infoThesis.description,
-			requiredKnowledge: infoThesis.requiredKnowledge,
-			notes: infoThesis.notes,
-			expirationDate: infoThesis.expirationDate,
-			level: infoThesis.level,
-			codeDegree: infoThesis.cds,
-			cds: titleDegree,
-			supervisor: supervisor, //arriva come oggetto con name e surname
-			keywords: keywords,
-			types: types,
-			groups: groups,
-			coSupervisors: coSupervisors,
-		};
-		res.status(200).json(thesis);
-	} catch (err) {
-		res.status(500).json({ error: 'Error the view of the thesis' });
-	}
-});
-
-app.post('/api/thesis/:id/apply', upload.single('file'), checkJwt, async (req, res) => {
-	try {
-		let thesisId = req.params.id;
-		if (isNaN(thesisId) || thesisId <= 0) {
+		if (isNaN(thesisID) || thesisID <= 0) {
 			return res.status(400).json({ error: 'Invalid thesis ID.' });
 		}
-		const date = await db.getVirtualDate();
-		let userRole = await db.getRole(req.auth);
-		const thesis_info = await db.getThesis(thesisId);
-		const state = await db.checkThesisActive(thesisId, (date == 0) ? currentDate.format('YYYY-MM-DD') : date);
-		let applications = await db.getStudentApplications(userRole.id, (date == 0) ? currentDate.format('YYYY-MM-DD') : date)
 
-		applications = applications.filter((elem) => (elem.state == '0' || elem.state == '1'))
+		try {
+			const infoThesis = await db.getThesis(thesisID);
+			const titleDegree = await db.getTitleDegree(infoThesis.cds);
+			const supervisor = await db.getTeacher(infoThesis.supervisor);
+			const keywords = await db.getKeywordsbyId(thesisID);
+			const types = await db.getTypesbyId(thesisID);
+			const groups = await db.getGroupSupervisorAndCoSupervisor(thesisID);
+			const coSupervisors = await db.getCoSupervisors(thesisID);
 
-		if (state != '1') {
-			return res.status(400).json({ error: 'Thesis not active' });
+			let thesis = {
+				title: infoThesis.title,
+				description: infoThesis.description,
+				requiredKnowledge: infoThesis.requiredKnowledge,
+				notes: infoThesis.notes,
+				expirationDate: infoThesis.expirationDate,
+				level: infoThesis.level,
+				codeDegree: infoThesis.cds,
+				cds: titleDegree,
+				supervisor: supervisor, //arriva come oggetto con name e surname
+				keywords: keywords,
+				types: types,
+				groups: groups,
+				coSupervisors: coSupervisors,
+			};
+			res.status(200).json(thesis);
+		} catch (err) {
+			res.status(500).json({ error: 'Error the view of the thesis' });
 		}
-
-		if (applications.length > 0) {
-			return res.status(400).json({ error: 'Pending or accepted application already exists' })
-		}
-
-		if (userRole.role != 'student') return res.status(401).json({ error: 'Unauthorized user' });
-
-		let applId = await db.insertApplication(userRole.id, thesisId, (date == 0) ? currentDate.format('YYYY-MM-DD') : date);
-
-		if (req.file) {
-			await db.insertCv(applId, req.file.filename, req.file.path);
-		}
-
-		let getMailTeacher = await db.getMailTeacher(thesis_info.supervisor);
-
-		const mailOptions = {
-			from: 's313373@studenti.polito.it',
-			to: `${getMailTeacher}`,  //da sostituire, la mai 317977 è per test
-			text: `You received a Thesis Application for ${thesis_info.title} from student ${userRole.id}`,
-			subject: 'Thesis Application',
-		};
-
-		// Send the email using Nodemailer
-		transporter.sendMail(mailOptions, (error, info) => {
-			if (error) {
-				return console.error(error);
-			}
-			console.log('Message sent: %s', info.message);
-		});
-		return res.status(200).json('Insertion Succesful');
-	} catch (err) {
-		return res.status(503).json({ error: 'Error in the insertion of an application' });
-	}
+	})();
 });
 
-
-app.get('/api/thesis/applications/browse', checkJwt, async (req, res) => {
-
-	try {
-		const userRole = await db.getRole(req.auth);
-		const date = await db.getVirtualDate();
-		if (userRole.role == "teacher") {
-			const applications = await db.getTeacherApplications(userRole.id, (date == 0) ? currentDate.format("YYYY-MM-DD") : date);
-			return res.status(200).json(applications);
-		} else {
-			if (userRole.role == "student") {
-				const applications = await db.getStudentApplications(userRole.id, (date == 0) ? currentDate.format("YYYY-MM-DD") : date);
-				for (let i = 0; i < applications.length; i++) {
-					applications[i].keywords = await db.getKeywordsbyId(applications[i].id);
-					applications[i].types = await db.getTypesbyId(applications[i].id)
-				}
-				return res.status(200).json(applications)
+app.post('/api/thesis/:id/apply', upload.single('file'), checkJwt,(req, res) => {
+	(async () => {
+		try {
+			let thesisId = req.params.id;
+			if (isNaN(thesisId) || thesisId <= 0) {
+				return res.status(400).json({ error: 'Invalid thesis ID.' });
 			}
-		}
+			const date = await db.getVirtualDate();
+			let userRole = await db.getRole(req.auth);
+			const thesis_info = await db.getThesis(thesisId);
+			const state = await db.checkThesisActive(thesisId, (date == 0) ? currentDate.format('YYYY-MM-DD') : date);
+			let applications = await db.getStudentApplications(userRole.id, (date == 0) ? currentDate.format('YYYY-MM-DD') : date)
 
-		return res.status(401).json({ error: 'Unauthorized user' })
-	} catch (err) {
-		res.status(503).json({ error: "GetApplications error" })
-	}
-})
+			applications = applications.filter((elem) => (elem.state == '0' || elem.state == '1'))
 
-app.post('/api/accept/application', [
-	check('studentID').isString().trim().notEmpty(),
-	check('thesisID').isInt().custom(value => value > 0),
+			if (state != '1') {
+				return res.status(400).json({ error: 'Thesis not active' });
+			}
 
-], checkJwt, async (req, res) => {
-	try {
-		const errors = validationResult(req);
-		if (!errors.isEmpty()) {
-			return res.status(422).json({ errors: errors.array() });
-		}
+			if (applications.length > 0) {
+				return res.status(400).json({ error: 'Pending or accepted application already exists' })
+			}
 
-		let thesis = req.body.thesisID;
-		let student = req.body.studentID;
+			if (userRole.role != 'student') return res.status(401).json({ error: 'Unauthorized user' });
 
-		let getMailStudent = await db.getMailStudent(student);
+			let applId = await db.insertApplication(userRole.id, thesisId, (date == 0) ? currentDate.format('YYYY-MM-DD') : date);
 
-		let thesis_info = await db.getThesis(thesis);
-		let getRole = await db.getRole(req.auth);
-		if (getRole.role != "teacher") {
-			return res.status(401).json({ error: "Unauthorized" })
-		}
-		let getApplication = await db.checkExistenceApplication(thesis, student);
-		if (getApplication.available == 1 && getApplication.data.state == 0) {
-			let acceptApplication = await db.acceptApplication(thesis, student);
-			await db.cancelApplications(thesis, student);
-			await db.archiveThesis(thesis);
+			if (req.file) {
+				await db.insertCv(applId, req.file.filename, req.file.path);
+			}
+
+			let getMailTeacher = await db.getMailTeacher(thesis_info.supervisor);
+
 			const mailOptions = {
 				from: 's313373@studenti.polito.it',
-				to: `${getMailStudent}`,
-				text: `Your thesis application for ${thesis_info.title} has been accepted`,
-				subject: 'Thesis Accepted',
+				to: `${getMailTeacher}`,  //da sostituire, la mai 317977 è per test
+				text: `You received a Thesis Application for ${thesis_info.title} from student ${userRole.id}`,
+				subject: 'Thesis Application',
 			};
 
+			// Send the email using Nodemailer
 			transporter.sendMail(mailOptions, (error, info) => {
 				if (error) {
 					return console.error(error);
 				}
 				console.log('Message sent: %s', info.message);
 			});
-			return res.status(200).json(acceptApplication);
-		} else {
-			return res.status(400).json({ error: 'Application does not exist' })
+			return res.status(200).json('Insertion Succesful');
+		} catch (err) {
+			return res.status(503).json({ error: 'Error in the insertion of an application' });
 		}
+	})();
+});
 
 
-	} catch (err) {
-		return res.status(503).json({ error: "Error while awhile accepting the application" });
-	}
+app.get('/api/thesis/applications/browse', checkJwt,(req, res) => {
+	(async () => {
+		try {
+			const userRole = await db.getRole(req.auth);
+			const date = await db.getVirtualDate();
+			if (userRole.role == "teacher") {
+				const applications = await db.getTeacherApplications(userRole.id, (date == 0) ? currentDate.format("YYYY-MM-DD") : date);
+				return res.status(200).json(applications);
+			} else {
+				if (userRole.role == "student") {
+					const applications = await db.getStudentApplications(userRole.id, (date == 0) ? currentDate.format("YYYY-MM-DD") : date);
+					for (let i = 0; i < applications.length; i++) {
+						applications[i].keywords = await db.getKeywordsbyId(applications[i].id);
+						applications[i].types = await db.getTypesbyId(applications[i].id)
+					}
+					return res.status(200).json(applications)
+				}
+			}
+
+			return res.status(401).json({ error: 'Unauthorized user' })
+		} catch (err) {
+			res.status(503).json({ error: "GetApplications error" })
+		}
+	})();
+});
+
+app.post('/api/accept/application', [
+	check('studentID').isString().trim().notEmpty(),
+	check('thesisID').isInt().custom(value => value > 0),
+
+], checkJwt,(req, res) => {
+	(async () => {
+		try {
+			const errors = validationResult(req);
+			if (!errors.isEmpty()) {
+				return res.status(422).json({ errors: errors.array() });
+			}
+
+			let thesis = req.body.thesisID;
+			let student = req.body.studentID;
+
+			let getMailStudent = await db.getMailStudent(student);
+
+			let thesis_info = await db.getThesis(thesis);
+			let getRole = await db.getRole(req.auth);
+			if (getRole.role != "teacher") {
+				return res.status(401).json({ error: "Unauthorized" })
+			}
+			let getApplication = await db.checkExistenceApplication(thesis, student);
+			if (getApplication.available == 1 && getApplication.data.state == 0) {
+				let acceptApplication = await db.acceptApplication(thesis, student);
+				await db.cancelApplications(thesis, student);
+				await db.archiveThesis(thesis);
+				const mailOptions = {
+					from: 's313373@studenti.polito.it',
+					to: `${getMailStudent}`,
+					text: `Your thesis application for ${thesis_info.title} has been accepted`,
+					subject: 'Thesis Accepted',
+				};
+
+				transporter.sendMail(mailOptions, (error, info) => {
+					if (error) {
+						return console.error(error);
+					}
+					console.log('Message sent: %s', info.message);
+				});
+				return res.status(200).json(acceptApplication);
+			} else {
+				return res.status(400).json({ error: 'Application does not exist' })
+			}
+
+
+		} catch (err) {
+			return res.status(503).json({ error: "Error while awhile accepting the application" });
+		}
+	})();
 });
 
 app.post('/api/reject/application', [
 	check('studentID').isString().trim().notEmpty(),
 	check('thesisID').isInt().custom(value => value > 0),
 
-], checkJwt, async (req, res) => {
-	try {
+], checkJwt, (req, res) => {
+	(async () => {
+		try {
 
-		const errors = validationResult(req);
-		if (!errors.isEmpty()) {
-			return res.status(422).json({ errors: errors.array() });
+			const errors = validationResult(req);
+			if (!errors.isEmpty()) {
+				return res.status(422).json({ errors: errors.array() });
+			}
+			let thesis = req.body.thesisID;
+			let student = req.body.studentID;
+			let getMailStudent = await db.getMailStudent(student);
+			let getRole = await db.getRole(req.auth);
+			let thesis_info = await db.getThesis(thesis);
+			if (getRole.role != "teacher") {
+				return res.status(401).json({ error: "Unauthorized" })
+			}
+			let getApplication = await db.checkExistenceApplication(thesis, student);
+			if (getApplication.available == 1 && getApplication.data.state == 0) {
+				let rejectApplication = await db.rejectApplication(thesis, student);
+
+				const mailOptions = {
+					from: 's313373@studenti.polito.it',
+					to: `${getMailStudent}`,
+					text: `Your thesis application for ${thesis_info.title} has been rejected`,
+					subject: 'Thesis Rejected',
+				};
+
+				transporter.sendMail(mailOptions, (error, info) => {
+					if (error) {
+						return console.error(error);
+					}
+					console.log('Message sent: %s', info.message);
+				});
+				return res.status(200).json(rejectApplication);
+			} else {
+				return res.status(400).json({ error: 'Application does not exist' })
+			}
+
+		} catch (err) {
+			return res.status(503).json({ error: "Error in the reject of an application" });
 		}
-		let thesis = req.body.thesisID;
-		let student = req.body.studentID;
-		let getMailStudent = await db.getMailStudent(student);
-		let getRole = await db.getRole(req.auth);
-		let thesis_info = await db.getThesis(thesis);
-		if (getRole.role != "teacher") {
-			return res.status(401).json({ error: "Unauthorized" })
-		}
-		let getApplication = await db.checkExistenceApplication(thesis, student);
-		if (getApplication.available == 1 && getApplication.data.state == 0) {
-			let rejectApplication = await db.rejectApplication(thesis, student);
-
-			const mailOptions = {
-				from: 's313373@studenti.polito.it',
-				to: `${getMailStudent}`,
-				text: `Your thesis application for ${thesis_info.title} has been rejected`,
-				subject: 'Thesis Rejected',
-			};
-
-			transporter.sendMail(mailOptions, (error, info) => {
-				if (error) {
-					return console.error(error);
-				}
-				console.log('Message sent: %s', info.message);
-			});
-			return res.status(200).json(rejectApplication);
-		} else {
-			return res.status(400).json({ error: 'Application does not exist' })
-		}
-
-	} catch (err) {
-		return res.status(503).json({ error: "Error in the reject of an application" });
-	}
+	})();
 });
 
 app.put('/api/edit/thesis/:id',
@@ -521,58 +532,59 @@ app.put('/api/edit/thesis/:id',
 		check('types').isArray(),
 	],
 	checkJwt,
-	async (req, res) => {
-		const thesisId = req.params.id;
-		if (isNaN(thesisId) || thesisId <= 0) {
-			return res.status(400).json({ error: 'Invalid thesis Id.' });
-		}
-
-		const errors = validationResult(req);
-		if (!errors.isEmpty()) {
-			return res.status(422).json({ errors: errors.array() });
-		}
-
-		try {
-			const userRole = await db.getRole(req.auth);
-
-			if (userRole.role != 'teacher') {
-				return res.status(401).json({ error: 'Unauthorized user' });
+	(req, res) => {
+		(async () => {
+			const thesisId = req.params.id;
+			if (isNaN(thesisId) || thesisId <= 0) {
+				return res.status(400).json({ error: 'Invalid thesis Id.' });
 			}
 
-			const supervisor = await db.getThesisSupervisor(thesisId);
-			if (userRole.id != supervisor) {
-				return res.status(400).json({ error: 'The teacher does not have the permission to modify the thesis' });
+			const errors = validationResult(req);
+			if (!errors.isEmpty()) {
+				return res.status(422).json({ errors: errors.array() });
 			}
 
-			const date = await db.getVirtualDate();
-			const checkApplications = await db.checkExistenceAcceptedApplicationForThesis(thesisId);
-			if (checkApplications == 1) {
-				return res.status(400).json({ error: 'The thesis has accepted applications and cannot be modified' });
+			try {
+				const userRole = await db.getRole(req.auth);
+
+				if (userRole.role != 'teacher') {
+					return res.status(401).json({ error: 'Unauthorized user' });
+				}
+
+				const supervisor = await db.getThesisSupervisor(thesisId);
+				if (userRole.id != supervisor) {
+					return res.status(400).json({ error: 'The teacher does not have the permission to modify the thesis' });
+				}
+
+				const date = await db.getVirtualDate();
+				const checkApplications = await db.checkExistenceAcceptedApplicationForThesis(thesisId);
+				if (checkApplications == 1) {
+					return res.status(400).json({ error: 'The thesis has accepted applications and cannot be modified' });
+				}
+
+				const expirationDate = req.body.expiration_date;
+				if (dayjs(expirationDate).isBefore((date == 0) ? currentDate.format("YYYY-MM-DD") : date)) {
+					return res.status(400).json({ error: 'The expiration date is not valid, change the expiration date' });
+				}
+
+				const checkStatus = await db.checkThesisActive(thesisId, (date == 0) ? currentDate.format("YYYY-MM-DD") : date);
+
+				await processCoSupervisors(thesisId, req.body.co_supervisors);
+				await processKeywords(thesisId, req.body.keywords);
+				await processTypes(thesisId, req.body.types);
+
+				if (checkStatus == '0') {
+					await db.activateThesis(thesisId);
+				}
+
+				await db.editThesis(thesisId, req.body.title, req.body.description, req.body.required_knowledge, req.body.notes, expirationDate, req.body.level, req.body.degree);
+
+				return res.status(200).json(thesisId);
+			} catch (err) {
+				return res.status(503).json({ error: 'Error in the update of the thesis' });
 			}
-
-			const expirationDate = req.body.expiration_date;
-			if (dayjs(expirationDate).isBefore((date == 0) ? currentDate.format("YYYY-MM-DD") : date)) {
-				return res.status(400).json({ error: 'The expiration date is not valid, change the expiration date' });
-			}
-
-			const checkStatus = await db.checkThesisActive(thesisId, (date == 0) ? currentDate.format("YYYY-MM-DD") : date);
-
-			await processCoSupervisors(thesisId, req.body.co_supervisors);
-			await processKeywords(thesisId, req.body.keywords);
-			await processTypes(thesisId, req.body.types);
-
-			if (checkStatus == '0') {
-				await db.activateThesis(thesisId);
-			}
-
-			await db.editThesis(thesisId, req.body.title, req.body.description, req.body.required_knowledge, req.body.notes, expirationDate, req.body.level, req.body.degree);
-
-			return res.status(200).json(thesisId);
-		} catch (err) {
-			return res.status(503).json({ error: 'Error in the update of the thesis' });
-		}
-	}
-);
+		})();
+});
 
 async function processCoSupervisors(thesisId, coSupervisors) {
 	await db.deleteCoSupervisor(thesisId);
@@ -596,7 +608,8 @@ async function processTypes(thesisId, types) {
 }
 
 
-app.get('/api/virtualClockStatus', checkJwt, async (req, res) => {
+app.get('/api/virtualClockStatus', checkJwt, (req, res) => {
+	(async () => {
 	try {
 		const date = await db.getVirtualDate();
 		return res.status(200).json(date)
@@ -604,152 +617,160 @@ app.get('/api/virtualClockStatus', checkJwt, async (req, res) => {
 	} catch (err) {
 		return res.status(503).json({ error: "Get Virtual Clock status error" })
 	}
-})
+})();
+});
 
 
 app.put('/api/virtualClockOn', [
 	check('date').isString().trim().isLength({ min: 10, max: 10 })
 ],
 	checkJwt,
-	async (req, res) => {
-		const errors = validationResult(req);
-		if (!errors.isEmpty()) {
-			return res.status(422).json({ errors: errors.array() });
-		}
+	(req, res) => {
+		(async () => {
+			const errors = validationResult(req);
+			if (!errors.isEmpty()) {
+				return res.status(422).json({ errors: errors.array() });
+			}
 
+			try {
+				await db.setVirtualDate(req.body.date);
+				return res.status(200).json("Updated")
+			}
+			catch (err) {
+				return res.status(503).json({ error: "Update error" })
+			}
+
+
+		})();
+});
+
+
+app.put('/api/virtualClockOff', checkJwt,(req, res) => {
+	(async () => {
 		try {
-			await db.setVirtualDate(req.body.date);
+			await db.setVirtualDate(null);
+			await db.resetStatusPastApplications(currentDate.format("YYYY-MM-DD"))
+			await db.deleteFutureApplications(currentDate.format("YYYY-MM-DD"));
 			return res.status(200).json("Updated")
 		}
 		catch (err) {
 			return res.status(503).json({ error: "Update error" })
 		}
 
-
-	})
-
-
-app.put('/api/virtualClockOff', checkJwt, async (req, res) => {
-	try {
-		await db.setVirtualDate(null);
-		await db.resetStatusPastApplications(currentDate.format("YYYY-MM-DD"))
-		await db.deleteFutureApplications(currentDate.format("YYYY-MM-DD"));
-		return res.status(200).json("Updated")
-	}
-	catch (err) {
-		return res.status(503).json({ error: "Update error" })
-	}
-
-})
+	})();
+});
 
 
 //DELETE THESIS 
 app.post('/api/delete/thesis', [
 	check('thesisID').isInt().custom(value => value > 0),
 
-], checkJwt, async (req, res) => {
-	try {
+], checkJwt, (req, res) => {
+	(async () => {
+		try {
 
-		const errors = validationResult(req);
-		if (!errors.isEmpty()) {
-			return res.status(422).json({ errors: errors.array() });
-		}
-		let thesis = req.body.thesisID;
-		let getRole = await db.getRole(req.auth);
-		if (getRole.role != "teacher") {
-			return res.status(401).json({ error: "Unauthorized" })
-		}
+			const errors = validationResult(req);
+			if (!errors.isEmpty()) {
+				return res.status(422).json({ errors: errors.array() });
+			}
+			let thesis = req.body.thesisID;
+			let getRole = await db.getRole(req.auth);
+			if (getRole.role != "teacher") {
+				return res.status(401).json({ error: "Unauthorized" })
+			}
 
-		let getThesisExistance = await db.checkExistenceThesis(thesis);
-		if (getThesisExistance.available == 1 && getThesisExistance.data.state == 1) {
-			await db.setStatusDeleted(thesis)
-			await db.cancelApplicationsByThesis(thesis)
-			return res.status(200).json("Thesis deleted successfully");
-		} else {
-			return res.status(400).json({ error: 'Thesis proposal does not exist' })
+			let getThesisExistance = await db.checkExistenceThesis(thesis);
+			if (getThesisExistance.available == 1 && getThesisExistance.data.state == 1) {
+				await db.setStatusDeleted(thesis)
+				await db.cancelApplicationsByThesis(thesis)
+				return res.status(200).json("Thesis deleted successfully");
+			} else {
+				return res.status(400).json({ error: 'Thesis proposal does not exist' })
+			}
+		} catch (err) {
+			return res.status(503).json({ error: "Error in the deletion of the thesis" });
 		}
-	} catch (err) {
-		return res.status(503).json({ error: "Error in the deletion of the thesis" });
-	}
+	})();
 });
 
 //Archive thesis proposal
 app.post('/api/archive/thesis', [
 	check('thesisID').isInt().custom(value => value > 0),
 
-], checkJwt, async (req, res) => {
-	try {
-
-		const errors = validationResult(req);
-		if (!errors.isEmpty()) {
-			return res.status(422).json({ errors: errors.array() });
-		}
-		let thesis = req.body.thesisID;
-		let getRole = await db.getRole(req.auth);
-		if (getRole.role != "teacher") {
-			return res.status(401).json({ error: "Unauthorized" })
-		}
-
-		const supervisor = await db.getThesisSupervisor(thesis);
-		if (getRole.id != supervisor) {
-			return res.status(400).json({ error: 'The teacher does not have the permission to archive the thesis' });
-		}
-
-		let getThesisExistance = await db.checkExistenceThesis(thesis);
-		if (getThesisExistance.available == 1 && getThesisExistance.data.state == 1) {
-			await db.archiveThesis(thesis)
-			await db.cancelPendingApplications(thesis)
-
-			return res.status(200).json("Thesis archived successfully");
-		} else {
-			return res.status(400).json({ error: 'The thesis is already archived or deleted' })
-		}
-	} catch (err) {
-		console.log(err)
-		return res.status(503).json({ error: "Error in archiving the thesis" });
-	}
-});
-
-
-app.post('/api/applications/details', checkJwt, [
-	check('idApplication').isInt().custom(value => value > 0)
-],
-	async (req, res) => {
-
+], checkJwt, (req, res) => {
+	(async () => {
 		try {
+
 			const errors = validationResult(req);
 			if (!errors.isEmpty()) {
 				return res.status(422).json({ errors: errors.array() });
 			}
-
-			let applId = req.body.idApplication;
-
+			let thesis = req.body.thesisID;
 			let getRole = await db.getRole(req.auth);
 			if (getRole.role != "teacher") {
 				return res.status(401).json({ error: "Unauthorized" })
 			}
 
-			let getApplication = await db.checkExistenceApplicationById(applId);
-			if (getApplication == 0) return res.status(400).json({ error: "Application does not exists" })
-			let studentInfo = await db.getStudentInfo(getApplication.student);
-			studentInfo.exams = await db.getStudentExams(getApplication.student);
-			studentInfo.state = getApplication.state;
-			let studentCv = await db.getCv(applId);
-			if (studentCv.filename != null) {
-				studentInfo.cv = studentCv.path;
+			const supervisor = await db.getThesisSupervisor(thesis);
+			if (getRole.id != supervisor) {
+				return res.status(400).json({ error: 'The teacher does not have the permission to archive the thesis' });
 			}
 
-			return res.status(200).json(studentInfo)
+			let getThesisExistance = await db.checkExistenceThesis(thesis);
+			if (getThesisExistance.available == 1 && getThesisExistance.data.state == 1) {
+				await db.archiveThesis(thesis)
+				await db.cancelPendingApplications(thesis)
 
-
+				return res.status(200).json("Thesis archived successfully");
+			} else {
+				return res.status(400).json({ error: 'The thesis is already archived or deleted' })
+			}
 		} catch (err) {
-
-			res.status(503).json({ error: "GetStudentInfo error" })
-
+			console.log(err)
+			return res.status(503).json({ error: "Error in archiving the thesis" });
 		}
+	})();
+});
+
+app.post('/api/applications/details', checkJwt, [
+	check('idApplication').isInt().custom(value => value > 0)
+],
+	(req, res) => {
+		(async () => {
+			try {
+				const errors = validationResult(req);
+				if (!errors.isEmpty()) {
+					return res.status(422).json({ errors: errors.array() });
+				}
+
+				let applId = req.body.idApplication;
+
+				let getRole = await db.getRole(req.auth);
+				if (getRole.role != "teacher") {
+					return res.status(401).json({ error: "Unauthorized" })
+				}
+
+				let getApplication = await db.checkExistenceApplicationById(applId);
+				if (getApplication == 0) return res.status(400).json({ error: "Application does not exists" })
+				let studentInfo = await db.getStudentInfo(getApplication.student);
+				studentInfo.exams = await db.getStudentExams(getApplication.student);
+				studentInfo.state = getApplication.state;
+				let studentCv = await db.getCv(applId);
+				if (studentCv.filename != null) {
+					studentInfo.cv = studentCv.path;
+				}
+
+				return res.status(200).json(studentInfo)
 
 
-	})
+			} catch (err) {
+
+				res.status(503).json({ error: "GetStudentInfo error" })
+
+			}
+
+		})();
+});
 
 
 module.exports = { app, port, transporter };
