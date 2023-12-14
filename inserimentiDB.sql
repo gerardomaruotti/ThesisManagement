@@ -146,7 +146,7 @@ INSERT INTO "DEPARTMENT" ("COD_DEPARTMENT","NAME") VALUES ('DAUIN','Dipartimento
  ('DISAT','Dipartimento Scienza Applicata e Tecnologia'),
  ('DIGEP','Dipartimento di Ingegneria Gestionale e della Produzione');
 INSERT INTO "STUDENT" ("ID","NAME","SURNAME","GENDER","NATIONALITY","EMAIL","ENROLLMENT_YEAR","COD_DEGREE") VALUES ('s319852','Evelina Marija','Bratuhina','F','Lettone','s319852@studenti.polito.it','2022','LM-32'),
- ('s313373','Fabio','Mangani','M','Italiana','s313373@studenti.polito.it','2022','LM-32'),
+ ('s313373','Fabio','Mangani','M','Italiana','studente.thesis@gmail.com','2022','LM-32'),
  ('s319854','Riccardo','Simeone','M','Italiana','s319854@studenti.polito.it','2022','LM-32'),
  ('s317977','Giacomo','Cauda','M','Italiana','s317977@studenti.polito.it','2022','LM-29'),
  ('s317642','Gerardo','Maruotti','M','Italiana','s317642@studenti.polito.it','2022','LM-20'),
@@ -157,7 +157,7 @@ INSERT INTO "TEACHER" ("ID","NAME","SURNAME","EMAIL","COD_GROUP","COD_DEPARTMENT
  ('d123457','Anna Filomena','Carbone','d123457@polito.it','GR-05','DISAT'),
  ('d123458','Lorenzo','Casalino','d123458@polito.it','AA-02','DIMEAS'),
  ('d123459','Silvia','Chiusano','d123459@polito.it','GR-04','DAUIN'),
- ('d111111','Marco','Sangermano','s315327@studenti.polito.it','AA-01','DISAT'),
+ ('d111111','Marco','Sangermano','teacher.thesis@gmail.com','AA-01','DISAT'),
  ('d123461','Carlo','Rafele','d123461@polito.it','RESLOG','DIGEP'),
  ('d123462','Fulvio','Corno','d123462@polito.it','GR-10','DAUIN'),
  ('d123463','Antonio','Vetrò','d123463@polito.it','GR-16','DAUIN');
