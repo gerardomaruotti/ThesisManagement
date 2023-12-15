@@ -36,7 +36,7 @@ TEMPLATE FOR RETROSPECTIVE (Team 18)
 | #9 Notify Application Decision  |    5     |    8   |        8h 00m    |      6h 15m        | 
 | #10 Delete Proposal     |   5      |    3    |    8h 30m        |       8h 45m       |
 | #11 Copy Proposal      |    3     |    3    |   4h 30m      |      4h 00m        |
-| #12 Archive Proposal      |    5     |    3    |    5h 00m      |        10h 40m      |
+| #12 Archive Proposal      |    5     |    3    |    8h 00m      |        10h 40m      |
 | #13 Access applicant CV      |    6     |    13    |   15h 00m     |    12h 45m          |
 | #14  Notifty Application      |    5     |    8    |   8h 00m      |     6h 15m         |
 
