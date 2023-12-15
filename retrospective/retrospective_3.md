@@ -1,4 +1,4 @@
-TEMPLATE FOR RETROSPECTIVE (Team 18)
+RETROSPECTIVE (Team 18)
 =====================================
 
 - [process measures](#process-measures)
@@ -67,7 +67,7 @@ TEMPLATE FOR RETROSPECTIVE (Team 18)
 - Technical Dept management:
   - Total hours estimated: 
   - Total hours spent:
-  - Hours estimated for remediation by SonarQube: 4h 4m
+  - Hours estimated for remediation by SonarQube
   - Hours estimated for remediation by SonarQube only for the selected and planned issues
   - Hours spent on remediation: 15h 45m
   - Hours estimated on remediation: 10h 30m  (!)
