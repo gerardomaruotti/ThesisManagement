@@ -369,7 +369,7 @@ exports.getThesisTeacher = (ID, date) => {
             sup_name: elem.sup_name,
             sup_surname: elem.sup_surname,
             notes: elem.notes,
-            status : ((date > elem.date) ? 0 : elem.status),
+            status : ((date==0) ? elem.status : ((date > elem.date && elem.status == 1) ? 0 : elem.status)),
             count: 0,
             keywords: [],
             types: [], 
@@ -522,7 +522,7 @@ exports.checkThesisActive = (idThesis,date) => {
       if (row == undefined) {
         reject({ error: 'Thesis not found.' });
       } else {
-        resolve((row.STATE) && ((date <= row.EXPIRATION_DATE) ? 1 : 0));
+        resolve((date == 0) ? row.STATE : (date > row.EXPIRATION_DATE && row.state == 1) ? 0 : row.STATE);
       }
     });
   });
@@ -562,7 +562,7 @@ exports.getTeacherApplications = (teacherId,date) => {
           name: elem.NAME,
           surname: elem.SURNAME,
           email: elem.EMAIL,
-          state: (date <= elem.EXPIRATION_DATE) ? elem.STATE : ((elem.STATE != 0) ? elem.STATE : 3),
+          state: ((date == 0) ? elem.STATE : (date > elem.EXPIRATION_DATE && elem.STATE == 0) ? 3 : elem.STATE),
         }));
 
         resolve(applications)
@@ -590,7 +590,7 @@ exports.getStudentApplications = (studentId,date) => {
           supervisor: elem.SUPERVISOR,
           name: elem.NAME,
           surname: elem.SURNAME,
-          state: (date <= elem.EXPIRATION_DATE) ? elem.STATE : ((elem.STATE != 0) ? elem.STATE : 3),
+          state: ((date == 0) ? elem.STATE : (date > elem.EXPIRATION_DATE && elem.STATE == 0) ? 3 : elem.STATE),
           keywords: [],
           types: []
         }));
@@ -1057,6 +1057,38 @@ exports.checkExistenceApplicationById= (idApplication)=> {
           
           resolve(appl)
         }
+      }
+    });
+  });
+}
+
+
+exports.updateThesisStatus = (date) => {
+  return new Promise((resolve, reject) => {
+    const sql = 'UPDATE THESIS_STATUS SET STATE = 0 WHERE STATE = 1 AND THESIS IN ( SELECT ID_THESIS FROM THESIS WHERE date(EXPIRATION_DATE) < date(?))';
+    db.run(sql, [date], function(err){
+      if (err) {
+        reject(err);
+        return;
+      }
+      else {
+          resolve("Updated")
+      }
+    });
+  });
+}
+
+
+exports.cancelPendingApplicationsExpiredThesis = (date) => {
+  return new Promise((resolve, reject) => {
+    const sql = 'UPDATE THESIS_APPLICATION SET STATE = 3 WHERE STATE = 0 AND THESIS IN ( SELECT ID_THESIS FROM THESIS WHERE date(EXPIRATION_DATE) < date(?))';
+    db.run(sql, [date], function(err){
+      if (err) {
+        reject(err);
+        return;
+      }
+      else {
+          resolve("Updated")
       }
     });
   });

@@ -12,10 +12,19 @@ const nodemailer = require('nodemailer');
 const sgTransport = require('nodemailer-sendgrid-transport');
 const multer = require('multer');
 const fs = require('fs');
-const path = require('path')
+const path = require('path');
+const cron = require('node-cron');
 require('dotenv').config();
 
 app.use(express.json());
+
+db.updateThesisStatus(currentDate.format("YYYY-MM-DD"))
+.then(()=> db.cancelPendingApplicationsExpiredThesis(currentDate.format("YYYY-MM-DD")))
+
+cron.schedule('0 0 * * *', () => {
+	db.updateThesisStatus(currentDate.format("YYYY-MM-DD"))
+	.then(()=> db.cancelPendingApplicationsExpiredThesis(currentDate.format("YYYY-MM-DD")))
+});
 
 const checkJwt = auth({
 	audience: 'https://thesismanagement.eu.auth0.com/api/v2/',
@@ -118,7 +127,7 @@ app.post('/api/thesis', checkJwt,(req, res) => {
 			const getRole = await db.getRole(req.auth);
 			const date = await db.getVirtualDate();
 			if (getRole.role == 'teacher') {
-				const thesis = await processTeacherThesis(getRole.id, (date == 0) ? currentDate.format('YYYY-MM-DD') : date, getRole);
+				const thesis = await processTeacherThesis(getRole.id, date, getRole);
 				res.status(200).json(thesis);
 			} else if (getRole.role == 'student') {
 				const thesis = await processStudentThesis(getRole.id, (date == 0) ? currentDate.format('YYYY-MM-DD') : date, req.body.filters, getRole);
@@ -347,8 +356,8 @@ app.post('/api/thesis/:id/apply', upload.single('file'), checkJwt,(req, res) => 
 			const date = await db.getVirtualDate();
 			let userRole = await db.getRole(req.auth);
 			const thesis_info = await db.getThesis(thesisId);
-			const state = await db.checkThesisActive(thesisId, (date == 0) ? currentDate.format('YYYY-MM-DD') : date);
-			let applications = await db.getStudentApplications(userRole.id, (date == 0) ? currentDate.format('YYYY-MM-DD') : date)
+			const state = await db.checkThesisActive(thesisId, date);
+			let applications = await db.getStudentApplications(userRole.id, date)
 
 			applications = applications.filter((elem) => (elem.state == '0' || elem.state == '1'))
 
@@ -398,11 +407,11 @@ app.get('/api/thesis/applications/browse', checkJwt,(req, res) => {
 			const userRole = await db.getRole(req.auth);
 			const date = await db.getVirtualDate();
 			if (userRole.role == "teacher") {
-				const applications = await db.getTeacherApplications(userRole.id, (date == 0) ? currentDate.format("YYYY-MM-DD") : date);
+				const applications = await db.getTeacherApplications(userRole.id, date);
 				return res.status(200).json(applications);
 			} else {
 				if (userRole.role == "student") {
-					const applications = await db.getStudentApplications(userRole.id, (date == 0) ? currentDate.format("YYYY-MM-DD") : date);
+					const applications = await db.getStudentApplications(userRole.id, date);
 					for (let i = 0; i < applications.length; i++) {
 						applications[i].keywords = await db.getKeywordsbyId(applications[i].id);
 						applications[i].types = await db.getTypesbyId(applications[i].id)
@@ -567,7 +576,7 @@ app.put('/api/edit/thesis/:id',
 					return res.status(400).json({ error: 'The expiration date is not valid, change the expiration date' });
 				}
 
-				const checkStatus = await db.checkThesisActive(thesisId, (date == 0) ? currentDate.format("YYYY-MM-DD") : date);
+				const checkStatus = await db.checkThesisActive(thesisId, date);
 
 				await processCoSupervisors(thesisId, req.body.co_supervisors);
 				await processKeywords(thesisId, req.body.keywords);
