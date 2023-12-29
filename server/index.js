@@ -751,7 +751,7 @@ app.post('/api/applications/details', checkJwt, [
 				if (!errors.isEmpty()) {
 					return res.status(422).json({ errors: errors.array() });
 				}
-
+				const date = await db.getVirtualDate();
 				let applId = req.body.idApplication;
 
 				let getRole = await db.getRole(req.auth);
@@ -759,7 +759,7 @@ app.post('/api/applications/details', checkJwt, [
 					return res.status(401).json({ error: "Unauthorized" })
 				}
 
-				let getApplication = await db.checkExistenceApplicationById(applId);
+				let getApplication = await db.checkExistenceApplicationById(applId,date);
 				if (getApplication == 0) return res.status(400).json({ error: "Application does not exists" })
 				let studentInfo = await db.getStudentInfo(getApplication.student);
 				studentInfo.exams = await db.getStudentExams(getApplication.student);
