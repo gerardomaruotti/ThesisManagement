@@ -1148,16 +1148,32 @@ exports.insertCoSupervisorRequest = (request, name, surname, email) => {
   });
 }
 
-exports.updateRequest = (reqeustID) =>{
+exports.approveRequestSecretary = (reqeustID) =>{
   return new Promise((resolve, reject) => {
-    const sql = "UPDATE THESIS_REQUEST SET STATUS = 0 AND ID_REQUEST == 1";
-    db.run(sql, [request, name, surname, email ], function (err) {
+    const sql = "UPDATE THESIS_REQUEST SET STATUS = 1 WHERE STATUS = 0 AND ID_REQUEST == ?";
+    db.run(sql, [reqeustID], function (err) {
       if (err) {
         reject(err);
         console.log(err)
         return;
       }
-      resolve("inserted");
+      resolve(this.lastID);
     });
   });
 }
+
+exports.rejectRequestSecretary = (reqeustID) =>{
+  return new Promise((resolve, reject) => {
+    const sql = "UPDATE THESIS_REQUEST SET STATUS = 2 WHERE STATUS = 0 AND ID_REQUEST == ?";
+    db.run(sql, [reqeustID], function (err) {
+      if (err) {
+        reject(err);
+        console.log(err)
+        return;
+      }
+      resolve(this.lastID);
+    });
+  });
+}
+
+

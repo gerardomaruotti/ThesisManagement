@@ -833,7 +833,7 @@ app.post(
 
 
 app.post( //i am supposed to be a secretary 
-	'/api/approve/request',
+	'/api/approve/request/secretary',
 	[
 		check('requestID').isInt()
 	], 
@@ -847,16 +847,43 @@ app.post( //i am supposed to be a secretary
 
 			try {
 				const userRole = await db.getRole(req.auth);
-				if (userRole == "secretary"){
+				if (userRole.role == "secretary"){
 					//approve the request, modify the state from 0 to 1
-					const requestId = await db.updateRequest(reqID);
+					const requestId = await db.approveRequestSecretary(reqID);
 				}
+				return res.status(200).json(); //mettere thesis id 
 			} catch (err) {
 				return res.status(503).json({ error: 'Error in the insertion' });
 			}
 		})();
 });
 
+
+app.post( //i am supposed to be a secretary 
+	'/api/reject/request/secretary',
+	[
+		check('requestID').isInt()
+	], 
+	(req, res) => {
+		(async () => {
+			const errors = validationResult(req);
+			if (!errors.isEmpty()) {
+				return res.status(422).json({ errors: errors.array() });
+			}
+			const reqID =  req.body.requestID;
+
+			try {
+				const userRole = await db.getRole(req.auth);
+				if (userRole.role == "secretary"){
+					//approve the request, modify the state from 0 to 1
+					const requestId = await db.rejectRequestSecretary(reqID);
+				}
+				return res.status(200).json(); //mettere thesis id 
+			} catch (err) {
+				return res.status(503).json({ error: 'Error in the insertion' });
+			}
+		})();
+});
 module.exports = { app, port, transporter };
 
 
