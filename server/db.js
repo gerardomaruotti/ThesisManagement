@@ -353,22 +353,22 @@ exports.getRole = (auth0) => {
       }
     };
 
-    //auth0.payload.sub
+    //auth0.payload.sub --> auth0|655262d32d58c43c6805bd0b
 
     const findStudent = () => {
-      db.get(findStudentQuery, ["auth0|6596d0b638eb82cc492dc54e"], (err, elem) => {
+      db.get(findStudentQuery, ["auth0|655262d32d58c43c6805bd0b"], (err, elem) => {
         handleStudentQueryResult(err, elem);
       });
     };
 
     const findTeacher = () => {
-      db.get(findTeacherQuery, ["auth0|6596d0b638eb82cc492dc54e"], (err, elem) => {
+      db.get(findTeacherQuery, ["auth0|655262d32d58c43c6805bd0b"], (err, elem) => {
         handleTeacherQueryResult(err, elem);
       });
     };
 
     const findSecretary = () => {
-      db.get(findSecretaryQuery, ["auth0|6596d0b638eb82cc492dc54e"], (err, elem) => {
+      db.get(findSecretaryQuery, ["auth0|655262d32d58c43c6805bd0b"], (err, elem) => {
         handleSecretaryQueryResult(err, elem);
       });
     };
@@ -1154,7 +1154,6 @@ exports.approveRequestSecretary = (reqeustID) =>{
     db.run(sql, [reqeustID], function (err) {
       if (err) {
         reject(err);
-        console.log(err)
         return;
       }
       resolve(this.lastID);
@@ -1168,7 +1167,6 @@ exports.rejectRequestSecretary = (reqeustID) =>{
     db.run(sql, [reqeustID], function (err) {
       if (err) {
         reject(err);
-        console.log(err)
         return;
       }
       resolve(this.lastID);
@@ -1177,3 +1175,28 @@ exports.rejectRequestSecretary = (reqeustID) =>{
 }
 
 
+exports.approveRequestTeacher = (reqeustID) =>{
+  return new Promise((resolve, reject) => {
+    const sql = "UPDATE THESIS_REQUEST SET STATUS = 3 WHERE STATUS = 1 AND ID_REQUEST == ?";
+    db.run(sql, [reqeustID], function (err) {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve(this.lastID);
+    });
+  });
+}
+
+exports.rejectRequestTeache = (reqeustID) =>{
+  return new Promise((resolve, reject) => {
+    const sql = "UPDATE THESIS_REQUEST SET STATUS = 4 WHERE STATUS = 1 AND ID_REQUEST == ?";
+    db.run(sql, [reqeustID], function (err) {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve(this.lastID);
+    });
+  });
+}

@@ -174,7 +174,7 @@ Content-Type: application/json
     ]
 }
   
-####################                         
+####################                                   
 POST http://localhost:3001/api/approve/request/secretary HTTP/1.1   
 Content-Type: application/json
 
@@ -190,4 +190,23 @@ Content-Type: application/json
 {		
     "requestID":"1"
 }
+
+
+####################                                   
+POST http://localhost:3001/api/approve/request/professor HTTP/1.1   
+Content-Type: application/json
+
+{		
+    "requestID":"1"
+}
+
+
+####################                                
+POST http://localhost:3001/api/reject/request/professor HTTP/1.1   
+Content-Type: application/json
+
+{		
+    "requestID":"1"
+}
+
 
