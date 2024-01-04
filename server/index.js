@@ -782,6 +782,57 @@ app.post('/api/applications/details', checkJwt, [
 });
 
 
+
+app.post(
+	'/api/insert/request',
+	[
+		check('supervisor').isString().trim().isLength({ min: 1 }),
+		check('title').isString().trim().isLength({ min: 1 }),
+		check('description').isString(),
+		check('co_supervisors').isArray(),
+
+	], 
+	checkJwt,
+	(req, res) => {
+		(async () => {
+			const errors = validationResult(req);
+			if (!errors.isEmpty()) {
+				return res.status(422).json({ errors: errors.array() });
+			}
+
+			const supervisor = req.body.supervisor; //codice matricola di un prof
+			const title = req.body.title;
+			const description = req.body.description;
+			const co_supervisors = req.body.co_supervisors;
+
+			try {
+				//i need groups of supervisor and co-supervisor of the thesis
+				const userRole = await db.getRole(req.auth);
+				//const userRole = {role:"student", id:"s317977"}
+				if (userRole.role == 'student') {
+					const student = userRole.id;
+					const request_date = currentDate.format("YYYY-MM-DD");
+					const approval_date = "";
+					const status = 0;
+					
+
+					const requestId = await db.insertRequest(supervisor, title, description, co_supervisor, student, request_date, approval_date, status);
+					console.log(requestId)
+					for (let i = 0; i < co_supervisors.length; i++) {
+						console.log(co_supervisors[i].name + " - " +  co_supervisors[i].surname + " - " + co_supervisors[i].email)
+						await db.insertCoSupervisorRequest(requestId, co_supervisors[i].name, co_supervisors[i].surname, co_supervisors[i].email);
+					}
+					return res.status(200).json(); //mettere thesis id 
+				} else {
+					return res.status(401).json({ error: 'Unauthorized user' });
+				}
+			} catch (err) {
+				return res.status(503).json({ error: 'Error in the insertion' });
+			}
+		})();
+});
+
+
 module.exports = { app, port, transporter };
 
 

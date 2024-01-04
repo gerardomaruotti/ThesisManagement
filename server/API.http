@@ -158,3 +158,20 @@ Content-Type: application/json
 }
 
 
+
+###################               
+POST http://localhost:3001/api/insert/request HTTP/1.1   
+Content-Type: application/json
+
+{		
+    "supervisor" : "d111111",
+	"title" : "thesis test",
+	"description" : "descrizione tesi 1",
+	"co_supervisors" : [
+        {"name":"Carlo", "surname":"Rafele", "email":"d123461@polito.it"},
+        {"name":"Antonio", "surname":"Vetrò", "email":"d123463@polito.it"},
+        {"name":"Lorenza", "surname":"Maggio", "email":"maggio_lorenza@agency.it"}
+    ]
+}
+
+

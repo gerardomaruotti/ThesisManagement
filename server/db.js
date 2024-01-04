@@ -1093,3 +1093,30 @@ exports.cancelPendingApplicationsExpiredThesis = (date) => {
     });
   });
 }
+
+exports.insertRequest = (supervisor, title, description, co_supervisor, student, request_date, approval_date, status) => {
+  return new Promise((resolve, reject) => {
+    const sql = 'INSERT INTO THESIS_REQUEST (STUDENT, SUPERVISOR, TITLE, DESCRIPTION, REQUEST_DATE, APPROVAL_DATE, STATUS) VALUES (?,?,?,?,?,?,?)';
+    db.run(sql, [student,supervisor,title, description,request_date,approval_date, status], function (err) {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve(this.lastID);
+    });
+  });
+}
+
+exports.insertCoSupervisorRequest = (request, name, surname, email) => {
+  return new Promise((resolve, reject) => {
+    const sql = 'INSERT INTO REQUEST_COSUPERVISOR (REQUEST, NAME, SURNAME, EMAIL) VALUES (?,?,?,?)';
+    db.run(sql, [request, name, surname, email ], function (err) {
+      if (err) {
+        reject(err);
+        console.log(err)
+        return;
+      }
+      resolve("inserted");
+    });
+  });
+}
