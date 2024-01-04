@@ -339,7 +339,6 @@ exports.getRole = (auth0) => {
       if (err) {
         reject(err);
       } else {
-        console.log(elem)
         if (elem !== undefined) {
           resolve({
             "role": "secretary",
@@ -1128,7 +1127,6 @@ exports.insertRequest = (supervisor, title, description,  student, request_date,
     db.run(sql, [student,supervisor,title, description,request_date,approval_date, status], function (err) {
       if (err) {
         reject(err);
-        console.log(err)
         return;
       }
       resolve(this.lastID);
@@ -1139,6 +1137,20 @@ exports.insertRequest = (supervisor, title, description,  student, request_date,
 exports.insertCoSupervisorRequest = (request, name, surname, email) => {
   return new Promise((resolve, reject) => {
     const sql = 'INSERT INTO REQUEST_COSUPERVISOR (REQUEST, NAME, SURNAME, EMAIL) VALUES (?,?,?,?)';
+    db.run(sql, [request, name, surname, email ], function (err) {
+      if (err) {
+        reject(err);
+        console.log(err)
+        return;
+      }
+      resolve("inserted");
+    });
+  });
+}
+
+exports.updateRequest = (reqeustID) =>{
+  return new Promise((resolve, reject) => {
+    const sql = "UPDATE THESIS_REQUEST SET STATUS = 0 AND ID_REQUEST == 1";
     db.run(sql, [request, name, surname, email ], function (err) {
       if (err) {
         reject(err);
