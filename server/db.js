@@ -297,6 +297,7 @@ exports.getRole = (auth0) => {
   return new Promise((resolve, reject) => {
     const findStudentQuery = 'SELECT S.ID AS ID, S.NAME AS NAME, S.SURNAME AS SURNAME, S.EMAIL AS EMAIL FROM STUD_AUTH0 SA JOIN STUDENT S ON S.ID == SA.ID  WHERE ID_AUTH0=? ';
     const findTeacherQuery = 'SELECT T.ID AS ID, T.NAME AS NAME, T.SURNAME AS SURNAME, T.EMAIL AS EMAIL FROM TEACHER T JOIN TEACHER_AUTH0 TA ON T.ID == TA.ID WHERE ID_AUTH0=? ';
+    const findSecretaryQuery = 'SELECT S.ID AS ID, S.NAME AS NAME, S.SURNAME AS SURNAME, S.EMAIL AS EMAIL FROM SECRETARY_CLERK S JOIN SECRETARY_AUTH0 SA ON S.ID == SA.ID WHERE ID_AUTH0=? ';
 
     const handleStudentQueryResult = (err, elem) => {
       if (err) {
@@ -329,20 +330,47 @@ exports.getRole = (auth0) => {
             "email": elem.EMAIL
           });
         } else {
+          findSecretary(); // Neither student nor teacher found
+        }
+      }
+    };
+
+    const handleSecretaryQueryResult = (err, elem) => {
+      if (err) {
+        reject(err);
+      } else {
+        console.log(elem)
+        if (elem !== undefined) {
+          resolve({
+            "role": "secretary",
+            "id": elem.ID,
+            "name": elem.NAME,
+            "surname": elem.SURNAME,
+            "email": elem.EMAIL
+          });
+        } else {
           resolve({}); // Neither student nor teacher found
         }
       }
     };
 
+    //auth0.payload.sub
+
     const findStudent = () => {
-      db.get(findStudentQuery, [auth0.payload.sub], (err, elem) => {
+      db.get(findStudentQuery, ["auth0|6596d0b638eb82cc492dc54e"], (err, elem) => {
         handleStudentQueryResult(err, elem);
       });
     };
 
     const findTeacher = () => {
-      db.get(findTeacherQuery, [auth0.payload.sub], (err, elem) => {
+      db.get(findTeacherQuery, ["auth0|6596d0b638eb82cc492dc54e"], (err, elem) => {
         handleTeacherQueryResult(err, elem);
+      });
+    };
+
+    const findSecretary = () => {
+      db.get(findSecretaryQuery, ["auth0|6596d0b638eb82cc492dc54e"], (err, elem) => {
+        handleSecretaryQueryResult(err, elem);
       });
     };
 
@@ -1094,12 +1122,13 @@ exports.cancelPendingApplicationsExpiredThesis = (date) => {
   });
 }
 
-exports.insertRequest = (supervisor, title, description, co_supervisor, student, request_date, approval_date, status) => {
+exports.insertRequest = (supervisor, title, description,  student, request_date, approval_date, status) => {
   return new Promise((resolve, reject) => {
     const sql = 'INSERT INTO THESIS_REQUEST (STUDENT, SUPERVISOR, TITLE, DESCRIPTION, REQUEST_DATE, APPROVAL_DATE, STATUS) VALUES (?,?,?,?,?,?,?)';
     db.run(sql, [student,supervisor,title, description,request_date,approval_date, status], function (err) {
       if (err) {
         reject(err);
+        console.log(err)
         return;
       }
       resolve(this.lastID);

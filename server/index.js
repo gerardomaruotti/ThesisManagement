@@ -808,18 +808,16 @@ app.post(
 			try {
 				//i need groups of supervisor and co-supervisor of the thesis
 				const userRole = await db.getRole(req.auth);
-				//const userRole = {role:"student", id:"s317977"}
+				//const userRole = {role:"student", id:"s317977"}  -->  for backend test 
 				if (userRole.role == 'student') {
 					const student = userRole.id;
 					const request_date = currentDate.format("YYYY-MM-DD");
 					const approval_date = "";
 					const status = 0;
 					
-
-					const requestId = await db.insertRequest(supervisor, title, description, co_supervisor, student, request_date, approval_date, status);
-					console.log(requestId)
+					const requestId = await db.insertRequest(supervisor, title, description, student, request_date, approval_date, status);
 					for (let i = 0; i < co_supervisors.length; i++) {
-						console.log(co_supervisors[i].name + " - " +  co_supervisors[i].surname + " - " + co_supervisors[i].email)
+						//console.log(co_supervisors[i].name + " - " +  co_supervisors[i].surname + " - " + co_supervisors[i].email)
 						await db.insertCoSupervisorRequest(requestId, co_supervisors[i].name, co_supervisors[i].surname, co_supervisors[i].email);
 					}
 					return res.status(200).json(); //mettere thesis id 
@@ -832,6 +830,32 @@ app.post(
 		})();
 });
 
+
+
+app.post( //i am supposed to be a secretary 
+	'/api/approve/request',
+	[
+		check('requestID').isInt()
+	], 
+	(req, res) => {
+		(async () => {
+			const errors = validationResult(req);
+			if (!errors.isEmpty()) {
+				return res.status(422).json({ errors: errors.array() });
+			}
+			const reqID =  req.body.requestID;
+
+			try {
+				const userRole = await db.getRole(req.auth);
+				if (userRole == "secretary"){
+					//approve the request, modify the state from 0 to 1
+					const requestId = await db.updateRequest(reqID);
+				}
+			} catch (err) {
+				return res.status(503).json({ error: 'Error in the insertion' });
+			}
+		})();
+});
 
 module.exports = { app, port, transporter };
 
