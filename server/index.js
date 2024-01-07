@@ -741,7 +741,6 @@ app.post('/api/archive/thesis', [
 				return res.status(400).json({ error: 'The thesis is already archived or deleted' })
 			}
 		} catch (err) {
-			console.log(err)
 			return res.status(503).json({ error: "Error in archiving the thesis" });
 		}
 	})();
