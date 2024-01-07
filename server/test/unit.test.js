@@ -1,6 +1,6 @@
 const request = require('supertest');
 const { app, transporter } = require('../index.js');
-let db = require('../db');
+const db = require('../db');
 const dayjs = require('dayjs');
 const currentDate = dayjs();
 const cron = require('node-cron');
@@ -12,7 +12,10 @@ const teacher = {
 const student = {
     role: "student",
     id: "1"
-}
+};
+const secretary = {
+    role: "secretary",
+};
 
 const vcBody = {
     date: date
@@ -99,6 +102,10 @@ const thesisExist = {
         state: "1"
     }
 }
+
+const requestBody = {
+    requestID: 1,
+};
 
 const testFileContent = 'This is the content of the fake file.'
 const testFileName = 'test-file.txt'
@@ -1694,6 +1701,7 @@ describe('POST Insert Request', () => {
         expect(db.getRole).toHaveBeenCalledTimes(1);
         expect(db.insertRequest).toHaveBeenCalledTimes(0);
         expect(res.status).toBe(401);
+        expect(res.body).toEqual({ error: 'Unauthorized user' });
     });
 
     test(`should return a 503 error when an error occurs`, async () => {
@@ -1704,15 +1712,110 @@ describe('POST Insert Request', () => {
         expect(db.getRole).toHaveBeenCalledTimes(1);
         expect(db.insertRequest).toHaveBeenCalledTimes(0);
         expect(res.status).toBe(503);
+        expect(res.body).toEqual({ error: 'Error in the insertion' });
     });
 
     test(`should return a 422 error when called without something in the body`, async () => {
-        db.getRole.mockRejectedValueOnce(genericError);
 
         const res = await request(app).post('/api/insert/request');
 
         expect(db.getRole).toHaveBeenCalledTimes(0);
         expect(db.insertRequest).toHaveBeenCalledTimes(0);
         expect(res.status).toBe(422);
+        expect(res.body.errors).toHaveLength(6);
     });
 });
+
+describe('POST Approve secretary', () => {
+    test(`should correctly approve a request by secretary`, async () => {
+    
+        db.getRole.mockResolvedValueOnce(secretary);
+        db.approveRequestSecretary.mockResolvedValueOnce(1);
+
+        const res = await request(app).post('/api/approve/request/secretary').send(requestBody);
+
+        expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.approveRequestSecretary).toHaveBeenCalledTimes(1);
+        expect(db.approveRequestSecretary).toHaveBeenCalledWith(requestBody.requestID);
+        expect(res.status).toBe(200);
+    });
+
+    test(`should return a 401 error when the user is not secretary`, async () => {
+        db.getRole.mockResolvedValueOnce(teacher);
+
+        const res = await request(app).post('/api/approve/request/secretary').send(requestBody);
+
+        expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.approveRequestSecretary).toHaveBeenCalledTimes(0);
+        expect(res.status).toBe(401);
+        expect(res.body).toEqual({ error: 'Unauthorized user' });
+    });
+
+    test(`should return a 503 error when an error occurs`, async () => {
+        db.getRole.mockRejectedValueOnce(genericError);
+
+        const res = await request(app).post('/api/approve/request/secretary').send(requestBody);
+
+        expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.approveRequestSecretary).toHaveBeenCalledTimes(0);
+        expect(res.status).toBe(503);
+        expect(res.body).toEqual({ error: 'Error in the insertion' });
+    });
+
+    test(`should return a 422 error when called without something in the body`, async () => {
+
+        const res = await request(app).post('/api/approve/request/secretary');
+
+        expect(db.getRole).toHaveBeenCalledTimes(0);
+        expect(db.approveRequestSecretary).toHaveBeenCalledTimes(0);
+        expect(res.status).toBe(422);
+        expect(res.body.errors).toHaveLength(1);
+    });
+});    
+
+describe('POST Reject secretary', () => {
+    test(`should correctly reject a request by secretary`, async () => {
+    
+        db.getRole.mockResolvedValueOnce(secretary);
+        db.rejectRequestSecretary.mockResolvedValueOnce(1);
+
+        const res = await request(app).post('/api/reject/request/secretary').send(requestBody);
+
+        expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.rejectRequestSecretary).toHaveBeenCalledTimes(1);
+        expect(db.rejectRequestSecretary).toHaveBeenCalledWith(requestBody.requestID);
+        expect(res.status).toBe(200);
+    });
+
+    test(`should return a 401 error when the user is not secretary`, async () => {
+        db.getRole.mockResolvedValueOnce(teacher);
+
+        const res = await request(app).post('/api/reject/request/secretary').send(requestBody);
+
+        expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.rejectRequestSecretary).toHaveBeenCalledTimes(0);
+        expect(res.status).toBe(401);
+        expect(res.body).toEqual({ error: 'Unauthorized user' });
+    });
+
+    test(`should return a 503 error when an error occurs`, async () => {
+        db.getRole.mockRejectedValueOnce(genericError);
+
+        const res = await request(app).post('/api/reject/request/secretary').send(requestBody);
+
+        expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.rejectRequestSecretary).toHaveBeenCalledTimes(0);
+        expect(res.status).toBe(503);
+        expect(res.body).toEqual({ error: 'Error in the insertion' });
+    });
+
+    test(`should return a 422 error when called without something in the body`, async () => {
+
+        const res = await request(app).post('/api/reject/request/secretary');
+
+        expect(db.getRole).toHaveBeenCalledTimes(0);
+        expect(db.rejectRequestSecretary).toHaveBeenCalledTimes(0);
+        expect(res.status).toBe(422);
+        expect(res.body.errors).toHaveLength(1);
+    });
+});    
