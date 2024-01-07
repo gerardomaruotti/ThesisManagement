@@ -850,8 +850,11 @@ app.post( //i am supposed to be a secretary
 				if (userRole.role == "secretary"){
 					//approve the request, modify the state from 0 to 1
 					const requestId = await db.approveRequestSecretary(reqID);
+					return res.status(200).json(); //mettere thesis id
 				}
-				return res.status(200).json(); //mettere thesis id 
+				else{
+					return res.status(401).json({ error: 'Unauthorized user' });
+				} 
 			} catch (err) {
 				return res.status(503).json({ error: 'Error in the insertion' });
 			}
@@ -877,8 +880,11 @@ app.post( //i am supposed to be a secretary
 				if (userRole.role == "secretary"){
 					//approve the request, modify the state from 0 to 1
 					const requestId = await db.rejectRequestSecretary(reqID);
+					return res.status(200).json(); //mettere thesis id
 				}
-				return res.status(200).json(); //mettere thesis id 
+				else{
+					return res.status(401).json({ error: 'Unauthorized user' });
+				} 
 			} catch (err) {
 				return res.status(503).json({ error: 'Error in the insertion' });
 			}
@@ -905,8 +911,11 @@ app.post( //i am supposed to be a secretary
 				if (userRole.role == "teacher"){
 					//approve the request, modify the state from 0 to 1
 					const requestId = await db.approveRequestTeacher(reqID);
+					return res.status(200).json(); //mettere thesis id
 				}
-				return res.status(200).json(); //mettere thesis id 
+				else{
+					return res.status(401).json({ error: 'Unauthorized user' });
+				} 
 			} catch (err) {
 				return res.status(503).json({ error: 'Error in the insertion' });
 			}
@@ -933,8 +942,11 @@ app.post( //i am supposed to be a secretary
 				if (userRole.role == "teacher"){
 					//approve the request, modify the state from 0 to 1
 					const requestId = await db.rejectRequestTeache(reqID);
+					return res.status(200).json(); //mettere thesis id
 				}
-				return res.status(200).json(); //mettere thesis id 
+				else{
+					return res.status(401).json({ error: 'Unauthorized user' });
+				} 
 			} catch (err) {
 				return res.status(503).json({ error: 'Error in the insertion' });
 			}
