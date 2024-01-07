@@ -1,8 +1,9 @@
 const request = require('supertest');
 const { app, transporter } = require('../index.js');
-const db = require('../db');
+let db = require('../db');
 const dayjs = require('dayjs');
 const currentDate = dayjs();
+const cron = require('node-cron');
 const date = "2023-07-03";
 const teacher = {
     role: "teacher",
@@ -1670,3 +1671,48 @@ describe('POST Application Details', () => {
         expect(res.body).toEqual({error: "GetStudentInfo error"});
     });
 })
+
+describe('POST Insert Request', () => {
+    test(`should correctly insert a request`, async () => {
+        db.getRole.mockResolvedValueOnce(student);
+        db.insertRequest.mockResolvedValueOnce(1);
+        db.insertCoSupervisorRequest.mockResolvedValue();
+
+        const res = await request(app).post('/api/insert/request').send(thesis1);
+
+        expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.insertRequest).toHaveBeenCalledTimes(1);
+        expect(db.insertCoSupervisorRequest).toHaveBeenCalledTimes(2);
+        expect(res.status).toBe(200);
+    });
+
+    test(`should return a 401 error when the user is not a student`, async () => {
+        db.getRole.mockResolvedValueOnce(teacher);
+
+        const res = await request(app).post('/api/insert/request').send(thesis1);
+
+        expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.insertRequest).toHaveBeenCalledTimes(0);
+        expect(res.status).toBe(401);
+    });
+
+    test(`should return a 503 error when an error occurs`, async () => {
+        db.getRole.mockRejectedValueOnce(genericError);
+
+        const res = await request(app).post('/api/insert/request').send(thesis1);
+
+        expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.insertRequest).toHaveBeenCalledTimes(0);
+        expect(res.status).toBe(503);
+    });
+
+    test(`should return a 422 error when called without something in the body`, async () => {
+        db.getRole.mockRejectedValueOnce(genericError);
+
+        const res = await request(app).post('/api/insert/request');
+
+        expect(db.getRole).toHaveBeenCalledTimes(0);
+        expect(db.insertRequest).toHaveBeenCalledTimes(0);
+        expect(res.status).toBe(422);
+    });
+});
