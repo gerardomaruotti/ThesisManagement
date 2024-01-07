@@ -18,12 +18,18 @@ require('dotenv').config();
 
 app.use(express.json());
 
-db.updateThesisStatus(currentDate.format("YYYY-MM-DD"))
-.then(()=> db.cancelPendingApplicationsExpiredThesis(currentDate.format("YYYY-MM-DD")))
+ (async() => {
+	await db.updateThesisStatus(currentDate.format("YYYY-MM-DD"))
+	await db.cancelPendingApplicationsExpiredThesis(currentDate.format("YYYY-MM-DD"))
+ })();
+
+
 
 cron.schedule('0 0 * * *', () => {
-	db.updateThesisStatus(currentDate.format("YYYY-MM-DD"))
-	.then(()=> db.cancelPendingApplicationsExpiredThesis(currentDate.format("YYYY-MM-DD")))
+	(async() => {
+		await db.updateThesisStatus(currentDate.format("YYYY-MM-DD"))
+		await db.cancelPendingApplicationsExpiredThesis(currentDate.format("YYYY-MM-DD"))
+	 })();
 });
 
 const checkJwt = auth({
