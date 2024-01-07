@@ -805,39 +805,35 @@ app.post(
 				return res.status(422).json({ errors: errors.array() });
 			}
 
-			const supervisor = req.body.supervisor; //codice matricola di un prof
+			const supervisor = req.body.supervisor;
 			const title = req.body.title;
 			const description = req.body.description;
 			const co_supervisors = req.body.co_supervisors;
-
+	
 			try {
-				//i need groups of supervisor and co-supervisor of the thesis
 				const userRole = await db.getRole(req.auth);
-				//const userRole = {role:"student", id:"s317977"}  -->  for backend test 
-				if (userRole.role == 'student') {
-					const student = userRole.id;
-					const request_date = currentDate.format("YYYY-MM-DD");
-					const approval_date = "";
-					const status = 0;
+				if (userRole.role != 'student') return res.status(401).json({ error: 'Unauthorized user' });
+				
+				const student = userRole.id;
+				const request_date = currentDate.format("YYYY-MM-DD");
+				let approval_date = "";
+				let status = 0;
 					
-					const requestId = await db.insertRequest(supervisor, title, description, student, request_date, approval_date, status);
-					for (let i = 0; i < co_supervisors.length; i++) {
-						//console.log(co_supervisors[i].name + " - " +  co_supervisors[i].surname + " - " + co_supervisors[i].email)
-						await db.insertCoSupervisorRequest(requestId, co_supervisors[i].name, co_supervisors[i].surname, co_supervisors[i].email);
-					}
-					return res.status(200).json(); //mettere thesis id 
-				} else {
-					return res.status(401).json({ error: 'Unauthorized user' });
+				const requestId = await db.insertRequest(supervisor, title, description, student, request_date, approval_date, status);
+				for (let i = 0; i < co_supervisors.length; i++) {	
+					await db.insertCoSupervisorRequest(requestId, co_supervisors[i].name, co_supervisors[i].surname, co_supervisors[i].email);
 				}
+				
+				return res.status(200).json("Insert request successful"); 
 			} catch (err) {
-				return res.status(503).json({ error: 'Error in the insertion' });
+				return res.status(503).json({ error: 'Error in the insertion of the request' });
 			}
 		})();
 });
 
 
 
-app.post( //i am supposed to be a secretary 
+app.post(
 	'/api/approve/request/secretary',
 	[
 		check('requestID').isInt()
@@ -852,16 +848,17 @@ app.post( //i am supposed to be a secretary
 
 			try {
 				const userRole = await db.getRole(req.auth);
-				if (userRole.role == "secretary"){
+				const requestExists = await db.checkRequestExistance(reqID);
+
+				if (!requestExists) return res.status(500).json({ error: 'Request does not exists' });
+
+				if (userRole.role != "secretary") return res.status(401).json({ error: 'Unauthorized user' });
 					//approve the request, modify the state from 0 to 1
-					const requestId = await db.approveRequestSecretary(reqID);
-					return res.status(200).json(); //mettere thesis id
-				}
-				else{
-					return res.status(401).json({ error: 'Unauthorized user' });
-				} 
+				await db.approveRequestSecretary(reqID);
+				return res.status(200).json("Request approved by secretary");
+
 			} catch (err) {
-				return res.status(503).json({ error: 'Error in the insertion' });
+				return res.status(503).json({ error: 'Error in the process to approve request by secretary' });
 			}
 		})();
 });
@@ -882,23 +879,22 @@ app.post( //i am supposed to be a secretary
 
 			try {
 				const userRole = await db.getRole(req.auth);
-				if (userRole.role == "secretary"){
-					//approve the request, modify the state from 0 to 1
-					const requestId = await db.rejectRequestSecretary(reqID);
-					return res.status(200).json(); //mettere thesis id
-				}
-				else{
-					return res.status(401).json({ error: 'Unauthorized user' });
-				} 
+				const requestExists = await db.checkRequestExistance(reqID);
+
+				if (!requestExists) return res.status(500).json({ error: 'Request does not exists' });
+				if (userRole.role != "secretary") return res.status(401).json({ error: 'Unauthorized user' });
+					//approve the request, modify the state from 0 to 2
+					await db.rejectRequestSecretary(reqID);
+					return res.status(200).json("Request rejected by secretary");
 			} catch (err) {
-				return res.status(503).json({ error: 'Error in the insertion' });
+				return res.status(503).json({ error: 'Error in the process to reject request by secretary' });
 			}
 		})();
 });
 
 
 
-app.post( //i am supposed to be a secretary 
+app.post( 
 	'/api/approve/request/professor',
 	[
 		check('requestID').isInt()
@@ -913,23 +909,22 @@ app.post( //i am supposed to be a secretary
 
 			try {
 				const userRole = await db.getRole(req.auth);
-				if (userRole.role == "teacher"){
-					//approve the request, modify the state from 0 to 1
-					const requestId = await db.approveRequestTeacher(reqID);
-					return res.status(200).json(); //mettere thesis id
-				}
-				else{
-					return res.status(401).json({ error: 'Unauthorized user' });
-				} 
+				const requestExists = await db.checkRequestExistance(reqID);
+
+				if (!requestExists) return res.status(500).json({ error: 'Request does not exists' });
+				if (userRole.role != "teacher") return res.status(401).json({ error: 'Unauthorized user' });
+					//approve the request, modify the state from 1 to 3
+				await db.approveRequestTeacher(reqID);
+				return res.status(200).json("Request accepted by professor");
 			} catch (err) {
-				return res.status(503).json({ error: 'Error in the insertion' });
+				return res.status(503).json({ error: 'Error in the process to approve request by professor' });
 			}
 		})();
 });
 
 
 
-app.post( //i am supposed to be a secretary 
+app.post( 
 	'/api/reject/request/professor',
 	[
 		check('requestID').isInt()
@@ -944,19 +939,21 @@ app.post( //i am supposed to be a secretary
 
 			try {
 				const userRole = await db.getRole(req.auth);
-				if (userRole.role == "teacher"){
-					//approve the request, modify the state from 0 to 1
-					const requestId = await db.rejectRequestTeache(reqID);
-					return res.status(200).json(); //mettere thesis id
-				}
-				else{
-					return res.status(401).json({ error: 'Unauthorized user' });
-				} 
+				const requestExists = await db.checkRequestExistance(reqID);
+
+				if (!requestExists) return res.status(500).json({ error: 'Request does not exists' });
+				if (userRole.role != "teacher") return res.status(401).json({ error: 'Unauthorized user' });
+				//approve the request, modify the state from 1 to 4
+				await db.rejectRequestTeacher(reqID);
+				return res.status(200).json("Request rejected by professor");
 			} catch (err) {
-				return res.status(503).json({ error: 'Error in the insertion' });
+				return res.status(503).json({ error: 'Error in the process to reject request by professor' });
 			}
 		})();
 });
+
+
+
 module.exports = { app, port, transporter };
 
 

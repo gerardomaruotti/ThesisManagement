@@ -353,22 +353,22 @@ exports.getRole = (auth0) => {
       }
     };
 
-    //auth0.payload.sub --> auth0|655262d32d58c43c6805bd0b
+    //auth0.payload.sub = "auth0|655262d32d58c43c6805bd0b";
 
     const findStudent = () => {
-      db.get(findStudentQuery, ["auth0|655262d32d58c43c6805bd0b"], (err, elem) => {
+      db.get(findStudentQuery, [auth0.payload.sub], (err, elem) => {
         handleStudentQueryResult(err, elem);
       });
     };
 
     const findTeacher = () => {
-      db.get(findTeacherQuery, ["auth0|655262d32d58c43c6805bd0b"], (err, elem) => {
+      db.get(findTeacherQuery, [auth0.payload.sub], (err, elem) => {
         handleTeacherQueryResult(err, elem);
       });
     };
 
     const findSecretary = () => {
-      db.get(findSecretaryQuery, ["auth0|655262d32d58c43c6805bd0b"], (err, elem) => {
+      db.get(findSecretaryQuery, [auth0.payload.sub], (err, elem) => {
         handleSecretaryQueryResult(err, elem);
       });
     };
@@ -839,6 +839,30 @@ exports.checkExistenceAcceptedApplicationForThesis= (thesis)=> {
   });
 }
 
+exports.checkRequestExistance = (reqID) => {
+
+  return new Promise((resolve,reject) => {
+    const sql= 'SELECT * FROM THESIS_REQUEST WHERE ID_REQUEST=?';
+
+    db.get(sql,[reqID], (err, row) => {
+      if(err){
+        console.log(err);
+        reject(err);
+      } else{
+        if(row == undefined){
+          resolve(0);
+        } else{
+          resolve(1);
+        }
+      }
+
+
+    })
+  })
+
+
+};
+
 exports.getVirtualDate= ()=> {
   return new Promise((resolve, reject) => {
     const sql = 'SELECT data FROM VIRTUAL_CLOCK';
@@ -1148,55 +1172,55 @@ exports.insertCoSupervisorRequest = (request, name, surname, email) => {
   });
 }
 
-exports.approveRequestSecretary = (reqeustID) =>{
+exports.approveRequestSecretary = (requestID) =>{
   return new Promise((resolve, reject) => {
     const sql = "UPDATE THESIS_REQUEST SET STATUS = 1 WHERE STATUS = 0 AND ID_REQUEST == ?";
-    db.run(sql, [reqeustID], function (err) {
+    db.run(sql, [requestID], function (err) {
       if (err) {
         reject(err);
         return;
       }
-      resolve(this.lastID);
+      resolve(1);
     });
   });
 }
 
-exports.rejectRequestSecretary = (reqeustID) =>{
+exports.rejectRequestSecretary = (requestID) =>{
   return new Promise((resolve, reject) => {
     const sql = "UPDATE THESIS_REQUEST SET STATUS = 2 WHERE STATUS = 0 AND ID_REQUEST == ?";
-    db.run(sql, [reqeustID], function (err) {
+    db.run(sql, [requestID], function (err) {
       if (err) {
         reject(err);
         return;
       }
-      resolve(this.lastID);
+      resolve(1);
     });
   });
 }
 
 
-exports.approveRequestTeacher = (reqeustID) =>{
+exports.approveRequestTeacher = (requestID) =>{
   return new Promise((resolve, reject) => {
     const sql = "UPDATE THESIS_REQUEST SET STATUS = 3 WHERE STATUS = 1 AND ID_REQUEST == ?";
-    db.run(sql, [reqeustID], function (err) {
+    db.run(sql, [requestID], function (err) {
       if (err) {
         reject(err);
         return;
       }
-      resolve(this.lastID);
+      resolve(1);
     });
   });
 }
 
-exports.rejectRequestTeache = (reqeustID) =>{
+exports.rejectRequestTeacher = (requestID) =>{
   return new Promise((resolve, reject) => {
     const sql = "UPDATE THESIS_REQUEST SET STATUS = 4 WHERE STATUS = 1 AND ID_REQUEST == ?";
-    db.run(sql, [reqeustID], function (err) {
+    db.run(sql, [requestID], function (err) {
       if (err) {
         reject(err);
         return;
       }
-      resolve(this.lastID);
+      resolve(1);
     });
   });
 }
