@@ -1,6 +1,7 @@
 const request = require('supertest');
-const { app, transporter } = require('../index.js');
 const db = require('../db');
+db.updateThesisStatus
+const { app, transporter } = require('../index.js');
 const dayjs = require('dayjs');
 const currentDate = dayjs();
 const cron = require('node-cron');
@@ -27,7 +28,7 @@ const thesis1 = {
     description: "description1",
     required_knowledge: "required_knowledge1",
     notes: "notes1",
-    expiration_date: "2024-01-01",
+    expiration_date: "2025-01-01",
     level: "level1",
     cds: "cds1",
     degree: "degree1",
@@ -274,7 +275,7 @@ describe('POST Thesis', () => {
 
         expect(db.getRole).toHaveBeenCalledTimes(1);
         expect(db.getThesisTeacher).toHaveBeenCalledTimes(1);
-        expect(db.getThesisTeacher).toHaveBeenCalledWith(teacher.id, currentDate.format('YYYY-MM-DD'));
+        expect(db.getThesisTeacher).toHaveBeenCalledWith(teacher.id, 0);
         expect(db.getKeywordsbyId).toHaveBeenCalledTimes(2);
         expect(db.getTypesbyId).toHaveBeenCalledTimes(2);
         expect(db.checkExistenceApplicationForThesis).toHaveBeenCalledTimes(2);
@@ -641,9 +642,9 @@ describe('Apply for Proposal', () => {
         expect(db.getThesis).toHaveBeenCalledTimes(1);
         expect(db.getThesis).toHaveBeenCalledWith("5");
         expect(db.checkThesisActive).toHaveBeenCalledTimes(1);
-        expect(db.checkThesisActive).toHaveBeenCalledWith("5", currentDate.format('YYYY-MM-DD'));
+        expect(db.checkThesisActive).toHaveBeenCalledWith("5", 0);
         expect(db.getStudentApplications).toHaveBeenCalledTimes(1);
-        expect(db.getStudentApplications).toHaveBeenCalledWith(student.id, currentDate.format('YYYY-MM-DD'));
+        expect(db.getStudentApplications).toHaveBeenCalledWith(student.id, 0);
         expect(db.insertApplication).toHaveBeenCalledTimes(1);
         expect(db.insertApplication).toHaveBeenCalledWith(student.id, "5", currentDate.format('YYYY-MM-DD'));
         expect(db.getMailTeacher).toHaveBeenCalledTimes(1);
@@ -699,7 +700,7 @@ describe('Apply for Proposal', () => {
         expect(db.getThesis).toHaveBeenCalledTimes(1);
         expect(db.getThesis).toHaveBeenCalledWith("5");
         expect(db.checkThesisActive).toHaveBeenCalledTimes(1);
-        expect(db.checkThesisActive).toHaveBeenCalledWith("5", currentDate.format('YYYY-MM-DD'));
+        expect(db.checkThesisActive).toHaveBeenCalledWith("5", 0);
         expect(db.getStudentApplications).toHaveBeenCalledTimes(1);
         expect(db.insertApplication).toHaveBeenCalledTimes(0);
         expect(res.status).toBe(400);
@@ -720,7 +721,7 @@ describe('Apply for Proposal', () => {
         expect(db.getThesis).toHaveBeenCalledTimes(1);
         expect(db.getThesis).toHaveBeenCalledWith("5");
         expect(db.checkThesisActive).toHaveBeenCalledTimes(1);
-        expect(db.checkThesisActive).toHaveBeenCalledWith("5", currentDate.format('YYYY-MM-DD'));
+        expect(db.checkThesisActive).toHaveBeenCalledWith("5", 0);
         expect(db.insertApplication).toHaveBeenCalledTimes(0);
         expect(db.getStudentApplications).toHaveBeenCalledTimes(1);
         expect(res.status).toBe(401);
@@ -745,7 +746,7 @@ describe('Apply for Proposal', () => {
         expect(db.getThesis).toHaveBeenCalledTimes(1);
         expect(db.getThesis).toHaveBeenCalledWith("5");
         expect(db.checkThesisActive).toHaveBeenCalledTimes(1);
-        expect(db.checkThesisActive).toHaveBeenCalledWith("5", currentDate.format('YYYY-MM-DD'));
+        expect(db.checkThesisActive).toHaveBeenCalledWith("5", 0);
         expect(db.insertApplication).toHaveBeenCalledTimes(0);
         expect(db.getStudentApplications).toHaveBeenCalledTimes(1);
         expect(res.status).toBe(400);
@@ -789,7 +790,7 @@ describe('GET Theacher and Student Application', () => {
         const res = await request(app).get('/api/thesis/applications/browse');
         expect(db.getRole).toHaveBeenCalledTimes(1);
         expect(db.getTeacherApplications).toHaveBeenCalledTimes(1);
-        expect(db.getTeacherApplications).toHaveBeenCalledWith(teacher.id, currentDate.format('YYYY-MM-DD'));
+        expect(db.getTeacherApplications).toHaveBeenCalledWith(teacher.id, 0);
         expect(res.status).toBe(200);
         expect(res.body).toEqual(applications);
     });
@@ -818,7 +819,7 @@ describe('GET Theacher and Student Application', () => {
 
         expect(db.getRole).toHaveBeenCalledTimes(1);
         expect(db.getStudentApplications).toHaveBeenCalledTimes(1);
-        expect(db.getStudentApplications).toHaveBeenCalledWith(student.id, currentDate.format('YYYY-MM-DD'));
+        expect(db.getStudentApplications).toHaveBeenCalledWith(student.id, 0);
         expect(res.status).toBe(200);
         expect(res.body).toEqual(applications);
     });
@@ -1141,7 +1142,7 @@ describe('PUT Edit Thesis', () => {
         expect(db.checkExistenceAcceptedApplicationForThesis).toHaveBeenCalledTimes(1);
         expect(db.checkExistenceAcceptedApplicationForThesis).toHaveBeenCalledWith("1");
         expect(db.checkThesisActive).toHaveBeenCalledTimes(1);
-        expect(db.checkThesisActive).toHaveBeenCalledWith("1", currentDate.format('YYYY-MM-DD'));
+        expect(db.checkThesisActive).toHaveBeenCalledWith("1", 0);
         expect(db.deleteCoSupervisor).toHaveBeenCalledTimes(1);
         expect(db.deleteKeyword).toHaveBeenCalledTimes(1);
         expect(db.deleteType).toHaveBeenCalledTimes(1);
@@ -1592,6 +1593,7 @@ describe('POST Archive Thesis', () => {
 })
 
 const setupAppMocks = (cvData) => {
+    db.getVirtualDate.mockResolvedValueOnce(0);
     db.getRole.mockResolvedValueOnce(teacher);
     db.checkExistenceApplicationById.mockResolvedValueOnce(tmpApp);
     db.getStudentInfo.mockResolvedValueOnce(student);
@@ -1600,9 +1602,10 @@ const setupAppMocks = (cvData) => {
 };
 
 const performCommonAssertionsAppDetails = (res, expectedBody) => {
+    expect(db.getVirtualDate).toHaveBeenCalledTimes(1);
     expect(db.getRole).toHaveBeenCalledTimes(1);
     expect(db.checkExistenceApplicationById).toHaveBeenCalledTimes(1);
-    expect(db.checkExistenceApplicationById).toHaveBeenCalledWith(detailBody.idApplication);
+    expect(db.checkExistenceApplicationById).toHaveBeenCalledWith(detailBody.idApplication, 0);
     expect(db.getStudentInfo).toHaveBeenCalledTimes(1);
     expect(db.getStudentInfo).toHaveBeenCalledWith(tmpApp.student);
     expect(db.getStudentExams).toHaveBeenCalledTimes(1);
