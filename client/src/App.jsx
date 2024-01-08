@@ -238,7 +238,12 @@ function App() {
 								date={dateVirtualClock}
 							/>
 						) : isSecretary ? (
-							<SecretaryHome handleError={handleError} handleSuccess={handleSuccess} accessToken={accessToken} />
+							<SecretaryHome
+								handleError={handleError}
+								handleSuccess={handleSuccess}
+								accessToken={accessToken}
+								setMsgModal={setMsgModal}
+								setShowModal={setShowModal} />
 						) : null
 					}
 				/>
@@ -327,7 +332,12 @@ function App() {
 				/>
 				<Route path='/requests' element={<StudentRequests accessToken={accessToken} handleError={handleError} />} />
 				<Route path='/requests/add' element={<NotFound />} />
-				<Route path='requests/:id' element={<RequestThesisDetails accessToken={accessToken} handleError={handleError} handleSuccess={handleSuccess} />} />
+				<Route path='requests/:id' element={<RequestThesisDetails
+					accessToken={accessToken}
+					handleError={handleError}
+					handleSuccess={handleSuccess}
+					setMsgModal={setMsgModal}
+					setShowModal={setShowModal} />} />
 				<Route
 					path='/settings'
 					element={

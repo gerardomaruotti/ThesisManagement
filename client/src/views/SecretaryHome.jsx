@@ -8,7 +8,9 @@ import SecretaryCard from '../components/SecretaryCard.jsx';
 
 const SecretaryHome = ({ handleError,
     handleSuccess,
-    accessToken, }) => {
+    accessToken,
+    setShowModal,
+    setMsgModal }) => {
 
     const { loading, setLoading } = useLoading();
     const [rapidFilter, setRapidFilter] = useState('secretary-review');
@@ -91,7 +93,10 @@ const SecretaryHome = ({ handleError,
                                 request={request}
                                 setInternalDirty={setInternalDirty}
                                 handleError={handleError}
-                                handleSuccess={handleSuccess} />
+                                handleSuccess={handleSuccess}
+                                setShowModal={setShowModal}
+                                setMsgModal={setMsgModal}
+                            />
                         ))) : (
                         <Col style={{ marginTop: 25 }}>
                             <p>No request to display</p>
@@ -107,6 +112,8 @@ SecretaryHome.propTypes = {
     handleError: PropTypes.func.isRequired,
     handleSuccess: PropTypes.func.isRequired,
     accessToken: PropTypes.string.isRequired,
+    setShowModal: PropTypes.func.isRequired,
+    setMsgModal: PropTypes.func.isRequired,
 };
 
 export default SecretaryHome;

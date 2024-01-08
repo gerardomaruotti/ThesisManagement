@@ -6,7 +6,7 @@ import API from '../API';
 import { useNavigate } from 'react-router-dom';
 
 
-const SecretaryCard = ({ request, setInternalDirty, accessToken, handleError, handleSuccess }) => {
+const SecretaryCard = ({ request, setInternalDirty, accessToken, handleError, handleSuccess, setShowModal, setMsgModal }) => {
     const navigate = useNavigate();
     const styleStatus =
         request.status == 0 ? {
@@ -32,6 +32,7 @@ const SecretaryCard = ({ request, setInternalDirty, accessToken, handleError, ha
         } : null;
 
     function acceptRequest() {
+        setShowModal(false);
         API.approveRequestRecretary(accessToken, request.id)
             .then(() => {
                 handleSuccess('Request accepted');
@@ -43,6 +44,7 @@ const SecretaryCard = ({ request, setInternalDirty, accessToken, handleError, ha
     }
 
     function rejectRequest() {
+        setShowModal(false);
         API.rejectRequestRecretary(accessToken, request.id)
             .then(() => {
                 handleSuccess('Request rejected');
@@ -74,28 +76,28 @@ const SecretaryCard = ({ request, setInternalDirty, accessToken, handleError, ha
                     {request.title}
                 </Button>
 
-                <div className='d-flex justify-content-around' style={{ fontSize: 15, marginTop: 15, height: 30 }}>
+                <div className='d-flex justify-content-around' style={{ fontSize: 14, marginTop: 15, height: 30 }}>
                     <div className='d-flex flex-row align-items-center'>
                         <Image style={{ height: 35, width: 35 }} src={Avatar} roundedCircle />
                         <div className='d-flex flex-column'>
-                            <span style={{ paddingLeft: 8, fontWeight: 400 }}>Supervisor:</span>
-                            <span style={{ color: 'rgba(0, 0, 0, 0.8)', paddingLeft: 8, fontWeight: 'light' }}>{request.nameT + " " + request.surnameT}</span>
+                            <span style={{ color: 'rgba(0, 0, 0, 0.8)', paddingLeft: 8, fontWeight: 400 }}>Supervisor:</span>
+                            <span style={{ color: 'rgba(0, 0, 0, 0.6)', fontWeight: 'regular', fontSize: 13, paddingLeft: 8, }}>{request.nameT + " " + request.surnameT}</span>
                         </div>
                     </div>
                     <div className='d-flex flex-row align-items-center'>
                         <Image style={{ height: 35, width: 35 }} src={Avatar} roundedCircle />
                         <div className='d-flex flex-column'>
-                            <span style={{ paddingLeft: 8, fontWeight: 400 }}>Student:</span>
-                            <span style={{ color: 'rgba(0, 0, 0, 0.8)', paddingLeft: 8 }}>{request.nameS + " " + request.surnameS}</span>
+                            <span style={{ color: 'rgba(0, 0, 0, 0.8)', paddingLeft: 8, fontWeight: 400 }}>Student:</span>
+                            <span style={{ color: 'rgba(0, 0, 0, 0.6)', fontWeight: 'regular', fontSize: 13, paddingLeft: 8 }}>{request.nameS + " " + request.surnameS}</span>
                         </div>
                     </div>
                 </div>
                 <div
                     style={{
                         fontWeight: 'regular',
-                        fontSize: 16,
+                        fontSize: 14,
                         marginTop: 20,
-                        minHeight: 72,
+                        minHeight: 68,
                         color: 'rgba(0, 0, 0, 0.8)',
                         display: '-webkit-box',
                         WebkitBoxOrient: 'vertical',
@@ -120,7 +122,7 @@ const SecretaryCard = ({ request, setInternalDirty, accessToken, handleError, ha
                         >
                             <i className={styleStatus.icon} style={{ fontSize: '16px' }}></i>
                         </span>
-                        <span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>{styleStatus.text}</span>
+                        <span style={{ color: 'rgba(0, 0, 0, 0.5)', fontSize: 14 }}>{styleStatus.text}</span>
                     </div>
                     {!request.status == 0 ? null : (
                         <div>
@@ -128,7 +130,15 @@ const SecretaryCard = ({ request, setInternalDirty, accessToken, handleError, ha
                                 variant="link"
                                 className='buttonHover'
                                 style={{ textDecoration: 'none', color: 'green', marginRight: 8 }}
-                                onClick={acceptRequest}>
+                                onClick={() => {
+                                    setShowModal(true);
+                                    setMsgModal({
+                                        header: 'Accept request',
+                                        body: `Are you sure you want to Accept the request of student ${request.student}?`,
+                                        method: () => acceptRequest(),
+                                    });
+                                }
+                                }>
                                 <i className="bi bi-check-circle" style={{ fontSize: '16px', paddingRight: 8, color: 'green' }}></i>
                                 Accept
                             </Button>
@@ -136,7 +146,14 @@ const SecretaryCard = ({ request, setInternalDirty, accessToken, handleError, ha
                                 variant="link"
                                 className='buttonHover2'
                                 style={{ textDecoration: 'none', color: 'rgba(234, 84, 85)' }}
-                                onClick={rejectRequest}>
+                                onClick={() => {
+                                    setShowModal(true);
+                                    setMsgModal({
+                                        header: 'Reject request',
+                                        body: `Are you sure you want to reject the request of student ${request.student}?`,
+                                        method: () => rejectRequest(),
+                                    });
+                                }}>
                                 <i className="bi bi-x-circle" style={{ fontSize: '16px', paddingRight: 8, color: 'rgba(234, 84, 85)' }}></i>
                                 Reject
                             </Button>
@@ -154,6 +171,8 @@ SecretaryCard.propTypes = {
     accessToken: PropTypes.string.isRequired,
     handleError: PropTypes.func.isRequired,
     handleSuccess: PropTypes.func.isRequired,
+    setShowModal: PropTypes.func.isRequired,
+    setMsgModal: PropTypes.func.isRequired,
 };
 
 export default SecretaryCard;

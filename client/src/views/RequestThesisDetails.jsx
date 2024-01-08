@@ -10,7 +10,9 @@ import DetailsRequestLeftBar from '../components/DetailsRequestLeftBar.jsx';
 
 const RequestThesisDetails = ({ handleError,
     handleSuccess,
-    accessToken, }) => {
+    accessToken,
+    setShowModal,
+    setMsgModal }) => {
     const { loading, setLoading } = useLoading();
     const navigate = useNavigate();
     const { id } = useParams();
@@ -50,7 +52,14 @@ const RequestThesisDetails = ({ handleError,
                     <Row style={{ display: 'flex', alignItems: 'start' }}>
                         <Col md={4} className='d-none d-md-flex'>
                             <Card style={{ padding: 20, position: 'sticky', top: 25 }} className='custom-card'>
-                                {/* <DetailsRequestLeftBar request={request} /> */}
+                                <DetailsRequestLeftBar
+                                    request={request}
+                                    handleError={handleError}
+                                    handleSuccess={handleSuccess}
+                                    setInternalDirty={setInternalDirty}
+                                    accessToken={accessToken}
+                                    setMsgModal={setMsgModal}
+                                    setShowModal={setShowModal} />
                             </Card>
                         </Col>
                         <Col md={8}>
@@ -88,7 +97,14 @@ const RequestThesisDetails = ({ handleError,
                     <Offcanvas.Title>Details</Offcanvas.Title>
                 </Offcanvas.Header>
                 <Offcanvas.Body>
-                    {/* <DetailsRequestLeftBar request={request} /> */}
+                    <DetailsRequestLeftBar
+                        request={request}
+                        handleError={handleError}
+                        handleSuccess={handleSuccess}
+                        setInternalDirty={setInternalDirty}
+                        accessToken={accessToken}
+                        setMsgModal={setMsgModal}
+                        setShowModal={setShowModal} />
                 </Offcanvas.Body>
             </Offcanvas>
 
@@ -100,6 +116,8 @@ RequestThesisDetails.propTypes = {
     handleError: PropTypes.func.isRequired,
     handleSuccess: PropTypes.func.isRequired,
     accessToken: PropTypes.string,
+    setShowModal: PropTypes.func.isRequired,
+    setMsgModal: PropTypes.func.isRequired,
 };
 
 export default RequestThesisDetails
