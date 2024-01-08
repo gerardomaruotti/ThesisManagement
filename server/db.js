@@ -1145,6 +1145,116 @@ exports.cancelPendingApplicationsExpiredThesis = (date) => {
   });
 }
 
+exports.getTeacherRequests = (teacherID) => {
+
+  return new Promise((resolve, reject) => {
+    const sql = "SELECT * FROM THESIS_REQUEST WHERE SUPERVISOR=? AND STATUS=1";
+    db.all(sql, [teacherID], (err,rows) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      
+      let requests = rows.map((elem)=> ({
+        id: elem.ID_REQUEST,
+        student: elem.STUDENT,
+        supervisor: elem.SUPERVISOR,
+        title: elem.TITLE,
+        description: elem.DESCRIPTION,
+        request_date: elem.REQUEST_DATE,
+        approval_date: elem.APPROVAL_DATE,
+        status: elem.STATUS
+      }))
+
+      resolve(requests);
+
+    });
+  });
+
+
+
+}
+
+
+
+exports.getSecretaryRequests = () => {
+
+  return new Promise((resolve, reject) => {
+    const sql = "SELECT * FROM THESIS_REQUEST";
+    db.all(sql, [], (err,rows) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      
+      let requests = rows.map((elem)=> ({
+        id: elem.ID_REQUEST,
+        student: elem.STUDENT,
+        supervisor: elem.SUPERVISOR,
+        title: elem.TITLE,
+        description: elem.DESCRIPTION,
+        request_date: elem.REQUEST_DATE,
+        approval_date: elem.APPROVAL_DATE,
+        status: elem.STATUS
+      }))
+
+      resolve(requests);
+
+    });
+  });
+
+
+
+}
+
+
+exports.getStudentRequests = (studentID) => {
+
+  return new Promise((resolve, reject) => {
+    const sql = "SELECT * FROM THESIS_REQUEST WHERE STUDENT=?";
+    db.all(sql, [studentID], (err,rows) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      
+      let requests = rows.map((elem)=> ({
+        id: elem.ID_REQUEST,
+        student: elem.STUDENT,
+        title: elem.TITLE,
+        description: elem.DESCRIPTION,
+        request_date: elem.REQUEST_DATE,
+        approval_date: elem.APPROVAL_DATE,
+        status: elem.STATUS
+      }))
+
+      resolve(requests);
+
+    });
+  });
+
+
+
+}
+
+
+exports.checkPendingStudentRequests = (studentID) =>{
+  return new Promise((resolve, reject) => {
+    const sql = 'SELECT * FROM THESIS_REQUEST WHERE STUDENT=? AND STATUS IN (0,1,3)';
+    db.get(sql, [], (err, row) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      if(row == undefined){
+        resolve(0);
+      } else{
+        resolve(1);
+      }
+    });
+  });
+}
+
 exports.insertRequest = (supervisor, title, description,  student, request_date, approval_date, status) => {
   return new Promise((resolve, reject) => {
     const sql = 'INSERT INTO THESIS_REQUEST (STUDENT, SUPERVISOR, TITLE, DESCRIPTION, REQUEST_DATE, APPROVAL_DATE, STATUS) VALUES (?,?,?,?,?,?,?)';
@@ -1199,10 +1309,10 @@ exports.rejectRequestSecretary = (requestID) =>{
 }
 
 
-exports.approveRequestTeacher = (requestID) =>{
+exports.approveRequestTeacher = (requestID,date) =>{
   return new Promise((resolve, reject) => {
-    const sql = "UPDATE THESIS_REQUEST SET STATUS = 3 WHERE STATUS = 1 AND ID_REQUEST == ?";
-    db.run(sql, [requestID], function (err) {
+    const sql = "UPDATE THESIS_REQUEST SET STATUS = 3 AND APPROVAL_DATE=? WHERE STATUS = 1 AND ID_REQUEST == ?";
+    db.run(sql, [date,requestID], function (err) {
       if (err) {
         reject(err);
         return;
@@ -1224,3 +1334,30 @@ exports.rejectRequestTeacher = (requestID) =>{
     });
   });
 }
+
+exports.changeRequestTeacher = (reqID, title, description) => {
+  return new Promise((resolve, reject) => {
+    const sql = "UPDATE THESIS_REQUEST SET STATUS = 0 AND TITLE = ? AND DESCRIPTION = ? WHERE STATUS = 1 AND ID_REQUEST = ?";
+    db.run(sql, [title,description,reqID], function (err) {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve(1);
+    });
+  });
+}
+
+exports.deleteRequestCoSupervisor = (reqID) => {
+  return new Promise((resolve, reject) => {
+    const sql = "DELETE FROM REQUEST_COSUPERVISOR WHERE REQUEST=?";
+    db.run(sql, [reqID], function (err) {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve(1);
+    });
+  });
+}
+
