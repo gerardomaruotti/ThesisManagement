@@ -17,7 +17,6 @@ function StudentRequests({ accessToken, handleError }) {
 		if (!accessToken) return;
 		API.getStudentThesisRequest(accessToken)
 			.then((req) => {
-				console.log(req);
 				setRequests(req);
 			})
 			.catch((err) => {
@@ -30,10 +29,14 @@ function StudentRequests({ accessToken, handleError }) {
 		<Loading />
 	) : (
 		<Container>
-			<Row style={{ marginBottom: 25 }}>
-				{requests.map((request) => {
-					return <StudentRequestCard key={request.id} request={request} />;
-				})}
+			<Row>
+				{requests.length > 0 ? (
+					requests.map((request) => {
+						return <StudentRequestCard key={request.id} request={request} />;
+					})
+				) : (
+					<h1 style={{ textAlign: 'center', marginTop: 50 }}>No thesis request made</h1>
+				)}
 			</Row>
 			<Button
 				variant='primary'
