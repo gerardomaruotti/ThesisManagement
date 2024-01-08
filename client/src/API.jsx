@@ -129,6 +129,10 @@ function getStudentApplicationInfo(accessToken, idApplication) {
 	return callAPI('/applications/details', accessToken, 'POST', JSON.stringify({ idApplication: idApplication }));
 }
 
+function getStudentThesisRequest(accessToken) {
+	return callAPI('/requests', accessToken, 'GET', null);
+}
+
 const API = {
 	getAllKeywords,
 	getAllTypes,
@@ -150,5 +154,6 @@ const API = {
 	resetVirtualClock,
 	setVirtualClock,
 	getStudentApplicationInfo,
+	getStudentThesisRequest,
 };
 export default API;
