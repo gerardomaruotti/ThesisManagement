@@ -316,7 +316,7 @@ function App() {
 						/>
 					}
 				/>
-				<Route path='/requests' element={<StudentRequests />} />
+				<Route path='/requests' element={<StudentRequests accessToken={accessToken} />} />
 				<Route path='/requests/add' element={<NotFound />} />
 				<Route
 					path='/settings'
