@@ -787,7 +787,33 @@ app.post('/api/applications/details', checkJwt, [
 		})();
 });
 
+app.get('/api/requests', checkJwt, (req,res) => {
 
+(async() =>{
+
+	const userRole=await db.getRole(auth);
+	if(userRole.role=="teacher") {
+		let teacherRequests=await db.getTeacherRequests(userRole.id);
+		return res.status(200).json(teacherRequests);
+	} else{
+		if(userRole.role=="secretary") {
+			let secretaryRequests=await db.getSecretaryRequests();
+			return res.status(200).json(secretaryRequests);
+		} else{
+			if(userRole.role=="student"){
+				let studentRequests= await db.getStudentRequests(userRole.id);
+				return res.status(200).json(studentRequests);
+			} else{
+				return res.status(401).json("Unauthorized")
+			}
+		}
+	}
+
+})();
+
+
+
+})
 
 app.post(
 	'/api/insert/request',
@@ -819,7 +845,8 @@ app.post(
 				const request_date = currentDate.format("YYYY-MM-DD");
 				let approval_date = "";
 				let status = 0;
-					
+				const pendingRequests = await db.checkPendingStudentRequests(student);
+				if(pendingRequests) return res.status(400).json("Student has already pending requests")
 				const requestId = await db.insertRequest(supervisor, title, description, student, request_date, approval_date, status);
 				for (let i = 0; i < co_supervisors.length; i++) {	
 					await db.insertCoSupervisorRequest(requestId, co_supervisors[i].name, co_supervisors[i].surname, co_supervisors[i].email);
@@ -915,7 +942,8 @@ app.post(
 				if (!requestExists) return res.status(500).json({ error: 'Request does not exists' });
 				if (userRole.role != "teacher") return res.status(401).json({ error: 'Unauthorized user' });
 					//approve the request, modify the state from 1 to 3
-				await db.approveRequestTeacher(reqID);
+				let approval_date=currentDate.format("YYYY-MM-DD");
+				await db.approveRequestTeacher(reqID,approval_date);
 				return res.status(200).json("Request accepted by professor");
 			} catch (err) {
 				return res.status(503).json({ error: 'Error in the process to approve request by professor' });
@@ -953,6 +981,48 @@ app.post(
 		})();
 });
 
+app.post( 
+	'/api/change/request/professor',
+	[
+		check('requestID').isInt(),
+		check('title').isString().trim().isLength({ min: 1 }),
+		check('description').isString(),
+		check('co_supervisors').isArray(),
+	], 
+	(req, res) => {
+		(async () => {
+			const errors = validationResult(req);
+			if (!errors.isEmpty()) {
+				return res.status(422).json({ errors: errors.array() });
+			}
+			const reqID =  req.body.requestID;
+			const title=req.body.title;
+			const description=req.body.description;
+			const co_supervisors=req.body.co_supervisors;
+
+			try {
+				const userRole = await db.getRole(req.auth);
+				const requestExists = await db.checkRequestExistance(reqID);
+
+				if (!requestExists) return res.status(500).json({ error: 'Request does not exists' });
+				if (userRole.role != "teacher") return res.status(401).json({ error: 'Unauthorized user' });
+				await processRequestSupervisor(reqID,co_supervisors);
+				await db.changeRequestTeacher(reqID, title, description);
+				return res.status(200).json("Request change completed by professor");
+			} catch (err) {
+				return res.status(503).json({ error: 'Error in the process to reject request by professor' });
+			}
+		})();
+});
+
+async function processRequestSupervisor (requestID, co_supervisors){
+
+	await db.deleteRequestCoSupervisor(requestID);
+	for(let i=0;i<co_supervisors.length;i++){
+		await db.insertCoSupervisorRequest(reqID,co_supervisors[i].name,co_supervisors[i].surname,co_supervisors[i].email)
+	}
+
+}
 
 
 module.exports = { app, port, transporter };
