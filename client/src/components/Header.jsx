@@ -16,21 +16,29 @@ function Header({ date, userData, isStudent, isProfessor }) {
 	function navElement() {
 		return (
 			<Nav activeKey={location.pathname}>
-				<Nav.Link eventKey='/' onClick={() => navigate('/')}>
-					Proposals
-				</Nav.Link>
-				<Nav.Link eventKey='/applications' onClick={() => navigate('/applications')}>
-					Applications
-				</Nav.Link>
-				<Nav.Link eventKey='/requests' onClick={() => navigate('/requests')}>
-					Thesis Requests
-				</Nav.Link>
-				<Nav.Link className='d-md-none' eventKey='/notifications'>
-					Notifications
-				</Nav.Link>
-				<Nav.Link className='d-md-none' eventKey='/settings' onClick={() => navigate('/settings')}>
-					Settings
-				</Nav.Link>
+				{!userData ? null :
+					userData.role === 'secretary' ? (
+						<Nav.Link eventKey='/' onClick={() => navigate('/')}>
+							Student Thesis Request
+						</Nav.Link>
+					) : (
+						<>
+							<Nav.Link eventKey='/' onClick={() => navigate('/')}>
+								Proposals
+							</Nav.Link>
+							<Nav.Link eventKey='/applications' onClick={() => navigate('/applications')}>
+								Applications
+							</Nav.Link>
+              <Nav.Link eventKey='/requests' onClick={() => navigate('/requests')}>
+                Thesis Requests
+              </Nav.Link>
+							<Nav.Link className='d-md-none' eventKey='/notifications'>
+								Notifications
+							</Nav.Link>
+							<Nav.Link className='d-md-none' eventKey='/settings' onClick={() => navigate('/settings')}>
+								Settings
+							</Nav.Link>
+						</>)}
 				{isAuthenticated ? (
 					<Nav.Link className='d-md-none' eventKey='/logout' onClick={logout}>
 						Logout

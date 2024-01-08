@@ -20,6 +20,7 @@ import EditProposal from './views/EditProposal.jsx';
 import Settings from './views/Settings.jsx';
 import StudentApplicationInfo from './views/StudentApplicationInfo.jsx';
 import StudentRequests from './views/StudentRequests.jsx';
+import SecretaryHome from './views/SecretaryHome.jsx';
 
 function App() {
 	const { user, isAuthenticated, getAccessTokenSilently, isLoading, loginWithRedirect } = useAuth0();
@@ -33,6 +34,7 @@ function App() {
 	const [applications, setApplications] = useState([]);
 	const [applicationsThesis, setApplicationsThesis] = useState([]);
 	const [copiedProposal, setCopiedProposal] = useState(null);
+	const [isSecretary, setIsSecretary] = useState(false);
 
 	const { setLoading } = useLoading();
 
@@ -93,9 +95,14 @@ function App() {
 						if (user.role === 'student') {
 							setIsProfessor(false);
 							setIsStudent(true);
+							setIsSecretary(false);
 						} else if (user.role === 'teacher') {
 							setIsProfessor(true);
 							setIsStudent(false);
+							setIsSecretary(false);
+						}
+						else if (user.role === 'secretary') {
+							setIsSecretary(true);
 						}
 						handleSuccess('Logged in successfully!');
 					})
@@ -111,7 +118,7 @@ function App() {
 	}, [isAuthenticated, getAccessTokenSilently, user?.sub, setLoading]);
 
 	useEffect(() => {
-		if (isAuthenticated) {
+		if (!isSecretary && isAuthenticated && (isStudent || isProfessor)) {
 			setLoading(true);
 			API.getAllThesis(accessToken)
 				.then((thesis) => {
@@ -121,7 +128,7 @@ function App() {
 				.catch((err) => handleError(err))
 				.finally(() => setLoading(false));
 		}
-	}, [dirty, accessToken]);
+	}, [dirty, accessToken, isSecretary, isStudent, isProfessor]);
 
 	useEffect(() => {
 		if (isAuthenticated && isStudent) {
@@ -229,6 +236,12 @@ function App() {
 								setDirty={setDirty}
 								hasApplied={hasApplied}
 								date={dateVirtualClock}
+							/>
+						) : isSecretary ? (
+							<SecretaryHome
+								handleError={handleError}
+								handleSuccess={handleSuccess}
+								accessToken={accessToken}
 							/>
 						) : null
 					}

@@ -796,7 +796,7 @@ app.get('/api/requests', checkJwt, (req,res) => {
 
 (async() =>{
 
-	const userRole=await db.getRole(auth);
+	const userRole=await db.getRole(req.auth);
 	if(userRole.role=="teacher") {
 		let teacherRequests=await db.getTeacherRequests(userRole.id);
 		return res.status(200).json(teacherRequests);
