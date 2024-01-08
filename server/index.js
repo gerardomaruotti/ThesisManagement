@@ -133,7 +133,7 @@ app.post('/api/thesis', checkJwt,(req, res) => {
 			const getRole = await db.getRole(req.auth);
 			const date = await db.getVirtualDate();
 			if (getRole.role == 'teacher') {
-				const thesis = await processTeacherThesis(getRole.id, date, getRole);
+				const thesis = await processTeacherThesis(getRole.id, date, req.body.filters, getRole);
 				res.status(200).json(thesis);
 			} else if (getRole.role == 'student') {
 				const thesis = await processStudentThesis(getRole.id, (date == 0) ? currentDate.format('YYYY-MM-DD') : date, req.body.filters, getRole);
@@ -147,9 +147,15 @@ app.post('/api/thesis', checkJwt,(req, res) => {
 	})();
 });
 
-async function processTeacherThesis(teacherId, date, getRole) {
+
+async function processTeacherThesis(teacherId, date, filters, getRole) {
 	let thesis = await db.getThesisTeacher(teacherId, date);
-	return processThesisDetails(thesis, getRole);
+	thesis = await processThesisDetails(thesis, getRole);
+	if (!filters) {
+		return thesis;
+	}
+
+	return await filterThesis(thesis, filters);
 }
 
 async function processStudentThesis(studentId, date, filters, getRole) {
