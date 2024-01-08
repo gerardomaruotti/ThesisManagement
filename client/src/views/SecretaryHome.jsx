@@ -20,7 +20,6 @@ const SecretaryHome = ({ handleError,
             setLoading(true);
             API.getStudentThesisRequest(accessToken)
                 .then((requests) => {
-                    console.log(requests);
                     setRequests(requests);
                     setFilteredRequests(requests);
                     setLoading(false);
