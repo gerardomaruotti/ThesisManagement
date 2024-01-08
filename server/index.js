@@ -888,6 +888,26 @@ app.post(
 				if (userRole.role != "secretary") return res.status(401).json({ error: 'Unauthorized user' });
 					//approve the request, modify the state from 0 to 1
 				await db.approveRequestSecretary(reqID);
+
+				let teacher = await db.getRequestTeacher(reqID);
+				let student = await db.getRequestStudent(reqID);
+				let mailTeacher = await db.getMailTeacher(teacher);
+
+				const mailOptions = {
+					from: `${userRole.email}`,
+					to: `${mailTeacher}`,  
+					text: `You received a Thesis Request from student ${student}`,
+					subject: 'Thesis Request',
+				};
+
+				// Send the email using Nodemailer
+				transporter.sendMail(mailOptions, (error, info) => {
+					if (error) {
+						return console.error(error);
+					}
+					console.log('Message sent: %s', info.message);
+				});
+				
 				return res.status(200).json("Request approved by secretary");
 
 			} catch (err) {

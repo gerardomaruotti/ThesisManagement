@@ -863,6 +863,41 @@ exports.checkRequestExistance = (reqID) => {
 
 };
 
+exports.getRequestTeacher = (reqID) => {
+
+  return new Promise((resolve,reject) => {
+    const sql= 'SELECT SUPERVISOR FROM THESIS_REQUEST WHERE ID_REQUEST=?';
+
+    db.get(sql,[reqID], (err, row) => {
+      if(err){
+        reject(err);
+        return;
+      } 
+      resolve(row.SUPERVISOR);
+        
+    })
+  })
+
+
+};
+
+exports.getRequestStudent = (reqID) => {
+
+  return new Promise((resolve,reject) => {
+    const sql= 'SELECT STUDENT FROM THESIS_REQUEST WHERE ID_REQUEST=?';
+
+    db.get(sql,[reqID], (err, row) => {
+      if(err){
+        reject(err);
+        return;
+      }
+      resolve(row.STUDENT);
+    })
+  })
+
+
+};
+
 exports.getVirtualDate= ()=> {
   return new Promise((resolve, reject) => {
     const sql = 'SELECT data FROM VIRTUAL_CLOCK';
