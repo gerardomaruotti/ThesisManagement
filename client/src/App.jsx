@@ -19,6 +19,7 @@ import GenericModal from './components/GenericModal.jsx';
 import EditProposal from './views/EditProposal.jsx';
 import Settings from './views/Settings.jsx';
 import StudentApplicationInfo from './views/StudentApplicationInfo.jsx';
+import StudentRequests from './views/StudentRequests.jsx';
 
 function App() {
 	const { user, isAuthenticated, getAccessTokenSilently, isLoading, loginWithRedirect } = useAuth0();
@@ -181,7 +182,7 @@ function App() {
 
 	return (
 		<BrowserRouter>
-			<Header userData={userData} date={dateVirtualClock} />
+			<Header userData={userData} date={dateVirtualClock} isStudent={isStudent} isProfessor={isProfessor} />
 			<Toaster />
 			<GenericModal showModal={showModal} setShowModal={setShowModal} msgModal={msgModal} />
 			<Routes>
@@ -315,6 +316,8 @@ function App() {
 						/>
 					}
 				/>
+				<Route path='/requests' element={<StudentRequests />} />
+				<Route path='/requests/add' element={<NotFound />} />
 				<Route
 					path='/settings'
 					element={
