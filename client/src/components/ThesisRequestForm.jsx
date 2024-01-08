@@ -32,7 +32,7 @@ function ThesisRequestForm({ accessToken, handleError, request }) {
 					</Form.Group>
 				</Col>
 			</Row>
-			<Container style={{ textAlign: 'center', marginTop: 10 }}>
+			<Container style={{ textAlign: 'center', marginTop: 20 }}>
 				<Button variant='outline-secondary' className='form-button' type='cancel' onClick={() => navigate('/requests')}>
 					Cancel
 				</Button>
