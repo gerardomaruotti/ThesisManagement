@@ -1010,9 +1010,7 @@ app.post(
 	'/api/change/request/professor',
 	[
 		check('requestID').isInt(),
-		check('title').isString().trim().isLength({ min: 1 }),
-		check('description').isString(),
-		check('co_supervisors').isArray(),
+		check('notes').isString()
 	], 
 	(req, res) => {
 		(async () => {
@@ -1021,21 +1019,16 @@ app.post(
 				return res.status(422).json({ errors: errors.array() });
 			}
 			const reqID =  req.body.requestID;
-			const title=req.body.title;
-			const description=req.body.description;
-			const co_supervisors=req.body.co_supervisors;
-
 			try {
 				const userRole = await db.getRole(req.auth);
 				const requestExists = await db.checkRequestExistance(reqID);
 
 				if (!requestExists) return res.status(500).json({ error: 'Request does not exists' });
 				if (userRole.role != "teacher") return res.status(401).json({ error: 'Unauthorized user' });
-				await processRequestSupervisor(reqID,co_supervisors);
-				await db.changeRequestTeacher(reqID, title, description);
+				await db.changeRequestTeacher(reqID, notes);
 				return res.status(200).json("Request change completed by professor");
 			} catch (err) {
-				return res.status(503).json({ error: 'Error in the process to reject request by professor' });
+				return res.status(503).json({ error: 'Error in the process to request change by professor' });
 			}
 		})();
 });
