@@ -133,6 +133,14 @@ function getStudentThesisRequest(accessToken) {
 	return callAPI('/requests', accessToken, 'GET', null);
 }
 
+function approveRequestRecretary(accessToken, idRequest) {
+	return callAPI('/approve/request/secretary', accessToken, 'POST', JSON.stringify({ requestID: idRequest }));
+}
+
+function rejectRequestRecretary(accessToken, idRequest) {
+	return callAPI('/reject/request/secretary', accessToken, 'POST', JSON.stringify({ requestID: idRequest }));
+}
+
 const API = {
 	getAllKeywords,
 	getAllTypes,
@@ -155,5 +163,7 @@ const API = {
 	setVirtualClock,
 	getStudentApplicationInfo,
 	getStudentThesisRequest,
+	approveRequestRecretary,
+	rejectRequestRecretary
 };
 export default API;

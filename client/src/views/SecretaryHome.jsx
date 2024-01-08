@@ -14,7 +14,7 @@ const SecretaryHome = ({ handleError,
     const [rapidFilter, setRapidFilter] = useState('secretary-review');
     const [filteredRequests, setFilteredRequests] = useState([]);
     const [requests, setRequests] = useState([]); // 0 pending, 1 accepted by secretary, 2 rejected by secretary, 3 accepted by professor, 4 rejected by professor, 5 request change
-
+    const [internalDirty, setInternalDirty] = useState(false);
     useEffect(() => {
         if (accessToken != null) {
             setLoading(true);
@@ -23,13 +23,15 @@ const SecretaryHome = ({ handleError,
                     setRequests(requests);
                     setFilteredRequests(requests);
                     setLoading(false);
+                    setInternalDirty(false);
                 })
                 .catch((err) => {
                     handleError(err.message);
                     setLoading(false);
+                    setInternalDirty(false);
                 });
         }
-    }, [accessToken])
+    }, [accessToken, internalDirty])
 
     useEffect(() => {
         if (requests.length != 0) {
@@ -83,7 +85,13 @@ const SecretaryHome = ({ handleError,
                 <Row style={{ marginBottom: 25 }}>
                     {filteredRequests.length != 0 ? (
                         filteredRequests.map((request) => (
-                            <SecretaryCard key={request.id} request={request} />
+                            <SecretaryCard
+                                key={request.id} a
+                                accessToken={accessToken}
+                                request={request}
+                                setInternalDirty={setInternalDirty}
+                                handleError={handleError}
+                                handleSuccess={handleSuccess} />
                         ))) : (
                         <Col style={{ marginTop: 25 }}>
                             <p>No request to display</p>

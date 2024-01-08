@@ -21,6 +21,7 @@ import Settings from './views/Settings.jsx';
 import StudentApplicationInfo from './views/StudentApplicationInfo.jsx';
 import StudentRequests from './views/StudentRequests.jsx';
 import SecretaryHome from './views/SecretaryHome.jsx';
+import RequestThesisDetails from './views/RequestThesisDetails.jsx';
 
 function App() {
 	const { user, isAuthenticated, getAccessTokenSilently, isLoading, loginWithRedirect } = useAuth0();
@@ -326,6 +327,7 @@ function App() {
 				/>
 				<Route path='/requests' element={<StudentRequests accessToken={accessToken} handleError={handleError} />} />
 				<Route path='/requests/add' element={<NotFound />} />
+				<Route path='requests/:id' element={<RequestThesisDetails accessToken={accessToken} handleError={handleError} handleSuccess={handleSuccess} />} />
 				<Route
 					path='/settings'
 					element={

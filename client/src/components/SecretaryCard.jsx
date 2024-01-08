@@ -2,9 +2,12 @@ import React, { useState } from 'react'
 import { Card, Col, Button, Image } from 'react-bootstrap'
 import PropTypes from 'prop-types';
 import Avatar from '../assets/avatar.svg';
+import API from '../API';
+import { useNavigate } from 'react-router-dom';
 
 
-const SecretaryCard = ({ request }) => {
+const SecretaryCard = ({ request, setInternalDirty, accessToken, handleError, handleSuccess }) => {
+    const navigate = useNavigate();
     const styleStatus =
         request.status == 0 ? {
             backgroundColor: 'rgba(164, 161, 141, 0.2)',
@@ -28,13 +31,35 @@ const SecretaryCard = ({ request }) => {
             text: 'Rejected',
         } : null;
 
+    function acceptRequest() {
+        API.approveRequestRecretary(accessToken, request.id)
+            .then(() => {
+                handleSuccess('Request accepted');
+                setInternalDirty(true);
+            })
+            .catch((err) => {
+                handleError(err);
+            });
+    }
+
+    function rejectRequest() {
+        API.rejectRequestRecretary(accessToken, request.id)
+            .then(() => {
+                handleSuccess('Request rejected');
+                setInternalDirty(true);
+            })
+            .catch((err) => {
+                handleError(err);
+            });
+    }
+
     return (
         <Col lg={6} sm={12} style={{ marginTop: 25 }}>
             <Card style={{ padding: 20 }} className='custom-card'>
                 <Button
                     className='title'
                     variant='link'
-                    //onClick={() => navigate('/proposal/' + thesis.ID, { state: { fromHome: true } })}
+                    onClick={() => navigate('/requests/' + request.id)}
                     style={{
                         fontWeight: 'medium',
                         fontSize: 18,
@@ -99,11 +124,19 @@ const SecretaryCard = ({ request }) => {
                     </div>
                     {!request.status == 0 ? null : (
                         <div>
-                            <Button variant="link" className='buttonHover' style={{ textDecoration: 'none', color: 'green', marginRight: 8 }}>
+                            <Button
+                                variant="link"
+                                className='buttonHover'
+                                style={{ textDecoration: 'none', color: 'green', marginRight: 8 }}
+                                onClick={acceptRequest}>
                                 <i className="bi bi-check-circle" style={{ fontSize: '16px', paddingRight: 8, color: 'green' }}></i>
                                 Accept
                             </Button>
-                            <Button variant="link" className='buttonHover2' style={{ textDecoration: 'none', color: 'rgba(234, 84, 85)' }}>
+                            <Button
+                                variant="link"
+                                className='buttonHover2'
+                                style={{ textDecoration: 'none', color: 'rgba(234, 84, 85)' }}
+                                onClick={rejectRequest}>
                                 <i className="bi bi-x-circle" style={{ fontSize: '16px', paddingRight: 8, color: 'rgba(234, 84, 85)' }}></i>
                                 Reject
                             </Button>
@@ -117,6 +150,10 @@ const SecretaryCard = ({ request }) => {
 
 SecretaryCard.propTypes = {
     request: PropTypes.object.isRequired,
+    setInternalDirty: PropTypes.func.isRequired,
+    accessToken: PropTypes.string.isRequired,
+    handleError: PropTypes.func.isRequired,
+    handleSuccess: PropTypes.func.isRequired,
 };
 
-export default SecretaryCard
+export default SecretaryCard;
