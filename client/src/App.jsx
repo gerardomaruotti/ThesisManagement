@@ -100,8 +100,7 @@ function App() {
 							setIsProfessor(true);
 							setIsStudent(false);
 							setIsSecretary(false);
-						}
-						else if (user.role === 'secretary') {
+						} else if (user.role === 'secretary') {
 							setIsSecretary(true);
 						}
 						handleSuccess('Logged in successfully!');
@@ -238,11 +237,7 @@ function App() {
 								date={dateVirtualClock}
 							/>
 						) : isSecretary ? (
-							<SecretaryHome
-								handleError={handleError}
-								handleSuccess={handleSuccess}
-								accessToken={accessToken}
-							/>
+							<SecretaryHome handleError={handleError} handleSuccess={handleSuccess} accessToken={accessToken} />
 						) : null
 					}
 				/>
@@ -329,7 +324,7 @@ function App() {
 						/>
 					}
 				/>
-				<Route path='/requests' element={<StudentRequests accessToken={accessToken} />} />
+				<Route path='/requests' element={<StudentRequests accessToken={accessToken} handleError={handleError} />} />
 				<Route path='/requests/add' element={<NotFound />} />
 				<Route
 					path='/settings'

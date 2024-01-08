@@ -7,19 +7,21 @@ import Loading from '../components/Loading.jsx';
 import PropsTypes from 'prop-types';
 import API from '../API.jsx';
 
-function StudentRequests({ accessToken }) {
+function StudentRequests({ accessToken, handleError }) {
 	const navigate = useNavigate();
 	const { loading, setLoading } = useLoading();
 	const [requests, setRequests] = useState([]);
 
 	useEffect(() => {
 		setLoading(true);
-		API.getStudentThesisRequests(accessToken)
+		if (!accessToken) return;
+		API.getStudentThesisRequest(accessToken)
 			.then((req) => {
+				console.log(req);
 				setRequests(req);
 			})
 			.catch((err) => {
-				console.log(err);
+				handleError(err);
 			})
 			.finally(() => setLoading(false));
 	}, [accessToken]);
@@ -49,6 +51,7 @@ function StudentRequests({ accessToken }) {
 
 StudentRequests.propTypes = {
 	accessToken: PropsTypes.string,
+	handleError: PropsTypes.func,
 };
 
 export default StudentRequests;

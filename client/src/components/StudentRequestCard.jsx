@@ -55,7 +55,7 @@ function StudentRequestCard({ request }) {
 							>
 								<i className='bi bi-calendar3' style={{ fontSize: '16px' }}></i>
 							</span>
-							{request.state === 3 ? (
+							{request.status === 3 ? (
 								<span style={{ marginLeft: 8, color: 'rgba(0, 0, 0, 0.5)' }}>{dayjs(request.request_date).format('DD/MM/YYYY')}</span>
 							) : (
 								<span style={{ marginLeft: 8, color: 'rgba(0, 0, 0, 0.5)' }}>{dayjs(request.request_date).format('DD/MM/YYYY')}</span>
@@ -63,7 +63,7 @@ function StudentRequestCard({ request }) {
 						</div>
 					</Col>
 					<Col md={6} style={{ display: 'flex', justifyContent: 'end' }}>
-						{request.state === 0 ? (
+						{request.status === 0 ? (
 							<div style={{ display: 'flex', alignItems: 'center', float: 'left', marginTop: 20 }}>
 								<Col style={{ display: 'flex', alignItems: 'center', float: 'left' }}>
 									<span
@@ -83,7 +83,7 @@ function StudentRequestCard({ request }) {
 								</Col>
 							</div>
 						) : null}
-						{request.state === 1 ? (
+						{request.status === 1 ? (
 							<div style={{ display: 'flex', alignItems: 'center', float: 'left', marginTop: 20 }}>
 								<Col style={{ display: 'flex', alignItems: 'center', float: 'left' }}>
 									<span
@@ -103,7 +103,7 @@ function StudentRequestCard({ request }) {
 								</Col>
 							</div>
 						) : null}
-						{request.state === 2 ? (
+						{request.status === 2 ? (
 							<div style={{ display: 'flex', alignItems: 'center', float: 'left', marginTop: 20 }}>
 								<Col style={{ display: 'flex', alignItems: 'center', float: 'left' }}>
 									<span
@@ -123,7 +123,7 @@ function StudentRequestCard({ request }) {
 								</Col>
 							</div>
 						) : null}
-						{request.state === 3 ? (
+						{request.status === 3 ? (
 							<div style={{ display: 'flex', alignItems: 'center', float: 'left', marginTop: 20 }}>
 								<Col style={{ display: 'flex', alignItems: 'center', float: 'left' }}>
 									<span
@@ -143,7 +143,7 @@ function StudentRequestCard({ request }) {
 								</Col>
 							</div>
 						) : null}
-						{request.state === 4 ? (
+						{request.status === 4 ? (
 							<div style={{ display: 'flex', alignItems: 'center', float: 'left', marginTop: 20 }}>
 								<Col style={{ display: 'flex', alignItems: 'center', float: 'left' }}>
 									<span
@@ -163,7 +163,7 @@ function StudentRequestCard({ request }) {
 								</Col>
 							</div>
 						) : null}
-						{request.state === 5 ? (
+						{request.status === 5 ? (
 							<div style={{ display: 'flex', alignItems: 'center', float: 'left', marginTop: 20 }}>
 								<Col style={{ display: 'flex', alignItems: 'center', float: 'left' }}>
 									<span
