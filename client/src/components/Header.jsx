@@ -8,7 +8,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import dayjs from 'dayjs';
 import PropsTypes from 'prop-types';
 
-function Header({ date, userData }) {
+function Header({ date, userData, isStudent, isProfessor }) {
 	const { isAuthenticated, loginWithRedirect, logout } = useAuth0();
 	const navigate = useNavigate();
 	let location = useLocation();
@@ -29,6 +29,9 @@ function Header({ date, userData }) {
 							<Nav.Link eventKey='/applications' onClick={() => navigate('/applications')}>
 								Applications
 							</Nav.Link>
+              <Nav.Link eventKey='/requests' onClick={() => navigate('/requests')}>
+                Thesis Requests
+              </Nav.Link>
 							<Nav.Link className='d-md-none' eventKey='/notifications'>
 								Notifications
 							</Nav.Link>
@@ -80,7 +83,6 @@ function Header({ date, userData }) {
 									</div>
 								</Container>
 							</Dropdown.Toggle>
-
 							<Dropdown.Menu>
 								<Dropdown.Item onClick={() => navigate('/settings')}>
 									<i className='bi bi-gear'></i>
