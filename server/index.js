@@ -121,6 +121,8 @@ app.get('/api/cds', checkJwt, (req, res) => {
 			res.status(503).json({ error: 'getCds error' });
 		});
 });
+
+
 //METODI API
 //fare metodo gestione autenticazione --> che ritorna ID matricla e chekka auth0
 
@@ -799,14 +801,17 @@ app.get('/api/requests', checkJwt, (req,res) => {
 	const userRole=await db.getRole(req.auth);
 	if(userRole.role=="teacher") {
 		let teacherRequests=await db.getTeacherRequests(userRole.id);
+		teacherRequests=await processIDS(teacherRequests);
 		return res.status(200).json(teacherRequests);
 	} else{
 		if(userRole.role=="secretary") {
 			let secretaryRequests=await db.getSecretaryRequests();
+			secretaryRequests=await processIDS(secretaryRequests);
 			return res.status(200).json(secretaryRequests);
 		} else{
 			if(userRole.role=="student"){
 				let studentRequests= await db.getStudentRequests(userRole.id);
+				studentRequests=await processIDS(studentRequests);
 				return res.status(200).json(studentRequests);
 			} else{
 				return res.status(401).json("Unauthorized")
@@ -819,6 +824,20 @@ app.get('/api/requests', checkJwt, (req,res) => {
 
 
 })
+
+
+async function processIDS(requests){
+	for(let i=0;i<requests.length;i++){
+		let infoS = await db.getStudentInfo(requests[i].student);
+		let infoT = await db.getTeacher(requests[i].supervisor)
+		requests[i].nameS=infoS.name;
+		requests[i].surnameS=infoS.surname;
+		requests[i].nameT=infoT.name;
+		requests[i].surnameT=infoT.surname;
+	}
+
+	return requests;
+}
 
 app.post(
 	'/api/insert/request',

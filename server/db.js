@@ -1256,6 +1256,7 @@ exports.getStudentRequests = (studentID) => {
       let requests = rows.map((elem)=> ({
         id: elem.ID_REQUEST,
         student: elem.STUDENT,
+        supervisor: elem.SUPERVISOR,
         title: elem.TITLE,
         description: elem.DESCRIPTION,
         request_date: elem.REQUEST_DATE,
