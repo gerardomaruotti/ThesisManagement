@@ -1,27 +1,33 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Row, Col, Card, Image } from 'react-bootstrap';
+import { Row, Col, Card, Image, Button } from 'react-bootstrap';
 import { Color } from '../constants/colors.js';
+import { useNavigate } from 'react-router-dom';
 import Avatar from '../assets/avatar.svg';
 import PropTypes from 'prop-types';
 import dayjs from 'dayjs';
 
 function StudentRequestCard({ request }) {
+	const navigate = useNavigate();
 	return (
 		<Col lg={6} sm={12} style={{ marginTop: 25 }}>
 			<Card style={{ padding: 20 }} className='custom-card'>
-				<div
+				<Button
+					className='title'
+					variant='link'
+					onClick={() => navigate('/requests/' + request.id)}
 					style={{
 						fontWeight: 'medium',
 						fontSize: 18,
-						height: 55,
+						height: 60,
 						display: '-webkit-box',
 						WebkitBoxOrient: 'vertical',
 						WebkitLineClamp: '2',
 						overflow: 'hidden',
+						cursor: 'pointer',
 					}}
 				>
 					{request.title}
-				</div>
+				</Button>
 				<Col>
 					<div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15, height: 30 }}>
 						<Col style={{ display: 'flex', alignItems: 'center' }}>
@@ -68,7 +74,7 @@ function StudentRequestCard({ request }) {
 							)}
 						</div>
 					</Col>
-					<Col md={6} style={{ display: 'flex', justifyContent: 'end' }}>
+					<Col style={{ display: 'flex', justifyContent: 'end' }}>
 						{request.status === 0 ? (
 							<div style={{ display: 'flex', alignItems: 'center', float: 'left', marginTop: 20 }}>
 								<Col style={{ display: 'flex', alignItems: 'center', float: 'left' }}>
