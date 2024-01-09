@@ -1397,8 +1397,8 @@ exports.rejectRequestTeacher = (requestID) =>{
 
 exports.changeRequestTeacher = (reqID, notes) => {
   return new Promise((resolve, reject) => {
-    const sql = "UPDATE THESIS_REQUEST SET STATUS = 5 AND NOTES = ? WHERE STATUS = 1 AND ID_REQUEST = ?";
-    db.run(sql, [title,notes], function (err) {
+    const sql = "UPDATE THESIS_REQUEST SET STATUS = 5, NOTES = ? WHERE STATUS = 1 AND ID_REQUEST = ?";
+    db.run(sql, [notes,reqID], function (err) {
       if (err) {
         reject(err);
         return;
