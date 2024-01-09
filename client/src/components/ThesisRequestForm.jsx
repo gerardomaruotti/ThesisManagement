@@ -23,7 +23,8 @@ function ThesisRequestForm({ accessToken, handleError }) {
 					setProfessors(
 						cosupervisors.map((cosupervisor) => {
 							return {
-								value: cosupervisor.email,
+								id: cosupervisor.ID,
+								value: cosupervisor.ID,
 								label: cosupervisor.name + ' ' + cosupervisor.surname,
 								email: cosupervisor.email,
 								name: cosupervisor.name,
@@ -74,7 +75,7 @@ function ThesisRequestForm({ accessToken, handleError }) {
 		const newRequest = {
 			title: title,
 			description: description,
-			supervisor: supervisor.email.split('@')[0],
+			supervisor: supervisor.id,
 			co_supervisors: formattedCoSupervisors,
 		};
 
