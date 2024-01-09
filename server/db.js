@@ -1371,7 +1371,7 @@ exports.rejectRequestSecretary = (requestID) =>{
 
 exports.approveRequestTeacher = (requestID,date) =>{
   return new Promise((resolve, reject) => {
-    const sql = "UPDATE THESIS_REQUEST SET STATUS = 3 AND APPROVAL_DATE=? WHERE STATUS = 1 AND ID_REQUEST == ?";
+    const sql = "UPDATE THESIS_REQUEST SET STATUS = 3, APPROVAL_DATE=? WHERE STATUS = 1 AND ID_REQUEST = ?";
     db.run(sql, [date,requestID], function (err) {
       if (err) {
         reject(err);
