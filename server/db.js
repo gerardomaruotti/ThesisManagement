@@ -1198,6 +1198,7 @@ exports.getTeacherRequests = (teacherID) => {
         description: elem.DESCRIPTION,
         request_date: elem.REQUEST_DATE,
         approval_date: elem.APPROVAL_DATE,
+        notes: elem.NOTES,
         status: elem.STATUS
       }))
 
@@ -1230,6 +1231,7 @@ exports.getSecretaryRequests = () => {
         description: elem.DESCRIPTION,
         request_date: elem.REQUEST_DATE,
         approval_date: elem.APPROVAL_DATE,
+        notes: elem.NOTES,
         status: elem.STATUS
       }))
 
@@ -1261,6 +1263,7 @@ exports.getStudentRequests = (studentID) => {
         description: elem.DESCRIPTION,
         request_date: elem.REQUEST_DATE,
         approval_date: elem.APPROVAL_DATE,
+        notes: elem.NOTES,
         status: elem.STATUS
       }))
 
