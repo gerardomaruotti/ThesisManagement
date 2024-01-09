@@ -55,10 +55,16 @@ function StudentRequestCard({ request }) {
 							>
 								<i className='bi bi-calendar3' style={{ fontSize: '16px' }}></i>
 							</span>
-							{request.status === 3 ? (
-								<span style={{ marginLeft: 8, color: 'rgba(0, 0, 0, 0.5)' }}>{dayjs(request.request_date).format('DD/MM/YYYY')}</span>
+							{request.status === 3 && request.approval_date ? (
+								<div className='d-flex flex-column'>
+									<span style={{ color: 'rgba(0, 0, 0, 0.8)', paddingLeft: 8, fontWeight: 400 }}>Approval Date</span>
+									<span style={{ marginLeft: 8, color: 'rgba(0, 0, 0, 0.5)' }}>{dayjs(request.approval_date).format('DD/MM/YYYY')}</span>
+								</div>
 							) : (
-								<span style={{ marginLeft: 8, color: 'rgba(0, 0, 0, 0.5)' }}>{dayjs(request.request_date).format('DD/MM/YYYY')}</span>
+								<div className='d-flex flex-column'>
+									<span style={{ color: 'rgba(0, 0, 0, 0.8)', paddingLeft: 8, fontWeight: 400 }}>Request Date</span>
+									<span style={{ marginLeft: 8, color: 'rgba(0, 0, 0, 0.5)' }}>{dayjs(request.request_date).format('DD/MM/YYYY')}</span>
+								</div>
 							)}
 						</div>
 					</Col>
