@@ -42,6 +42,7 @@ function StudentRequests({ accessToken, handleError }) {
 				variant='primary'
 				className='insert-proposal'
 				style={{ borderRadius: 50 }}
+				disabled={requests.some((request) => !(request.status === 2 || request.status === 4))}
 				onClick={() => {
 					navigate('/requests/add');
 				}}
