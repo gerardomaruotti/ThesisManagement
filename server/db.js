@@ -1300,7 +1300,7 @@ exports.getRequestCoSup = (reqID) => {
 
 exports.checkPendingStudentRequests = (studentID) =>{
   return new Promise((resolve, reject) => {
-    const sql = 'SELECT * FROM THESIS_REQUEST WHERE STUDENT=? AND STATUS IN (0,1,3)';
+    const sql = 'SELECT * FROM THESIS_REQUEST WHERE STUDENT=? AND STATUS IN (0,1,3,5)';
     db.get(sql, [], (err, row) => {
       if (err) {
         reject(err);
