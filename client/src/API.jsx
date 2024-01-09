@@ -137,6 +137,14 @@ function insertThesisRequest(accessToken, thesisRequest) {
 	return callAPI('/insert/request', accessToken, 'POST', JSON.stringify(thesisRequest));
 }
 
+function approveRequestRecretary(accessToken, idRequest) {
+	return callAPI('/approve/request/secretary', accessToken, 'POST', JSON.stringify({ requestID: idRequest }));
+}
+
+function rejectRequestRecretary(accessToken, idRequest) {
+	return callAPI('/reject/request/secretary', accessToken, 'POST', JSON.stringify({ requestID: idRequest }));
+}
+
 const API = {
 	getAllKeywords,
 	getAllTypes,
@@ -160,5 +168,7 @@ const API = {
 	getStudentApplicationInfo,
 	getStudentThesisRequest,
 	insertThesisRequest,
+	approveRequestRecretary,
+	rejectRequestRecretary
 };
 export default API;

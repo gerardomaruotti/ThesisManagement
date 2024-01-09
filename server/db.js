@@ -1256,6 +1256,7 @@ exports.getStudentRequests = (studentID) => {
       let requests = rows.map((elem)=> ({
         id: elem.ID_REQUEST,
         student: elem.STUDENT,
+        supervisor: elem.SUPERVISOR,
         title: elem.TITLE,
         description: elem.DESCRIPTION,
         request_date: elem.REQUEST_DATE,
@@ -1266,6 +1267,30 @@ exports.getStudentRequests = (studentID) => {
       resolve(requests);
 
     });
+  });
+
+
+
+}
+
+exports.getRequestCoSup = (reqID) => {
+  return new Promise((resolve, reject) => {
+    const sql = 'SELECT * FROM REQUEST_COSUPERVISOR WHERE REQUEST=?';
+    db.all(sql, [reqID], (err, rows) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      
+        let cosup=rows.map((elem) => ({
+          name: elem.NAME,
+          surname: elem.SURNAME,
+          email: elem.EMAIL
+        }))
+
+        resolve(cosup);
+      }
+    );
   });
 
 

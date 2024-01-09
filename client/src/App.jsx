@@ -22,6 +22,7 @@ import StudentApplicationInfo from './views/StudentApplicationInfo.jsx';
 import StudentRequests from './views/StudentRequests.jsx';
 import SecretaryHome from './views/SecretaryHome.jsx';
 import InsertThesisRequest from './views/InsertThesisRequest.jsx';
+import RequestThesisDetails from './views/RequestThesisDetails.jsx';
 
 function App() {
 	const { user, isAuthenticated, getAccessTokenSilently, isLoading, loginWithRedirect } = useAuth0();
@@ -238,7 +239,12 @@ function App() {
 								date={dateVirtualClock}
 							/>
 						) : isSecretary ? (
-							<SecretaryHome handleError={handleError} handleSuccess={handleSuccess} accessToken={accessToken} />
+							<SecretaryHome
+								handleError={handleError}
+								handleSuccess={handleSuccess}
+								accessToken={accessToken}
+								setMsgModal={setMsgModal}
+								setShowModal={setShowModal} />
 						) : null
 					}
 				/>
@@ -327,6 +333,13 @@ function App() {
 				/>
 				<Route path='/requests' element={<StudentRequests accessToken={accessToken} handleError={handleError} />} />
 				<Route path='/requests/add' element={<InsertThesisRequest accessToken={accessToken} handleError={handleError} />} />
+				<Route path='/requests/add' element={<NotFound />} />
+				<Route path='requests/:id' element={<RequestThesisDetails
+					accessToken={accessToken}
+					handleError={handleError}
+					handleSuccess={handleSuccess}
+					setMsgModal={setMsgModal}
+					setShowModal={setShowModal} />} />
 				<Route
 					path='/settings'
 					element={

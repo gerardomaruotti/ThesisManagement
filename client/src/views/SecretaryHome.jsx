@@ -8,29 +8,32 @@ import SecretaryCard from '../components/SecretaryCard.jsx';
 
 const SecretaryHome = ({ handleError,
     handleSuccess,
-    accessToken, }) => {
+    accessToken,
+    setShowModal,
+    setMsgModal }) => {
 
     const { loading, setLoading } = useLoading();
     const [rapidFilter, setRapidFilter] = useState('secretary-review');
     const [filteredRequests, setFilteredRequests] = useState([]);
     const [requests, setRequests] = useState([]); // 0 pending, 1 accepted by secretary, 2 rejected by secretary, 3 accepted by professor, 4 rejected by professor, 5 request change
-
+    const [internalDirty, setInternalDirty] = useState(false);
     useEffect(() => {
         if (accessToken != null) {
             setLoading(true);
             API.getStudentThesisRequest(accessToken)
                 .then((requests) => {
-                    console.log(requests);
                     setRequests(requests);
                     setFilteredRequests(requests);
                     setLoading(false);
+                    setInternalDirty(false);
                 })
                 .catch((err) => {
                     handleError(err.message);
                     setLoading(false);
+                    setInternalDirty(false);
                 });
         }
-    }, [accessToken])
+    }, [accessToken, internalDirty])
 
     useEffect(() => {
         if (requests.length != 0) {
@@ -56,12 +59,12 @@ const SecretaryHome = ({ handleError,
                         <Col md='auto' style={{ paddingBottom: 10, overflowX: 'auto' }}>
                             <Nav variant='pills' activeKey={rapidFilter} style={{ display: 'flex', flexWrap: 'nowrap' }}>
                                 <Nav.Item>
-                                    <Nav.Link eventKey='secretary-review' className='buttons-rapid-filter' onClick={() => setRapidFilter('secretary-review')}>
+                                    <Nav.Link eventKey='secretary-review' style={{ width: 200 }} className='buttons-rapid-filter' onClick={() => setRapidFilter('secretary-review')}>
                                         In review by secretary
                                     </Nav.Link>
                                 </Nav.Item>
                                 <Nav.Item>
-                                    <Nav.Link eventKey='supervisor-review' className='buttons-rapid-filter' onClick={() => setRapidFilter('supervisor-review')}>
+                                    <Nav.Link eventKey='supervisor-review' style={{ width: 220 }} className='buttons-rapid-filter' onClick={() => setRapidFilter('supervisor-review')}>
                                         In review by supervisor
                                     </Nav.Link>
                                 </Nav.Item>
@@ -84,7 +87,16 @@ const SecretaryHome = ({ handleError,
                 <Row style={{ marginBottom: 25 }}>
                     {filteredRequests.length != 0 ? (
                         filteredRequests.map((request) => (
-                            <SecretaryCard key={request.id} request={request} />
+                            <SecretaryCard
+                                key={request.id} a
+                                accessToken={accessToken}
+                                request={request}
+                                setInternalDirty={setInternalDirty}
+                                handleError={handleError}
+                                handleSuccess={handleSuccess}
+                                setShowModal={setShowModal}
+                                setMsgModal={setMsgModal}
+                            />
                         ))) : (
                         <Col style={{ marginTop: 25 }}>
                             <p>No request to display</p>
@@ -100,6 +112,8 @@ SecretaryHome.propTypes = {
     handleError: PropTypes.func.isRequired,
     handleSuccess: PropTypes.func.isRequired,
     accessToken: PropTypes.string.isRequired,
+    setShowModal: PropTypes.func.isRequired,
+    setMsgModal: PropTypes.func.isRequired,
 };
 
 export default SecretaryHome;

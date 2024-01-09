@@ -121,6 +121,8 @@ app.get('/api/cds', checkJwt, (req, res) => {
 			res.status(503).json({ error: 'getCds error' });
 		});
 });
+
+
 //METODI API
 //fare metodo gestione autenticazione --> che ritorna ID matricla e chekka auth0
 
@@ -795,30 +797,53 @@ app.post('/api/applications/details', checkJwt, [
 app.get('/api/requests', checkJwt, (req,res) => {
 
 (async() =>{
-
-	const userRole=await db.getRole(req.auth);
-	if(userRole.role=="teacher") {
-		let teacherRequests=await db.getTeacherRequests(userRole.id);
-		return res.status(200).json(teacherRequests);
-	} else{
-		if(userRole.role=="secretary") {
-			let secretaryRequests=await db.getSecretaryRequests();
-			return res.status(200).json(secretaryRequests);
-		} else{
-			if(userRole.role=="student"){
-				let studentRequests= await db.getStudentRequests(userRole.id);
-				return res.status(200).json(studentRequests);
-			} else{
-				return res.status(401).json("Unauthorized")
+	try{
+		const userRole = await db.getRole(req.auth);
+		if (userRole.role == "teacher") {
+			let teacherRequests = await db.getTeacherRequests(userRole.id);
+			teacherRequests = await processIDS(teacherRequests);
+			return res.status(200).json(teacherRequests);
+		} else {
+			if (userRole.role == "secretary") {
+				let secretaryRequests = await db.getSecretaryRequests();
+				secretaryRequests = await processIDS(secretaryRequests);
+				return res.status(200).json(secretaryRequests);
+			} else {
+				if (userRole.role == "student") {
+					let studentRequests = await db.getStudentRequests(userRole.id);
+					studentRequests = await processIDS(studentRequests);
+					return res.status(200).json(studentRequests);
+				} else {
+					return res.status(401).json("Unauthorized")
+				}
 			}
 		}
-	}
 
+	} catch(err){
+		return res.status(503).json({error: "Error get Requests"})
+	}
+	
 })();
 
 
 
 })
+
+
+async function processIDS(requests){
+	for(let i=0;i<requests.length;i++){
+		let cosup = await db.getRequestCoSup(requests[i].id)
+		let infoS = await db.getStudentInfo(requests[i].student);
+		let infoT = await db.getTeacher(requests[i].supervisor);
+		requests[i].co_supervisors = [...cosup];
+		requests[i].nameS=infoS.name;
+		requests[i].surnameS=infoS.surname;
+		requests[i].nameT=infoT.name;
+		requests[i].surnameT=infoT.surname;
+	}
+
+	return requests;
+}
 
 app.post(
 	'/api/insert/request',
@@ -870,7 +895,7 @@ app.post(
 	'/api/approve/request/secretary',
 	[
 		check('requestID').isInt()
-	], 
+	], checkJwt,
 	(req, res) => {
 		(async () => {
 			const errors = validationResult(req);
@@ -921,7 +946,7 @@ app.post( //i am supposed to be a secretary
 	'/api/reject/request/secretary',
 	[
 		check('requestID').isInt()
-	], 
+	], checkJwt,
 	(req, res) => {
 		(async () => {
 			const errors = validationResult(req);
@@ -951,7 +976,7 @@ app.post(
 	'/api/approve/request/professor',
 	[
 		check('requestID').isInt()
-	], 
+	], checkJwt,
 	(req, res) => {
 		(async () => {
 			const errors = validationResult(req);
@@ -982,7 +1007,7 @@ app.post(
 	'/api/reject/request/professor',
 	[
 		check('requestID').isInt()
-	], 
+	], checkJwt,
 	(req, res) => {
 		(async () => {
 			const errors = validationResult(req);
@@ -1011,7 +1036,7 @@ app.post(
 	[
 		check('requestID').isInt(),
 		check('notes').isString()
-	], 
+	], checkJwt,
 	(req, res) => {
 		(async () => {
 			const errors = validationResult(req);
