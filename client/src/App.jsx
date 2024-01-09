@@ -326,7 +326,7 @@ function App() {
 					}
 				/>
 				<Route path='/requests' element={<StudentRequests accessToken={accessToken} handleError={handleError} />} />
-				<Route path='/requests/add' element={<InsertThesisRequest accessToken={accessToken} />} />
+				<Route path='/requests/add' element={<InsertThesisRequest accessToken={accessToken} handleError={handleError} />} />
 				<Route
 					path='/settings'
 					element={

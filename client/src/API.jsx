@@ -133,6 +133,10 @@ function getStudentThesisRequest(accessToken) {
 	return callAPI('/requests', accessToken, 'GET', null);
 }
 
+function insertThesisRequest(accessToken, thesisRequest) {
+	return callAPI('/insert/request', accessToken, 'POST', JSON.stringify(thesisRequest));
+}
+
 const API = {
 	getAllKeywords,
 	getAllTypes,
@@ -155,5 +159,6 @@ const API = {
 	setVirtualClock,
 	getStudentApplicationInfo,
 	getStudentThesisRequest,
+	insertThesisRequest,
 };
 export default API;
