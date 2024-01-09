@@ -209,6 +209,22 @@ function App() {
 								setCopiedProposal={setCopiedProposal}
 								setShowModal={setShowModal}
 								setMsgModal={setMsgModal}
+								activatedFilters={activatedFilters}
+								setActivatedFilters={setActivatedFilters}
+								selectedSupervisor={selectedSupervisor}
+								setSelectedSupervisor={setSelectedSupervisor}
+								selectedCoSupervisors={selectedCoSupervisors}
+								setSelectedCoSupervisors={setSelectedCoSupervisors}
+								selectedKeywords={selectedKeywords}
+								setSelectedKeywords={setSelectedKeywords}
+								selectedTypes={selectedTypes}
+								setSelectedTypes={setSelectedTypes}
+								selectedGroups={selectedGroups}
+								setSelectedGroups={setSelectedGroups}
+								expirationDate={expirationDate}
+								setExpirationDate={setExpirationDate}
+								setThesis={setThesis}
+								date={dateVirtualClock}
 							/>
 						) : isStudent ? (
 							<StudentHome
