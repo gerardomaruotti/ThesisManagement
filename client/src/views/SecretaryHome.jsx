@@ -59,12 +59,12 @@ const SecretaryHome = ({ handleError,
                         <Col md='auto' style={{ paddingBottom: 10, overflowX: 'auto' }}>
                             <Nav variant='pills' activeKey={rapidFilter} style={{ display: 'flex', flexWrap: 'nowrap' }}>
                                 <Nav.Item>
-                                    <Nav.Link eventKey='secretary-review' className='buttons-rapid-filter' onClick={() => setRapidFilter('secretary-review')}>
+                                    <Nav.Link eventKey='secretary-review' style={{ width: 200 }} className='buttons-rapid-filter' onClick={() => setRapidFilter('secretary-review')}>
                                         In review by secretary
                                     </Nav.Link>
                                 </Nav.Item>
                                 <Nav.Item>
-                                    <Nav.Link eventKey='supervisor-review' className='buttons-rapid-filter' onClick={() => setRapidFilter('supervisor-review')}>
+                                    <Nav.Link eventKey='supervisor-review' style={{ width: 220 }} className='buttons-rapid-filter' onClick={() => setRapidFilter('supervisor-review')}>
                                         In review by supervisor
                                     </Nav.Link>
                                 </Nav.Item>

@@ -108,7 +108,7 @@ const SecretaryCard = ({ request, setInternalDirty, accessToken, handleError, ha
                 >
                     {request.description}
                 </div>
-                <div className='d-flex justify-content-around' style={{ marginTop: 20, textAlign: 'center' }}>
+                <div className='d-flex justify-content-around align-items-center' style={{ marginTop: 20, textAlign: 'center' }}>
                     <div>
                         <span
                             className='badge'
@@ -117,19 +117,18 @@ const SecretaryCard = ({ request, setInternalDirty, accessToken, handleError, ha
                                 color: styleStatus.color,
                                 padding: '0.7em 0.7em',
                                 borderRadius: '0.25rem',
-                                marginRight: 10,
                             }}
                         >
                             <i className={styleStatus.icon} style={{ fontSize: '16px' }}></i>
                         </span>
-                        <span style={{ color: 'rgba(0, 0, 0, 0.5)', fontSize: 14 }}>{styleStatus.text}</span>
+                        <span style={{ color: 'rgba(0, 0, 0, 0.5)', fontSize: 14, paddingLeft: 10 }}>{styleStatus.text}</span>
                     </div>
                     {!request.status == 0 ? null : (
-                        <div>
+                        <div className='d-flex flex-row'>
                             <Button
                                 variant="link"
                                 className='buttonHover'
-                                style={{ textDecoration: 'none', color: 'green', marginRight: 8 }}
+                                style={{ textDecoration: 'none', color: 'green' }}
                                 onClick={() => {
                                     setShowModal(true);
                                     setMsgModal({
@@ -139,8 +138,10 @@ const SecretaryCard = ({ request, setInternalDirty, accessToken, handleError, ha
                                     });
                                 }
                                 }>
-                                <i className="bi bi-check-circle" style={{ fontSize: '16px', paddingRight: 8, color: 'green' }}></i>
-                                Accept
+                                <div className="d-flex align-items-center">
+                                    <i className="bi bi-check-circle mobile-view" style={{ fontSize: '16px', paddingRight: 8, color: 'green' }}></i>
+                                    <span className='d-none d-md-flex'>Accept</span>
+                                </div>
                             </Button>
                             <Button
                                 variant="link"
@@ -154,8 +155,10 @@ const SecretaryCard = ({ request, setInternalDirty, accessToken, handleError, ha
                                         method: () => rejectRequest(),
                                     });
                                 }}>
-                                <i className="bi bi-x-circle" style={{ fontSize: '16px', paddingRight: 8, color: 'rgba(234, 84, 85)' }}></i>
-                                Reject
+                                <div className="d-flex align-items-center">
+                                    <i className="bi bi-x-circle mobile-view" style={{ fontSize: '16px', paddingRight: 8, color: 'rgba(234, 84, 85)' }}></i>
+                                    <span className='d-none d-md-flex'>Reject</span>
+                                </div>
                             </Button>
                         </div>
                     )}

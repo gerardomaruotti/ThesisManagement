@@ -75,88 +75,96 @@ const DetailsRequestLeftBar = ({ request, handleSuccess, handleError, accessToke
                     </div>
                 </div>
             </Col>
-            {!request.coSupervisors ? null : request.coSupervisors.length > 0 ? (
+            {!request.co_supervisors ? null : request.co_supervisors.length > 0 ? (
                 <Col md={12}>
                     <div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}> Co-Supervisors </div>
-                    <div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}>
-                        {request.coSupervisors.map((coSupervisor, index) => (
-                            <div key={index} style={{ display: 'flex', alignItems: 'center', marginBottom: 10 }}>
-                                <Image style={{ height: 38, width: 38 }} src={Avatar} roundedCircle />
-                                <span style={{ marginLeft: 15, color: 'rgba(0, 0, 0, 0.5)', marginRight: 15 }}>{request.coSupervisor.name + ' ' + request.coSupervisor.surname}</span>
+                    {request.co_supervisors.map((coSupervisor, index) => (
+                        <div key={index} className='d-flex flex-row align-items-center' style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}>
+                            <Image style={{ height: 38, width: 38 }} src={Avatar} roundedCircle />
+                            <div className='d-flex flex-column'>
+                                <span style={{ marginLeft: 15, color: 'rgba(0, 0, 0, 0.8)' }}>{coSupervisor.name + ' ' + coSupervisor.surname}</span>
+                                <span style={{ marginLeft: 15, color: 'rgba(0, 0, 0, 0.5)', fontWeight: 'regular', fontSize: 13 }}>{coSupervisor.email}</span>
                             </div>
-                        ))}
-                    </div>
+                        </div>
+                    ))}
                 </Col>
-            ) : null}
-            {!request.approval_date ? null : (
-                <Col md={12}>
-                    <div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}> Approval Date </div>
-                    <div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}>
-                        <span
-                            className='badge'
-                            style={{ backgroundColor: 'rgba(230, 120, 43, 0.1)', color: Color.secondary, padding: '1em 1em', borderRadius: '0.25rem' }}
-                        >
-                            <i className='bi bi-calendar3' style={{ fontSize: '16px' }}></i>
-                        </span>
-                        <span style={{ marginLeft: 8, color: 'rgba(0, 0, 0, 0.5)' }}>{dayjs(request.approval_date).format('DD/MM/YYYY')}</span>
+            ) : null
+            }
+            {
+                !request.approval_date ? null : (
+                    <Col md={12}>
+                        <div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}> Approval Date </div>
+                        <div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}>
+                            <span
+                                className='badge'
+                                style={{ backgroundColor: 'rgba(230, 120, 43, 0.1)', color: Color.secondary, padding: '1em 1em', borderRadius: '0.25rem' }}
+                            >
+                                <i className='bi bi-calendar3' style={{ fontSize: '16px' }}></i>
+                            </span>
+                            <span style={{ marginLeft: 8, color: 'rgba(0, 0, 0, 0.5)' }}>{dayjs(request.approval_date).format('DD/MM/YYYY')}</span>
+                        </div>
+                    </Col>
+                )
+            }
+            {
+                !styleStatus ? null : (
+                    <div>
+                        <div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}> Request status </div>
+                        <div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}>
+                            <span
+                                className='badge'
+                                style={{
+                                    backgroundColor: styleStatus.backgroundColor,
+                                    color: styleStatus.color,
+                                    padding: '1em 1em',
+                                    borderRadius: '0.25rem',
+                                    marginRight: 10,
+                                }}
+                            >
+                                <i className={styleStatus.icon} style={{ fontSize: '16px' }}></i>
+                            </span>
+                            <span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>{styleStatus.text}</span>
+                        </div>
                     </div>
-                </Col>
-            )}
-            {!styleStatus ? null : (
-                <div>
-                    <div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}> Request status </div>
-                    <div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}>
-                        <span
-                            className='badge'
-                            style={{
-                                backgroundColor: styleStatus.backgroundColor,
-                                color: styleStatus.color,
-                                padding: '1em 1em',
-                                borderRadius: '0.25rem',
-                                marginRight: 10,
+                )
+            }
+            {
+                !request.status == 0 ? null : (
+                    <div className='d-flex justify-content-around' style={{ marginTop: 30 }}>
+                        <Button
+                            variant='outline-success'
+                            style={{ borderRadius: 20, width: 100 }}
+                            onClick={() => {
+                                setShowModal(true);
+                                setMsgModal({
+                                    header: 'Accept request',
+                                    body: `Are you sure you want to Accept the request of student ${request.student}?`,
+                                    method: () => acceptRequest(),
+                                });
                             }}
                         >
-                            <i className={styleStatus.icon} style={{ fontSize: '16px' }}></i>
-                        </span>
-                        <span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>{styleStatus.text}</span>
+                            <i className='bi bi-check2' style={{ paddingRight: 5 }}></i>
+                            Accept
+                        </Button>
+                        <Button
+                            variant='outline-danger'
+                            style={{ borderRadius: 20, width: 100 }}
+                            onClick={() => {
+                                setShowModal(true);
+                                setMsgModal({
+                                    header: 'Reject request',
+                                    body: `Are you sure you want to reject the request of student ${request.student}?`,
+                                    method: () => rejectRequest(),
+                                });
+                            }}
+                        >
+                            <i className='bi bi-x-lg' style={{ paddingRight: 5 }}></i>
+                            Reject
+                        </Button>
                     </div>
-                </div>
-            )}
-            {!request.status == 0 ? null : (
-                <div className='d-flex justify-content-around' style={{ marginTop: 30 }}>
-                    <Button
-                        variant='outline-success'
-                        style={{ borderRadius: 20, width: 100 }}
-                        onClick={() => {
-                            setShowModal(true);
-                            setMsgModal({
-                                header: 'Accept request',
-                                body: `Are you sure you want to Accept the request of student ${request.student}?`,
-                                method: () => acceptRequest(),
-                            });
-                        }}
-                    >
-                        <i className='bi bi-check2' style={{ paddingRight: 5 }}></i>
-                        Accept
-                    </Button>
-                    <Button
-                        variant='outline-danger'
-                        style={{ borderRadius: 20, width: 100 }}
-                        onClick={() => {
-                            setShowModal(true);
-                            setMsgModal({
-                                header: 'Reject request',
-                                body: `Are you sure you want to reject the request of student ${request.student}?`,
-                                method: () => rejectRequest(),
-                            });
-                        }}
-                    >
-                        <i className='bi bi-x-lg' style={{ paddingRight: 5 }}></i>
-                        Reject
-                    </Button>
-                </div>
-            )}
-        </Row>
+                )
+            }
+        </Row >
     )
 }
 
