@@ -6,7 +6,7 @@ import { Color } from '../constants/colors.js'
 import API from '../API'
 import dayjs from 'dayjs'
 
-const DetailsRequestLeftBar = ({ request, handleSuccess, handleError, accessToken, setInternalDirty, setShowModal, setMsgModal }) => {
+const DetailsRequestLeftBar = ({ request, handleSuccess, handleError, accessToken, setInternalDirty, setShowModal, setMsgModal, isProfessor, isSecretary }) => {
     const styleStatus =
         request.status == 0 ? {
             backgroundColor: 'rgba(164, 161, 141, 0.2)',
@@ -32,26 +32,49 @@ const DetailsRequestLeftBar = ({ request, handleSuccess, handleError, accessToke
 
     function acceptRequest() {
         setShowModal(false);
-        API.approveRequestSecretary(accessToken, request.id)
-            .then(() => {
-                handleSuccess('Request accepted');
-                setInternalDirty(true);
-            })
-            .catch((err) => {
-                handleError(err);
-            });
+        if (isProfessor) {
+            API.approveRequestProfessor(accessToken, request.id)
+                .then(() => {
+                    handleSuccess('Request accepted');
+                    setInternalDirty(true);
+                })
+                .catch((err) => {
+                    handleError(err);
+                });
+        }
+        else {
+            API.approveRequestSecretary(accessToken, request.id)
+                .then(() => {
+                    handleSuccess('Request accepted');
+                    setInternalDirty(true);
+                })
+                .catch((err) => {
+                    handleError(err);
+                });
+        }
     }
 
     function rejectRequest() {
         setShowModal(false);
-        API.rejectRequestSecretary(accessToken, request.id)
-            .then(() => {
-                handleSuccess('Request rejected');
-                setInternalDirty(true);
-            })
-            .catch((err) => {
-                handleError(err);
-            });
+        if (isProfessor) {
+            API.rejectRequestProfessor(accessToken, request.id)
+                .then(() => {
+                    handleSuccess('Request rejected');
+                    setInternalDirty(true);
+                })
+                .catch((err) => {
+                    handleError(err);
+                });
+        } else {
+            API.rejectRequestSecretary(accessToken, request.id)
+                .then(() => {
+                    handleSuccess('Request rejected');
+                    setInternalDirty(true);
+                })
+                .catch((err) => {
+                    handleError(err);
+                });
+        }
     }
 
     return (
@@ -142,11 +165,11 @@ const DetailsRequestLeftBar = ({ request, handleSuccess, handleError, accessToke
                 )
             }
             {
-                !request.status == 0 ? null : (
+                (request.status == 0 && isSecretary == true) || (request.status == 1 && isProfessor == true) ? (
                     <div className='d-flex justify-content-around' style={{ marginTop: 30 }}>
                         <Button
                             variant='outline-success'
-                            style={{ borderRadius: 20, width: 100 }}
+                            style={{ borderRadius: 20 }}
                             onClick={() => {
                                 setShowModal(true);
                                 setMsgModal({
@@ -159,9 +182,28 @@ const DetailsRequestLeftBar = ({ request, handleSuccess, handleError, accessToke
                             <i className='bi bi-check2' style={{ paddingRight: 5 }}></i>
                             Accept
                         </Button>
+                        {
+                            isProfessor ?
+                                <Button
+                                    variant='outline-warning'
+                                    style={{ borderRadius: 20 }}
+                                    onClick={() => {
+                                        setShowModal(true);
+                                        setMsgModal({
+                                            header: 'Accept request',
+                                            body: `Are you sure you want to Accept the request of student ${request.student}?`,
+                                            method: () => acceptRequest(),
+                                        });
+                                    }}
+                                >
+                                    <i className='bi bi-pen' style={{ paddingRight: 5 }}></i>
+                                    Request change
+                                </Button>
+                                : null
+                        }
                         <Button
                             variant='outline-danger'
-                            style={{ borderRadius: 20, width: 100 }}
+                            style={{ borderRadius: 20 }}
                             onClick={() => {
                                 setShowModal(true);
                                 setMsgModal({
@@ -175,7 +217,7 @@ const DetailsRequestLeftBar = ({ request, handleSuccess, handleError, accessToke
                             Reject
                         </Button>
                     </div>
-                )
+                ) : null
             }
         </Row >
     )
@@ -189,6 +231,8 @@ DetailsRequestLeftBar.propTypes = {
     setInternalDirty: PropTypes.func.isRequired,
     setShowModal: PropTypes.func.isRequired,
     setMsgModal: PropTypes.func.isRequired,
+    isSecretary: PropTypes.bool.isRequired,
+    isProfessor: PropTypes.bool.isRequired,
 };
 
 export default DetailsRequestLeftBar

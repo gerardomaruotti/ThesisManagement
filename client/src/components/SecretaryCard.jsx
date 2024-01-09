@@ -18,7 +18,7 @@ const SecretaryCard = ({ request, setInternalDirty, accessToken, handleError, ha
                 <i className='bi bi-headphones' style={{ fontSize: '18px' }}></i>
                 <i className='bi bi-hourglass-split' style={{ fontSize: '10px', alignSelf: 'flex-end' }}></i>
             </div>,
-            text: 'In review by secretary',
+            text: 'Secretary review',
         } : request.status == 1 ? {
             backgroundColor: 'rgba(164, 161, 141, 0.2)',
             color: 'rgba(164, 161, 141)',
@@ -26,7 +26,7 @@ const SecretaryCard = ({ request, setInternalDirty, accessToken, handleError, ha
                 <i className='bi bi-person' style={{ fontSize: '18px' }}></i>
                 <i className='bi bi-hourglass-split' style={{ fontSize: '10px', alignSelf: 'flex-end' }}></i>
             </div>,
-            text: 'In review by supervisor',
+            text: 'Supervisor review',
         } : request.status == 3 ? {
             backgroundColor: 'rgba(1, 133, 114, 0.2)',
             color: 'rgba(1, 133, 114)',

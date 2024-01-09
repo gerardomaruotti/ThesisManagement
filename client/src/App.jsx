@@ -361,7 +361,9 @@ function App() {
 					handleError={handleError}
 					handleSuccess={handleSuccess}
 					setMsgModal={setMsgModal}
-					setShowModal={setShowModal} />} />
+					setShowModal={setShowModal}
+					isProfessor={isProfessor}
+					isSecretary={isSecretary} />} />
 				<Route
 					path='/settings'
 					element={

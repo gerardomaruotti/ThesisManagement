@@ -12,7 +12,9 @@ const RequestThesisDetails = ({ handleError,
     handleSuccess,
     accessToken,
     setShowModal,
-    setMsgModal }) => {
+    setMsgModal,
+    isProfessor,
+    isSecretary }) => {
     const { loading, setLoading } = useLoading();
     const navigate = useNavigate();
     const { id } = useParams();
@@ -59,7 +61,9 @@ const RequestThesisDetails = ({ handleError,
                                     setInternalDirty={setInternalDirty}
                                     accessToken={accessToken}
                                     setMsgModal={setMsgModal}
-                                    setShowModal={setShowModal} />
+                                    setShowModal={setShowModal}
+                                    isProfessor={isProfessor}
+                                    isSecretary={isSecretary} />
                             </Card>
                         </Col>
                         <Col md={8}>
@@ -104,7 +108,9 @@ const RequestThesisDetails = ({ handleError,
                         setInternalDirty={setInternalDirty}
                         accessToken={accessToken}
                         setMsgModal={setMsgModal}
-                        setShowModal={setShowModal} />
+                        setShowModal={setShowModal}
+                        isProfessor={isProfessor}
+                        isSecretary={isSecretary} />
                 </Offcanvas.Body>
             </Offcanvas>
 
@@ -118,6 +124,8 @@ RequestThesisDetails.propTypes = {
     accessToken: PropTypes.string,
     setShowModal: PropTypes.func.isRequired,
     setMsgModal: PropTypes.func.isRequired,
+    isProfessor: PropTypes.bool.isRequired,
+    isSecretary: PropTypes.bool.isRequired,
 };
 
 export default RequestThesisDetails

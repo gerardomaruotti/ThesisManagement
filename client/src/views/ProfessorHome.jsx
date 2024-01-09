@@ -115,7 +115,7 @@ function ProfessorHome({
 							</Col>
 						</Row>)}
 					<Row style={{ paddingTop: 25, paddingBottom: 20 }}>
-						<Col>
+						<Col xs={12} md={'auto'} style={{ paddingBottom: 10 }}>
 							<Nav variant='pills' activeKey={rapidFilter}>
 								<Nav.Item>
 									<Nav.Link eventKey='active' className='buttons-rapid-filter' onClick={() => setRapidFilter('active')}>
