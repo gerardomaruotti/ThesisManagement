@@ -12,22 +12,28 @@ const SecretaryCard = ({ request, setInternalDirty, accessToken, handleError, ha
         request.status == 0 ? {
             backgroundColor: 'rgba(164, 161, 141, 0.2)',
             color: 'rgba(164, 161, 141)',
-            icon: 'bi bi-hourglass-split',
+            icon: <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '14px', height: '14px' }}>
+                <i className='bi bi-headphones' style={{ fontSize: '18px' }}></i>
+                <i className='bi bi-hourglass-split' style={{ fontSize: '10px', alignSelf: 'flex-end' }}></i>
+            </div>,
             text: 'In review by secretary',
         } : request.status == 1 ? {
             backgroundColor: 'rgba(164, 161, 141, 0.2)',
             color: 'rgba(164, 161, 141)',
-            icon: 'bi bi-hourglass-split',
+            icon: <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '14px', height: '14px' }}>
+                <i className='bi bi-person' style={{ fontSize: '18px' }}></i>
+                <i className='bi bi-hourglass-split' style={{ fontSize: '10px', alignSelf: 'flex-end' }}></i>
+            </div>,
             text: 'In review by supervisor',
         } : request.status == 3 ? {
             backgroundColor: 'rgba(1, 133, 114, 0.2)',
             color: 'rgba(1, 133, 114)',
-            icon: 'bi bi-check-circle',
+            icon: <i className='bi bi-check-circle' style={{ fontSize: '16px' }}></i>,
             text: 'Accepted',
         } : request.status == 2 || request.status == 4 ? {
             backgroundColor: 'rgba(234, 84, 85, 0.2)',
             color: 'rgba(234, 84, 85)',
-            icon: 'bi bi-x-circle',
+            icon: <i className='bi bi-x-circle' style={{ fontSize: '16px' }}></i>,
             text: 'Rejected',
         } : null;
 
@@ -115,11 +121,11 @@ const SecretaryCard = ({ request, setInternalDirty, accessToken, handleError, ha
                             style={{
                                 backgroundColor: styleStatus.backgroundColor,
                                 color: styleStatus.color,
-                                padding: '0.7em 0.7em',
+                                padding: '1em 1em',
                                 borderRadius: '0.25rem',
                             }}
                         >
-                            <i className={styleStatus.icon} style={{ fontSize: '16px' }}></i>
+                            {styleStatus.icon}
                         </span>
                         <span style={{ color: 'rgba(0, 0, 0, 0.5)', fontSize: 14, paddingLeft: 10 }}>{styleStatus.text}</span>
                     </div>
