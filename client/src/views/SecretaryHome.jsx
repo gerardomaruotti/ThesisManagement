@@ -22,6 +22,7 @@ const SecretaryHome = ({ handleError,
             setLoading(true);
             API.getStudentThesisRequest(accessToken)
                 .then((requests) => {
+                    console.log(requests);
                     setRequests(requests);
                     setFilteredRequests(requests);
                     setLoading(false);
@@ -45,6 +46,8 @@ const SecretaryHome = ({ handleError,
                 setFilteredRequests(requests.filter((request) => request.status == 3));
             } else if (rapidFilter === 'rejected') {
                 setFilteredRequests(requests.filter((request) => request.status == 2 || request.status == 4));
+            } else if (rapidFilter === 'requested-change') {
+                setFilteredRequests(requests.filter((request) => request.status == 5));
             }
         }
     }, [rapidFilter, requests])
@@ -64,8 +67,13 @@ const SecretaryHome = ({ handleError,
                                     </Nav.Link>
                                 </Nav.Item>
                                 <Nav.Item>
-                                    <Nav.Link eventKey='supervisor-review' style={{ width: 220 }} className='buttons-rapid-filter' onClick={() => setRapidFilter('supervisor-review')}>
+                                    <Nav.Link eventKey='supervisor-review' style={{ width: 205 }} className='buttons-rapid-filter' onClick={() => setRapidFilter('supervisor-review')}>
                                         In review by supervisor
+                                    </Nav.Link>
+                                </Nav.Item>
+                                <Nav.Item>
+                                    <Nav.Link eventKey='requested-change' style={{ width: 170 }} className='buttons-rapid-filter' onClick={() => setRapidFilter('requested-change')}>
+                                        Requested change
                                     </Nav.Link>
                                 </Nav.Item>
                                 <Nav.Item>

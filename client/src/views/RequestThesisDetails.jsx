@@ -80,6 +80,14 @@ const RequestThesisDetails = ({ handleError, handleSuccess, accessToken, setShow
 										<div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15, whiteSpace: 'pre-line' }}>{request.description}</div>
 									</Col>
 								</Row>
+								{!request.notes ? null :
+									<Row>
+										<Col md={12}>
+											<div style={{ fontWeight: 'bold', fontSize: 15, marginTop: 15, color: '#E6782B' }}>Changes requested by the supervisor </div>
+											<div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15, whiteSpace: 'pre-line' }}>{request.notes}</div>
+										</Col>
+									</Row>
+								}
 								<Col className='d-md-none' style={{ textAlign: 'center', marginTop: 20 }}>
 									<Button variant='primary' onClick={handleShow}>
 										Show more details

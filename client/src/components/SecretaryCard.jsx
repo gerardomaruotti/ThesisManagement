@@ -15,18 +15,18 @@ const SecretaryCard = ({ request, setInternalDirty, accessToken, handleError, ha
 	const styleStatus =
 		request.status == 0
 			? {
-					backgroundColor: 'rgba(164, 161, 141, 0.2)',
-					color: 'rgba(164, 161, 141)',
-					icon: (
-						<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '14px', height: '14px' }}>
-							<i className='bi bi-headphones' style={{ fontSize: '18px' }}></i>
-							<i className='bi bi-hourglass-split' style={{ fontSize: '10px', alignSelf: 'flex-end' }}></i>
-						</div>
-					),
-					text: 'Secretary review',
-			  }
+				backgroundColor: 'rgba(164, 161, 141, 0.2)',
+				color: 'rgba(164, 161, 141)',
+				icon: (
+					<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '14px', height: '14px' }}>
+						<i className='bi bi-headphones' style={{ fontSize: '18px' }}></i>
+						<i className='bi bi-hourglass-split' style={{ fontSize: '10px', alignSelf: 'flex-end' }}></i>
+					</div>
+				),
+				text: 'Secretary review',
+			}
 			: request.status == 1
-			? {
+				? {
 					backgroundColor: 'rgba(164, 161, 141, 0.2)',
 					color: 'rgba(164, 161, 141)',
 					icon: (
@@ -36,29 +36,29 @@ const SecretaryCard = ({ request, setInternalDirty, accessToken, handleError, ha
 						</div>
 					),
 					text: 'Supervisor review',
-			  }
-			: request.status == 3
-			? {
-					backgroundColor: 'rgba(1, 133, 114, 0.2)',
-					color: 'rgba(1, 133, 114)',
-					icon: <i className='bi bi-check-circle' style={{ fontSize: '16px' }}></i>,
-					text: 'Accepted',
-			  }
-			: request.status == 2 || request.status == 4
-			? {
-					backgroundColor: 'rgba(234, 84, 85, 0.2)',
-					color: 'rgba(234, 84, 85)',
-					icon: <i className='bi bi-x-circle' style={{ fontSize: '16px' }}></i>,
-					text: 'Rejected',
-			  }
-			: request.status == 5
-			? {
-					backgroundColor: 'rgba(230,120,43, 0.2)',
-					color: 'rgba(230,120,43)',
-					icon: <i className='bi bi-pencil' style={{ fontSize: '16px' }}></i>,
-					text: 'Request change',
-			  }
-			: null;
+				}
+				: request.status == 3
+					? {
+						backgroundColor: 'rgba(1, 133, 114, 0.2)',
+						color: 'rgba(1, 133, 114)',
+						icon: <i className='bi bi-check-circle' style={{ fontSize: '16px' }}></i>,
+						text: 'Accepted',
+					}
+					: request.status == 2 || request.status == 4
+						? {
+							backgroundColor: 'rgba(234, 84, 85, 0.2)',
+							color: 'rgba(234, 84, 85)',
+							icon: <i className='bi bi-x-circle' style={{ fontSize: '16px' }}></i>,
+							text: 'Rejected',
+						}
+						: request.status == 5
+							? {
+								backgroundColor: 'rgba(230,120,43, 0.2)',
+								color: 'rgba(230,120,43)',
+								icon: <i className='bi bi-pencil' style={{ fontSize: '16px' }}></i>,
+								text: 'Request change',
+							}
+							: null;
 
 	function acceptRequest() {
 		setShowModal(false);
@@ -265,6 +265,7 @@ const SecretaryCard = ({ request, setInternalDirty, accessToken, handleError, ha
 				handleSuccess={handleSuccess}
 				requestID={request.id}
 				accessToken={accessToken}
+				setInternalDirty={setInternalDirty}
 			/>
 		</Col>
 	);

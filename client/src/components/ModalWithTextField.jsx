@@ -10,6 +10,7 @@ const ModalWithTextField = ({
     handleSuccess,
     requestID,
     accessToken,
+    setInternalDirty,
 }) => {
     const [notes, setNotes] = useState('');
 
@@ -22,6 +23,7 @@ const ModalWithTextField = ({
                 setNotes('');
                 handleSuccess('Request change sent correctly');
                 setShowModal(false);
+                setInternalDirty(true);
             })
             .catch((err) => {
                 handleError(err);
@@ -63,6 +65,7 @@ ModalWithTextField.propTypes = {
     handleSuccess: PropTypes.func.isRequired,
     requestID: PropTypes.number,
     accessToken: PropTypes.string,
+    setInternalDirty: PropTypes.func.isRequired,
 };
 
 export default ModalWithTextField
