@@ -14,12 +14,13 @@ function ThesisRequestForm({ accessToken, handleError }) {
 	const [coSupervisors, setCoSupervisors] = useState([]);
 	const [selectedCoSupervisors, setSelectedCoSupervisors] = useState([]);
 	const [supervisors, setSupervisors] = useState([]);
+	const [professors, setProfessors] = useState([]);
 
 	useEffect(() => {
 		if (accessToken) {
 			API.getAllSupervisors(accessToken)
 				.then((cosupervisors) => {
-					setCoSupervisors(
+					setProfessors(
 						cosupervisors.map((cosupervisor) => {
 							return {
 								value: cosupervisor.email,
@@ -36,8 +37,29 @@ function ThesisRequestForm({ accessToken, handleError }) {
 	}, [accessToken]);
 
 	useEffect(() => {
-		setSupervisors(coSupervisors);
-	}, [coSupervisors]);
+		setSupervisors(professors);
+		setCoSupervisors(professors);
+	}, [professors]);
+
+	function handleSelectSupervisor(selectedOption) {
+		setSupervisor(selectedOption);
+		setCoSupervisors(professors);
+		selectedOption && setCoSupervisors(coSupervisors.filter((cosupervisor) => cosupervisor.email !== selectedOption.email));
+	}
+
+	function handleSelectedCoSupervisors(selectedOptions) {
+		setSelectedCoSupervisors(selectedOptions);
+		setSupervisors(professors);
+		selectedOptions &&
+			setSupervisors(
+				coSupervisors.filter((cosupervisor) => {
+					for (let i = 0; i < selectedOptions.length; i++) {
+						if (cosupervisor.email === selectedOptions[i].email) return false;
+					}
+					return true;
+				})
+			);
+	}
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
@@ -58,16 +80,8 @@ function ThesisRequestForm({ accessToken, handleError }) {
 
 		API.insertThesisRequest(accessToken, newRequest)
 			.then(() => navigate(-1))
-			.catch((err) => handleError(err.error));
+			.catch((err) => handleError(err.errors));
 	};
-
-	function handleSelectSupervisor(selectedOption) {
-		setSupervisor(selectedOption);
-	}
-
-	function handleSelectedCoSupervisors(selectedOptions) {
-		setSelectedCoSupervisors(selectedOptions);
-	}
 
 	return (
 		<Form onSubmit={handleSubmit}>
