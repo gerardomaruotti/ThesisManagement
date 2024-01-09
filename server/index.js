@@ -1044,6 +1044,7 @@ app.post(
 				return res.status(422).json({ errors: errors.array() });
 			}
 			const reqID =  req.body.requestID;
+			const notes = req.body.notes;
 			try {
 				const userRole = await db.getRole(req.auth);
 				const requestExists = await db.checkRequestExistance(reqID);
