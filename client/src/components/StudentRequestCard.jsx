@@ -197,7 +197,7 @@ function StudentRequestCard({ request }) {
 									</span>
 								</Col>
 								<Col style={{ display: 'flex', alignItems: 'left', float: 'left', marginLeft: 5, whiteSpace: 'nowrap' }}>
-									<span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>Request change</span>
+									<span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>Requested change</span>
 								</Col>
 							</div>
 						) : null}
