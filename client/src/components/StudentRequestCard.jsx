@@ -26,7 +26,7 @@ function StudentRequestCard({ request }) {
 					<div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15, height: 30 }}>
 						<Col style={{ display: 'flex', alignItems: 'center' }}>
 							<Image style={{ height: 35, width: 35 }} src={Avatar} roundedCircle />
-							<span style={{ color: 'rgba(0, 0, 0, 0.8)', paddingLeft: 8 }}>{request.supervisor}</span>
+							<span style={{ color: 'rgba(0, 0, 0, 0.8)', paddingLeft: 8 }}>{request.nameT + ' ' + request.surnameT}</span>
 						</Col>
 					</div>
 				</Col>
@@ -75,7 +75,10 @@ function StudentRequestCard({ request }) {
 											borderRadius: '0.25rem',
 										}}
 									>
-										<i className='bi bi-hourglass-split' style={{ fontSize: '16px' }}></i>
+										<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '14px', height: '14px' }}>
+											<i className='bi bi-headphones' style={{ fontSize: '18px' }}></i>
+											<i className='bi bi-hourglass-split' style={{ fontSize: '10px', alignSelf: 'flex-end' }}></i>
+										</div>
 									</span>
 								</Col>
 								<Col style={{ display: 'flex', alignItems: 'left', float: 'left', marginLeft: 5, whiteSpace: 'nowrap' }}>
@@ -95,7 +98,10 @@ function StudentRequestCard({ request }) {
 											borderRadius: '0.25rem',
 										}}
 									>
-										<i className='bi bi-hourglass-split' style={{ fontSize: '16px' }}></i>
+										<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '14px', height: '14px' }}>
+											<i className='bi bi-person' style={{ fontSize: '18px' }}></i>
+											<i className='bi bi-hourglass-split' style={{ fontSize: '10px', alignSelf: 'flex-end' }}></i>
+										</div>
 									</span>
 								</Col>
 								<Col style={{ display: 'flex', alignItems: 'left', float: 'left', marginLeft: 5, whiteSpace: 'nowrap' }}>
