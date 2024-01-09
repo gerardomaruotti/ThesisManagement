@@ -832,8 +832,10 @@ app.get('/api/requests', checkJwt, (req,res) => {
 
 async function processIDS(requests){
 	for(let i=0;i<requests.length;i++){
+		let cosup = await db.getRequestCoSup(requests[i].id)
 		let infoS = await db.getStudentInfo(requests[i].student);
-		let infoT = await db.getTeacher(requests[i].supervisor)
+		let infoT = await db.getTeacher(requests[i].supervisor);
+		requests[i].co_supervisors = [...cosup];
 		requests[i].nameS=infoS.name;
 		requests[i].surnameS=infoS.surname;
 		requests[i].nameT=infoT.name;
