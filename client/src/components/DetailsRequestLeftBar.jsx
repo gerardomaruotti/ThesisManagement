@@ -5,8 +5,10 @@ import Avatar from '../assets/avatar.svg'
 import { Color } from '../constants/colors.js'
 import API from '../API'
 import dayjs from 'dayjs'
+import ModalWithTextField from './ModalWithTextField.jsx'
 
 const DetailsRequestLeftBar = ({ request, handleSuccess, handleError, accessToken, setInternalDirty, setShowModal, setMsgModal, isProfessor, isSecretary }) => {
+    const [showModalWithText, setShowModalWithText] = useState(false);
     const styleStatus =
         request.status == 0 ? {
             backgroundColor: 'rgba(164, 161, 141, 0.2)',
@@ -188,12 +190,7 @@ const DetailsRequestLeftBar = ({ request, handleSuccess, handleError, accessToke
                                     variant='outline-warning'
                                     style={{ borderRadius: 20 }}
                                     onClick={() => {
-                                        setShowModal(true);
-                                        setMsgModal({
-                                            header: 'Accept request',
-                                            body: `Are you sure you want to Accept the request of student ${request.student}?`,
-                                            method: () => acceptRequest(),
-                                        });
+                                        setShowModalWithText(true);
                                     }}
                                 >
                                     <i className='bi bi-pen' style={{ paddingRight: 5 }}></i>
@@ -219,6 +216,8 @@ const DetailsRequestLeftBar = ({ request, handleSuccess, handleError, accessToke
                     </div>
                 ) : null
             }
+            <ModalWithTextField showModal={showModalWithText} setShowModal={setShowModalWithText} handleError={handleError} handleSuccess={handleSuccess} requestID={request.id} accessToken={accessToken} />
+
         </Row >
     )
 }

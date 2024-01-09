@@ -153,6 +153,10 @@ function rejectRequestProfessor(accessToken, idRequest) {
 	return callAPI('/reject/request/professor', accessToken, 'POST', JSON.stringify({ requestID: idRequest }));
 }
 
+function changeRequestProfessor(accessToken, idRequest, notes) {
+	return callAPI('/change/request/professor', accessToken, 'POST', JSON.stringify({ requestID: idRequest, notes: notes }));
+}
+
 const API = {
 	getAllKeywords,
 	getAllTypes,
@@ -180,5 +184,6 @@ const API = {
 	rejectRequestSecretary,
 	approveRequestProfessor,
 	rejectRequestProfessor,
+	changeRequestProfessor,
 };
 export default API;
