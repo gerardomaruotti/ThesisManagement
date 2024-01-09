@@ -133,6 +133,10 @@ function getStudentThesisRequest(accessToken) {
 	return callAPI('/requests', accessToken, 'GET', null);
 }
 
+function insertThesisRequest(accessToken, thesisRequest) {
+	return callAPI('/insert/request', accessToken, 'POST', JSON.stringify(thesisRequest));
+}
+
 function approveRequestRecretary(accessToken, idRequest) {
 	return callAPI('/approve/request/secretary', accessToken, 'POST', JSON.stringify({ requestID: idRequest }));
 }
@@ -163,6 +167,7 @@ const API = {
 	setVirtualClock,
 	getStudentApplicationInfo,
 	getStudentThesisRequest,
+	insertThesisRequest,
 	approveRequestRecretary,
 	rejectRequestRecretary
 };
