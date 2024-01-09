@@ -137,12 +137,20 @@ function insertThesisRequest(accessToken, thesisRequest) {
 	return callAPI('/insert/request', accessToken, 'POST', JSON.stringify(thesisRequest));
 }
 
-function approveRequestRecretary(accessToken, idRequest) {
+function approveRequestSecretary(accessToken, idRequest) {
 	return callAPI('/approve/request/secretary', accessToken, 'POST', JSON.stringify({ requestID: idRequest }));
 }
 
-function rejectRequestRecretary(accessToken, idRequest) {
+function rejectRequestSecretary(accessToken, idRequest) {
 	return callAPI('/reject/request/secretary', accessToken, 'POST', JSON.stringify({ requestID: idRequest }));
+}
+
+function approveRequestProfessor(accessToken, idRequest) {
+	return callAPI('/approve/request/professor', accessToken, 'POST', JSON.stringify({ requestID: idRequest }));
+}
+
+function rejectRequestProfessor(accessToken, idRequest) {
+	return callAPI('/reject/request/professor', accessToken, 'POST', JSON.stringify({ requestID: idRequest }));
 }
 
 const API = {
@@ -168,7 +176,9 @@ const API = {
 	getStudentApplicationInfo,
 	getStudentThesisRequest,
 	insertThesisRequest,
-	approveRequestRecretary,
-	rejectRequestRecretary
+	approveRequestSecretary,
+	rejectRequestSecretary,
+	approveRequestProfessor,
+	rejectRequestProfessor,
 };
 export default API;

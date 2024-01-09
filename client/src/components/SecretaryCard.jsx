@@ -4,9 +4,11 @@ import PropTypes from 'prop-types';
 import Avatar from '../assets/avatar.svg';
 import API from '../API';
 import { useNavigate } from 'react-router-dom';
+import { Color } from '../constants/colors.js';
+import dayjs from 'dayjs';
 
 
-const SecretaryCard = ({ request, setInternalDirty, accessToken, handleError, handleSuccess, setShowModal, setMsgModal }) => {
+const SecretaryCard = ({ request, setInternalDirty, accessToken, handleError, handleSuccess, setShowModal, setMsgModal, isProfessor }) => {
     const navigate = useNavigate();
     const styleStatus =
         request.status == 0 ? {
@@ -39,26 +41,49 @@ const SecretaryCard = ({ request, setInternalDirty, accessToken, handleError, ha
 
     function acceptRequest() {
         setShowModal(false);
-        API.approveRequestRecretary(accessToken, request.id)
-            .then(() => {
-                handleSuccess('Request accepted');
-                setInternalDirty(true);
-            })
-            .catch((err) => {
-                handleError(err);
-            });
+        if (isProfessor) {
+            API.approveRequestProfessor(accessToken, request.id)
+                .then(() => {
+                    handleSuccess('Request accepted');
+                    setInternalDirty(true);
+                })
+                .catch((err) => {
+                    handleError(err);
+                });
+        }
+        else {
+            API.approveRequestSecretary(accessToken, request.id)
+                .then(() => {
+                    handleSuccess('Request accepted');
+                    setInternalDirty(true);
+                })
+                .catch((err) => {
+                    handleError(err);
+                });
+        }
     }
 
     function rejectRequest() {
         setShowModal(false);
-        API.rejectRequestRecretary(accessToken, request.id)
-            .then(() => {
-                handleSuccess('Request rejected');
-                setInternalDirty(true);
-            })
-            .catch((err) => {
-                handleError(err);
-            });
+        if (isProfessor) {
+            API.rejectRequestProfessor(accessToken, request.id)
+                .then(() => {
+                    handleSuccess('Request rejected');
+                    setInternalDirty(true);
+                })
+                .catch((err) => {
+                    handleError(err);
+                });
+        } else {
+            API.rejectRequestSecretary(accessToken, request.id)
+                .then(() => {
+                    handleSuccess('Request rejected');
+                    setInternalDirty(true);
+                })
+                .catch((err) => {
+                    handleError(err);
+                });
+        }
     }
 
     return (
@@ -114,7 +139,26 @@ const SecretaryCard = ({ request, setInternalDirty, accessToken, handleError, ha
                 >
                     {request.description}
                 </div>
-                <div className='d-flex justify-content-around align-items-center' style={{ marginTop: 20, textAlign: 'center' }}>
+                <div className='d-flex justify-content-around align-items-center' style={{ marginTop: 15, textAlign: 'center' }}>
+                    <div style={{ fontWeight: 'medium', fontSize: 15, display: 'flex', alignItems: 'center' }}>
+                        <span
+                            className='badge'
+                            style={{ backgroundColor: 'rgba(230, 120, 43, 0.1)', color: Color.secondary, padding: '1em 1em', borderRadius: '0.25rem' }}
+                        >
+                            <i className='bi bi-calendar3' style={{ fontSize: '16px' }}></i>
+                        </span>
+                        {request.status === 3 && request.approval_date ? (
+                            <div className='d-flex flex-column'>
+                                <span style={{ color: 'rgba(0, 0, 0, 0.8)', paddingLeft: 8, fontWeight: 400 }}>Approval Date</span>
+                                <span style={{ marginLeft: 8, color: 'rgba(0, 0, 0, 0.5)' }}>{dayjs(request.approval_date).format('DD/MM/YYYY')}</span>
+                            </div>
+                        ) : (
+                            <div className='d-flex flex-column'>
+                                <span style={{ color: 'rgba(0, 0, 0, 0.8)', paddingLeft: 8, fontWeight: 400 }}>Request Date</span>
+                                <span style={{ marginLeft: 8, color: 'rgba(0, 0, 0, 0.5)' }}>{dayjs(request.request_date).format('DD/MM/YYYY')}</span>
+                            </div>
+                        )}
+                    </div>
                     <div>
                         <span
                             className='badge'
@@ -127,10 +171,12 @@ const SecretaryCard = ({ request, setInternalDirty, accessToken, handleError, ha
                         >
                             {styleStatus.icon}
                         </span>
-                        <span style={{ color: 'rgba(0, 0, 0, 0.5)', fontSize: 14, paddingLeft: 10 }}>{styleStatus.text}</span>
+                        <span style={{ color: 'rgba(0, 0, 0, 0.5)', fontSize: 15, paddingLeft: 10 }}>{styleStatus.text}</span>
                     </div>
-                    {!request.status == 0 ? null : (
-                        <div className='d-flex flex-row'>
+                </div>
+                {(request.status == 0 && isProfessor == false) || (request.status == 1 && isProfessor == true) ? (
+                    <div className='d-flex justify-content-center align-items-center' style={{ marginTop: 20, textAlign: 'center' }}>
+                        <div style={{ marginRight: 10 }}>
                             <Button
                                 variant="link"
                                 className='buttonHover'
@@ -149,28 +195,44 @@ const SecretaryCard = ({ request, setInternalDirty, accessToken, handleError, ha
                                     <span className='d-none d-md-flex'>Accept</span>
                                 </div>
                             </Button>
-                            <Button
-                                variant="link"
-                                className='buttonHover2'
-                                style={{ textDecoration: 'none', color: 'rgba(234, 84, 85)' }}
-                                onClick={() => {
-                                    setShowModal(true);
-                                    setMsgModal({
-                                        header: 'Reject request',
-                                        body: `Are you sure you want to reject the request of student ${request.student}?`,
-                                        method: () => rejectRequest(),
-                                    });
-                                }}>
-                                <div className="d-flex align-items-center">
-                                    <i className="bi bi-x-circle mobile-view" style={{ fontSize: '16px', paddingRight: 8, color: 'rgba(234, 84, 85)' }}></i>
-                                    <span className='d-none d-md-flex'>Reject</span>
-                                </div>
-                            </Button>
                         </div>
-                    )}
-                </div>
+                        {
+                            isProfessor ?
+                                <div style={{ marginRight: 10 }}>
+                                    <Button
+                                        variant="link"
+                                        className='buttonHover3'
+                                        style={{ textDecoration: 'none', color: 'rgba(252,193,8)' }}
+                                        onClick={() => {
+                                        }}>
+                                        <div className="d-flex align-items-center">
+                                            <i className="bi bi-x-circle mobile-view" style={{ fontSize: '16px', paddingRight: 8, color: 'rgba(252,193,8)' }}></i>
+                                            <span className='d-none d-md-flex'>Request change</span>
+                                        </div>
+                                    </Button>
+                                </div>
+                                : null
+                        }
+                        <Button
+                            variant="link"
+                            className='buttonHover2'
+                            style={{ textDecoration: 'none', color: 'rgba(234, 84, 85)' }}
+                            onClick={() => {
+                                setShowModal(true);
+                                setMsgModal({
+                                    header: 'Reject request',
+                                    body: `Are you sure you want to reject the request of student ${request.student}?`,
+                                    method: () => rejectRequest(),
+                                });
+                            }}>
+                            <div className="d-flex align-items-center">
+                                <i className="bi bi-x-circle mobile-view" style={{ fontSize: '16px', paddingRight: 8, color: 'rgba(234, 84, 85)' }}></i>
+                                <span className='d-none d-md-flex'>Reject</span>
+                            </div>
+                        </Button>
+                    </div>) : null}
             </Card>
-        </Col>
+        </Col >
     )
 }
 
@@ -180,8 +242,9 @@ SecretaryCard.propTypes = {
     accessToken: PropTypes.string.isRequired,
     handleError: PropTypes.func.isRequired,
     handleSuccess: PropTypes.func.isRequired,
-    setShowModal: PropTypes.func.isRequired,
-    setMsgModal: PropTypes.func.isRequired,
+    setShowModal: PropTypes.func,
+    setMsgModal: PropTypes.func,
+    isProfessor: PropTypes.bool.isRequired,
 };
 
 export default SecretaryCard;

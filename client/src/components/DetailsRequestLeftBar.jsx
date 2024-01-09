@@ -32,7 +32,7 @@ const DetailsRequestLeftBar = ({ request, handleSuccess, handleError, accessToke
 
     function acceptRequest() {
         setShowModal(false);
-        API.approveRequestRecretary(accessToken, request.id)
+        API.approveRequestSecretary(accessToken, request.id)
             .then(() => {
                 handleSuccess('Request accepted');
                 setInternalDirty(true);
@@ -44,7 +44,7 @@ const DetailsRequestLeftBar = ({ request, handleSuccess, handleError, accessToke
 
     function rejectRequest() {
         setShowModal(false);
-        API.rejectRequestRecretary(accessToken, request.id)
+        API.rejectRequestSecretary(accessToken, request.id)
             .then(() => {
                 handleSuccess('Request rejected');
                 setInternalDirty(true);

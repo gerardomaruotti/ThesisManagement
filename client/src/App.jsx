@@ -23,6 +23,7 @@ import StudentRequests from './views/StudentRequests.jsx';
 import SecretaryHome from './views/SecretaryHome.jsx';
 import InsertThesisRequest from './views/InsertThesisRequest.jsx';
 import RequestThesisDetails from './views/RequestThesisDetails.jsx';
+import ProfessorCheckRequests from './views/ProfessorCheckRequests.jsx';
 
 function App() {
 	const { user, isAuthenticated, getAccessTokenSilently, isLoading, loginWithRedirect } = useAuth0();
@@ -347,7 +348,12 @@ function App() {
 						/>
 					}
 				/>
-				<Route path='/requests' element={<StudentRequests accessToken={accessToken} handleError={handleError} />} />
+				<Route path='/requests' element={
+					isStudent ?
+						<StudentRequests accessToken={accessToken} handleError={handleError} /> :
+						isProfessor ?
+							<ProfessorCheckRequests handleError={handleError} handleSuccess={handleSuccess} accessToken={accessToken} setShowModal={setShowModal} setMsgModal={setMsgModal} />
+							: null} />
 				<Route path='/requests/add' element={<InsertThesisRequest accessToken={accessToken} handleError={handleError} />} />
 				<Route path='/requests/add' element={<NotFound />} />
 				<Route path='requests/:id' element={<RequestThesisDetails

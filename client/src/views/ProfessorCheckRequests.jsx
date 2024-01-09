@@ -6,22 +6,27 @@ import { useLoading } from '../LoadingContext';
 import Loading from '../components/Loading.jsx';
 import SecretaryCard from '../components/SecretaryCard.jsx';
 
-const SecretaryHome = ({ handleError,
+
+const ProfessorCheckRequests = ({
+    handleError,
     handleSuccess,
     accessToken,
     setShowModal,
-    setMsgModal }) => {
+    setMsgModal
+}) => {
 
     const { loading, setLoading } = useLoading();
-    const [rapidFilter, setRapidFilter] = useState('secretary-review');
+    const [rapidFilter, setRapidFilter] = useState('supervisor-review');
     const [filteredRequests, setFilteredRequests] = useState([]);
     const [requests, setRequests] = useState([]); // 0 pending, 1 accepted by secretary, 2 rejected by secretary, 3 accepted by professor, 4 rejected by professor, 5 request change
     const [internalDirty, setInternalDirty] = useState(false);
+
     useEffect(() => {
         if (accessToken != null) {
             setLoading(true);
             API.getStudentThesisRequest(accessToken)
                 .then((requests) => {
+                    console.log(requests);
                     setRequests(requests);
                     setFilteredRequests(requests);
                     setLoading(false);
@@ -37,9 +42,7 @@ const SecretaryHome = ({ handleError,
 
     useEffect(() => {
         if (requests.length != 0) {
-            if (rapidFilter === 'secretary-review') {
-                setFilteredRequests(requests.filter((request) => request.status == 0));
-            } else if (rapidFilter === 'supervisor-review') {
+            if (rapidFilter === 'supervisor-review') {
                 setFilteredRequests(requests.filter((request) => request.status == 1));
             } else if (rapidFilter === 'accepted') {
                 setFilteredRequests(requests.filter((request) => request.status == 3));
@@ -58,11 +61,6 @@ const SecretaryHome = ({ handleError,
                     <Row style={{ marginTop: 25, paddingBottom: 10 }}>
                         <Col md='auto' style={{ paddingBottom: 10, overflowX: 'auto' }}>
                             <Nav variant='pills' activeKey={rapidFilter} style={{ display: 'flex', flexWrap: 'nowrap' }}>
-                                <Nav.Item>
-                                    <Nav.Link eventKey='secretary-review' style={{ width: 200 }} className='buttons-rapid-filter' onClick={() => setRapidFilter('secretary-review')}>
-                                        In review by secretary
-                                    </Nav.Link>
-                                </Nav.Item>
                                 <Nav.Item>
                                     <Nav.Link eventKey='supervisor-review' style={{ width: 220 }} className='buttons-rapid-filter' onClick={() => setRapidFilter('supervisor-review')}>
                                         In review by supervisor
@@ -94,9 +92,9 @@ const SecretaryHome = ({ handleError,
                                 setInternalDirty={setInternalDirty}
                                 handleError={handleError}
                                 handleSuccess={handleSuccess}
+                                isProfessor={true}
                                 setShowModal={setShowModal}
                                 setMsgModal={setMsgModal}
-                                isProfessor={false}
                             />
                         ))) : (
                         <Col style={{ marginTop: 25 }}>
@@ -109,12 +107,12 @@ const SecretaryHome = ({ handleError,
     )
 }
 
-SecretaryHome.propTypes = {
+ProfessorCheckRequests.propTypes = {
     handleError: PropTypes.func.isRequired,
     handleSuccess: PropTypes.func.isRequired,
     accessToken: PropTypes.string.isRequired,
     setShowModal: PropTypes.func.isRequired,
     setMsgModal: PropTypes.func.isRequired,
-};
+}
 
-export default SecretaryHome;
+export default ProfessorCheckRequests
