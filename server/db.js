@@ -1183,7 +1183,7 @@ exports.cancelPendingApplicationsExpiredThesis = (date) => {
 exports.getTeacherRequests = (teacherID) => {
 
   return new Promise((resolve, reject) => {
-    const sql = "SELECT * FROM THESIS_REQUEST WHERE SUPERVISOR=? AND STATUS=1";
+    const sql = "SELECT * FROM THESIS_REQUEST WHERE SUPERVISOR=? AND STATUS IN (1, 3, 4, 5)";
     db.all(sql, [teacherID], (err,rows) => {
       if (err) {
         reject(err);
