@@ -4,6 +4,7 @@ import PropTypes from 'prop-types'
 import Avatar from '../assets/avatar.svg'
 import { Color } from '../constants/colors.js'
 import API from '../API'
+import dayjs from 'dayjs'
 
 const DetailsRequestLeftBar = ({ request, handleSuccess, handleError, accessToken, setInternalDirty, setShowModal, setMsgModal }) => {
     const styleStatus =
@@ -90,6 +91,18 @@ const DetailsRequestLeftBar = ({ request, handleSuccess, handleError, accessToke
                 </Col>
             ) : null
             }
+            <Col md={12}>
+                <div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}> Request Date </div>
+                <div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}>
+                    <span
+                        className='badge'
+                        style={{ backgroundColor: 'rgba(230, 120, 43, 0.1)', color: Color.secondary, padding: '1em 1em', borderRadius: '0.25rem' }}
+                    >
+                        <i className='bi bi-calendar3' style={{ fontSize: '16px' }}></i>
+                    </span>
+                    <span style={{ marginLeft: 8, color: 'rgba(0, 0, 0, 0.5)' }}>{dayjs(request.request_date).format('DD/MM/YYYY')}</span>
+                </div>
+            </Col>
             {
                 !request.approval_date ? null : (
                     <Col md={12}>
