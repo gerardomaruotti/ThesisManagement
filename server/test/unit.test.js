@@ -1715,7 +1715,7 @@ describe('POST Insert Request', () => {
         expect(db.getRole).toHaveBeenCalledTimes(1);
         expect(db.insertRequest).toHaveBeenCalledTimes(0);
         expect(res.status).toBe(503);
-        expect(res.body).toEqual({ error: 'Error in the insertion' });
+        expect(res.body).toEqual({ error: 'Error in the insertion of the request' });
     });
 
     test(`should return a 422 error when called without something in the body`, async () => {
@@ -1733,22 +1733,42 @@ describe('POST Approve secretary', () => {
     test(`should correctly approve a request by secretary`, async () => {
     
         db.getRole.mockResolvedValueOnce(secretary);
+        db.checkRequestExistance.mockResolvedValueOnce(1);
         db.approveRequestSecretary.mockResolvedValueOnce(1);
 
         const res = await request(app).post('/api/approve/request/secretary').send(requestBody);
 
         expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.checkRequestExistance).toHaveBeenCalledTimes(1);
+        expect(db.checkRequestExistance).toHaveBeenCalledWith(requestBody.requestID);
         expect(db.approveRequestSecretary).toHaveBeenCalledTimes(1);
         expect(db.approveRequestSecretary).toHaveBeenCalledWith(requestBody.requestID);
         expect(res.status).toBe(200);
     });
 
-    test(`should return a 401 error when the user is not secretary`, async () => {
-        db.getRole.mockResolvedValueOnce(teacher);
+    test(`should return a 500 error when request does not exist`, async () => {
+    
+        db.getRole.mockResolvedValueOnce(secretary);
+        db.checkRequestExistance.mockResolvedValueOnce(0);
 
         const res = await request(app).post('/api/approve/request/secretary').send(requestBody);
 
         expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.checkRequestExistance).toHaveBeenCalledTimes(1);
+        expect(db.checkRequestExistance).toHaveBeenCalledWith(requestBody.requestID);
+        expect(res.status).toBe(500);
+        expect(res.body).toEqual({ error: 'Request does not exists' });
+    });
+
+    test(`should return a 401 error when the user is not secretary`, async () => {
+        db.getRole.mockResolvedValueOnce(teacher);
+        db.checkRequestExistance.mockResolvedValueOnce(1);
+
+        const res = await request(app).post('/api/approve/request/secretary').send(requestBody);
+
+        expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.checkRequestExistance).toHaveBeenCalledTimes(1);
+        expect(db.checkRequestExistance).toHaveBeenCalledWith(requestBody.requestID);
         expect(db.approveRequestSecretary).toHaveBeenCalledTimes(0);
         expect(res.status).toBe(401);
         expect(res.body).toEqual({ error: 'Unauthorized user' });
@@ -1762,7 +1782,7 @@ describe('POST Approve secretary', () => {
         expect(db.getRole).toHaveBeenCalledTimes(1);
         expect(db.approveRequestSecretary).toHaveBeenCalledTimes(0);
         expect(res.status).toBe(503);
-        expect(res.body).toEqual({ error: 'Error in the insertion' });
+        expect(res.body).toEqual({ error: 'Error in the process to approve request by secretary' });
     });
 
     test(`should return a 422 error when called without something in the body`, async () => {
@@ -1780,22 +1800,42 @@ describe('POST Reject secretary', () => {
     test(`should correctly reject a request by secretary`, async () => {
     
         db.getRole.mockResolvedValueOnce(secretary);
+        db.checkRequestExistance.mockResolvedValueOnce(1);
         db.rejectRequestSecretary.mockResolvedValueOnce(1);
 
         const res = await request(app).post('/api/reject/request/secretary').send(requestBody);
 
         expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.checkRequestExistance).toHaveBeenCalledTimes(1);
+        expect(db.checkRequestExistance).toHaveBeenCalledWith(requestBody.requestID);
         expect(db.rejectRequestSecretary).toHaveBeenCalledTimes(1);
         expect(db.rejectRequestSecretary).toHaveBeenCalledWith(requestBody.requestID);
         expect(res.status).toBe(200);
     });
 
-    test(`should return a 401 error when the user is not secretary`, async () => {
+    test(`should return a 500 error when the request does not exist`, async () => {
         db.getRole.mockResolvedValueOnce(teacher);
+        db.checkRequestExistance.mockResolvedValueOnce(0);
 
         const res = await request(app).post('/api/reject/request/secretary').send(requestBody);
 
         expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.checkRequestExistance).toHaveBeenCalledTimes(1);
+        expect(db.checkRequestExistance).toHaveBeenCalledWith(requestBody.requestID);
+        expect(db.rejectRequestSecretary).toHaveBeenCalledTimes(0);
+        expect(res.status).toBe(500);
+        expect(res.body).toEqual({ error: 'Request does not exists' });
+    });
+
+    test(`should return a 401 error when the user is not secretary`, async () => {
+        db.getRole.mockResolvedValueOnce(teacher);
+        db.checkRequestExistance.mockResolvedValueOnce(1);
+
+        const res = await request(app).post('/api/reject/request/secretary').send(requestBody);
+
+        expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.checkRequestExistance).toHaveBeenCalledTimes(1);
+        expect(db.checkRequestExistance).toHaveBeenCalledWith(requestBody.requestID);
         expect(db.rejectRequestSecretary).toHaveBeenCalledTimes(0);
         expect(res.status).toBe(401);
         expect(res.body).toEqual({ error: 'Unauthorized user' });
@@ -1809,7 +1849,7 @@ describe('POST Reject secretary', () => {
         expect(db.getRole).toHaveBeenCalledTimes(1);
         expect(db.rejectRequestSecretary).toHaveBeenCalledTimes(0);
         expect(res.status).toBe(503);
-        expect(res.body).toEqual({ error: 'Error in the insertion' });
+        expect(res.body).toEqual({ error: 'Error in the process to reject request by secretary' });
     });
 
     test(`should return a 422 error when called without something in the body`, async () => {
