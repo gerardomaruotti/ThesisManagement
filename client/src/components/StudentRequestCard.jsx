@@ -1,5 +1,5 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Row, Col, Card, Image, Button } from 'react-bootstrap';
+import { Row, Col, Card, Image, Button, OverlayTrigger, Popover } from 'react-bootstrap';
 import { Color } from '../constants/colors.js';
 import { useNavigate } from 'react-router-dom';
 import Avatar from '../assets/avatar.svg';
@@ -8,6 +8,21 @@ import dayjs from 'dayjs';
 
 function StudentRequestCard({ request }) {
 	const navigate = useNavigate();
+	const popover = (
+		<Popover>
+			{!request.notes ?
+				<Popover.Body>No note left by supervisor</Popover.Body>
+				: (
+					<>
+						<Popover.Header as="h3" style={{ color: Color.primary }}>Changes requested by the supervisor</Popover.Header>
+						<Popover.Body>
+							{request.notes}
+						</Popover.Body>
+					</>
+				)}
+		</Popover>
+	);
+
 	return (
 		<Col lg={6} sm={12} style={{ marginTop: 25 }}>
 			<Card style={{ padding: 20 }} className='custom-card'>
@@ -182,29 +197,35 @@ function StudentRequestCard({ request }) {
 							</div>
 						) : null}
 						{request.status === 5 ? (
-							<div style={{ display: 'flex', alignItems: 'center', float: 'left', marginTop: 20 }}>
-								<Col style={{ display: 'flex', alignItems: 'center', float: 'left' }}>
-									<span
-										className='badge'
-										style={{
-											backgroundColor: 'rgba(230, 120, 43, 0.2)',
-											color: 'rgba(230, 120, 43)',
-											padding: '1em 1em',
-											borderRadius: '0.25rem',
-										}}
-									>
-										<i className='bi bi-pencil' style={{ fontSize: '16px' }}></i>
-									</span>
-								</Col>
-								<Col style={{ display: 'flex', alignItems: 'left', float: 'left', marginLeft: 5, whiteSpace: 'nowrap' }}>
-									<span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>Requested change</span>
-								</Col>
-							</div>
+							<OverlayTrigger
+								placement='bottom'
+								delay={{ show: 100, hide: 200 }}
+								overlay={popover}
+							>
+								<div style={{ display: 'flex', alignItems: 'center', float: 'left', marginTop: 20 }}>
+									<Col style={{ display: 'flex', alignItems: 'center', float: 'left' }}>
+										<span
+											className='badge'
+											style={{
+												backgroundColor: 'rgba(230, 120, 43, 0.2)',
+												color: 'rgba(230, 120, 43)',
+												padding: '1em 1em',
+												borderRadius: '0.25rem',
+											}}
+										>
+											<i className='bi bi-pencil' style={{ fontSize: '16px' }}></i>
+										</span>
+									</Col>
+									<Col style={{ display: 'flex', alignItems: 'left', float: 'left', marginLeft: 5, whiteSpace: 'nowrap' }}>
+										<span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>Requested change</span>
+									</Col>
+								</div>
+							</OverlayTrigger>
 						) : null}
 					</Col>
 				</Row>
 			</Card>
-		</Col>
+		</Col >
 	);
 }
 

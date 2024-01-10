@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card, Col, Button, Image } from 'react-bootstrap';
+import { Card, Col, Button, Image, OverlayTrigger, Popover } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import Avatar from '../assets/avatar.svg';
 import API from '../API';
@@ -12,6 +12,20 @@ import ModalWithTextField from './ModalWithTextField.jsx';
 const SecretaryCard = ({ request, setInternalDirty, accessToken, handleError, handleSuccess, setShowModal, setMsgModal, isProfessor }) => {
 	const navigate = useNavigate();
 	const [showModalWithText, setShowModalWithText] = useState(false);
+	const popover = (
+		<Popover>
+			{!request.notes ?
+				<Popover.Body>No note left by supervisor</Popover.Body>
+				: (
+					<>
+						<Popover.Header as="h3" style={{ color: Color.primary }}>Changes requested by the supervisor</Popover.Header>
+						<Popover.Body>
+							{request.notes}
+						</Popover.Body>
+					</>
+				)}
+		</Popover>
+	);
 	const styleStatus =
 		request.status == 0
 			? {
@@ -183,21 +197,43 @@ const SecretaryCard = ({ request, setInternalDirty, accessToken, handleError, ha
 							</div>
 						)}
 					</div>
-					<div>
-						<span
-							className='badge'
-							style={{
-								backgroundColor: styleStatus.backgroundColor,
-								color: styleStatus.color,
-								padding: '1em 1em',
-								borderRadius: '0.25rem',
-							}}
+					{request.status == 5 ?
+						<OverlayTrigger
+							placement='bottom'
+							delay={{ show: 100, hide: 200 }}
+							overlay={popover}
 						>
-							{styleStatus.icon}
-						</span>
-						<span style={{ color: 'rgba(0, 0, 0, 0.5)', fontSize: 15, paddingLeft: 10 }}>{styleStatus.text}</span>
-					</div>
+							<div>
+								<span
+									className='badge'
+									style={{
+										backgroundColor: styleStatus.backgroundColor,
+										color: styleStatus.color,
+										padding: '1em 1em',
+										borderRadius: '0.25rem',
+									}}
+								>
+									{styleStatus.icon}
+								</span>
+								<span style={{ color: 'rgba(0, 0, 0, 0.5)', fontSize: 15, paddingLeft: 10 }}>{styleStatus.text}</span>
+							</div>
+						</OverlayTrigger> :
+						<div>
+							<span
+								className='badge'
+								style={{
+									backgroundColor: styleStatus.backgroundColor,
+									color: styleStatus.color,
+									padding: '1em 1em',
+									borderRadius: '0.25rem',
+								}}
+							>
+								{styleStatus.icon}
+							</span>
+							<span style={{ color: 'rgba(0, 0, 0, 0.5)', fontSize: 15, paddingLeft: 10 }}>{styleStatus.text}</span>
+						</div>}
 				</div>
+
 				{(request.status == 0 && isProfessor == false) || (request.status == 1 && isProfessor == true) ? (
 					<div className='d-flex justify-content-center align-items-center' style={{ marginTop: 20, textAlign: 'center' }}>
 						<div style={{ marginRight: 10 }}>
