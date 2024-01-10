@@ -331,22 +331,13 @@ app.get('/api/thesis/:id', checkJwt,(req, res) => {
 		}
 
 		try {
-			console.log(1);
 			const infoThesis = await db.getThesis(thesisID);
-			console.log(infoThesis);
-			console.log(2);
 			const titleDegree = await db.getTitleDegree(infoThesis.cds);
-			console.log(3);
 			const supervisor = await db.getTeacher(infoThesis.supervisor);
-			console.log(4);
 			const keywords = await db.getKeywordsbyId(thesisID);
-			console.log(5);
 			const types = await db.getTypesbyId(thesisID);
-			console.log(6);
 			const groups = await db.getGroupSupervisorAndCoSupervisor(thesisID);
-			console.log(7);
 			const coSupervisors = await db.getCoSupervisors(thesisID);
-			console.log(8);
 
 			let thesis = {
 				title: infoThesis.title,

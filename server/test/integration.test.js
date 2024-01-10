@@ -229,7 +229,7 @@ const thesis = {
     keywords: ['k1', 'k2']
   };
 
-describe('GET Supervisors Groups', () => {
+describe('POST INSERT THESIS', () => {
     afterAll(async () => {
         await dbTest.deleteTableContent("CO_SUPERVISOR");
         await dbTest.deleteTableContent("KEYWORD");
@@ -263,6 +263,29 @@ describe('GET Thesis by ID', () => {
     });
     
     test('should correctly get a thesis given a certain ID', async () => {
+        const res = await request(app).get('/api/thesis/2').set('Authorization', `Bearer ${teacher.jwt}`);
+
+        expect(res.status).toBe(200);
+    });
+});
+
+describe('Apply for Proposal', () => {
+    beforeAll(async () => {
+        const insertPromises = [];
+        insertPromises.push(dbTest.insertThesis(2, student.degree, teacher.id, date));
+        insertPromises.push(dbTest.insertThesisStatus(2, 1));
+        insertPromises.push(dbTest.insertDegree(0));
+
+        await Promise.all(insertPromises);
+    });
+
+    afterAll(async () => {
+        await dbTest.deleteTableContent("DEGREE");
+        await dbTest.deleteTableContent("THESIS_STATUS");
+        await dbTest.deleteTableContent("THESIS");
+    });
+    
+    test('should correctly apply for a thesis', async () => {
         const res = await request(app).get('/api/thesis/2').set('Authorization', `Bearer ${teacher.jwt}`);
 
         expect(res.status).toBe(200);
