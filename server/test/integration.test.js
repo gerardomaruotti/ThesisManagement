@@ -80,9 +80,9 @@ describe('GET Teachers', () => {
         expect(res.status).toBe(200);
         expect(res.body).not.toHaveLength(0);
         expect(res.body).toEqual(expect.arrayContaining([
-            { ID: "d0", name: "name0", surname: "surname0", email: "email0" },
-            { ID: "d1", name: "name1", surname: "surname1", email: "email1" },
-            { ID: "d2", name: "name2", surname: "surname2", email: "email2" },
+            { ID: "d0", name: "name0", surname: "surname0", email: "email0@polito.it" },
+            { ID: "d1", name: "name1", surname: "surname1", email: "email1@polito.it" },
+            { ID: "d2", name: "name2", surname: "surname2", email: "email2@polito.it" },
         ]));
     });
 });
@@ -274,19 +274,17 @@ describe('Apply for Proposal', () => {
         const insertPromises = [];
         insertPromises.push(dbTest.insertThesis(2, student.degree, teacher.id, date));
         insertPromises.push(dbTest.insertThesisStatus(2, 1));
-        insertPromises.push(dbTest.insertDegree(0));
 
         await Promise.all(insertPromises);
     });
 
     afterAll(async () => {
-        await dbTest.deleteTableContent("DEGREE");
         await dbTest.deleteTableContent("THESIS_STATUS");
         await dbTest.deleteTableContent("THESIS");
     });
     
     test('should correctly apply for a thesis', async () => {
-        const res = await request(app).get('/api/thesis/2').set('Authorization', `Bearer ${teacher.jwt}`);
+        const res = await request(app).post('/api/thesis/2/apply').set('Authorization', `Bearer ${student.jwt}`);
 
         expect(res.status).toBe(200);
     });

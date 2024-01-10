@@ -187,7 +187,7 @@ exports.insertDepartment = (n) => {
 exports.insertStudent = (n) => {
     return new Promise((resolve, reject) => {
         const query = `INSERT INTO "STUDENT" ("ID","NAME","SURNAME","GENDER","NATIONALITY","EMAIL","ENROLLMENT_YEAR","COD_DEGREE") VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
-        db.run(query, ["s" + n, "name" + n, "surname" + n, "gender" + n, "nationaliy" + n, "email"+n, "enrollament_y" + n, "cod_d" + n], function (err) {
+        db.run(query, ["s" + n, "name" + n, "surname" + n, "gender" + n, "nationaliy" + n, "email"+n+"@studenti.polito.it", "enrollament_y" + n, "cod_d" + n], function (err) {
             if (err) {
                 handleError(err);
             } else {
@@ -306,7 +306,7 @@ exports.insertTeacher = (n) => {
     return new Promise((resolve, reject) => {
         const query = `INSERT INTO "TEACHER" ("ID","NAME","SURNAME","EMAIL","COD_GROUP","COD_DEPARTMENT") VALUES (?, ?, ?, ?, ?, ?)`;
 
-        db.run(query, ["d"+n, "name" + n, "surname" + n, "email" + n, "cod_g" + n, "cod_d" + n], function (err) {
+        db.run(query, ["d"+n, "name" + n, "surname" + n, "email" + n+"@polito.it", "cod_g" + n, "cod_d" + n], function (err) {
             if (err) {
                 handleError(err);
             } else {

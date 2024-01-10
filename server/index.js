@@ -401,6 +401,8 @@ app.post('/api/thesis/:id/apply', upload.single('file'), checkJwt,(req, res) => 
 				subject: 'Thesis Application',
 			};
 
+			console.log(mailOptions);
+
 			// Send the email using Nodemailer
 			transporter.sendMail(mailOptions, (error, info) => {
 				if (error) {
