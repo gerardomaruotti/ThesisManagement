@@ -1862,3 +1862,137 @@ describe('POST Reject secretary', () => {
         expect(res.body.errors).toHaveLength(1);
     });
 });    
+
+describe('POST Approve professor', () => {
+    test(`should correctly approve a request by professor`, async () => {
+    
+        db.getRole.mockResolvedValueOnce(teacher);
+        db.checkRequestExistance.mockResolvedValueOnce(1);
+        db.approveRequestTeacher.mockResolvedValueOnce(1);
+
+        const res = await request(app).post('/api/approve/request/professor').send(requestBody);
+
+        expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.checkRequestExistance).toHaveBeenCalledTimes(1);
+        expect(db.checkRequestExistance).toHaveBeenCalledWith(requestBody.requestID);
+        expect(db.approveRequestTeacher).toHaveBeenCalledTimes(1);
+        expect(db.approveRequestTeacher).toHaveBeenCalledWith(requestBody.requestID, currentDate.format("YYYY-MM-DD"));
+        expect(res.status).toBe(200);
+    });
+
+    test(`should return a 500 error when request does not exist`, async () => {
+    
+        db.getRole.mockResolvedValueOnce(teacher);
+        db.checkRequestExistance.mockResolvedValueOnce(0);
+
+        const res = await request(app).post('/api/approve/request/professor').send(requestBody);
+
+        expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.checkRequestExistance).toHaveBeenCalledTimes(1);
+        expect(db.checkRequestExistance).toHaveBeenCalledWith(requestBody.requestID);
+        expect(res.status).toBe(500);
+        expect(res.body).toEqual({ error: 'Request does not exists' });
+    });
+
+    test(`should return a 401 error when the user is not teacher`, async () => {
+        db.getRole.mockResolvedValueOnce(student);
+        db.checkRequestExistance.mockResolvedValueOnce(1);
+
+        const res = await request(app).post('/api/approve/request/professor').send(requestBody);
+
+        expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.checkRequestExistance).toHaveBeenCalledTimes(1);
+        expect(db.checkRequestExistance).toHaveBeenCalledWith(requestBody.requestID);
+        expect(db.approveRequestTeacher).toHaveBeenCalledTimes(0);
+        expect(res.status).toBe(401);
+        expect(res.body).toEqual({ error: 'Unauthorized user' });
+    });
+
+    test(`should return a 503 error when an error occurs`, async () => {
+        db.getRole.mockRejectedValueOnce(genericError);
+
+        const res = await request(app).post('/api/approve/request/professor').send(requestBody);
+
+        expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.approveRequestTeacher).toHaveBeenCalledTimes(0);
+        expect(res.status).toBe(503);
+        expect(res.body).toEqual({ error: 'Error in the process to approve request by professor' });
+    });
+
+    test(`should return a 422 error when called without something in the body`, async () => {
+
+        const res = await request(app).post('/api/approve/request/professor');
+
+        expect(db.getRole).toHaveBeenCalledTimes(0);
+        expect(db.approveRequestTeacher).toHaveBeenCalledTimes(0);
+        expect(res.status).toBe(422);
+        expect(res.body.errors).toHaveLength(1);
+    });
+});
+
+describe('POST Reject professor', () => {
+    test(`should correctly approve a request by professor`, async () => {
+    
+        db.getRole.mockResolvedValueOnce(teacher);
+        db.checkRequestExistance.mockResolvedValueOnce(1);
+        db.rejectRequestTeacher.mockResolvedValueOnce(1);
+
+        const res = await request(app).post('/api/reject/request/professor').send(requestBody);
+
+        expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.checkRequestExistance).toHaveBeenCalledTimes(1);
+        expect(db.checkRequestExistance).toHaveBeenCalledWith(requestBody.requestID);
+        expect(db.rejectRequestTeacher).toHaveBeenCalledTimes(1);
+        expect(db.rejectRequestTeacher).toHaveBeenCalledWith(requestBody.requestID);
+        expect(res.status).toBe(200);
+    });
+
+    test(`should return a 500 error when request does not exist`, async () => {
+    
+        db.getRole.mockResolvedValueOnce(teacher);
+        db.checkRequestExistance.mockResolvedValueOnce(0);
+
+        const res = await request(app).post('/api/reject/request/professor').send(requestBody);
+
+        expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.checkRequestExistance).toHaveBeenCalledTimes(1);
+        expect(db.checkRequestExistance).toHaveBeenCalledWith(requestBody.requestID);
+        expect(res.status).toBe(500);
+        expect(res.body).toEqual({ error: 'Request does not exists' });
+    });
+
+    test(`should return a 401 error when the user is not teacher`, async () => {
+        db.getRole.mockResolvedValueOnce(student);
+        db.checkRequestExistance.mockResolvedValueOnce(1);
+
+        const res = await request(app).post('/api/reject/request/professor').send(requestBody);
+
+        expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.checkRequestExistance).toHaveBeenCalledTimes(1);
+        expect(db.checkRequestExistance).toHaveBeenCalledWith(requestBody.requestID);
+        expect(db.rejectRequestTeacher).toHaveBeenCalledTimes(0);
+        expect(res.status).toBe(401);
+        expect(res.body).toEqual({ error: 'Unauthorized user' });
+    });
+
+    test(`should return a 503 error when an error occurs`, async () => {
+        db.getRole.mockRejectedValueOnce(genericError);
+
+        const res = await request(app).post('/api/reject/request/professor').send(requestBody);
+
+        expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.rejectRequestTeacher).toHaveBeenCalledTimes(0);
+        expect(res.status).toBe(503);
+        expect(res.body).toEqual({ error: 'Error in the process to reject request by professor' });
+    });
+
+    test(`should return a 422 error when called without something in the body`, async () => {
+
+        const res = await request(app).post('/api/reject/request/professor');
+
+        expect(db.getRole).toHaveBeenCalledTimes(0);
+        expect(db.approveRequestTeacher).toHaveBeenCalledTimes(0);
+        expect(res.status).toBe(422);
+        expect(res.body.errors).toHaveLength(1);
+    });
+});
