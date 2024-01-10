@@ -349,6 +349,7 @@ describe('POST Thesis', () => {
                 cosupervisor: ["email1"],
                 supervisor: ["supervisor1"],
                 group: ["group1", "group2"],
+                exp_date: "2024-03-03"
             }
         }
 

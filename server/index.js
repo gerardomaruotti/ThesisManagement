@@ -192,6 +192,7 @@ async function filterThesis(thesis, filters) {
 }
 
 async function validateThesis(thesis, filters) {
+	console.log(filters)
 	let totFilters = { value: 0 };
 	let cosupervisors = await db.getCoSupervisorsEmail(thesis.ID);
 	let sup = await db.getThesisSupervisor(thesis.ID);
@@ -401,7 +402,6 @@ app.post('/api/thesis/:id/apply', upload.single('file'), checkJwt,(req, res) => 
 				subject: 'Thesis Application',
 			};
 
-			console.log(mailOptions);
 
 			// Send the email using Nodemailer
 			transporter.sendMail(mailOptions, (error, info) => {
@@ -922,7 +922,7 @@ app.post(
 				let mailTeacher = await db.getMailTeacher(teacher);
 
 				const mailOptions = {
-					from: `${userRole.email}`,
+					from: `s313373@studenti.polito.it`,
 					to: `${mailTeacher}`,  
 					text: `You received a Thesis Request from student ${student}`,
 					subject: 'Thesis Request',
