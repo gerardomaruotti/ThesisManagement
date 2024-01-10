@@ -1,6 +1,5 @@
 const request = require('supertest');
 const db = require('../db');
-db.updateThesisStatus
 const { app, transporter } = require('../index.js');
 const dayjs = require('dayjs');
 const currentDate = dayjs();
@@ -118,6 +117,7 @@ const thesisExist = {
 
 const requestBody = {
     requestID: 1,
+    notes: "notes"
 };
 
 const testFileContent = 'This is the content of the fake file.'
@@ -133,6 +133,9 @@ jest.mock('nodemailer', () => ({
     createTransport: jest.fn(() => ({
         sendMail: jest.fn(),
     })),
+}));
+jest.mock('node-cron', () => ({
+    schedule: jest.fn(),
 }));
 
 beforeEach(() => {
@@ -2098,5 +2101,75 @@ describe('GET Requests', () => {
         expect(db.getRole).toHaveBeenCalledTimes(1);
         expect(res.status).toBe(503);
         expect(res.body).toEqual({error: "Error get Requests"});
+    });
+});
+
+describe('POST Request Change Professor', () => {
+    test(`should correctly apply request change for a teacher`, async () => {
+
+        db.getRole.mockResolvedValueOnce(teacher);
+        db.checkRequestExistance.mockResolvedValueOnce(true);
+        db.changeRequestTeacher.mockResolvedValueOnce();
+
+        const res = await request(app).post('/api/change/request/professor').send(requestBody);
+
+        expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.checkRequestExistance).toHaveBeenCalledTimes(1);
+        expect(db.checkRequestExistance).toHaveBeenCalledWith(requestBody.requestID);
+        expect(db.changeRequestTeacher).toHaveBeenCalledTimes(1);
+        expect(db.changeRequestTeacher).toHaveBeenCalledTimes(requestBody.requestID, requestBody.notes);
+        expect(res.status).toBe(200);
+        expect(res.body).toEqual("Request change completed by professor");
+    });
+
+    test(`should return a 401 error when the user is not a teacher`, async () => {
+
+        db.getRole.mockResolvedValueOnce(student);
+
+        const res = await request(app).post('/api/change/request/professor').send(requestBody);
+
+        expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.checkRequestExistance).toHaveBeenCalledTimes(0);
+        expect(db.changeRequestTeacher).toHaveBeenCalledTimes(0);
+        expect(res.status).toBe(401);
+        expect(res.body).toEqual({ error: 'Unauthorized user' });
+    });
+
+    test(`should return a 404 error when the request does not exist`, async () => {
+
+        db.getRole.mockResolvedValueOnce(teacher);
+        db.checkRequestExistance.mockResolvedValueOnce(false);
+
+        const res = await request(app).post('/api/change/request/professor').send(requestBody);
+
+        expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.checkRequestExistance).toHaveBeenCalledTimes(1);
+        expect(db.checkRequestExistance).toHaveBeenCalledWith(requestBody.requestID);
+        expect(db.changeRequestTeacher).toHaveBeenCalledTimes(0);
+        expect(res.status).toBe(404);
+        expect(res.body).toEqual({ error: 'Request does not exists' });
+    });
+
+    test(`should return a 503 error when an error occurs`, async () => {
+
+        db.getRole.mockRejectedValueOnce(genericError);
+
+        const res = await request(app).post('/api/change/request/professor').send(requestBody);
+
+        expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.checkRequestExistance).toHaveBeenCalledTimes(0);
+        expect(db.changeRequestTeacher).toHaveBeenCalledTimes(0);
+        expect(res.status).toBe(503);
+        expect(res.body).toEqual({ error: 'Error in the process to request change by professor' });
+    });
+
+    test(`should return a 422 when there is any error in the body`, async () => {
+
+        const res = await request(app).post('/api/change/request/professor');
+
+        expect(db.getRole).toHaveBeenCalledTimes(0);
+        expect(db.changeRequestTeacher).toHaveBeenCalledTimes(0);
+        expect(res.status).toBe(422);
+        expect(res.body.errors).toHaveLength(2);
     });
 });

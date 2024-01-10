@@ -18,6 +18,7 @@ require('dotenv').config();
 
 app.use(express.json());
 
+
  (async() => {
 	await db.updateThesisStatus(currentDate.format("YYYY-MM-DD"))
 	await db.cancelPendingApplicationsExpiredThesis(currentDate.format("YYYY-MM-DD"))
@@ -330,13 +331,22 @@ app.get('/api/thesis/:id', checkJwt,(req, res) => {
 		}
 
 		try {
+			console.log(1);
 			const infoThesis = await db.getThesis(thesisID);
+			console.log(infoThesis);
+			console.log(2);
 			const titleDegree = await db.getTitleDegree(infoThesis.cds);
+			console.log(3);
 			const supervisor = await db.getTeacher(infoThesis.supervisor);
+			console.log(4);
 			const keywords = await db.getKeywordsbyId(thesisID);
+			console.log(5);
 			const types = await db.getTypesbyId(thesisID);
+			console.log(6);
 			const groups = await db.getGroupSupervisorAndCoSupervisor(thesisID);
+			console.log(7);
 			const coSupervisors = await db.getCoSupervisors(thesisID);
+			console.log(8);
 
 			let thesis = {
 				title: infoThesis.title,
@@ -1047,10 +1057,9 @@ app.post(
 			const notes = req.body.notes;
 			try {
 				const userRole = await db.getRole(req.auth);
-				const requestExists = await db.checkRequestExistance(reqID);
-
-				if (!requestExists) return res.status(500).json({ error: 'Request does not exists' });
 				if (userRole.role != "teacher") return res.status(401).json({ error: 'Unauthorized user' });
+				const requestExists = await db.checkRequestExistance(reqID);
+				if (!requestExists) return res.status(404).json({ error: 'Request does not exists' });
 				await db.changeRequestTeacher(reqID, notes);
 				return res.status(200).json("Request change completed by professor");
 			} catch (err) {
