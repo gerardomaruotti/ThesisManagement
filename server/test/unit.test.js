@@ -59,6 +59,18 @@ const thesis2 = {
 
 };
 
+const requests = [
+    {
+        id: 1,
+        student: 1,
+        supervisor: 1,
+    },
+    {
+        id: 2,
+        student: 2,
+        supervisor: 2,
+    }
+]
 const applications = [
     {
         id: 1,
@@ -1685,15 +1697,18 @@ describe('POST Application Details', () => {
 describe('POST Insert Request', () => {
     test(`should correctly insert a request`, async () => {
         db.getRole.mockResolvedValueOnce(student);
+        db.checkPendingStudentRequests.mockResolvedValueOnce(false);
         db.insertRequest.mockResolvedValueOnce(1);
         db.insertCoSupervisorRequest.mockResolvedValue();
 
         const res = await request(app).post('/api/insert/request').send(thesis1);
 
         expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.checkPendingStudentRequests).toHaveBeenCalledTimes(1);
         expect(db.insertRequest).toHaveBeenCalledTimes(1);
         expect(db.insertCoSupervisorRequest).toHaveBeenCalledTimes(2);
         expect(res.status).toBe(200);
+        expect(res.body).toEqual("Insert request successful")
     });
 
     test(`should return a 401 error when the user is not a student`, async () => {
@@ -1702,9 +1717,23 @@ describe('POST Insert Request', () => {
         const res = await request(app).post('/api/insert/request').send(thesis1);
 
         expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.checkPendingStudentRequests).toHaveBeenCalledTimes(0);
         expect(db.insertRequest).toHaveBeenCalledTimes(0);
         expect(res.status).toBe(401);
         expect(res.body).toEqual({ error: 'Unauthorized user' });
+    });
+
+    test(`should return a 400 error when the student already has a pending application`, async () => {
+        db.getRole.mockResolvedValueOnce(student);
+        db.checkPendingStudentRequests.mockResolvedValueOnce(true);
+
+        const res = await request(app).post('/api/insert/request').send(thesis1);
+
+        expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.checkPendingStudentRequests).toHaveBeenCalledTimes(1);
+        expect(db.insertRequest).toHaveBeenCalledTimes(0);
+        expect(res.status).toBe(400);
+        expect(res.body).toEqual({ error: 'Student has already pending requests' });
     });
 
     test(`should return a 503 error when an error occurs`, async () => {
@@ -1994,5 +2023,80 @@ describe('POST Reject professor', () => {
         expect(db.approveRequestTeacher).toHaveBeenCalledTimes(0);
         expect(res.status).toBe(422);
         expect(res.body.errors).toHaveLength(1);
+    });
+});
+
+describe('GET Requests', () => {
+    test(`should correctly retrieve requests to a teacher`, async () => {
+
+        db.getRole.mockResolvedValueOnce(teacher);
+        db.getTeacherRequests.mockResolvedValueOnce(requests);
+        db.getRequestCoSup.mockResolvedValue(thesis1.co_supervisors);
+        db.getStudentInfo.mockResolvedValue(thesis1.co_supervisors[0]);
+        db.getTeacher.mockResolvedValue(thesis1.co_supervisors[0]);
+        
+        const res = await request(app).get('/api/requests');
+
+        expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.getTeacherRequests).toHaveBeenCalledTimes(1);
+        expect(db.getTeacherRequests).toHaveBeenCalledWith(teacher.id);
+        expect(db.getRequestCoSup).toHaveBeenCalledTimes(2);
+        expect(db.getStudentInfo).toHaveBeenCalledTimes(2);
+        expect(db.getTeacher).toHaveBeenCalledTimes(2);
+        expect(res.status).toBe(200);
+    });
+
+    test(`should correctly retrieve requests to secretary`, async () => {
+
+        db.getRole.mockResolvedValueOnce(secretary);
+        db.getSecretaryRequests.mockResolvedValueOnce(requests);
+        db.getRequestCoSup.mockResolvedValue(thesis1.co_supervisors);
+        db.getStudentInfo.mockResolvedValue(thesis1.co_supervisors[0]);
+        db.getTeacher.mockResolvedValue(thesis1.co_supervisors[0]);
+        
+        const res = await request(app).get('/api/requests');
+
+        expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.getSecretaryRequests).toHaveBeenCalledTimes(1);
+        expect(db.getRequestCoSup).toHaveBeenCalledTimes(2);
+        expect(db.getStudentInfo).toHaveBeenCalledTimes(2);
+        expect(db.getTeacher).toHaveBeenCalledTimes(2);
+        expect(res.status).toBe(200);
+    });
+
+    test(`should correctly retrieve requests to a student`, async () => {
+
+        db.getRole.mockResolvedValueOnce(student);
+        db.getStudentRequests.mockResolvedValueOnce([]);
+        
+        const res = await request(app).get('/api/requests');
+
+        expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.getStudentRequests).toHaveBeenCalledTimes(1);
+        expect(db.getStudentRequests).toHaveBeenCalledWith(student.id);
+        expect(db.getRequestCoSup).toHaveBeenCalledTimes(0);
+        expect(db.getStudentInfo).toHaveBeenCalledTimes(0);
+        expect(db.getTeacher).toHaveBeenCalledTimes(0);
+        expect(res.status).toBe(200);
+    });
+
+    test(`should return a 401 error when the user is not Authorized`, async () => {
+        db.getRole.mockResolvedValueOnce({role: "Unknown"});
+
+        const res = await request(app).get('/api/requests');
+
+        expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(res.status).toBe(401);
+        expect(res.body).toEqual({error: "Unauthorized user"});
+    });
+
+    test(`should return a 503 error when an error occurs`, async () => {
+        db.getRole.mockRejectedValueOnce(genericError);
+
+        const res = await request(app).get('/api/requests');
+
+        expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(res.status).toBe(503);
+        expect(res.body).toEqual({error: "Error get Requests"});
     });
 });

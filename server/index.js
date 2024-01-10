@@ -814,7 +814,7 @@ app.get('/api/requests', checkJwt, (req,res) => {
 					studentRequests = await processIDS(studentRequests);
 					return res.status(200).json(studentRequests);
 				} else {
-					return res.status(401).json("Unauthorized")
+					return res.status(401).json({error: "Unauthorized user"})
 				}
 			}
 		}
@@ -876,7 +876,7 @@ app.post(
 				let approval_date = "";
 				let status = 0;
 				const pendingRequests = await db.checkPendingStudentRequests(student);
-				if(pendingRequests) return res.status(400).json("Student has already pending requests")
+				if(pendingRequests) return res.status(400).json({ error: 'Student has already pending requests' })
 				const requestId = await db.insertRequest(supervisor, title, description, student, request_date, approval_date, status);
 				for (let i = 0; i < co_supervisors.length; i++) {	
 					await db.insertCoSupervisorRequest(requestId, co_supervisors[i].name, co_supervisors[i].surname, co_supervisors[i].email);
