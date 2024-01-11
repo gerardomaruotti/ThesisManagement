@@ -58,16 +58,16 @@ const SecretaryHome = ({ handleError,
         <>
             <div style={{ position: 'sticky', top: 0, zIndex: 2, backgroundColor: 'white', boxShadow: '0 4px 2px -2px rgba(0, 0, 0, 0.2)' }}>
                 <Container>
-                    <Row style={{ marginTop: 25, paddingBottom: 10 }}>
+                    <Row style={{ paddingTop: 25, paddingBottom: 10 }}>
                         <Col md='auto' style={{ paddingBottom: 10, overflowX: 'auto' }}>
                             <Nav variant='pills' activeKey={rapidFilter} style={{ display: 'flex', flexWrap: 'nowrap' }}>
                                 <Nav.Item>
-                                    <Nav.Link eventKey='secretary-review' style={{ width: 200 }} className='buttons-rapid-filter' onClick={() => setRapidFilter('secretary-review')}>
+                                    <Nav.Link eventKey='secretary-review' style={{ width: 193 }} className='buttons-rapid-filter' onClick={() => setRapidFilter('secretary-review')}>
                                         In review by secretary
                                     </Nav.Link>
                                 </Nav.Item>
                                 <Nav.Item>
-                                    <Nav.Link eventKey='supervisor-review' style={{ width: 205 }} className='buttons-rapid-filter' onClick={() => setRapidFilter('supervisor-review')}>
+                                    <Nav.Link eventKey='supervisor-review' style={{ width: 201 }} className='buttons-rapid-filter' onClick={() => setRapidFilter('supervisor-review')}>
                                         In review by supervisor
                                     </Nav.Link>
                                 </Nav.Item>

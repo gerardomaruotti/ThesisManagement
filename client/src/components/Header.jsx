@@ -29,11 +29,8 @@ function Header({ date, userData, isStudent, isProfessor }) {
 							<Nav.Link eventKey='/applications' onClick={() => navigate('/applications')}>
 								Applications
 							</Nav.Link>
-              <Nav.Link eventKey='/requests' onClick={() => navigate('/requests')}>
-                Thesis Requests
-              </Nav.Link>
-							<Nav.Link className='d-md-none' eventKey='/notifications'>
-								Notifications
+							<Nav.Link eventKey='/requests' onClick={() => navigate('/requests')}>
+								Thesis Requests
 							</Nav.Link>
 							<Nav.Link className='d-md-none' eventKey='/settings' onClick={() => navigate('/settings')}>
 								Settings
