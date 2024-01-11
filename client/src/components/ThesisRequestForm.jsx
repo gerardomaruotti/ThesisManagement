@@ -64,6 +64,12 @@ function ThesisRequestForm({ accessToken, handleError }) {
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
+
+		if (!title.trim() || !description.trim()) {
+			handleError('Invisible characters alone are not allowed');
+			return;
+		}
+
 		const formattedCoSupervisors = selectedCoSupervisors.map((selectedCoSupervisor) => {
 			return {
 				email: selectedCoSupervisor.email,
