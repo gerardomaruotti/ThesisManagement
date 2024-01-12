@@ -301,3 +301,17 @@ Steps:
 4. Ensure that a green popup with the text 'Application successful' is displayed on the screen.
 6. Login in Politecnico mail server as the teacher of the thesis.
 7. Ensure that he has received the confirmation email.
+
+### [14] Insert student request
+
+In this section, we have verified that a student can request a thesis.
+
+#### Test 1
+Steps:
+1. Login as a student.
+2. Go to `Request` tab
+2. Ensure that I don't have previous request
+3. Click `Submit` without inserting nothing.
+4. Ensure that request is not sent and it require mandatory information.
+6. Login in Politecnico mail server as the teacher of the thesis.
+7. Ensure that he has received the confirmation email.
