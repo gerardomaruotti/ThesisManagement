@@ -18,6 +18,7 @@ require('dotenv').config();
 
 app.use(express.json());
 
+
  (async() => {
 	await db.updateThesisStatus(currentDate.format("YYYY-MM-DD"))
 	await db.cancelPendingApplicationsExpiredThesis(currentDate.format("YYYY-MM-DD"))
@@ -191,6 +192,7 @@ async function filterThesis(thesis, filters) {
 }
 
 async function validateThesis(thesis, filters) {
+	console.log(filters)
 	let totFilters = { value: 0 };
 	let cosupervisors = await db.getCoSupervisorsEmail(thesis.ID);
 	let sup = await db.getThesisSupervisor(thesis.ID);
@@ -399,6 +401,7 @@ app.post('/api/thesis/:id/apply', upload.single('file'), checkJwt,(req, res) => 
 				text: `You received a Thesis Application for ${thesis_info.title} from student ${userRole.id}`,
 				subject: 'Thesis Application',
 			};
+
 
 			// Send the email using Nodemailer
 			transporter.sendMail(mailOptions, (error, info) => {
@@ -919,7 +922,7 @@ app.post(
 				let mailTeacher = await db.getMailTeacher(teacher);
 
 				const mailOptions = {
-					from: `${userRole.email}`,
+					from: `s313373@studenti.polito.it`,
 					to: `${mailTeacher}`,  
 					text: `You received a Thesis Request from student ${student}`,
 					subject: 'Thesis Request',
@@ -1047,10 +1050,9 @@ app.post(
 			const notes = req.body.notes;
 			try {
 				const userRole = await db.getRole(req.auth);
-				const requestExists = await db.checkRequestExistance(reqID);
-
-				if (!requestExists) return res.status(500).json({ error: 'Request does not exists' });
 				if (userRole.role != "teacher") return res.status(401).json({ error: 'Unauthorized user' });
+				const requestExists = await db.checkRequestExistance(reqID);
+				if (!requestExists) return res.status(404).json({ error: 'Request does not exists' });
 				await db.changeRequestTeacher(reqID, notes);
 				return res.status(200).json("Request change completed by professor");
 			} catch (err) {
