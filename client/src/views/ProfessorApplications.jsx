@@ -9,11 +9,10 @@ import API from '../API.jsx';
 import dayjs from 'dayjs';
 import PropTypes from 'prop-types';
 
-function ProfessorApplications({ accessToken, handleError, date }) {
+function ProfessorApplications({ accessToken, handleError, date, rapidFilter, setRapidFilter }) {
 	const { loading, setLoading } = useLoading();
 	const [applicationsThesis, setApplicationsThesis] = useState([]);
 	const [filteredApplications, setFilteredApplications] = useState({});
-	const [rapidFilter, setRapidFilter] = useState('all');
 
 	function unionForid(array) {
 		return array.reduce(function (acc, object) {
@@ -82,7 +81,7 @@ function ProfessorApplications({ accessToken, handleError, date }) {
 			}
 			setFilteredApplications(filter);
 		}
-	}, [rapidFilter]);
+	}, [rapidFilter, applicationsThesis]);
 
 	return loading ? (
 		<Loading />
@@ -148,6 +147,8 @@ ProfessorApplications.propTypes = {
 	accessToken: PropTypes.string.isRequired,
 	handleError: PropTypes.func.isRequired,
 	date: PropTypes.string,
+	rapidFilter: PropTypes.string.isRequired,
+	setRapidFilter: PropTypes.func.isRequired,
 };
 
 export default ProfessorApplications;

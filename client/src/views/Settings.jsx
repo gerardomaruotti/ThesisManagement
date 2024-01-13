@@ -44,7 +44,6 @@ function Settings({ accessToken, handleError, handleSuccess, setDirty, virtualCl
 			handleError('Please select a date');
 			return;
 		}
-		console.log(date);
 		setDateVirtualClock(date);
 		API.setVirtualClock(accessToken, date)
 			.then((res) => {

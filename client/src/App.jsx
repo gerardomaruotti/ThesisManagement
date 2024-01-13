@@ -38,6 +38,7 @@ function App() {
 	const [applicationsThesis, setApplicationsThesis] = useState([]);
 	const [copiedProposal, setCopiedProposal] = useState(null);
 	const [isSecretary, setIsSecretary] = useState(false);
+	const [filterThesisArchive, setFilterThesisArchive] = useState([]);
 
 	const { setLoading } = useLoading();
 
@@ -57,6 +58,17 @@ function App() {
 	//virtual clock
 	const [virtualClock, setVirtualClock] = useState(false);
 	const [dateVirtualClock, setDateVirtualClock] = useState(null);
+
+	//rapid filters
+	const [rapidFilterStudent, setRapidFilterStudent] = useState('all');
+	const [rapidFilterSecretary, setRapidFilterSecretary] = useState('secretary-review');
+	const [rapidFilterProfessorHome, setRapidFilterProfessorHome] = useState('active');
+	const [rapidFilterProfessorApplication, setRapidFilterProfessorApplication] = useState('all');
+	const [rapidFilterProfessorRequest, setRapidFilterProfessorRequest] = useState('supervisor-review');
+
+
+
+
 
 	function handleError(err) {
 		toast.error(err.error ? err.error : err, {
@@ -125,6 +137,7 @@ function App() {
 			API.getAllThesis(accessToken)
 				.then((thesis) => {
 					setThesis(thesis);
+					setFilterThesisArchive(thesis);
 					setDirty(false);
 				})
 				.catch((err) => handleError(err))
@@ -226,6 +239,10 @@ function App() {
 								setExpirationDate={setExpirationDate}
 								setThesis={setThesis}
 								date={dateVirtualClock}
+								rapidFilter={rapidFilterProfessorHome}
+								setRapidFilter={setRapidFilterProfessorHome}
+								filterThesis={filterThesisArchive}
+								setFilterThesis={setFilterThesisArchive}
 							/>
 						) : isStudent ? (
 							<StudentHome
@@ -254,6 +271,8 @@ function App() {
 								setDirty={setDirty}
 								hasApplied={hasApplied}
 								date={dateVirtualClock}
+								rapidFilter={rapidFilterStudent}
+								setRapidFilter={setRapidFilterStudent}
 							/>
 						) : isSecretary ? (
 							<SecretaryHome
@@ -261,7 +280,10 @@ function App() {
 								handleSuccess={handleSuccess}
 								accessToken={accessToken}
 								setMsgModal={setMsgModal}
-								setShowModal={setShowModal} />
+								setShowModal={setShowModal}
+								rapidFilter={rapidFilterSecretary}
+								setRapidFilter={setRapidFilterSecretary}
+							/>
 						) : null
 					}
 				/>
@@ -313,7 +335,7 @@ function App() {
 					path='/applications'
 					element={
 						isProfessor ? (
-							<ProfessorApplications accessToken={accessToken} handleError={handleError} isProfessor={isProfessor} date={dateVirtualClock} />
+							<ProfessorApplications accessToken={accessToken} handleError={handleError} isProfessor={isProfessor} date={dateVirtualClock} rapidFilter={rapidFilterProfessorApplication} setRapidFilter={setRapidFilterProfessorApplication} />
 						) : isStudent ? (
 							<StudentApplications accessToken={accessToken} handleError={handleError} />
 						) : null
@@ -352,7 +374,15 @@ function App() {
 					isStudent ?
 						<StudentRequests accessToken={accessToken} handleError={handleError} /> :
 						isProfessor ?
-							<ProfessorCheckRequests handleError={handleError} handleSuccess={handleSuccess} accessToken={accessToken} setShowModal={setShowModal} setMsgModal={setMsgModal} />
+							<ProfessorCheckRequests
+								handleError={handleError}
+								handleSuccess={handleSuccess}
+								accessToken={accessToken}
+								setShowModal={setShowModal}
+								setMsgModal={setMsgModal}
+								rapidFilter={rapidFilterProfessorRequest}
+								setRapidFilter={setRapidFilterProfessorRequest}
+							/>
 							: null} />
 				<Route path='/requests/add' element={<InsertThesisRequest accessToken={accessToken} handleError={handleError} />} />
 				<Route path='/requests/add' element={<NotFound />} />

@@ -15,9 +15,6 @@ const ModalWithTextField = ({
     const [notes, setNotes] = useState('');
 
     function requestChange() {
-        console.log(requestID);
-        console.log(notes);
-        console.log(accessToken);
         API.changeRequestProfessor(accessToken, requestID, notes)
             .then(() => {
                 setNotes('');

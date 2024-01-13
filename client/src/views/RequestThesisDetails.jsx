@@ -27,7 +27,6 @@ const RequestThesisDetails = ({ handleError, handleSuccess, accessToken, setShow
 			setLoading(true);
 			API.getStudentThesisRequest(accessToken)
 				.then((requests) => {
-					console.log(requests);
 					setRequest(requests.find((request) => request.id == id));
 					setLoading(false);
 					setInternalDirty(false);

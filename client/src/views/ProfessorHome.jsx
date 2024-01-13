@@ -38,12 +38,15 @@ function ProfessorHome({
 	setThesis,
 	expirationDate,
 	setExpirationDate,
-	date
+	date,
+	rapidFilter,
+	setRapidFilter,
+	filterThesis,
+	setFilterThesis,
 }) {
 	const navigate = useNavigate();
 	const { loginWithRedirect, isAuthenticated, isLoading } = useAuth0();
 	const { loading, setLoading } = useLoading();
-	const [rapidFilter, setRapidFilter] = useState('active');
 	const [filteredThesis, setFilteredThesis] = useState([]);
 	const [search, setSearch] = useState('');
 	const [filtersShow, setFiltersShow] = useState(false);
@@ -52,7 +55,7 @@ function ProfessorHome({
 		if (rapidFilter === 'active') {
 			setFilteredThesis(thesis.filter((thesis) => thesis.status == 1));
 		} else {
-			let filtered = thesis.filter((thesis) => thesis.status == 0).filter((thesis) => {
+			let filtered = filterThesis.filter((thesis) => thesis.status == 0).filter((thesis) => {
 				return (
 					thesis.title.toLowerCase().includes(search.toLowerCase()) ||
 					thesis.description.toLowerCase().includes(search.toLowerCase()) ||
@@ -63,7 +66,7 @@ function ProfessorHome({
 			});
 			setFilteredThesis(filtered);
 		}
-	}, [rapidFilter, thesis, applications, dirty, search]);
+	}, [rapidFilter, thesis, applications, dirty, search, filterThesis]);
 
 	function handleSearch(e) {
 		setSearch(e.target.value);
@@ -75,6 +78,7 @@ function ProfessorHome({
 		API.getAllThesis(accessToken)
 			.then((thesis) => {
 				setThesis(thesis);
+				setFilterThesis(thesis);
 			})
 			.catch((err) => {
 				handleError(err);
@@ -84,6 +88,17 @@ function ProfessorHome({
 			});
 		setActivatedFilters(false);
 		setRapidFilter('archived');
+	}
+
+	function handleActive() {
+		setRapidFilter('active');
+		API.getAllThesis(accessToken)
+			.then((thesis) => {
+				setThesis(thesis);
+			})
+			.catch((err) => {
+				handleError(err);
+			});
 	}
 
 	useEffect(() => {
@@ -118,7 +133,7 @@ function ProfessorHome({
 						<Col xs={12} md={'auto'} style={{ paddingBottom: 10 }}>
 							<Nav variant='pills' activeKey={rapidFilter}>
 								<Nav.Item>
-									<Nav.Link eventKey='active' className='buttons-rapid-filter' onClick={() => setRapidFilter('active')}>
+									<Nav.Link eventKey='active' className='buttons-rapid-filter' onClick={handleActive}>
 										Active
 									</Nav.Link>
 								</Nav.Item>
@@ -167,6 +182,7 @@ function ProfessorHome({
 				handleError={handleError}
 				date={date}
 				isProfessor={true}
+				setFilterThesis={setFilterThesis}
 			/>
 			<Container>
 				<Row style={{ marginBottom: 25 }}>
@@ -233,7 +249,11 @@ ProfessorHome.propTypes = {
 	setThesis: PropTypes.func.isRequired,
 	expirationDate: PropTypes.string.isRequired,
 	setExpirationDate: PropTypes.func.isRequired,
-	date: PropTypes.string
+	date: PropTypes.string,
+	rapidFilter: PropTypes.string.isRequired,
+	setRapidFilter: PropTypes.func.isRequired,
+	filterThesis: PropTypes.array.isRequired,
+	setFilterThesis: PropTypes.func.isRequired,
 };
 
 export default ProfessorHome;

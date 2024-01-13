@@ -30,6 +30,7 @@ function FiltersModal({
 	setExpirationDate,
 	date,
 	isProfessor,
+	setFilterThesis,
 }) {
 	const { setLoading } = useLoading();
 	const [keywords, setKeywords] = useState([]);
@@ -152,7 +153,7 @@ function FiltersModal({
 		setLoading(true);
 		API.getAllThesis(accessToken, body)
 			.then((thesis) => {
-				setThesis(thesis);
+				setFilterThesis(thesis);
 			})
 			.catch((err) => {
 				handleError(err);
@@ -269,6 +270,7 @@ FiltersModal.propTypes = {
 	setExpirationDate: PropTypes.func,
 	date: PropTypes.string,
 	isProfessor: PropTypes.bool,
+	setFilterThesis: PropTypes.func,
 };
 
 export default FiltersModal;

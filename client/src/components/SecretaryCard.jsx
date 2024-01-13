@@ -79,7 +79,7 @@ const SecretaryCard = ({ request, setInternalDirty, accessToken, handleError, ha
 		if (isProfessor) {
 			API.approveRequestProfessor(accessToken, request.id)
 				.then(() => {
-					handleSuccess('Request accepted');
+					handleSuccess('Request approved');
 					setInternalDirty(true);
 				})
 				.catch((err) => {
@@ -88,7 +88,7 @@ const SecretaryCard = ({ request, setInternalDirty, accessToken, handleError, ha
 		} else {
 			API.approveRequestSecretary(accessToken, request.id)
 				.then(() => {
-					handleSuccess('Request accepted');
+					handleSuccess('Request approved');
 					setInternalDirty(true);
 				})
 				.catch((err) => {
@@ -244,15 +244,15 @@ const SecretaryCard = ({ request, setInternalDirty, accessToken, handleError, ha
 								onClick={() => {
 									setShowModal(true);
 									setMsgModal({
-										header: 'Accept request',
-										body: `Are you sure you want to Accept the request of student ${request.student}?`,
+										header: 'Approve request',
+										body: `Are you sure you want to approve the request of student ${request.student}?`,
 										method: () => acceptRequest(),
 									});
 								}}
 							>
 								<div className='d-flex align-items-center'>
 									<i className='bi bi-check-circle mobile-view' style={{ fontSize: '16px', paddingRight: 8, color: 'green' }}></i>
-									<span className='d-none d-md-flex'>Accept</span>
+									<span className='d-none d-md-flex'>Approve</span>
 								</div>
 							</Button>
 						</div>

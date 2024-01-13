@@ -10,10 +10,12 @@ const SecretaryHome = ({ handleError,
     handleSuccess,
     accessToken,
     setShowModal,
-    setMsgModal }) => {
+    setMsgModal,
+    rapidFilter,
+    setRapidFilter
+}) => {
 
     const { loading, setLoading } = useLoading();
-    const [rapidFilter, setRapidFilter] = useState('secretary-review');
     const [filteredRequests, setFilteredRequests] = useState([]);
     const [requests, setRequests] = useState([]); // 0 pending, 1 accepted by secretary, 2 rejected by secretary, 3 accepted by professor, 4 rejected by professor, 5 request change
     const [internalDirty, setInternalDirty] = useState(false);
@@ -22,7 +24,6 @@ const SecretaryHome = ({ handleError,
             setLoading(true);
             API.getStudentThesisRequest(accessToken)
                 .then((requests) => {
-                    console.log(requests);
                     setRequests(requests);
                     setFilteredRequests(requests);
                     setLoading(false);
@@ -78,7 +79,7 @@ const SecretaryHome = ({ handleError,
                                 </Nav.Item>
                                 <Nav.Item>
                                     <Nav.Link eventKey='accepted' className='buttons-rapid-filter' onClick={() => setRapidFilter('accepted')}>
-                                        Accepted
+                                        Approved
                                     </Nav.Link>
                                 </Nav.Item>
                                 <Nav.Item>
@@ -123,6 +124,8 @@ SecretaryHome.propTypes = {
     accessToken: PropTypes.string.isRequired,
     setShowModal: PropTypes.func.isRequired,
     setMsgModal: PropTypes.func.isRequired,
+    rapidFilter: PropTypes.string.isRequired,
+    setRapidFilter: PropTypes.func.isRequired
 };
 
 export default SecretaryHome;

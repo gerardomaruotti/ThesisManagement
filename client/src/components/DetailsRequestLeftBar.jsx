@@ -193,14 +193,14 @@ const DetailsRequestLeftBar = ({
 						onClick={() => {
 							setShowModal(true);
 							setMsgModal({
-								header: 'Accept request',
-								body: `Are you sure you want to Accept the request of student ${request.student}?`,
+								header: 'Approve request',
+								body: `Are you sure you want to approve the request of student ${request.student}?`,
 								method: () => acceptRequest(),
 							});
 						}}
 					>
 						<i className='bi bi-check2' style={{ paddingRight: 5 }}></i>
-						Accept
+						Approve
 					</Button>
 					{isProfessor ? (
 						<Button
