@@ -1,7 +1,25 @@
 const request = require('supertest');
-const { app } = require('../index.js');
+const { app, transporter } = require('../index.js');
 const dbTest = require('./insert4test.js')
 const date = '2024-01-01'
+const thesis = {
+    title: 'Default Title',
+    description: 'Default Description',
+    required_knowledge: 'Default Knowledge',
+    notes: 'Default Notes',
+    expiration_date: '2024-06-06',
+    level: 'Default Level',
+    degree: 'Default Degree',
+    types: ['type1'],
+    co_supervisors: ['co-1'],
+    keywords: ['k1', 'k2']
+};
+
+jest.mock('nodemailer', () => ({
+    createTransport: jest.fn(() => ({
+        sendMail: jest.fn(),
+    })),
+}));
 jest.mock('node-cron', () => ({
     schedule: jest.fn(),
 }));
@@ -216,20 +234,7 @@ describe('GET Supervisors Groups', () => {
     });
 });
 
-const thesis = {
-    title: 'Default Title',
-    description: 'Default Description',
-    required_knowledge: 'Default Knowledge',
-    notes: 'Default Notes',
-    expiration_date: '2024-06-06',
-    level: 'Default Level',
-    degree: 'Default Degree',
-    types: ['type1'],
-    co_supervisors: ['co-1'],
-    keywords: ['k1', 'k2']
-  };
-
-describe('POST INSERT THESIS', () => {
+describe('POST Insert Thesis', () => {
     afterAll(async () => {
         await dbTest.deleteTableContent("CO_SUPERVISOR");
         await dbTest.deleteTableContent("KEYWORD");
@@ -269,7 +274,7 @@ describe('GET Thesis by ID', () => {
     });
 });
 
-describe('Apply for Proposal', () => {
+describe('POST Apply for Proposal', () => {
     beforeAll(async () => {
         const insertPromises = [];
         insertPromises.push(dbTest.insertThesis(2, student.degree, teacher.id, date));
@@ -284,7 +289,60 @@ describe('Apply for Proposal', () => {
     });
     
     test('should correctly apply for a thesis', async () => {
+        transporter.sendMail.mockResolvedValueOnce();
+
         const res = await request(app).post('/api/thesis/2/apply').set('Authorization', `Bearer ${student.jwt}`);
+
+        expect(res.status).toBe(200);
+    });
+});
+
+describe('GET Thesis Applications', () => {
+    beforeAll(async () => {
+        const insertPromises = [];
+        insertPromises.push(dbTest.insertThesis(2, student.degree, teacher.id, date));
+        insertPromises.push(dbTest.insertThesisApplication(2, 2, date));
+
+        await Promise.all(insertPromises);
+    });
+
+    afterAll(async () => {
+        await dbTest.deleteTableContent("THESIS");
+        await dbTest.deleteTableContent("THESIS_APPLICATION");
+    });
+    
+    test('should correctly get applications to teachers thesis ', async () => {
+        const res = await request(app).get('/api/thesis/applications/browse').set('Authorization', `Bearer ${teacher.jwt}`);
+
+        expect(res.status).toBe(200);
+    });
+
+    test('should correctly get applications of student ', async () => {
+        const res = await request(app).get('/api/thesis/applications/browse').set('Authorization', `Bearer ${student.jwt}`);
+
+        expect(res.status).toBe(200);
+    });
+});
+
+describe('POST Accept Application', () => {
+    beforeAll(async () => {
+        const insertPromises = [];
+        insertPromises.push(dbTest.insertStudent(2));
+        insertPromises.push(dbTest.insertThesis(2, student.degree, teacher.id, date));
+        insertPromises.push(dbTest.insertThesisApplication(2, 0, date));
+
+        await Promise.all(insertPromises);
+    });
+
+    afterAll(async () => {
+        await dbTest.deleteTableContent("THESIS");
+        await dbTest.deleteTableContent("THESIS_APPLICATION");
+    });
+    
+    test('should correctly apply for a thesis', async () => {
+        transporter.sendMail.mockResolvedValueOnce();
+
+        const res = await request(app).post('/api/accept/application').set('Authorization', `Bearer ${teacher.jwt}`).send({thesisID: 2, studentID: "s2"});
 
         expect(res.status).toBe(200);
     });

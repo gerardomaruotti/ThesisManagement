@@ -192,7 +192,6 @@ async function filterThesis(thesis, filters) {
 }
 
 async function validateThesis(thesis, filters) {
-	console.log(filters)
 	let totFilters = { value: 0 };
 	let cosupervisors = await db.getCoSupervisorsEmail(thesis.ID);
 	let sup = await db.getThesisSupervisor(thesis.ID);

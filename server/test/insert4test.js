@@ -236,7 +236,7 @@ exports.insertThesis = (n, deg, sup, date) => {
     });
 }
 
-exports.insertThesisAppliation = (n, state, date) => {
+exports.insertThesisApplication = (n, state, date) => {
     return new Promise((resolve, reject) => {
         const query = `INSERT INTO "THESIS_APPLICATION" ("ID_APPLICATION","STUDENT","THESIS","STATE","APPLICATION_DATE") VALUES (?, ?, ?, ? ,?)`;
         db.run(query, [n, "s" + n, n, state, date], function (err) {
