@@ -298,8 +298,12 @@ describe('POST Thesis', () => {
         expect(res.body).toEqual(thesis);
     });
 
-    test('should get all thesis of the departement of the professor using Virtual Clock', async () => {
-
+    test('should get all thesis of the departement of the professor using Virtual Clock and filters', async () => {
+        const body = {
+            filters: {
+                supervisor: ["supervisor1", "supervisor2"],
+            }
+        }
         const thesis = [thesis1, thesis2];
 
         db.getRole.mockResolvedValueOnce(teacher);
@@ -308,7 +312,12 @@ describe('POST Thesis', () => {
         db.getKeywordsbyId.mockResolvedValue(["keyword1", "keyword2"]);
         db.getTypesbyId.mockResolvedValue(["type1", "type2"]);
         db.checkExistenceApplicationForThesis.mockResolvedValue(["app1", "app2"]);
-        const res = await request(app).post('/api/thesis');
+        db.getCoSupervisorsEmail.mockResolvedValue(["email1"]);
+        db.getThesisSupervisor.mockResolvedValueOnce(thesis1.supervisor);
+        db.getThesisSupervisor.mockResolvedValueOnce(thesis2.supervisor);
+        db.getGroup.mockResolvedValue(thesis1.groups);
+        db.getThesisExpDate.mockResolvedValue(date);
+        const res = await request(app).post('/api/thesis').send(body);
 
         expect(db.getRole).toHaveBeenCalledTimes(1);
         expect(db.getThesisTeacher).toHaveBeenCalledTimes(1);
