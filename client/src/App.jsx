@@ -27,6 +27,7 @@ import ProfessorCheckRequests from './views/ProfessorCheckRequests.jsx';
 
 function App() {
 	const { user, isAuthenticated, getAccessTokenSilently, isLoading, loginWithRedirect } = useAuth0();
+	const { setLoading } = useLoading();
 	const [userData, setUserData] = useState(null);
 	const [thesis, setThesis] = useState([]);
 	const [accessToken, setAccessToken] = useState(null);
@@ -40,7 +41,9 @@ function App() {
 	const [isSecretary, setIsSecretary] = useState(false);
 	const [filterThesisArchive, setFilterThesisArchive] = useState([]);
 
-	const { setLoading } = useLoading();
+	// Requests
+	const [requests, setRequests] = useState([]);
+	const [hasRequested, setHasRequested] = useState(false);
 
 	// Filters
 	const [activatedFilters, setActivatedFilters] = useState(false);
@@ -65,10 +68,6 @@ function App() {
 	const [rapidFilterProfessorHome, setRapidFilterProfessorHome] = useState('active');
 	const [rapidFilterProfessorApplication, setRapidFilterProfessorApplication] = useState('all');
 	const [rapidFilterProfessorRequest, setRapidFilterProfessorRequest] = useState('supervisor-review');
-
-
-
-
 
 	function handleError(err) {
 		toast.error(err.error ? err.error : err, {
@@ -153,6 +152,23 @@ function App() {
 					setApplications(app);
 					let applied = app.some((application) => application.state == 0 || application.state == 1);
 					setHasApplied(applied);
+					setDirty(false);
+				})
+				.catch((err) => {
+					handleError(err);
+				})
+				.finally(() => setLoading(false));
+		}
+	}, [dirty, accessToken, isStudent]);
+
+	useEffect(() => {
+		if (isAuthenticated && isStudent) {
+			setLoading(true);
+			API.getStudentThesisRequest(accessToken)
+				.then((app) => {
+					setRequests(app);
+					let requested = app.some((request) => !(request.status === 2 || request.status === 4));
+					setHasRequested(requested);
 					setDirty(false);
 				})
 				.catch((err) => {
@@ -270,6 +286,7 @@ function App() {
 								applications={applications}
 								setDirty={setDirty}
 								hasApplied={hasApplied}
+								hasRequested={hasRequested}
 								date={dateVirtualClock}
 								rapidFilter={rapidFilterStudent}
 								setRapidFilter={setRapidFilterStudent}
@@ -335,7 +352,14 @@ function App() {
 					path='/applications'
 					element={
 						isProfessor ? (
-							<ProfessorApplications accessToken={accessToken} handleError={handleError} isProfessor={isProfessor} date={dateVirtualClock} rapidFilter={rapidFilterProfessorApplication} setRapidFilter={setRapidFilterProfessorApplication} />
+							<ProfessorApplications
+								accessToken={accessToken}
+								handleError={handleError}
+								isProfessor={isProfessor}
+								date={dateVirtualClock}
+								rapidFilter={rapidFilterProfessorApplication}
+								setRapidFilter={setRapidFilterProfessorApplication}
+							/>
 						) : isStudent ? (
 							<StudentApplications accessToken={accessToken} handleError={handleError} />
 						) : null
@@ -370,10 +394,12 @@ function App() {
 						/>
 					}
 				/>
-				<Route path='/requests' element={
-					isStudent ?
-						<StudentRequests accessToken={accessToken} handleError={handleError} /> :
-						isProfessor ?
+				<Route
+					path='/requests'
+					element={
+						isStudent ? (
+							<StudentRequests requests={requests} hasApplied={hasApplied} hasRequested={hasRequested} />
+						) : isProfessor ? (
 							<ProfessorCheckRequests
 								handleError={handleError}
 								handleSuccess={handleSuccess}
@@ -383,17 +409,25 @@ function App() {
 								rapidFilter={rapidFilterProfessorRequest}
 								setRapidFilter={setRapidFilterProfessorRequest}
 							/>
-							: null} />
+						) : null
+					}
+				/>
 				<Route path='/requests/add' element={<InsertThesisRequest accessToken={accessToken} handleError={handleError} />} />
 				<Route path='/requests/add' element={<NotFound />} />
-				<Route path='requests/:id' element={<RequestThesisDetails
-					accessToken={accessToken}
-					handleError={handleError}
-					handleSuccess={handleSuccess}
-					setMsgModal={setMsgModal}
-					setShowModal={setShowModal}
-					isProfessor={isProfessor}
-					isSecretary={isSecretary} />} />
+				<Route
+					path='requests/:id'
+					element={
+						<RequestThesisDetails
+							accessToken={accessToken}
+							handleError={handleError}
+							handleSuccess={handleSuccess}
+							setMsgModal={setMsgModal}
+							setShowModal={setShowModal}
+							isProfessor={isProfessor}
+							isSecretary={isSecretary}
+						/>
+					}
+				/>
 				<Route
 					path='/settings'
 					element={

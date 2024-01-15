@@ -25,6 +25,7 @@ function ProposalCard({
 	setDirty,
 	state,
 	hasApplied,
+	hasRequested,
 }) {
 	const navigate = useNavigate();
 	const [cv, setCv] = useState(null);
@@ -247,7 +248,7 @@ function ProposalCard({
 							</div>
 						) : (
 							<div style={{ marginTop: 20, textAlign: 'center' }}>
-								<Button variant='primary' disabled={hasApplied} style={{ width: 130 }} onClick={() => setShowModal(true)}>
+								<Button variant='primary' disabled={hasApplied || hasRequested} style={{ width: 130 }} onClick={() => setShowModal(true)}>
 									Apply
 								</Button>
 							</div>
@@ -285,6 +286,7 @@ ProposalCard.propTypes = {
 	setDirty: PropsTypes.func,
 	state: PropsTypes.number,
 	hasApplied: PropsTypes.bool,
+	hasRequested: PropsTypes.bool,
 };
 
 export default ProposalCard;

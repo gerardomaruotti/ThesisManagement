@@ -36,6 +36,7 @@ function StudentHome({
 	expirationDate,
 	setExpirationDate,
 	hasApplied,
+	hasRequested,
 	date,
 	rapidFilter,
 	setRapidFilter,
@@ -221,6 +222,7 @@ function StudentHome({
 											: null
 									}
 									hasApplied={hasApplied}
+									hasRequested={hasRequested}
 								/>
 							))
 					) : (
@@ -259,6 +261,7 @@ StudentHome.propTypes = {
 	expirationDate: PropTypes.string.isRequired,
 	setExpirationDate: PropTypes.func.isRequired,
 	hasApplied: PropTypes.bool.isRequired,
+	hasRequested: PropTypes.bool.isRequired,
 	date: PropTypes.string,
 	rapidFilter: PropTypes.string.isRequired,
 	setRapidFilter: PropTypes.func.isRequired,

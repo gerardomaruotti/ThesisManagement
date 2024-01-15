@@ -1,33 +1,12 @@
 import { Container, Row, Button } from 'react-bootstrap';
-import { useLoading } from '../LoadingContext';
-import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import StudentRequestCard from '../components/StudentRequestCard';
-import Loading from '../components/Loading.jsx';
 import PropsTypes from 'prop-types';
-import API from '../API.jsx';
 
-function StudentRequests({ accessToken, handleError }) {
+function StudentRequests({ hasApplied, requests, hasRequested }) {
 	const navigate = useNavigate();
-	const { loading, setLoading } = useLoading();
-	const [requests, setRequests] = useState([]);
 
-	useEffect(() => {
-		setLoading(true);
-		if (!accessToken) return;
-		API.getStudentThesisRequest(accessToken)
-			.then((req) => {
-				setRequests(req);
-			})
-			.catch((err) => {
-				handleError(err);
-			})
-			.finally(() => setLoading(false));
-	}, [accessToken]);
-
-	return loading ? (
-		<Loading />
-	) : (
+	return (
 		<Container>
 			<Row>
 				{requests.length > 0 ? (
@@ -42,7 +21,7 @@ function StudentRequests({ accessToken, handleError }) {
 				variant='primary'
 				className='insert-proposal'
 				style={{ borderRadius: 50 }}
-				disabled={requests.some((request) => !(request.status === 2 || request.status === 4))}
+				disabled={hasRequested || hasApplied}
 				onClick={() => {
 					navigate('/requests/add');
 				}}
@@ -54,8 +33,9 @@ function StudentRequests({ accessToken, handleError }) {
 }
 
 StudentRequests.propTypes = {
-	accessToken: PropsTypes.string,
-	handleError: PropsTypes.func,
+	requests: PropsTypes.array.isRequired,
+	hasApplied: PropsTypes.bool.isRequired,
+	hasRequested: PropsTypes.bool.isRequired,
 };
 
 export default StudentRequests;
