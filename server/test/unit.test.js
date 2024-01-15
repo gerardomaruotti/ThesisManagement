@@ -775,7 +775,29 @@ describe('Apply for Proposal', () => {
         expect(db.insertApplication).toHaveBeenCalledTimes(0);
         expect(db.getStudentApplications).toHaveBeenCalledTimes(1);
         expect(res.status).toBe(400);
-        expect(res.body).toEqual({ error: 'Pending or accepted application already exists' });
+        expect(res.body).toEqual({ error: 'Pending or accepted application or requests already exists' });
+    });
+
+    test('should return a 400 error when the user already has a request', async () => {
+        db.getVirtualDate.mockResolvedValueOnce(0);
+        db.getRole.mockResolvedValueOnce(student);
+        db.getThesis.mockResolvedValueOnce();
+        db.checkThesisActive.mockResolvedValueOnce(1);
+        db.getStudentApplications.mockResolvedValueOnce([]);
+        db.checkPendingStudentRequests.mockResolvedValueOnce(true);
+
+        const res = await request(app).post('/api/thesis/5/apply');
+
+        expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.getThesis).toHaveBeenCalledTimes(1);
+        expect(db.getThesis).toHaveBeenCalledWith("5");
+        expect(db.checkThesisActive).toHaveBeenCalledTimes(1);
+        expect(db.checkThesisActive).toHaveBeenCalledWith("5", 0);
+        expect(db.insertApplication).toHaveBeenCalledTimes(0);
+        expect(db.getStudentApplications).toHaveBeenCalledTimes(1);
+        expect(db.checkPendingStudentRequests).toHaveBeenCalledTimes(1);
+        expect(res.status).toBe(400);
+        expect(res.body).toEqual({ error: 'Pending or accepted application or requests already exists' });
     });
 
     test('should return a 500 if error occurs', async () => {
@@ -1711,6 +1733,7 @@ describe('POST Insert Request', () => {
     test(`should correctly insert a request`, async () => {
         db.getRole.mockResolvedValueOnce(student);
         db.checkPendingStudentRequests.mockResolvedValueOnce(false);
+        db.getStudentApplications.mockResolvedValueOnce([]);
         db.insertRequest.mockResolvedValueOnce(1);
         db.insertCoSupervisorRequest.mockResolvedValue();
 
@@ -1718,6 +1741,7 @@ describe('POST Insert Request', () => {
 
         expect(db.getRole).toHaveBeenCalledTimes(1);
         expect(db.checkPendingStudentRequests).toHaveBeenCalledTimes(1);
+        expect(db.getStudentApplications).toHaveBeenCalledTimes(1);
         expect(db.insertRequest).toHaveBeenCalledTimes(1);
         expect(db.insertCoSupervisorRequest).toHaveBeenCalledTimes(2);
         expect(res.status).toBe(200);
@@ -1736,9 +1760,10 @@ describe('POST Insert Request', () => {
         expect(res.body).toEqual({ error: 'Unauthorized user' });
     });
 
-    test(`should return a 400 error when the student already has a pending application`, async () => {
+    test(`should return a 400 error when the student already has a pending request`, async () => {
         db.getRole.mockResolvedValueOnce(student);
         db.checkPendingStudentRequests.mockResolvedValueOnce(true);
+        db.getStudentApplications.mockResolvedValueOnce([]);
 
         const res = await request(app).post('/api/insert/request').send(thesis1);
 
@@ -1746,7 +1771,21 @@ describe('POST Insert Request', () => {
         expect(db.checkPendingStudentRequests).toHaveBeenCalledTimes(1);
         expect(db.insertRequest).toHaveBeenCalledTimes(0);
         expect(res.status).toBe(400);
-        expect(res.body).toEqual({ error: 'Student has already pending requests' });
+        expect(res.body).toEqual({ error: 'Pending or accepted application or requests already exists' });
+    });
+
+    test(`should return a 400 error when the student already has a pending application`, async () => {
+        db.getRole.mockResolvedValueOnce(student);
+        db.checkPendingStudentRequests.mockResolvedValueOnce(false);
+        db.getStudentApplications.mockResolvedValueOnce([{state: 1}]);
+
+        const res = await request(app).post('/api/insert/request').send(thesis1);
+
+        expect(db.getRole).toHaveBeenCalledTimes(1);
+        expect(db.checkPendingStudentRequests).toHaveBeenCalledTimes(1);
+        expect(db.insertRequest).toHaveBeenCalledTimes(0);
+        expect(res.status).toBe(400);
+        expect(res.body).toEqual({ error: 'Pending or accepted application or requests already exists' });
     });
 
     test(`should return a 503 error when an error occurs`, async () => {
