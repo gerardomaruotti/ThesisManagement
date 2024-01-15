@@ -1062,15 +1062,6 @@ app.post(
 		})();
 });
 
-async function processRequestSupervisor (requestID, co_supervisors){
-
-	await db.deleteRequestCoSupervisor(requestID);
-	for(let i=0;i<co_supervisors.length;i++){
-		await db.insertCoSupervisorRequest(reqID,co_supervisors[i].name,co_supervisors[i].surname,co_supervisors[i].email)
-	}
-
-}
-
 
 module.exports = { app, port, transporter };
 
