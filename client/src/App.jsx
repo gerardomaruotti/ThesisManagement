@@ -20,10 +20,9 @@ import EditProposal from './views/EditProposal.jsx';
 import Settings from './views/Settings.jsx';
 import StudentApplicationInfo from './views/StudentApplicationInfo.jsx';
 import StudentRequests from './views/StudentRequests.jsx';
-import SecretaryHome from './views/SecretaryHome.jsx';
 import InsertThesisRequest from './views/InsertThesisRequest.jsx';
 import RequestThesisDetails from './views/RequestThesisDetails.jsx';
-import ProfessorCheckRequests from './views/ProfessorCheckRequests.jsx';
+import SecretaryAndProfessorRequest from './views/SecretaryAndProfessorRequest.jsx';
 
 function App() {
 	const { user, isAuthenticated, getAccessTokenSilently, isLoading, loginWithRedirect } = useAuth0();
@@ -292,7 +291,7 @@ function App() {
 								setRapidFilter={setRapidFilterStudent}
 							/>
 						) : isSecretary ? (
-							<SecretaryHome
+							<SecretaryAndProfessorRequest
 								handleError={handleError}
 								handleSuccess={handleSuccess}
 								accessToken={accessToken}
@@ -300,6 +299,7 @@ function App() {
 								setShowModal={setShowModal}
 								rapidFilter={rapidFilterSecretary}
 								setRapidFilter={setRapidFilterSecretary}
+								isProfessor={false}
 							/>
 						) : null
 					}
@@ -400,7 +400,7 @@ function App() {
 						isStudent ? (
 							<StudentRequests requests={requests} hasApplied={hasApplied} hasRequested={hasRequested} />
 						) : isProfessor ? (
-							<ProfessorCheckRequests
+							<SecretaryAndProfessorRequest
 								handleError={handleError}
 								handleSuccess={handleSuccess}
 								accessToken={accessToken}
@@ -408,6 +408,7 @@ function App() {
 								setMsgModal={setMsgModal}
 								rapidFilter={rapidFilterProfessorRequest}
 								setRapidFilter={setRapidFilterProfessorRequest}
+								isProfessor={isProfessor}
 							/>
 						) : null
 					}

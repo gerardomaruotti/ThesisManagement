@@ -1,18 +1,21 @@
 import React, { useEffect, useState } from 'react'
-import { Container, Row, Col, Nav, Button } from 'react-bootstrap'
+import { Container, Row, Col } from 'react-bootstrap'
 import API from '../API'
 import PropTypes from 'prop-types'
 import { useLoading } from '../LoadingContext';
 import Loading from '../components/Loading.jsx';
 import SecretaryCard from '../components/SecretaryCard.jsx';
+import RapidFilterRequest from '../components/RapidFilterRequest.jsx';
 
-const SecretaryHome = ({ handleError,
+const SecretaryAndProfessorRequest = ({
+    handleError,
     handleSuccess,
     accessToken,
     setShowModal,
     setMsgModal,
     rapidFilter,
-    setRapidFilter
+    setRapidFilter,
+    isProfessor
 }) => {
 
     const { loading, setLoading } = useLoading();
@@ -52,52 +55,17 @@ const SecretaryHome = ({ handleError,
             }
         }
     }, [rapidFilter, requests])
-
     return loading ? (
         <Loading />
     ) : (
         <>
-            <div style={{ position: 'sticky', top: 0, zIndex: 2, backgroundColor: 'white', boxShadow: '0 4px 2px -2px rgba(0, 0, 0, 0.2)' }}>
-                <Container>
-                    <Row style={{ paddingTop: 25, paddingBottom: 10 }}>
-                        <Col md='auto' style={{ paddingBottom: 10, overflowX: 'auto' }}>
-                            <Nav variant='pills' activeKey={rapidFilter} style={{ display: 'flex', flexWrap: 'nowrap' }}>
-                                <Nav.Item>
-                                    <Nav.Link eventKey='secretary-review' style={{ width: 193 }} className='buttons-rapid-filter' onClick={() => setRapidFilter('secretary-review')}>
-                                        In review by secretary
-                                    </Nav.Link>
-                                </Nav.Item>
-                                <Nav.Item>
-                                    <Nav.Link eventKey='supervisor-review' style={{ width: 201 }} className='buttons-rapid-filter' onClick={() => setRapidFilter('supervisor-review')}>
-                                        In review by supervisor
-                                    </Nav.Link>
-                                </Nav.Item>
-                                <Nav.Item>
-                                    <Nav.Link eventKey='requested-change' style={{ width: 170 }} className='buttons-rapid-filter' onClick={() => setRapidFilter('requested-change')}>
-                                        Requested change
-                                    </Nav.Link>
-                                </Nav.Item>
-                                <Nav.Item>
-                                    <Nav.Link eventKey='accepted' className='buttons-rapid-filter' onClick={() => setRapidFilter('accepted')}>
-                                        Approved
-                                    </Nav.Link>
-                                </Nav.Item>
-                                <Nav.Item>
-                                    <Nav.Link eventKey='rejected' className='buttons-rapid-filter' onClick={() => setRapidFilter('rejected')}>
-                                        Rejected
-                                    </Nav.Link>
-                                </Nav.Item>
-                            </Nav>
-                        </Col>
-                    </Row>
-                </Container>
-            </div>
+            <RapidFilterRequest rapidFilter={rapidFilter} setRapidFilter={setRapidFilter} isProfessor={isProfessor} />
             <Container>
                 <Row style={{ marginBottom: 25 }}>
                     {filteredRequests.length != 0 ? (
                         filteredRequests.map((request) => (
                             <SecretaryCard
-                                key={request.id} a
+                                key={request.id}
                                 accessToken={accessToken}
                                 request={request}
                                 setInternalDirty={setInternalDirty}
@@ -105,7 +73,7 @@ const SecretaryHome = ({ handleError,
                                 handleSuccess={handleSuccess}
                                 setShowModal={setShowModal}
                                 setMsgModal={setMsgModal}
-                                isProfessor={false}
+                                isProfessor={isProfessor}
                             />
                         ))) : (
                         <Col style={{ marginTop: 25 }}>
@@ -117,15 +85,15 @@ const SecretaryHome = ({ handleError,
         </>
     )
 }
-
-SecretaryHome.propTypes = {
+SecretaryAndProfessorRequest.propTypes = {
     handleError: PropTypes.func.isRequired,
     handleSuccess: PropTypes.func.isRequired,
     accessToken: PropTypes.string.isRequired,
     setShowModal: PropTypes.func.isRequired,
     setMsgModal: PropTypes.func.isRequired,
     rapidFilter: PropTypes.string.isRequired,
-    setRapidFilter: PropTypes.func.isRequired
+    setRapidFilter: PropTypes.func.isRequired,
+    isProfessor: PropTypes.bool.isRequired
 };
 
-export default SecretaryHome;
+export default SecretaryAndProfessorRequest
