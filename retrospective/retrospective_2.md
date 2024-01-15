@@ -1,4 +1,4 @@
-TEMPLATE FOR RETROSPECTIVE (Team 18)
+RETROSPECTIVE (Team 18)
 =====================================
 
 - [process measures](#process-measures)
