@@ -12,10 +12,26 @@ const nodemailer = require('nodemailer');
 const sgTransport = require('nodemailer-sendgrid-transport');
 const multer = require('multer');
 const fs = require('fs');
-const path = require('path')
+const path = require('path');
+const cron = require('node-cron');
 require('dotenv').config();
 
 app.use(express.json());
+
+
+ (async() => {
+	await db.updateThesisStatus(currentDate.format("YYYY-MM-DD"))
+	await db.cancelPendingApplicationsExpiredThesis(currentDate.format("YYYY-MM-DD"))
+ })();
+
+
+
+cron.schedule('0 0 * * *', () => {
+	(async() => {
+		await db.updateThesisStatus(currentDate.format("YYYY-MM-DD"))
+		await db.cancelPendingApplicationsExpiredThesis(currentDate.format("YYYY-MM-DD"))
+	 })();
+});
 
 const checkJwt = auth({
 	audience: 'https://thesismanagement.eu.auth0.com/api/v2/',
@@ -106,6 +122,8 @@ app.get('/api/cds', checkJwt, (req, res) => {
 			res.status(503).json({ error: 'getCds error' });
 		});
 });
+
+
 //METODI API
 //fare metodo gestione autenticazione --> che ritorna ID matricla e chekka auth0
 
@@ -118,7 +136,7 @@ app.post('/api/thesis', checkJwt,(req, res) => {
 			const getRole = await db.getRole(req.auth);
 			const date = await db.getVirtualDate();
 			if (getRole.role == 'teacher') {
-				const thesis = await processTeacherThesis(getRole.id, (date == 0) ? currentDate.format('YYYY-MM-DD') : date, getRole);
+				const thesis = await processTeacherThesis(getRole.id, date, req.body.filters, getRole);
 				res.status(200).json(thesis);
 			} else if (getRole.role == 'student') {
 				const thesis = await processStudentThesis(getRole.id, (date == 0) ? currentDate.format('YYYY-MM-DD') : date, req.body.filters, getRole);
@@ -132,9 +150,15 @@ app.post('/api/thesis', checkJwt,(req, res) => {
 	})();
 });
 
-async function processTeacherThesis(teacherId, date, getRole) {
+
+async function processTeacherThesis(teacherId, date, filters, getRole) {
 	let thesis = await db.getThesisTeacher(teacherId, date);
-	return processThesisDetails(thesis, getRole);
+	thesis = await processThesisDetails(thesis, getRole);
+	if (!filters) {
+		return thesis;
+	}
+
+	return await filterThesis(thesis, filters);
 }
 
 async function processStudentThesis(studentId, date, filters, getRole) {
@@ -347,17 +371,17 @@ app.post('/api/thesis/:id/apply', upload.single('file'), checkJwt,(req, res) => 
 			const date = await db.getVirtualDate();
 			let userRole = await db.getRole(req.auth);
 			const thesis_info = await db.getThesis(thesisId);
-			const state = await db.checkThesisActive(thesisId, (date == 0) ? currentDate.format('YYYY-MM-DD') : date);
-			let applications = await db.getStudentApplications(userRole.id, (date == 0) ? currentDate.format('YYYY-MM-DD') : date)
+			const state = await db.checkThesisActive(thesisId, date);
+			let applications = await db.getStudentApplications(userRole.id, date)
 
 			applications = applications.filter((elem) => (elem.state == '0' || elem.state == '1'))
-
+			const pendingRequests = await db.checkPendingStudentRequests(userRole.id);
 			if (state != '1') {
 				return res.status(400).json({ error: 'Thesis not active' });
 			}
 
-			if (applications.length > 0) {
-				return res.status(400).json({ error: 'Pending or accepted application already exists' })
+			if (applications.length > 0 || pendingRequests) {
+				return res.status(400).json({ error: 'Pending or accepted application or requests already exists' })
 			}
 
 			if (userRole.role != 'student') return res.status(401).json({ error: 'Unauthorized user' });
@@ -376,6 +400,7 @@ app.post('/api/thesis/:id/apply', upload.single('file'), checkJwt,(req, res) => 
 				text: `You received a Thesis Application for ${thesis_info.title} from student ${userRole.id}`,
 				subject: 'Thesis Application',
 			};
+
 
 			// Send the email using Nodemailer
 			transporter.sendMail(mailOptions, (error, info) => {
@@ -398,11 +423,11 @@ app.get('/api/thesis/applications/browse', checkJwt,(req, res) => {
 			const userRole = await db.getRole(req.auth);
 			const date = await db.getVirtualDate();
 			if (userRole.role == "teacher") {
-				const applications = await db.getTeacherApplications(userRole.id, (date == 0) ? currentDate.format("YYYY-MM-DD") : date);
+				const applications = await db.getTeacherApplications(userRole.id, date);
 				return res.status(200).json(applications);
 			} else {
 				if (userRole.role == "student") {
-					const applications = await db.getStudentApplications(userRole.id, (date == 0) ? currentDate.format("YYYY-MM-DD") : date);
+					const applications = await db.getStudentApplications(userRole.id, date);
 					for (let i = 0; i < applications.length; i++) {
 						applications[i].keywords = await db.getKeywordsbyId(applications[i].id);
 						applications[i].types = await db.getTypesbyId(applications[i].id)
@@ -567,7 +592,7 @@ app.put('/api/edit/thesis/:id',
 					return res.status(400).json({ error: 'The expiration date is not valid, change the expiration date' });
 				}
 
-				const checkStatus = await db.checkThesisActive(thesisId, (date == 0) ? currentDate.format("YYYY-MM-DD") : date);
+				const checkStatus = await db.checkThesisActive(thesisId, date);
 
 				await processCoSupervisors(thesisId, req.body.co_supervisors);
 				await processKeywords(thesisId, req.body.keywords);
@@ -726,7 +751,6 @@ app.post('/api/archive/thesis', [
 				return res.status(400).json({ error: 'The thesis is already archived or deleted' })
 			}
 		} catch (err) {
-			console.log(err)
 			return res.status(503).json({ error: "Error in archiving the thesis" });
 		}
 	})();
@@ -742,7 +766,7 @@ app.post('/api/applications/details', checkJwt, [
 				if (!errors.isEmpty()) {
 					return res.status(422).json({ errors: errors.array() });
 				}
-
+				const date = await db.getVirtualDate();
 				let applId = req.body.idApplication;
 
 				let getRole = await db.getRole(req.auth);
@@ -750,7 +774,7 @@ app.post('/api/applications/details', checkJwt, [
 					return res.status(401).json({ error: "Unauthorized" })
 				}
 
-				let getApplication = await db.checkExistenceApplicationById(applId);
+				let getApplication = await db.checkExistenceApplicationById(applId,date);
 				if (getApplication == 0) return res.status(400).json({ error: "Application does not exists" })
 				let studentInfo = await db.getStudentInfo(getApplication.student);
 				studentInfo.exams = await db.getStudentExams(getApplication.student);
@@ -769,6 +793,272 @@ app.post('/api/applications/details', checkJwt, [
 
 			}
 
+		})();
+});
+
+app.get('/api/requests', checkJwt, (req,res) => {
+
+(async() =>{
+	try{
+		const userRole = await db.getRole(req.auth);
+		if (userRole.role == "teacher") {
+			let teacherRequests = await db.getTeacherRequests(userRole.id);
+			teacherRequests = await processIDS(teacherRequests);
+			return res.status(200).json(teacherRequests);
+		} else {
+			if (userRole.role == "secretary") {
+				let secretaryRequests = await db.getSecretaryRequests();
+				secretaryRequests = await processIDS(secretaryRequests);
+				return res.status(200).json(secretaryRequests);
+			} else {
+				if (userRole.role == "student") {
+					let studentRequests = await db.getStudentRequests(userRole.id);
+					studentRequests = await processIDS(studentRequests);
+					return res.status(200).json(studentRequests);
+				} else {
+					return res.status(401).json({error: "Unauthorized user"})
+				}
+			}
+		}
+
+	} catch(err){
+		return res.status(503).json({error: "Error get Requests"})
+	}
+	
+})();
+
+
+
+})
+
+
+async function processIDS(requests){
+	for(let i=0;i<requests.length;i++){
+		let cosup = await db.getRequestCoSup(requests[i].id)
+		let infoS = await db.getStudentInfo(requests[i].student);
+		let infoT = await db.getTeacher(requests[i].supervisor);
+		requests[i].co_supervisors = [...cosup];
+		requests[i].nameS=infoS.name;
+		requests[i].surnameS=infoS.surname;
+		requests[i].nameT=infoT.name;
+		requests[i].surnameT=infoT.surname;
+	}
+
+	return requests;
+}
+
+app.post(
+	'/api/insert/request',
+	[
+		check('supervisor').isString().trim().isLength({ min: 1 }),
+		check('title').isString().trim().isLength({ min: 1 }),
+		check('description').isString(),
+		check('co_supervisors').isArray(),
+
+	], 
+	checkJwt,
+	(req, res) => {
+		(async () => {
+			const errors = validationResult(req);
+			if (!errors.isEmpty()) {
+				return res.status(422).json({ errors: errors.array() });
+			}
+
+			const supervisor = req.body.supervisor;
+			const title = req.body.title;
+			const description = req.body.description;
+			const co_supervisors = req.body.co_supervisors;
+	
+			try {
+				const userRole = await db.getRole(req.auth);
+				if (userRole.role != 'student') return res.status(401).json({ error: 'Unauthorized user' });
+				let date = await db.getVirtualDate();
+				const student = userRole.id;
+				const request_date = currentDate.format("YYYY-MM-DD");
+				let approval_date = "";
+				let status = 0;
+				const pendingRequests = await db.checkPendingStudentRequests(student);
+				let applications = await db.getStudentApplications(student, date)
+				applications = applications.filter((elem) => (elem.state == '0' || elem.state == '1'))
+				if(pendingRequests || applications.length > 0) return res.status(400).json({ error: 'Pending or accepted application or requests already exists' })
+				const requestId = await db.insertRequest(supervisor, title, description, student, request_date, approval_date, status);
+				for (let i = 0; i < co_supervisors.length; i++) {	
+					await db.insertCoSupervisorRequest(requestId, co_supervisors[i].name, co_supervisors[i].surname, co_supervisors[i].email);
+				}
+				
+				return res.status(200).json("Insert request successful"); 
+			} catch (err) {
+				return res.status(503).json({ error: 'Error in the insertion of the request' });
+			}
+		})();
+});
+
+
+
+app.post(
+	'/api/approve/request/secretary',
+	[
+		check('requestID').isInt()
+	], checkJwt,
+	(req, res) => {
+		(async () => {
+			const errors = validationResult(req);
+			if (!errors.isEmpty()) {
+				return res.status(422).json({ errors: errors.array() });
+			}
+			const reqID =  req.body.requestID;
+
+			try {
+				const userRole = await db.getRole(req.auth);
+				const requestExists = await db.checkRequestExistance(reqID);
+
+				if (!requestExists) return res.status(500).json({ error: 'Request does not exists' });
+
+				if (userRole.role != "secretary") return res.status(401).json({ error: 'Unauthorized user' });
+					//approve the request, modify the state from 0 to 1
+				await db.approveRequestSecretary(reqID);
+
+				let teacher = await db.getRequestTeacher(reqID);
+				let student = await db.getRequestStudent(reqID);
+				let mailTeacher = await db.getMailTeacher(teacher);
+
+				const mailOptions = {
+					from: `s313373@studenti.polito.it`,
+					to: `${mailTeacher}`,  
+					text: `You received a Thesis Request from student ${student}`,
+					subject: 'Thesis Request',
+				};
+
+				// Send the email using Nodemailer
+				transporter.sendMail(mailOptions, (error, info) => {
+					if (error) {
+						return console.error(error);
+					}
+					console.log('Message sent: %s', info.message);
+				});
+				
+				return res.status(200).json("Request approved by secretary");
+
+			} catch (err) {
+				return res.status(503).json({ error: 'Error in the process to approve request by secretary' });
+			}
+		})();
+});
+
+
+app.post( //i am supposed to be a secretary 
+	'/api/reject/request/secretary',
+	[
+		check('requestID').isInt()
+	], checkJwt,
+	(req, res) => {
+		(async () => {
+			const errors = validationResult(req);
+			if (!errors.isEmpty()) {
+				return res.status(422).json({ errors: errors.array() });
+			}
+			const reqID =  req.body.requestID;
+
+			try {
+				const userRole = await db.getRole(req.auth);
+				const requestExists = await db.checkRequestExistance(reqID);
+
+				if (!requestExists) return res.status(500).json({ error: 'Request does not exists' });
+				if (userRole.role != "secretary") return res.status(401).json({ error: 'Unauthorized user' });
+					//approve the request, modify the state from 0 to 2
+					await db.rejectRequestSecretary(reqID);
+					return res.status(200).json("Request rejected by secretary");
+			} catch (err) {
+				return res.status(503).json({ error: 'Error in the process to reject request by secretary' });
+			}
+		})();
+});
+
+
+
+app.post( 
+	'/api/approve/request/professor',
+	[
+		check('requestID').isInt()
+	], checkJwt,
+	(req, res) => {
+		(async () => {
+			const errors = validationResult(req);
+			if (!errors.isEmpty()) {
+				return res.status(422).json({ errors: errors.array() });
+			}
+			const reqID =  req.body.requestID;
+
+			try {
+				const userRole = await db.getRole(req.auth);
+				const requestExists = await db.checkRequestExistance(reqID);
+
+				if (!requestExists) return res.status(500).json({ error: 'Request does not exists' });
+				if (userRole.role != "teacher") return res.status(401).json({ error: 'Unauthorized user' });
+					//approve the request, modify the state from 1 to 3
+				let approval_date=currentDate.format("YYYY-MM-DD");
+				await db.approveRequestTeacher(reqID,approval_date);
+				return res.status(200).json("Request accepted by professor");
+			} catch (err) {
+				return res.status(503).json({ error: 'Error in the process to approve request by professor' });
+			}
+		})();
+});
+
+
+
+app.post( 
+	'/api/reject/request/professor',
+	[
+		check('requestID').isInt()
+	], checkJwt,
+	(req, res) => {
+		(async () => {
+			const errors = validationResult(req);
+			if (!errors.isEmpty()) {
+				return res.status(422).json({ errors: errors.array() });
+			}
+			const reqID =  req.body.requestID;
+
+			try {
+				const userRole = await db.getRole(req.auth);
+				const requestExists = await db.checkRequestExistance(reqID);
+
+				if (!requestExists) return res.status(500).json({ error: 'Request does not exists' });
+				if (userRole.role != "teacher") return res.status(401).json({ error: 'Unauthorized user' });
+				//approve the request, modify the state from 1 to 4
+				await db.rejectRequestTeacher(reqID);
+				return res.status(200).json("Request rejected by professor");
+			} catch (err) {
+				return res.status(503).json({ error: 'Error in the process to reject request by professor' });
+			}
+		})();
+});
+
+app.post( 
+	'/api/change/request/professor',
+	[
+		check('requestID').isInt(),
+		check('notes').isString()
+	], checkJwt,
+	(req, res) => {
+		(async () => {
+			const errors = validationResult(req);
+			if (!errors.isEmpty()) {
+				return res.status(422).json({ errors: errors.array() });
+			}
+			const reqID =  req.body.requestID;
+			const notes = req.body.notes;
+			try {
+				const userRole = await db.getRole(req.auth);
+				if (userRole.role != "teacher") return res.status(401).json({ error: 'Unauthorized user' });
+				const requestExists = await db.checkRequestExistance(reqID);
+				if (!requestExists) return res.status(404).json({ error: 'Request does not exists' });
+				await db.changeRequestTeacher(reqID, notes);
+				return res.status(200).json("Request change completed by professor");
+			} catch (err) {
+				return res.status(503).json({ error: 'Error in the process to request change by professor' });
+			}
 		})();
 });
 

@@ -211,6 +211,14 @@ function ProposalForm({ accessToken, handleError, thesis, createProposal, editPr
 
 	function handleSubmit(event) {
 		event.preventDefault();
+
+		if (!title.trim() || !description.trim()) {
+			handleError('Title and description must not be empty');
+			!title.trim() && setTitle('');
+			!description.trim() && setDescription('');
+			return;
+		}
+
 		const typesValues = selectedTypes.map((type) => type.value);
 		const keywordsValues = selectedKeywords.map((keyword) => keyword.value);
 		const formattedDate = dayjs(expirationDate).format('YYYY-MM-DD');

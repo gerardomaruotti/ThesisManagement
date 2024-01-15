@@ -129,6 +129,34 @@ function getStudentApplicationInfo(accessToken, idApplication) {
 	return callAPI('/applications/details', accessToken, 'POST', JSON.stringify({ idApplication: idApplication }));
 }
 
+function getStudentThesisRequest(accessToken) {
+	return callAPI('/requests', accessToken, 'GET', null);
+}
+
+function insertThesisRequest(accessToken, thesisRequest) {
+	return callAPI('/insert/request', accessToken, 'POST', JSON.stringify(thesisRequest));
+}
+
+function approveRequestSecretary(accessToken, idRequest) {
+	return callAPI('/approve/request/secretary', accessToken, 'POST', JSON.stringify({ requestID: idRequest }));
+}
+
+function rejectRequestSecretary(accessToken, idRequest) {
+	return callAPI('/reject/request/secretary', accessToken, 'POST', JSON.stringify({ requestID: idRequest }));
+}
+
+function approveRequestProfessor(accessToken, idRequest) {
+	return callAPI('/approve/request/professor', accessToken, 'POST', JSON.stringify({ requestID: idRequest }));
+}
+
+function rejectRequestProfessor(accessToken, idRequest) {
+	return callAPI('/reject/request/professor', accessToken, 'POST', JSON.stringify({ requestID: idRequest }));
+}
+
+function changeRequestProfessor(accessToken, idRequest, notes) {
+	return callAPI('/change/request/professor', accessToken, 'POST', JSON.stringify({ requestID: idRequest, notes: notes }));
+}
+
 const API = {
 	getAllKeywords,
 	getAllTypes,
@@ -150,5 +178,12 @@ const API = {
 	resetVirtualClock,
 	setVirtualClock,
 	getStudentApplicationInfo,
+	getStudentThesisRequest,
+	insertThesisRequest,
+	approveRequestSecretary,
+	rejectRequestSecretary,
+	approveRequestProfessor,
+	rejectRequestProfessor,
+	changeRequestProfessor,
 };
 export default API;

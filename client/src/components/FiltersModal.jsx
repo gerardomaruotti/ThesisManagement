@@ -29,6 +29,8 @@ function FiltersModal({
 	expirationDate,
 	setExpirationDate,
 	date,
+	isProfessor,
+	setFilterThesis,
 }) {
 	const { setLoading } = useLoading();
 	const [keywords, setKeywords] = useState([]);
@@ -151,7 +153,7 @@ function FiltersModal({
 		setLoading(true);
 		API.getAllThesis(accessToken, body)
 			.then((thesis) => {
-				setThesis(thesis);
+				setFilterThesis(thesis);
 			})
 			.catch((err) => {
 				handleError(err);
@@ -171,10 +173,12 @@ function FiltersModal({
 					<Form>
 						<Row>
 							<Col md={6}>
-								<Form.Group className='mb-3' controlId='formCoSupervisors'>
-									<Form.Label>Supervisors</Form.Label>
-									<Select isMulti options={supervisors} value={selectedSupervisor} styles={colorStyles} onChange={handleSupervisor} />
-								</Form.Group>
+								{!isProfessor && (
+									<Form.Group className='mb-3' controlId='formCoSupervisors'>
+										<Form.Label>Supervisors</Form.Label>
+										<Select isMulti options={supervisors} value={selectedSupervisor} styles={colorStyles} onChange={handleSupervisor} />
+									</Form.Group>
+								)}
 								<Form.Group className='mb-3' controlId='formCoSupervisors'>
 									<Form.Label>Co-supervisors</Form.Label>
 									<Select isMulti options={coSupervisors} value={selectedCoSupervisors} styles={colorStyles} onChange={handleCoSupervisors} />
@@ -265,6 +269,8 @@ FiltersModal.propTypes = {
 	expirationDate: PropTypes.string,
 	setExpirationDate: PropTypes.func,
 	date: PropTypes.string,
+	isProfessor: PropTypes.bool,
+	setFilterThesis: PropTypes.func,
 };
 
 export default FiltersModal;

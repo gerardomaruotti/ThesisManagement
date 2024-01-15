@@ -91,3 +91,61 @@ h1 {
 	color: rgba(0, 0, 0, 0.5) !important;
 	border-radius: 20px !important;
 }
+
+/* Secretary Home */
+
+.buttonHover:hover {
+	border: 1px solid green !important;
+	border-radius: 50px !important;
+}
+
+.buttonHover {
+	border: 1px solid transparent !important;
+	border-radius: 50px !important;
+}
+
+.buttonHover2:hover {
+	border: 1px solid rgba(234, 84, 85) !important;
+	border-radius: 50px !important;
+}
+
+.buttonHover2 {
+	border: 1px solid transparent !important;
+	border-radius: 50px !important;
+}
+
+.buttonHover3:hover {
+	border: 1px solid rgba(252, 193, 8) !important;
+	border-radius: 50px !important;
+}
+
+.buttonHover3 {
+	border: 1px solid transparent !important;
+	border-radius: 50px !important;
+}
+
+@media (max-width: 767px) {
+	.mobile-view {
+		font-size: 24px !important;
+	}
+
+	.mobile-icon {
+		height: 32px !important;
+		width: 32px !important;
+	}
+
+	.buttonHover2:hover {
+		border: 1px solid transparent !important;
+		border-radius: 50px !important;
+	}
+
+	.buttonHover:hover {
+		border: 1px solid transparent !important;
+		border-radius: 50px !important;
+	}
+
+	.buttonHover3:hover {
+		border: 1px solid transparent !important;
+		border-radius: 50px !important;
+	}
+}

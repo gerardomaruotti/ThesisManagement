@@ -36,14 +36,16 @@ function StudentHome({
 	expirationDate,
 	setExpirationDate,
 	hasApplied,
+	hasRequested,
 	date,
+	rapidFilter,
+	setRapidFilter,
 }) {
 	const { loginWithRedirect, isAuthenticated, isLoading } = useAuth0();
 	const { loading, setLoading } = useLoading();
 	const [filtersShow, setFiltersShow] = useState(false);
 	const [search, setSearch] = useState('');
 	const [filteredThesis, setFilteredThesis] = useState(thesis);
-	const [rapidFilter, setRapidFilter] = useState('all');
 
 	function handleRapidFilters(filter) {
 		if (filter === 'all') {
@@ -60,6 +62,7 @@ function StudentHome({
 	}
 
 	useEffect(() => {
+		setFilteredThesis(thesis);
 		if (rapidFilter === 'all') {
 			let filtered = thesis.filter((thesis) => {
 				return (
@@ -96,11 +99,7 @@ function StudentHome({
 			});
 			setFilteredThesis(filtered);
 		}
-	}, [rapidFilter, search]);
-
-	useEffect(() => {
-		setFilteredThesis(thesis);
-	}, [thesis]);
+	}, [rapidFilter, search, thesis]);
 
 	useEffect(() => {
 		if (!isAuthenticated && !isLoading) {
@@ -223,6 +222,7 @@ function StudentHome({
 											: null
 									}
 									hasApplied={hasApplied}
+									hasRequested={hasRequested}
 								/>
 							))
 					) : (
@@ -261,7 +261,10 @@ StudentHome.propTypes = {
 	expirationDate: PropTypes.string.isRequired,
 	setExpirationDate: PropTypes.func.isRequired,
 	hasApplied: PropTypes.bool.isRequired,
+	hasRequested: PropTypes.bool.isRequired,
 	date: PropTypes.string,
+	rapidFilter: PropTypes.string.isRequired,
+	setRapidFilter: PropTypes.func.isRequired,
 };
 
 export default StudentHome;

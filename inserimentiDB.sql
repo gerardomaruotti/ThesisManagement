@@ -122,6 +122,45 @@ CREATE TABLE IF NOT EXISTS "PDF_TABLE" (
 
 );
 
+CREATE TABLE IF NOT EXISTS "THESIS_REQUEST" (
+	"ID_REQUEST" INTEGER NOT NULL,
+	"STUDENT" VARCHAR(50) ,
+	"SUPERVISOR" VARCHAR(50),
+	"TITLE" VARCHAR(100),
+	"DESCRIPTION" VARCHAR(300),
+	"REQUEST_DATE" VARCHAR(50),
+	"APPROVAL_DATE" VARCHAR(50),
+	"STATUS" INTEGER NOT NULL,	
+	"NOTES" VARCHAR(500),					
+	FOREIGN KEY ("STUDENT") REFERENCES STUDENT("ID"),
+	FOREIGN KEY ("SUPERVISOR") REFERENCES TEACHER("ID"),
+	PRIMARY KEY ("ID_REQUEST" AUTOINCREMENT)
+);
+
+CREATE TABLE IF NOT EXISTS "SECRETARY_CLERK" (
+	"ID"	VARCHAR(50),
+	"NAME"	VARCHAR(25),
+	"SURNAME" VARCHAR(25),
+	"EMAIL"	VARCHAR(50),
+	PRIMARY KEY ("ID") 
+);
+
+CREATE TABLE IF NOT EXISTS "SECRETARY_AUTH0" (
+	"ID"	VARCHAR(50),
+	"ID_AUTH0"	VARCHAR(50),
+	PRIMARY KEY("ID"),
+	FOREIGN KEY("ID") REFERENCES "SECRETARY_CLERK"("ID")
+);
+
+CREATE TABLE IF NOT EXISTS "REQUEST_COSUPERVISOR" (
+	"REQUEST"	INTEGER NOT NULL,
+	"NAME"	VARCHAR(25),
+	"SURNAME"	VARCHAR(25),
+	"EMAIL"	VARCHAR(50),
+	PRIMARY KEY("REQUEST","EMAIL"),
+	FOREIGN KEY("REQUEST") REFERENCES "THESIS_REQUEST"("ID_REQUEST")
+);
+
 INSERT INTO "DEGREE" ("COD_DEGREE","TITLE_DEGREE") VALUES ('LM-53','Laurea magistrale in Ingegneria Dei Materiali'),
  ('LM-29','Laurea magistrale in Ingegneria Elettronica'),
  ('LM-31','Laurea magistrale in Ingegneria Gestionale'),
@@ -304,4 +343,19 @@ INSERT INTO "TYPE" ("THESIS","TYPE") VALUES (1,'EXPERIMENTAL'),
  (10,'REVIEW'),
  (10,'REVIEW OF ARTICLES');
 INSERT INTO "VIRTUAL_CLOCK" ("data") VALUES (null);
+INSERT INTO "THESIS_REQUEST" ("ID_REQUEST", "STUDENT", "SUPERVISOR", "TITLE", "DESCRIPTION", "REQUEST_DATE", "STATUS") VALUES(1,"s317977","d111111","Clustering algorithms based on segmentation techniques and artificial neural networks", "Suggests a research focus on the integration of clustering methodologies, segmentation techniques, and artificial neural networks (ANNs) within the realm of data analysis and pattern recognition. This interdisciplinary approach aims to enhance the efficiency and effectiveness of clustering algorithms by leveraging the strengths of segmentation techniques and the power of artificial neural networks.", "2024-01-04", 0);
+
+INSERT INTO "THESIS_REQUEST" ("ID_REQUEST", "STUDENT", "SUPERVISOR", "TITLE", "DESCRIPTION", "REQUEST_DATE", "STATUS") VALUES(2,"s319854","d111111","Tecniche di Binary Code Similarity e Binary Diffing per la classificazione di malware", "Suggerisce un focus di ricerca relativo all'applicazione di tecniche di similarità del codice binario e differenziazione binaria per la classificazione di malware. In questa descrizione in italiano, esploriamo l'approccio e l'importanza di queste tecniche nella lotta contro le minacce informatiche.", "2024-01-08", 0);
+
+
+INSERT INTO "SECRETARY_CLERK" ("ID","NAME","SURNAME","EMAIL") VALUES ('p543236','Giacomo','Ferrari','p543236@polito.it');
+INSERT INTO "SECRETARY_AUTH0" ("ID","ID_AUTH0") VALUES ('p543236','auth0|6596d0b638eb82cc492dc54e');
+INSERT INTO "REQUEST_COSUPERVISOR" ("REQUEST","NAME","SURNAME","EMAIL") VALUES (1,'Carlo','Rafele','d123461@polito.it'),
+ (1,'Antonio','Vetrò','d123463@polito.it'),
+ (1,'Lorenza','Maggio','maggio_lorenza@agency.it');
+
+INSERT INTO "REQUEST_COSUPERVISOR" ("REQUEST","NAME","SURNAME","EMAIL") VALUES (2,'Carlo','Rafele','d123461@polito.it'),
+ (2,'Lorenza','Maggio','maggio_lorenza@agency.it');
+
+
 COMMIT;

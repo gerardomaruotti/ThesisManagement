@@ -115,9 +115,52 @@ exports.createTestDb = async () => {
         PRIMARY KEY("THESIS","TYPE"),
         FOREIGN KEY("THESIS") REFERENCES "THESIS"("ID_THESIS")
     )`,
+    `CREATE TABLE IF NOT EXISTS "PDF_TABLE" (
+        "ID_APPLICATION" INTEGER NOT NULL,
+        "FILENAME" VARCHAR (50),
+        "PATH" TEXT,
+        FOREIGN KEY ("ID_APPLICATION") REFERENCES THESIS_APPLICATION("ID_APPLICATION"),
+        PRIMARY KEY ("ID_APPLICATION")
+    
+    );`,
             `CREATE TABLE IF NOT EXISTS "VIRTUAL_CLOCK" (
         "data"	VARCHAR(50)
-    )`
+    )`,
+    `CREATE TABLE IF NOT EXISTS "THESIS_REQUEST" (
+        "ID_REQUEST" INTEGER NOT NULL,
+        "STUDENT" VARCHAR(50) ,
+        "SUPERVISOR" VARCHAR(50),
+        "TITLE" VARCHAR(100),
+        "DESCRIPTION" VARCHAR(300),
+        "REQUEST_DATE" VARCHAR(50),
+        "APPROVAL_DATE" VARCHAR(50),
+        "STATUS" INTEGER NOT NULL,	
+        "NOTES" VARCHAR(500),					
+        FOREIGN KEY ("STUDENT") REFERENCES STUDENT("ID"),
+        FOREIGN KEY ("SUPERVISOR") REFERENCES TEACHER("ID"),
+        PRIMARY KEY ("ID_REQUEST" AUTOINCREMENT)
+    );`,
+    `CREATE TABLE IF NOT EXISTS "SECRETARY_CLERK" (
+        "ID"	VARCHAR(50),
+        "NAME"	VARCHAR(25),
+        "SURNAME" VARCHAR(25),
+        "EMAIL"	VARCHAR(50),
+        PRIMARY KEY ("ID") 
+    );`,
+    `CREATE TABLE IF NOT EXISTS "SECRETARY_AUTH0" (
+        "ID"	VARCHAR(50),
+        "ID_AUTH0"	VARCHAR(50),
+        PRIMARY KEY("ID"),
+        FOREIGN KEY("ID") REFERENCES "SECRETARY_CLERK"("ID")
+    );`,
+    `CREATE TABLE IF NOT EXISTS "REQUEST_COSUPERVISOR" (
+        "REQUEST"	INTEGER NOT NULL,
+        "NAME"	VARCHAR(25),
+        "SURNAME"	VARCHAR(25),
+        "EMAIL"	VARCHAR(50),
+        PRIMARY KEY("REQUEST","EMAIL"),
+        FOREIGN KEY("REQUEST") REFERENCES "THESIS_REQUEST"("ID_REQUEST")
+    );`
         ];
         
         db.serialize(() => {
@@ -187,7 +230,7 @@ exports.insertDepartment = (n) => {
 exports.insertStudent = (n) => {
     return new Promise((resolve, reject) => {
         const query = `INSERT INTO "STUDENT" ("ID","NAME","SURNAME","GENDER","NATIONALITY","EMAIL","ENROLLMENT_YEAR","COD_DEGREE") VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
-        db.run(query, ["s" + n, "name" + n, "surname" + n, "gender" + n, "nationaliy" + n, "email"+n, "enrollament_y" + n, "cod_d" + n], function (err) {
+        db.run(query, ["s" + n, "name" + n, "surname" + n, "gender" + n, "nationaliy" + n, "email"+n+"@studenti.polito.it", "enrollament_y" + n, "cod_deg" + n], function (err) {
             if (err) {
                 handleError(err);
             } else {
@@ -236,7 +279,7 @@ exports.insertThesis = (n, deg, sup, date) => {
     });
 }
 
-exports.insertThesisAppliation = (n, state, date) => {
+exports.insertThesisApplication = (n, state, date) => {
     return new Promise((resolve, reject) => {
         const query = `INSERT INTO "THESIS_APPLICATION" ("ID_APPLICATION","STUDENT","THESIS","STATE","APPLICATION_DATE") VALUES (?, ?, ?, ? ,?)`;
         db.run(query, [n, "s" + n, n, state, date], function (err) {
@@ -306,7 +349,7 @@ exports.insertTeacher = (n) => {
     return new Promise((resolve, reject) => {
         const query = `INSERT INTO "TEACHER" ("ID","NAME","SURNAME","EMAIL","COD_GROUP","COD_DEPARTMENT") VALUES (?, ?, ?, ?, ?, ?)`;
 
-        db.run(query, ["d"+n, "name" + n, "surname" + n, "email" + n, "cod_g" + n, "cod_d" + n], function (err) {
+        db.run(query, ["d"+n, "name" + n, "surname" + n, "email" + n+"@polito.it", "cod_g" + n, "cod_d" + n], function (err) {
             if (err) {
                 handleError(err);
             } else {
@@ -320,6 +363,59 @@ exports.insertTeacherAuth = (auth0) => {
     return new Promise((resolve, reject) => {
         const query = `INSERT INTO "TEACHER_AUTH0" ("ID", "ID_AUTH0") VALUES (?, ?)`;
         db.run(query, ["d0", auth0], function (err) {
+            if (err) {
+                handleError(err);
+            } else {
+                resolve();
+            }
+        });
+    });
+}
+
+exports.insertPDF = (n) => {
+    return new Promise((resolve, reject) => {
+        const query = `INSERT INTO "PDF_TABLE" ("ID_APPLICATION", "FILENAME", "PATH") VALUES (?, ?, ?)`;
+        db.run(query, [n, "f"+n, "f"+n], function (err) {
+            if (err) {
+                handleError(err);
+            } else {
+                resolve();
+            }
+        });
+    });
+}
+
+exports.insertThesisRequest = (n, s, t, date, status) => {
+    return new Promise((resolve, reject) => {
+        const query = `INSERT INTO "THESIS_REQUEST" ("ID_REQUEST","STUDENT","SUPERVISOR","TITLE","DESCRIPTION", "REQUEST_DATE", "APPROVAL_DATE", "STATUS", "NOTES") VALUES (?, ?, ?, ? ,?, ?, ?, ?, ?)`;
+        db.run(query, [n, s, t, "t"+n, "d"+n, date, null, status, "n"+n], function (err) {
+            if (err) {
+                handleError(err);
+            } else {
+                resolve();
+            }
+        });
+    });
+}
+
+
+exports.insertSecretary = (n) => {
+    return new Promise((resolve, reject) => {
+        const query = `INSERT INTO "SECRETARY_CLERK" ("ID","NAME","SURNAME","EMAIL") VALUES (?, ?, ?, ?)`;
+        db.run(query, [n, "n"+n, "s"+n, "e"+n], function (err) {
+            if (err) {
+                handleError(err);
+            } else {
+                resolve();
+            }
+        });
+    });
+}
+
+exports.insertSecretaryAuth = (auth0) => {
+    return new Promise((resolve, reject) => {
+        const query = `INSERT INTO "SECRETARY_AUTH0" ("ID","ID_AUTH0") VALUES (?, ?)`;
+        db.run(query, [0, auth0], function (err) {
             if (err) {
                 handleError(err);
             } else {
