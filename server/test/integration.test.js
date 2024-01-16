@@ -53,6 +53,8 @@ beforeAll(async () => {
     await dbTest.createTestDb();
     await dbTest.insertTeacher(0);
     await dbTest.insertStudent(0);
+    await dbTest.insertStudent(1);
+    await dbTest.insertStudent(2);
     await dbTest.insertSecretary(0);
     await dbTest.insertStudentAuth('auth0|654caa9c50ddd0e01984fe64');
     await dbTest.insertTeacherAuth('auth0|655262d32d58c43c6805bd0b');
@@ -292,18 +294,33 @@ describe('GET Thesis by ID', () => {
 const testFileContent = 'This is the content of the fake file.'
 const testFileName = 'test-file.txt'
 
+const beforeThesis = async (thesisId, thesisStatus, applicationId) => {
+    const insertPromises = [];
+
+    
+    insertPromises.push(dbTest.insertThesis(thesisId, student.degree, teacher.id, date));
+    insertPromises.push(dbTest.insertThesisStatus(thesisId, thesisStatus));
+
+    if (applicationId !== undefined) {
+        insertPromises.push(dbTest.insertThesisApplication(thesisId, 0, date));
+    }
+
+    await Promise.all(insertPromises);
+};
+
+const afterThesis = async () => {
+    await dbTest.deleteTableContent("THESIS_STATUS");
+    await dbTest.deleteTableContent("THESIS_APPLICATION");
+    await dbTest.deleteTableContent("THESIS");
+};
+
 describe('POST Apply for Proposal', () => {
     beforeAll(async () => {
-        const insertPromises = [];
-        insertPromises.push(dbTest.insertThesis(2, student.degree, teacher.id, date));
-        insertPromises.push(dbTest.insertThesisStatus(2, 1));
-
-        await Promise.all(insertPromises);
+        await beforeThesis(2, 1);
     });
 
     afterAll(async () => {
-        await dbTest.deleteTableContent("THESIS_STATUS");
-        await dbTest.deleteTableContent("THESIS");
+        await afterThesis();
     });
     
     test('should correctly apply for a thesis', async () => {
@@ -317,16 +334,11 @@ describe('POST Apply for Proposal', () => {
 
 describe('GET Thesis Applications', () => {
     beforeAll(async () => {
-        const insertPromises = [];
-        insertPromises.push(dbTest.insertThesis(2, student.degree, teacher.id, date));
-        insertPromises.push(dbTest.insertThesisApplication(2, 2, date));
-
-        await Promise.all(insertPromises);
+        await beforeThesis(2, 1, 2);
     });
 
     afterAll(async () => {
-        await dbTest.deleteTableContent("THESIS");
-        await dbTest.deleteTableContent("THESIS_APPLICATION");
+        await afterThesis();
     });
     
     test('should correctly get applications to teachers thesis ', async () => {
@@ -344,17 +356,11 @@ describe('GET Thesis Applications', () => {
 
 describe('POST Accept Application', () => {
     beforeAll(async () => {
-        const insertPromises = [];
-        insertPromises.push(dbTest.insertStudent(2));
-        insertPromises.push(dbTest.insertThesis(2, student.degree, teacher.id, date));
-        insertPromises.push(dbTest.insertThesisApplication(2, 0, date));
-
-        await Promise.all(insertPromises);
+        await beforeThesis(2, 1, 2);
     });
 
     afterAll(async () => {
-        await dbTest.deleteTableContent("THESIS");
-        await dbTest.deleteTableContent("THESIS_APPLICATION");
+        await afterThesis();
     });
     
     test('should correctly accept a thesis application', async () => {
@@ -368,16 +374,11 @@ describe('POST Accept Application', () => {
 
 describe('POST Reject Application', () => {
     beforeAll(async () => {
-        const insertPromises = [];
-        insertPromises.push(dbTest.insertThesis(2, student.degree, teacher.id, date));
-        insertPromises.push(dbTest.insertThesisApplication(2, 0, date));
-
-        await Promise.all(insertPromises);
+        await beforeThesis(2, 1, 2);
     });
 
     afterAll(async () => {
-        await dbTest.deleteTableContent("THESIS");
-        await dbTest.deleteTableContent("THESIS_APPLICATION");
+        await afterThesis();
     });
     
     test('should correctly reject a thesis application', async () => {
@@ -391,17 +392,11 @@ describe('POST Reject Application', () => {
 
 describe('PUT Edit Thesis', () => {
     beforeAll(async () => {
-        const insertPromises = [];
-        insertPromises.push(dbTest.insertThesis(2, student.degree, teacher.id, date));
-        insertPromises.push(dbTest.insertThesisStatus(2, 0));
-
-
-        await Promise.all(insertPromises);
+        await beforeThesis(2, 0, 2);
     });
 
     afterAll(async () => {
-        await dbTest.deleteTableContent("THESIS_STATUS");
-        await dbTest.deleteTableContent("THESIS");
+        await afterThesis();
     });
     
     test('should correctly edit an existing thesis', async () => {
@@ -447,18 +442,11 @@ describe('PUT VC Off', () => {
 
 describe('POST Delete Thesis', () => {
     beforeAll(async () => {
-        const insertPromises = [];
-        insertPromises.push(dbTest.insertThesis(2, student.degree, teacher.id, date));
-        insertPromises.push(dbTest.insertThesisStatus(2, 1));
-        insertPromises.push(dbTest.insertThesisApplication(2, 0, date));
-
-        await Promise.all(insertPromises);
+        await beforeThesis(2, 1, 2);
     });
 
     afterAll(async () => {
-        await dbTest.deleteTableContent("THESIS_STATUS");
-        await dbTest.deleteTableContent("THESIS_APPLICATION");
-        await dbTest.deleteTableContent("THESIS");
+        await afterThesis();
     });
     
     test('should correctly delete a thesis', async () => {
@@ -472,18 +460,11 @@ describe('POST Delete Thesis', () => {
 
 describe('POST Archive Thesis', () => {
     beforeAll(async () => {
-        const insertPromises = [];
-        insertPromises.push(dbTest.insertThesis(2, student.degree, teacher.id, date));
-        insertPromises.push(dbTest.insertThesisStatus(2, 1));
-        insertPromises.push(dbTest.insertThesisApplication(2, 0, date));
-
-        await Promise.all(insertPromises);
+        await beforeThesis(2, 1, 2);
     });
 
     afterAll(async () => {
-        await dbTest.deleteTableContent("THESIS_STATUS");
-        await dbTest.deleteTableContent("THESIS_APPLICATION");
-        await dbTest.deleteTableContent("THESIS");
+        await afterThesis();
     });
     
     test('should correctly archive a thesis', async () => {

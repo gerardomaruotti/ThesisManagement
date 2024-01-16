@@ -12,12 +12,11 @@ import PropTypes from 'prop-types';
 import { handleError, handleSuccess } from '../utils/toastHandlers.js';
 
 function ProfessorApplicationsThesis({ date, dirty, setDirty, setShowModal, setMsgModal }) {
-	const { accessToken, isProfessor } = useContext(UserContext);
+	const { accessToken } = useContext(UserContext);
 	const { loading, setLoading } = useLoading();
 	const navigate = useNavigate();
 	const [thesis, setThesis] = useState(null);
 	const [showDetails, setShowDetails] = useState(false);
-	// const [dirty, setDirty] = useState(false);
 	const [applicationsThesis, setApplicationsThesis] = useState([]);
 
 	const { id } = useParams();
@@ -224,7 +223,7 @@ function ProfessorApplicationsThesis({ date, dirty, setDirty, setShowModal, setM
 											</thead>
 											<tbody>
 												{applicationsThesis != []
-													? applicationsThesis.map((app, index) => (
+													? applicationsThesis.map((app) => (
 															<tr key={app.id_application}>
 																<td>{app.student}</td>
 																<td>{app.name}</td>

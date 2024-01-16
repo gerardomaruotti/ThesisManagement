@@ -36,9 +36,9 @@ function StudentApplicationCard({ application }) {
 						msOverflowStyle: 'none' /* For Internet Explorer and Edge */,
 					}}
 				>
-					{application.keywords.map((keyword, index) => (
+					{application.keywords.map((keyword) => (
 						<span
-							key={index}
+							key={keyword}
 							className='badge'
 							style={{
 								backgroundColor: randomcolor({ seed: keyword, luminosity: 'bright', format: 'rgba', alpha: 1 }).replace(/1(?=\))/, '0.1'),
