@@ -143,17 +143,16 @@ const SecretaryCard = ({ request, setInternalDirty, setShowModal, setMsgModal })
 						>
 							<i className='bi bi-calendar3' style={{ fontSize: '16px' }}></i>
 						</span>
-						{request.status === 3 && request.approval_date ? (
-							<div className='d-flex flex-column'>
-								<span style={{ color: 'rgba(0, 0, 0, 0.8)', paddingLeft: 8, fontWeight: 400 }}>Approval Date</span>
-								<span style={{ marginLeft: 8, color: 'rgba(0, 0, 0, 0.5)' }}>{dayjs(request.approval_date).format('DD/MM/YYYY')}</span>
-							</div>
-						) : (
-							<div className='d-flex flex-column'>
-								<span style={{ color: 'rgba(0, 0, 0, 0.8)', paddingLeft: 8, fontWeight: 400 }}>Request Date</span>
-								<span style={{ marginLeft: 8, color: 'rgba(0, 0, 0, 0.5)' }}>{dayjs(request.request_date).format('DD/MM/YYYY')}</span>
-							</div>
-						)}
+						<div className='d-flex flex-column'>
+							<span style={{ color: 'rgba(0, 0, 0, 0.8)', paddingLeft: 8, fontWeight: 400 }}>
+								{request.status === 3 && request.approval_date ? 'Approval Date' : 'Request Date'}
+							</span>
+							<span style={{ marginLeft: 8, color: 'rgba(0, 0, 0, 0.5)' }}>
+								{request.status === 3 && request.approval_date
+									? dayjs(request.approval_date).format('DD/MM/YYYY')
+									: dayjs(request.request_date).format('DD/MM/YYYY')}
+							</span>
+						</div>
 					</div>
 					{config ? (
 						<OverlayTrigger placement='bottom' delay={{ show: 100, hide: 200 }} overlay={request.status === 5 ? popover : <></>}>
