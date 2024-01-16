@@ -929,7 +929,7 @@ app.post(
 
 app.post( //i am supposed to be a secretary 
 	'/api/reject/request/secretary',
-	validateInputReq, checkJwt,
+	validateInputReq(), checkJwt,
 	(req, res) => {
 		(async () => {
 			const errors = validationResult(req);
@@ -986,7 +986,7 @@ app.post(
 
 app.post( 
 	'/api/reject/request/professor',
-	validateInputReq, checkJwt,
+	validateInputReq(), checkJwt,
 	(req, res) => {
 		(async () => {
 			const errors = validationResult(req);
