@@ -19,7 +19,6 @@ exports.getKeywords = () => {
     db.all(sql, [], (err, rows) => {
       if (err) {
         reject(err);
-        return;
       }
       else {
         let keywords = [];
@@ -38,7 +37,6 @@ exports.getKeywordsbyId = (idThesis) => {
     db.all(sql, [idThesis], (err, rows) => {
       if (err) {
         reject(err);
-        return;
       }
       else {
         let keywords = [];
@@ -58,7 +56,6 @@ exports.getTypes = () => {
     db.all(sql, [], (err, rows) => {
       if (err) {
         reject(err);
-        return;
       }
       else {
         let types = [];
@@ -77,7 +74,6 @@ exports.getTypesbyId = (idThesis) => {
     db.all(sql, [idThesis], (err, rows) => {
       if (err) {
         reject(err);
-        return;
       }
       else {
         let types = [];
@@ -96,7 +92,6 @@ exports.getTeachers = () => {
     db.all(sql, [], (err, rows) => {
       if (err) {
         reject(err);
-        return;
       }
       else {
         const teachers = rows.map((elem) => ({
@@ -118,7 +113,6 @@ exports.getTeacher = (codSupervisor) => {
     db.get(sql, [codSupervisor], (err, row) => {
       if (err) {
         reject(err);
-        return;
       }
       else {
         let teacher = {
@@ -138,7 +132,6 @@ exports.getCoSupervisors = (idThesis) => {
     db.all(sql, [idThesis], (err, rows) => {
       if (err) {
         reject(err);
-        return;
       }
       else {
         const coSupervisors = rows.map((elem) => ({
@@ -159,7 +152,6 @@ exports.getCoSupervisorsEmail = (idThesis) => {
     db.all(sql, [idThesis], (err, rows) => {
       if (err) {
         reject(err);
-        return;
       }
       else {
         let coSupervisors = [];
@@ -179,7 +171,6 @@ exports.getCdS = () => {
     db.all(sql, [], (err, rows) => {
       if (err) {
         reject(err);
-        return;
       }
       else {
         const cds = rows.map((elem) => ({
@@ -198,7 +189,6 @@ exports.getThesisExpDate = (ID) => {
     db.get(sql, [ID], (err, row) => {
       if (err) {
         reject(err);
-        return;
       }
       else {
         resolve(row.EXPIRATION_DATE)
@@ -213,7 +203,6 @@ exports.getGroups = () => {
     db.all(sql, (err, rows) => {
       if (err) {
         reject(err);
-        return;
       } else {
         const groups = rows.map((elem) => ({
           cod_group: elem.COD_GROUP,
@@ -231,7 +220,6 @@ exports.getThesisSupervisor = (ID) => {
     db.get(sql, [ID], (err, row) => {
       if (err) {
         reject(err);
-        return;
       }
       else {
         resolve(row.SUPERVISOR)
@@ -246,7 +234,6 @@ exports.getTitleDegree = (codDegree) => {
     db.get(sql, [codDegree], (err, row) => {
       if (err) {
         reject(err);
-        return;
       }
       else {
         resolve(row.TITLE_DEGREE)
@@ -261,7 +248,6 @@ exports.getGroupSupervisorAndCoSupervisor = (idThesis) => {
     db.all(sql, [idThesis, idThesis], (err, rows) => {
       if (err) {
         reject(err);
-        return;
       }
       else {
         const groups = rows.map((elem) => ({
@@ -280,7 +266,6 @@ exports.getGroup = (idThesis) => {
     db.all(sql, [idThesis, idThesis], (err, rows) => {
       if (err) {
         reject(err);
-        return;
       }
       else {
         let groups = [];
@@ -353,7 +338,6 @@ exports.getRole = (auth0) => {
       }
     };
 
-    //auth0.payload.sub = "auth0|655262d32d58c43c6805bd0b";
 
     const findStudent = () => {
       db.get(findStudentQuery, [auth0.payload.sub], (err, elem) => {
@@ -384,10 +368,12 @@ exports.getThesisTeacher = (ID, date) => {
     db.all(sql, [ID], (err, rows) => {
       if (err) {
         reject(err);
-        return;
       }
-      else {
-        if (rows.length > 0) {
+
+      if (rows.length == 0){
+          resolve([])
+      } else{
+
           const thesis = rows.map((elem) => ({
             ID: elem.ID,
             title: elem.title,
@@ -403,12 +389,9 @@ exports.getThesisTeacher = (ID, date) => {
             applications: 0
           }))
           resolve(thesis)
-        } else {
-          resolve([])
-        }
       }
     });
-  });
+  })
 }
 
 exports.getThesisStudent = (ID, curDate) => {
@@ -417,7 +400,6 @@ exports.getThesisStudent = (ID, curDate) => {
     db.all(sql, [ID,curDate], (err, rows) => {
       if (err) {
         reject(err);
-        return;
       }
       else {
         if (rows.length > 0) {
@@ -450,7 +432,6 @@ exports.insertThesis = (title, description, req_know, notes, exp_date, level, de
     db.run(sql, [title, description, req_know, notes, exp_date, level, degree, supervisor], function (err) {
       if (err) {
         reject(err);
-        return;
       }
       resolve(this.lastID);
     });
@@ -463,7 +444,6 @@ exports.insertCoSupervisor = (id, name, surname, email) => {
     db.run(sql, [id, name, surname, email], function (err) {
       if (err) {
         reject(err);
-        return;
       }
       resolve(this.lastID);
     });
@@ -476,7 +456,6 @@ exports.insertKeyword = (id, keyword) => {
     db.run(sql, [id, keyword], function (err) {
       if (err) {
         reject(err);
-        return;
       }
       resolve(this.lastID);
     });
@@ -489,7 +468,6 @@ exports.insertThesisStatus = (id) => {
     db.run(sql, [id, 1], function (err) {
       if (err) {
         reject(err);
-        return;
       }
       resolve(this.lastID);
     });
@@ -502,7 +480,6 @@ exports.insertType = (id, type) => {
     db.run(sql, [id, type], function (err) {
       if (err) {
         reject(err);
-        return;
       }
       resolve(this.lastID);
     });
@@ -517,10 +494,9 @@ exports.getThesis = (idThesis) => {
     db.get(sql, [idThesis], (err, row) => {
       if (err) {
         reject(err);
-        return;
       }
       if (row == undefined) {
-        reject({ error: 'Thesis not found.' });
+        reject(new Error('Thesis not found.'));
       } else {
         let thesis = {
           title: row.TITLE,
@@ -544,10 +520,9 @@ exports.checkThesisActive = (idThesis,date) => {
     db.get(sql, [idThesis], (err, row) => {
       if (err) {
         reject(err);
-        return;
       }
       if (row == undefined) {
-        reject({ error: 'Thesis not found.' });
+        reject(new Error('Thesis not found.'));
       } else {
         resolve((date == 0) ? row.STATE : (date > row.EXPIRATION_DATE && row.state == 1) ? 0 : row.STATE);
       }
@@ -562,7 +537,6 @@ exports.insertApplication = (userId, idThesis, date) => {
     db.run(sql, [userId, idThesis, 0, date], function (err) {
       if (err) {
         reject(err);
-        return;
       }
       resolve(this.lastID);
     });
@@ -575,7 +549,6 @@ exports.getTeacherApplications = (teacherId,date) => {
     db.all(sql, [teacherId], (err,rows) => {
       if (err) {
         reject(err);
-        return;
       } else{
         const applications=rows.map((elem)=>({
           id: elem.ID_THESIS,
@@ -606,7 +579,6 @@ exports.getStudentApplications = (studentId,date) => {
     db.all(sql, [studentId], (err,rows) => {
       if (err) {
         reject(err);
-        return;
       } else{
         const applications=rows.map((elem)=>({
           id: elem.ID_THESIS,
@@ -636,7 +608,6 @@ exports.checkExistenceApplication= (thesis, student)=> {
     db.get(sql, [student, thesis], (err, row) => {
       if (err) {
         reject(err);
-        return;
       }
       else {
         if (row == undefined)
@@ -661,7 +632,6 @@ exports.checkExistenceThesis= (thesis)=> {
     db.get(sql, [thesis], (err, row) => {
       if (err) {
         reject(err);
-        return;
       }
       else {
         if (row == undefined)
@@ -685,7 +655,7 @@ exports.acceptApplication = (thesis, student) => {
     db.run(sql, [thesis, student], function (err) {
       if (err) {
         reject(err);
-        return;
+         
       }
       resolve("Accepted");
     });
@@ -700,7 +670,7 @@ exports.cancelApplications = (thesis, student) => {
     db.run(sql, [thesis, student], function (err) {
       if (err) {
         reject(err);
-        return;
+         
       }
       resolve("Canceled");
     });
@@ -715,7 +685,7 @@ exports.rejectApplication = (thesis, student) => {
     db.run(sql, [thesis, student], function (err) {
       if (err) {
         reject(err);
-        return;
+         
       }
       resolve("Rejected");
     });
@@ -729,7 +699,7 @@ exports.archiveThesis=(thesis) => {
     db.run(sql, [thesis], function (err) {
       if (err) {
         reject(err);
-        return;
+         
       }
       resolve("Archived");
     });
@@ -742,7 +712,7 @@ exports.activateThesis=(thesis) => {
     db.run(sql, [thesis], function (err) {
       if (err) {
         reject(err);
-        return;
+         
       }
       resolve("Activated");
     });
@@ -755,7 +725,7 @@ exports.editThesis = (id, title, description, req_know, notes, exp_date, level, 
     db.run(sql, [title, description, req_know, notes, exp_date, level, degree, id], function (err) {
       if (err) {
         reject(err);
-        return;
+         
       }
       resolve(this.lastID);
     });
@@ -768,7 +738,7 @@ exports.deleteCoSupervisor = (id) => {
     db.run(sql, [id], function (err) {
       if (err) {
         reject(err);
-        return;
+         
       }
       resolve(1);
     });
@@ -781,7 +751,7 @@ exports.deleteKeyword = (id) => {
     db.run(sql, [id], function (err) {
       if (err) {
         reject(err);
-        return;
+         
       }
       resolve(1);
     });
@@ -794,7 +764,7 @@ exports.deleteType = (id) => {
     db.run(sql, [id], function (err) {
       if (err) {
         reject(err);
-        return;
+         
       }
       resolve(1);
     });
@@ -807,7 +777,7 @@ exports.checkExistenceApplicationForThesis= (thesis)=> {
     db.get(sql, [thesis], (err, row) => {
       if (err) {
         reject(err);
-        return;
+         
       }
       else {
         if (row == undefined)
@@ -826,7 +796,7 @@ exports.checkExistenceAcceptedApplicationForThesis= (thesis)=> {
     db.get(sql, [thesis], (err, row) => {
       if (err) {
         reject(err);
-        return;
+         
       }
       else {
         if (row == undefined)
@@ -871,7 +841,7 @@ exports.getRequestTeacher = (reqID) => {
     db.get(sql,[reqID], (err, row) => {
       if(err){
         reject(err);
-        return;
+         
       } 
       resolve(row.SUPERVISOR);
         
@@ -889,7 +859,7 @@ exports.getRequestStudent = (reqID) => {
     db.get(sql,[reqID], (err, row) => {
       if(err){
         reject(err);
-        return;
+         
       }
       resolve(row.STUDENT);
     })
@@ -904,7 +874,7 @@ exports.getVirtualDate= ()=> {
     db.get(sql, [], (err, row) => {
       if (err) {
         reject(err);
-        return;
+         
       }
       else {
         if (row.data == null)
@@ -923,7 +893,7 @@ exports.setVirtualDate= (date)=> {
     db.get(sql, [date], (err, row) => {
       if (err) {
         reject(err);
-        return;
+         
       }
       resolve(this.lastID)
     });
@@ -936,7 +906,7 @@ exports.resetStatusPastApplications = (date)=> {
     db.get(sql, [date], (err, row) => {
       if (err) {
         reject(err);
-        return;
+         
       }
       resolve(1)
     });
@@ -949,7 +919,7 @@ exports.deleteFutureApplications = (date)=> {
     db.get(sql, [date], (err, row) => {
       if (err) {
         reject(err);
-        return;
+         
       }
       resolve(1)
     });
@@ -962,7 +932,7 @@ exports.getMailStudent = (studentID) => {
     db.get(sql, [studentID], (err, row) => {
       if (err) {
         reject(err);
-        return;
+         
       }
       else {
         resolve(row.EMAIL)
@@ -978,7 +948,7 @@ exports.getMailTeacher = (teacherId) => {
     db.get(sql, [teacherId], (err, row) => {
       if (err) {
         reject(err);
-        return;
+         
       }
       else {
         resolve(row.EMAIL)
@@ -994,7 +964,7 @@ exports.setStatusDeleted = (thesis) => {
     db.run(sql, [thesis], function (err) {
       if (err) {
         reject(err);
-        return;
+         
       }
       resolve("updated");
     });
@@ -1009,7 +979,7 @@ exports.cancelApplicationsByThesis = (thesis) => {
     db.run(sql, [thesis], function (err) {
       if (err) {
         reject(err);
-        return;
+         
       }
       resolve("Canceled");
     });
@@ -1022,7 +992,7 @@ exports.cancelPendingApplications = (thesis) => {
     db.run(sql, [thesis], function (err) {
       if (err) {
         reject(err);
-        return;
+         
       }
       resolve("Canceled");
     });
@@ -1036,7 +1006,7 @@ exports.insertCv = (applId, filename, path) => {
     db.run(sql, [applId,filename,path], function (err) {
       if (err) {
         reject(err);
-        return;
+         
       }
       resolve("Cv uploaded");
     });
@@ -1050,7 +1020,7 @@ exports.getStudentInfo = (studentId) => {
     db.get(sql, [studentId], (err,row) => {
       if (err) {
         reject(err);
-        return;
+         
       }
       if(row == undefined){
         resolve({});
@@ -1079,7 +1049,7 @@ exports.getStudentExams = (studentId) => {
     db.all(sql, [studentId], (err,rows) => {
       if (err) {
         reject(err);
-        return;
+         
       }
     
         let exams = rows.map((elem) => ({
@@ -1104,7 +1074,7 @@ exports.getCv = (applId) => {
     db.get(sql, [applId], (err,row) => {
       if (err) {
         reject(err);
-        return;
+         
       }
       if(row == undefined){
         resolve({
@@ -1130,7 +1100,7 @@ exports.checkExistenceApplicationById= (idApplication,date)=> {
     db.get(sql, [idApplication], (err, row) => {
       if (err) {
         reject(err);
-        return;
+         
       }
       else {
         if (row == undefined)
@@ -1155,7 +1125,7 @@ exports.updateThesisStatus = (date) => {
     db.run(sql, [date], function(err){
       if (err) {
         reject(err);
-        return;
+         
       }
       else {
           resolve("Updated")
@@ -1171,7 +1141,7 @@ exports.cancelPendingApplicationsExpiredThesis = (date) => {
     db.run(sql, [date], function(err){
       if (err) {
         reject(err);
-        return;
+         
       }
       else {
           resolve("Updated")
@@ -1187,7 +1157,7 @@ exports.getTeacherRequests = (teacherID) => {
     db.all(sql, [teacherID], (err,rows) => {
       if (err) {
         reject(err);
-        return;
+         
       }
       
       let requests = rows.map((elem)=> ({
@@ -1220,7 +1190,7 @@ exports.getSecretaryRequests = () => {
     db.all(sql, [], (err,rows) => {
       if (err) {
         reject(err);
-        return;
+         
       }
       
       let requests = rows.map((elem)=> ({
@@ -1252,7 +1222,7 @@ exports.getStudentRequests = (studentID) => {
     db.all(sql, [studentID], (err,rows) => {
       if (err) {
         reject(err);
-        return;
+         
       }
       
       let requests = rows.map((elem)=> ({
@@ -1282,7 +1252,7 @@ exports.getRequestCoSup = (reqID) => {
     db.all(sql, [reqID], (err, rows) => {
       if (err) {
         reject(err);
-        return;
+         
       }
       
         let cosup=rows.map((elem) => ({
@@ -1307,7 +1277,7 @@ exports.checkPendingStudentRequests = (studentID) =>{
     db.get(sql, [studentID], (err, row) => {
       if (err) {
         reject(err);
-        return;
+         
       }
       if(row == undefined){
         resolve(0);
@@ -1324,7 +1294,7 @@ exports.insertRequest = (supervisor, title, description,  student, request_date,
     db.run(sql, [student,supervisor,title, description,request_date,approval_date, status], function (err) {
       if (err) {
         reject(err);
-        return;
+         
       }
       resolve(this.lastID);
     });
@@ -1338,7 +1308,7 @@ exports.insertCoSupervisorRequest = (request, name, surname, email) => {
       if (err) {
         reject(err);
         console.log(err)
-        return;
+         
       }
       resolve("inserted");
     });
@@ -1351,7 +1321,7 @@ exports.approveRequestSecretary = (requestID) =>{
     db.run(sql, [requestID], function (err) {
       if (err) {
         reject(err);
-        return;
+         
       }
       resolve(1);
     });
@@ -1364,7 +1334,7 @@ exports.rejectRequestSecretary = (requestID) =>{
     db.run(sql, [requestID], function (err) {
       if (err) {
         reject(err);
-        return;
+         
       }
       resolve(1);
     });
@@ -1378,7 +1348,7 @@ exports.approveRequestTeacher = (requestID,date) =>{
     db.run(sql, [date,requestID], function (err) {
       if (err) {
         reject(err);
-        return;
+         
       }
       resolve(1);
     });
@@ -1391,7 +1361,7 @@ exports.rejectRequestTeacher = (requestID) =>{
     db.run(sql, [requestID], function (err) {
       if (err) {
         reject(err);
-        return;
+         
       }
       resolve(1);
     });
@@ -1404,7 +1374,7 @@ exports.changeRequestTeacher = (reqID, notes) => {
     db.run(sql, [notes,reqID], function (err) {
       if (err) {
         reject(err);
-        return;
+         
       }
       resolve(1);
     });
@@ -1417,7 +1387,7 @@ exports.deleteRequestCoSupervisor = (reqID) => {
     db.run(sql, [reqID], function (err) {
       if (err) {
         reject(err);
-        return;
+         
       }
       resolve(1);
     });
