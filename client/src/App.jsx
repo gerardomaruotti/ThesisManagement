@@ -1,6 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import UserContext from './contexts/UserContext';
 import { useLoading } from './contexts/LoadingContext.jsx';
 import { handleError, handleSuccess } from './utils/toastHandlers.js';
@@ -69,6 +69,11 @@ function App() {
 	const [rapidFilterProfessorHome, setRapidFilterProfessorHome] = useState('active');
 	const [rapidFilterProfessorApplication, setRapidFilterProfessorApplication] = useState('all');
 	const [rapidFilterProfessorRequest, setRapidFilterProfessorRequest] = useState('supervisor-review');
+
+	const userCredentials = useMemo(
+		() => ({ user, isAuthenticated, isLoading, accessToken, userData, isProfessor, isStudent, isSecretary }),
+		[user, isAuthenticated, isLoading, accessToken, userData, isProfessor, isStudent, isSecretary]
+	);
 
 	useEffect(() => {
 		const getUserMetadata = async () => {
@@ -197,7 +202,7 @@ function App() {
 	}, [isAuthenticated, isLoading]);
 
 	return (
-		<UserContext.Provider value={{ user, isAuthenticated, isLoading, accessToken, userData, isProfessor, isStudent, isSecretary }}>
+		<UserContext.Provider value={userCredentials}>
 			<BrowserRouter>
 				<Header date={dateVirtualClock} />
 				<Toaster />
