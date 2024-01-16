@@ -4,63 +4,16 @@ import { Row, Col, Image, Button, OverlayTrigger, Popover } from 'react-bootstra
 import PropTypes from 'prop-types';
 import Avatar from '../assets/avatar.svg';
 import { Color } from '../constants/colors.js';
-import API from '../API';
 import dayjs from 'dayjs';
 import ModalWithTextField from './ModalWithTextField.jsx';
-import { handleSuccess, handleError } from '../utils/toastHandlers.js';
 import { statusConfig } from '../constants/statusConfig.js';
 import MyPopover from './MyPopover.jsx';
+import { acceptRequest, rejectRequest } from '../utils/manageRequests.js';
 
 const DetailsRequestLeftBar = ({ request, setInternalDirty, setShowModal, setMsgModal }) => {
 	const { accessToken, isSecretary, isProfessor } = useContext(UserContext);
 	const [showModalWithText, setShowModalWithText] = useState(false);
 	const config = statusConfig[request.status];
-
-	function acceptRequest() {
-		setShowModal(false);
-		if (isProfessor) {
-			API.approveRequestProfessor(accessToken, request.id)
-				.then(() => {
-					handleSuccess('Request accepted');
-					setInternalDirty(true);
-				})
-				.catch((err) => {
-					handleError(err);
-				});
-		} else {
-			API.approveRequestSecretary(accessToken, request.id)
-				.then(() => {
-					handleSuccess('Request accepted');
-					setInternalDirty(true);
-				})
-				.catch((err) => {
-					handleError(err);
-				});
-		}
-	}
-
-	function rejectRequest() {
-		setShowModal(false);
-		if (isProfessor) {
-			API.rejectRequestProfessor(accessToken, request.id)
-				.then(() => {
-					handleSuccess('Request rejected');
-					setInternalDirty(true);
-				})
-				.catch((err) => {
-					handleError(err);
-				});
-		} else {
-			API.rejectRequestSecretary(accessToken, request.id)
-				.then(() => {
-					handleSuccess('Request rejected');
-					setInternalDirty(true);
-				})
-				.catch((err) => {
-					handleError(err);
-				});
-		}
-	}
 
 	return (
 		<Row>
@@ -125,10 +78,19 @@ const DetailsRequestLeftBar = ({ request, setInternalDirty, setShowModal, setMsg
 				</Col>
 			)}
 			{config ? (
-				<OverlayTrigger placement='bottom' delay={{ show: 100, hide: 200 }} overlay={request.status === 5 ?
-					<Popover>
-						<MyPopover request={request} />
-					</Popover> : <></>}>
+				<OverlayTrigger
+					placement='bottom'
+					delay={{ show: 100, hide: 200 }}
+					overlay={
+						request.status === 5 ? (
+							<Popover>
+								<MyPopover request={request} />
+							</Popover>
+						) : (
+							<></>
+						)
+					}
+				>
 					<div>
 						<div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}> Request status </div>
 						<div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}>
@@ -162,7 +124,7 @@ const DetailsRequestLeftBar = ({ request, setInternalDirty, setShowModal, setMsg
 							setMsgModal({
 								header: 'Approve request',
 								body: `Are you sure you want to approve the request of student ${request.student}?`,
-								method: () => acceptRequest(),
+								method: () => acceptRequest(accessToken, request, isProfessor, setInternalDirty, setShowModal),
 							});
 						}}
 					>
@@ -189,7 +151,7 @@ const DetailsRequestLeftBar = ({ request, setInternalDirty, setShowModal, setMsg
 							setMsgModal({
 								header: 'Reject request',
 								body: `Are you sure you want to reject the request of student ${request.student}?`,
-								method: () => rejectRequest(),
+								method: () => rejectRequest(accessToken, request, isProfessor, setInternalDirty, setShowModal),
 							});
 						}}
 					>
