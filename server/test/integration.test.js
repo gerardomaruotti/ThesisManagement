@@ -521,18 +521,25 @@ describe('POST Application Details', () => {
     });
 });
 
+const beforeRequest = async (count, studentId) => {
+    const insertPromises = [];
+    for (let i = 1; i <= count; i++) {
+        insertPromises.push(dbTest.insertThesisRequest(i, studentId, teacher.id, date, 0));
+    }
+    await Promise.all(insertPromises);
+};
+
+const afterRequest = async () => {
+    await dbTest.deleteTableContent("THESIS_REQUEST");
+};
+
 describe('GET Requests', () => {
     beforeAll(async () => {
-        const insertPromises = [];
-        for (let i = 1; i< 4; i++){
-            insertPromises.push(dbTest.insertThesisRequest(i, "s"+(i-1), teacher.id, date, 0));
-        }
-
-        await Promise.all(insertPromises);
+        await beforeRequest(3, student.id);
     });
 
     afterAll(async () => {
-        await dbTest.deleteTableContent("THESIS_REQUEST");
+        await afterRequest();
     });
     
     test('should correctly retrieve all request made for a teacher', async () => {
@@ -548,7 +555,7 @@ describe('GET Requests', () => {
         const res = await request(app).get('/api/requests').set('Authorization', `Bearer ${student.jwt}`);
 
         expect(res.status).toBe(200);
-        expect(res.body).toHaveLength(1);
+        expect(res.body).toHaveLength(3);
     });
 
     test('should correctly retrieve all request made', async () => {
@@ -562,7 +569,7 @@ describe('GET Requests', () => {
 
 describe('POST Insert Request', () => {
     afterAll(async () => {
-        await dbTest.deleteTableContent("THESIS_REQUEST");
+        await afterRequest();
     });
     
     test('should correctly insert a request', async () => {
@@ -576,14 +583,11 @@ describe('POST Insert Request', () => {
 
 describe('POST Approve secretary', () => {
     beforeAll(async () => {
-        const insertPromises = [];
-        insertPromises.push(dbTest.insertThesisRequest(1, student.id, teacher.id, date, 0));
-
-        await Promise.all(insertPromises);
+        await beforeRequest(1, student.id);
     });
 
     afterAll(async () => {
-        await dbTest.deleteTableContent("THESIS_REQUEST");
+        await afterRequest();
     });
     
     test('should correctly approve a request by secretary', async () => {
@@ -598,14 +602,11 @@ describe('POST Approve secretary', () => {
 
 describe('POST Reject secretary', () => {
     beforeAll(async () => {
-        const insertPromises = [];
-        insertPromises.push(dbTest.insertThesisRequest(1, student.id, teacher.id, date, 0));
-
-        await Promise.all(insertPromises);
+        await beforeRequest(1, student.id);
     });
 
     afterAll(async () => {
-        await dbTest.deleteTableContent("THESIS_REQUEST");
+        await afterRequest();
     });
     
     test('should correctly reject a thesis by secretary', async () => {
@@ -619,14 +620,11 @@ describe('POST Reject secretary', () => {
 
 describe('POST Approve professor', () => {
     beforeAll(async () => {
-        const insertPromises = [];
-        insertPromises.push(dbTest.insertThesisRequest(1, student.id, teacher.id, date, 0));
-
-        await Promise.all(insertPromises);
+        await beforeRequest(1, student.id);
     });
 
     afterAll(async () => {
-        await dbTest.deleteTableContent("THESIS_REQUEST");
+        await afterRequest();
     });
     
     test('should correctly approve a request by a professor', async () => {
@@ -641,14 +639,11 @@ describe('POST Approve professor', () => {
 
 describe('POST Reject professor', () => {
     beforeAll(async () => {
-        const insertPromises = [];
-        insertPromises.push(dbTest.insertThesisRequest(1, student.id, teacher.id, date, 0));
-
-        await Promise.all(insertPromises);
+        await beforeRequest(1, student.id);
     });
 
     afterAll(async () => {
-        await dbTest.deleteTableContent("THESIS_REQUEST");
+        await afterRequest();
     });
     
     test('should correctly reject a thesis by a professor', async () => {
@@ -662,17 +657,14 @@ describe('POST Reject professor', () => {
 
 describe('POST Request Change Professor', () => {
     beforeAll(async () => {
-        const insertPromises = [];
-        insertPromises.push(dbTest.insertThesisRequest(1, student.id, teacher.id, date, 0));
-
-        await Promise.all(insertPromises);
+        await beforeRequest(1, student.id);
     });
 
     afterAll(async () => {
-        await dbTest.deleteTableContent("THESIS_REQUEST");
+        await afterRequest();
     });
     
-    test('should correctly reject a thesis by a professor', async () => {
+    test('should correclty perform a change request by a professor', async () => {
 
         const res = await request(app).post('/api/change/request/professor').set('Authorization', `Bearer ${teacher.jwt}`).send(commonBody);
 
