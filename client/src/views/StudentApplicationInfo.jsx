@@ -189,6 +189,7 @@ function StudentApplicationInfo({ setShowModal, setMsgModal, setDirtyParent }) {
 								<span style={{ paddingRight: 5 }}>
 									<i className='bi bi-check2' />
 								</span>
+								{''}
 								Accept
 							</Button>
 						</Col>
@@ -208,6 +209,7 @@ function StudentApplicationInfo({ setShowModal, setMsgModal, setDirtyParent }) {
 								<span style={{ paddingRight: 5 }}>
 									<i className='bi bi-x-lg' />
 								</span>
+								{''}
 								Reject
 							</Button>
 						</Col>
