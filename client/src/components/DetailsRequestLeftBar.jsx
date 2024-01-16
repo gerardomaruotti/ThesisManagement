@@ -9,25 +9,12 @@ import dayjs from 'dayjs';
 import ModalWithTextField from './ModalWithTextField.jsx';
 import { handleSuccess, handleError } from '../utils/toastHandlers.js';
 import { statusConfig } from '../constants/statusConfig.js';
+import MyPopover from './MyPopover.jsx';
 
 const DetailsRequestLeftBar = ({ request, setInternalDirty, setShowModal, setMsgModal }) => {
 	const { accessToken, isSecretary, isProfessor } = useContext(UserContext);
 	const [showModalWithText, setShowModalWithText] = useState(false);
 	const config = statusConfig[request.status];
-	const popover = (
-		<Popover>
-			{!request.notes ? (
-				<Popover.Body>No note left by supervisor</Popover.Body>
-			) : (
-				<>
-					<Popover.Header as='h3' style={{ color: Color.primary }}>
-						Changes requested by the supervisor
-					</Popover.Header>
-					<Popover.Body>{request.notes}</Popover.Body>
-				</>
-			)}
-		</Popover>
-	);
 
 	function acceptRequest() {
 		setShowModal(false);
@@ -138,7 +125,10 @@ const DetailsRequestLeftBar = ({ request, setInternalDirty, setShowModal, setMsg
 				</Col>
 			)}
 			{config ? (
-				<OverlayTrigger placement='bottom' delay={{ show: 100, hide: 200 }} overlay={request.status === 5 ? popover : <></>}>
+				<OverlayTrigger placement='bottom' delay={{ show: 100, hide: 200 }} overlay={request.status === 5 ?
+					<Popover>
+						<MyPopover request={request} />
+					</Popover> : <></>}>
 					<div>
 						<div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}> Request status </div>
 						<div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}>

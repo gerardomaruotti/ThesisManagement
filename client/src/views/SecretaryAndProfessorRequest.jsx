@@ -5,9 +5,9 @@ import API from '../API';
 import PropTypes from 'prop-types';
 import { useLoading } from '../contexts/LoadingContext.jsx';
 import Loading from '../components/Loading.jsx';
-import SecretaryCard from '../components/SecretaryCard.jsx';
 import RapidFilterRequest from '../components/RapidFilterRequest.jsx';
 import { handleError } from '../utils/toastHandlers.js';
+import RequestCard from '../components/RequestCard.jsx';
 
 const SecretaryAndProfessorRequest = ({ setShowModal, setMsgModal, rapidFilter, setRapidFilter }) => {
 	const { accessToken } = useContext(UserContext);
@@ -57,7 +57,7 @@ const SecretaryAndProfessorRequest = ({ setShowModal, setMsgModal, rapidFilter, 
 				<Row style={{ marginBottom: 25 }}>
 					{filteredRequests.length != 0 ? (
 						filteredRequests.map((request) => (
-							<SecretaryCard
+							<RequestCard
 								key={request.id}
 								request={request}
 								setInternalDirty={setInternalDirty}
