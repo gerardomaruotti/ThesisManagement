@@ -356,7 +356,7 @@ describe('GET Thesis Applications', () => {
 
 describe('POST Accept Application', () => {
     beforeAll(async () => {
-        await beforeThesis(2, 1, 2);
+        await beforeThesis(2, 0, 1);
     });
 
     afterAll(async () => {
