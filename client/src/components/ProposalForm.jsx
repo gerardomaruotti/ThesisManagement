@@ -280,7 +280,7 @@ function ProposalForm({ thesis, createProposal, editProposal, user, date, copied
 								onChange={handleSelectedCds}
 								isDisabled={selectedLevel === ''}
 								isClearable
-								placeholder={selectedLevel === '' ? 'Select a level first' : 'Select...'}
+								placeholder={'Select a Cds...'}
 							/>
 						</Form.Group>
 					) : null}
