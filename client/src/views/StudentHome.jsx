@@ -151,7 +151,7 @@ function StudentHome({
 					{filteredThesis.length != 0 ? (
 						filteredThesis
 							.sort((a, b) => b.count - a.count)
-							.map((thesis, index) => (
+							.map((thesis) => (
 								<ProposalCard
 									key={thesis.ID}
 									thesis={thesis}
