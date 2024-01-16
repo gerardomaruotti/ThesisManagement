@@ -289,7 +289,7 @@ function ProposalForm({ thesis, createProposal, editProposal, user, date, copied
 						<Form.Control
 							type='date'
 							value={expirationDate}
-							min={dayjs(date).format('YYYY-MM-DD')}
+							min={date ? dayjs(date).format('YYYY-MM-DD') : dayjs().format('YYYY-MM-DD')}
 							required
 							onChange={(event) => setExpirationDate(event.target.value)}
 						/>
