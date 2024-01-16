@@ -32,7 +32,7 @@ const DetailsRequestLeftBar = ({ request, setInternalDirty, setShowModal, setMsg
 					backgroundColor: 'rgba(1, 133, 114, 0.2)',
 					color: 'rgba(1, 133, 114)',
 					icon: 'bi bi-check-circle',
-					text: 'Accepted',
+					text: 'Approved',
 			  }
 			: request.status == 2 || request.status == 4
 			? {

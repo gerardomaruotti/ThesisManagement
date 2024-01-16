@@ -48,7 +48,7 @@ function StudentRequestCard({ request }) {
 			backgroundColor: 'rgba(1, 133, 114, 0.2)',
 			color: 'rgba(1, 133, 114)',
 			icon: 'bi bi-check-circle',
-			text: 'Accepted',
+			text: 'Approved',
 		},
 		4: {
 			backgroundColor: 'rgba(234, 84, 85, 0.2)',

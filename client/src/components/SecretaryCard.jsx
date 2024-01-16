@@ -59,7 +59,7 @@ const SecretaryCard = ({ request, setInternalDirty, setShowModal, setMsgModal })
 					backgroundColor: 'rgba(1, 133, 114, 0.2)',
 					color: 'rgba(1, 133, 114)',
 					icon: <i className='bi bi-check-circle' style={{ fontSize: '16px' }}></i>,
-					text: 'Accepted',
+					text: 'Approved',
 			  }
 			: request.status == 2 || request.status == 4
 			? {
@@ -73,7 +73,7 @@ const SecretaryCard = ({ request, setInternalDirty, setShowModal, setMsgModal })
 					backgroundColor: 'rgba(230,120,43, 0.2)',
 					color: 'rgba(230,120,43)',
 					icon: <i className='bi bi-pencil' style={{ fontSize: '16px' }}></i>,
-					text: 'Request change',
+					text: 'Requested change',
 			  }
 			: null;
 
@@ -269,7 +269,7 @@ const SecretaryCard = ({ request, setInternalDirty, setShowModal, setMsgModal })
 								>
 									<div className='d-flex align-items-center'>
 										<Image className='mobile-icon' style={{ height: 25, width: 25, paddingRight: 8 }} src={Pencil} roundedCircle />
-										<span className='d-none d-md-flex'>Request change</span>
+										<span className='d-none d-md-flex'>Requested change</span>
 									</div>
 								</Button>
 							</div>

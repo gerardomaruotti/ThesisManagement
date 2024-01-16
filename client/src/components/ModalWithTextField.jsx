@@ -13,7 +13,7 @@ const ModalWithTextField = ({ showModal, setShowModal, requestID, setInternalDir
 		API.changeRequestProfessor(accessToken, requestID, notes)
 			.then(() => {
 				setNotes('');
-				handleSuccess('Request change sent correctly');
+				handleSuccess('Change request sent correctly');
 				setShowModal(false);
 				setInternalDirty(true);
 			})
@@ -21,6 +21,7 @@ const ModalWithTextField = ({ showModal, setShowModal, requestID, setInternalDir
 				handleError(err);
 			});
 	}
+
 	return (
 		<Modal show={showModal} onHide={() => setShowModal(false)} centered>
 			<Modal.Header closeButton>
