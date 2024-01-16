@@ -1,5 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Navbar, NavDropdown, Nav, Image, Dropdown, Container } from 'react-bootstrap';
+import { useContext } from 'react';
+import UserContext from '../contexts/UserContext';
+import { Navbar, Nav, Image, Dropdown, Container } from 'react-bootstrap';
 import { useAuth0 } from '@auth0/auth0-react';
 import logo_white from '../assets/logo_white.svg';
 import { Color } from '../constants/colors.js';
@@ -8,7 +10,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import dayjs from 'dayjs';
 import PropsTypes from 'prop-types';
 
-function Header({ date, userData, isStudent, isProfessor }) {
+function Header({ date }) {
+	const { userData } = useContext(UserContext);
 	const { isAuthenticated, loginWithRedirect, logout } = useAuth0();
 	const navigate = useNavigate();
 	let location = useLocation();
@@ -16,26 +19,26 @@ function Header({ date, userData, isStudent, isProfessor }) {
 	function navElement() {
 		return (
 			<Nav activeKey={location.pathname}>
-				{!userData ? null :
-					userData.role === 'secretary' ? (
+				{!userData ? null : userData.role === 'secretary' ? (
+					<Nav.Link eventKey='/' onClick={() => navigate('/')}>
+						Student Thesis Request
+					</Nav.Link>
+				) : (
+					<>
 						<Nav.Link eventKey='/' onClick={() => navigate('/')}>
-							Student Thesis Request
+							Proposals
 						</Nav.Link>
-					) : (
-						<>
-							<Nav.Link eventKey='/' onClick={() => navigate('/')}>
-								Proposals
-							</Nav.Link>
-							<Nav.Link eventKey='/applications' onClick={() => navigate('/applications')}>
-								Applications
-							</Nav.Link>
-							<Nav.Link eventKey='/requests' onClick={() => navigate('/requests')}>
-								Thesis Requests
-							</Nav.Link>
-							<Nav.Link className='d-md-none' eventKey='/settings' onClick={() => navigate('/settings')}>
-								Settings
-							</Nav.Link>
-						</>)}
+						<Nav.Link eventKey='/applications' onClick={() => navigate('/applications')}>
+							Applications
+						</Nav.Link>
+						<Nav.Link eventKey='/requests' onClick={() => navigate('/requests')}>
+							Thesis Requests
+						</Nav.Link>
+						<Nav.Link className='d-md-none' eventKey='/settings' onClick={() => navigate('/settings')}>
+							Settings
+						</Nav.Link>
+					</>
+				)}
 				{isAuthenticated ? (
 					<Nav.Link className='d-md-none' eventKey='/logout' onClick={logout}>
 						Logout
@@ -114,7 +117,6 @@ function Header({ date, userData, isStudent, isProfessor }) {
 
 Header.propTypes = {
 	date: PropsTypes.string,
-	userData: PropsTypes.object,
 };
 
 export default Header;

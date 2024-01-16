@@ -1,18 +1,20 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import UserContext from './contexts/UserContext';
+import { useLoading } from './contexts/LoadingContext.jsx';
+import { handleError, handleSuccess } from './utils/toastHandlers.js';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useAuth0 } from '@auth0/auth0-react';
-import StudentHome from './views/StudentHome';
+import { Toaster } from 'react-hot-toast';
+import API from './API.jsx';
+import NotFound from './views/NotFound.jsx';
 import Header from './components/Header';
+import StudentHome from './views/StudentHome';
 import ProfessorHome from './views/ProfessorHome';
 import InsertProposal from './views/InsertProposal';
 import Proposal from './views/Proposal';
-import NotFound from './views/NotFound.jsx';
-import API from './API.jsx';
-import { useLoading } from './LoadingContext.jsx';
 import StudentApplications from './views/StudentApplications.jsx';
-import toast, { Toaster } from 'react-hot-toast';
 import ProfessorApplications from './views/ProfessorApplications.jsx';
 import ProfessorApplicationsThesis from './views/ProfessorApplicationsThesis.jsx';
 import GenericModal from './components/GenericModal.jsx';
@@ -67,34 +69,6 @@ function App() {
 	const [rapidFilterProfessorHome, setRapidFilterProfessorHome] = useState('active');
 	const [rapidFilterProfessorApplication, setRapidFilterProfessorApplication] = useState('all');
 	const [rapidFilterProfessorRequest, setRapidFilterProfessorRequest] = useState('supervisor-review');
-
-	function handleError(err) {
-		let errorMessage = err;
-		if (err instanceof Error) {
-			errorMessage = err.message;
-		}
-
-		toast.error(errorMessage, {
-			position: 'bottom-center',
-			duration: 5000,
-			style: {
-				borderRadius: '10px',
-				background: 'rgba(255, 0, 0, 0.9)',
-				color: '#fff',
-			},
-		});
-	}
-
-	function handleSuccess(msg) {
-		toast.success(msg, {
-			position: 'bottom-center',
-			style: {
-				borderRadius: '10px',
-				background: 'rgba(40, 199, 111, 0.9)',
-				color: '#fff',
-			},
-		});
-	}
 
 	useEffect(() => {
 		const getUserMetadata = async () => {
@@ -223,234 +197,173 @@ function App() {
 	}, [isAuthenticated, isLoading]);
 
 	return (
-		<BrowserRouter>
-			<Header userData={userData} date={dateVirtualClock} isStudent={isStudent} isProfessor={isProfessor} />
-			<Toaster />
-			<GenericModal showModal={showModal} setShowModal={setShowModal} msgModal={msgModal} />
-			<Routes>
-				<Route
-					path='/'
-					element={
-						isProfessor ? (
-							<ProfessorHome
-								thesis={thesis}
-								applications={applicationsThesis}
-								handleError={handleError}
-								handleSuccess={handleSuccess}
-								accessToken={accessToken}
-								dirty={dirty}
-								setDirty={setDirty}
-								setCopiedProposal={setCopiedProposal}
-								setShowModal={setShowModal}
+		<UserContext.Provider value={{ user, isAuthenticated, isLoading, accessToken, userData, isProfessor, isStudent, isSecretary }}>
+			<BrowserRouter>
+				<Header date={dateVirtualClock} />
+				<Toaster />
+				<GenericModal showModal={showModal} setShowModal={setShowModal} msgModal={msgModal} />
+				<Routes>
+					<Route
+						path='/'
+						element={
+							isProfessor ? (
+								<ProfessorHome
+									thesis={thesis}
+									applications={applicationsThesis}
+									dirty={dirty}
+									setDirty={setDirty}
+									setCopiedProposal={setCopiedProposal}
+									setShowModal={setShowModal}
+									setMsgModal={setMsgModal}
+									activatedFilters={activatedFilters}
+									setActivatedFilters={setActivatedFilters}
+									selectedSupervisor={selectedSupervisor}
+									setSelectedSupervisor={setSelectedSupervisor}
+									selectedCoSupervisors={selectedCoSupervisors}
+									setSelectedCoSupervisors={setSelectedCoSupervisors}
+									selectedKeywords={selectedKeywords}
+									setSelectedKeywords={setSelectedKeywords}
+									selectedTypes={selectedTypes}
+									setSelectedTypes={setSelectedTypes}
+									selectedGroups={selectedGroups}
+									setSelectedGroups={setSelectedGroups}
+									expirationDate={expirationDate}
+									setExpirationDate={setExpirationDate}
+									setThesis={setThesis}
+									date={dateVirtualClock}
+									rapidFilter={rapidFilterProfessorHome}
+									setRapidFilter={setRapidFilterProfessorHome}
+									filterThesis={filterThesisArchive}
+									setFilterThesis={setFilterThesisArchive}
+								/>
+							) : isStudent ? (
+								<StudentHome
+									thesis={thesis}
+									setThesis={setThesis}
+									activatedFilters={activatedFilters}
+									setActivatedFilters={setActivatedFilters}
+									selectedSupervisor={selectedSupervisor}
+									setSelectedSupervisor={setSelectedSupervisor}
+									selectedCoSupervisors={selectedCoSupervisors}
+									setSelectedCoSupervisors={setSelectedCoSupervisors}
+									selectedKeywords={selectedKeywords}
+									setSelectedKeywords={setSelectedKeywords}
+									selectedTypes={selectedTypes}
+									setSelectedTypes={setSelectedTypes}
+									selectedGroups={selectedGroups}
+									setSelectedGroups={setSelectedGroups}
+									expirationDate={expirationDate}
+									setExpirationDate={setExpirationDate}
+									setMsgModal={setMsgModal}
+									setShowModal={setShowModal}
+									applications={applications}
+									setDirty={setDirty}
+									hasApplied={hasApplied}
+									hasRequested={hasRequested}
+									date={dateVirtualClock}
+									rapidFilter={rapidFilterStudent}
+									setRapidFilter={setRapidFilterStudent}
+								/>
+							) : isSecretary ? (
+								<SecretaryAndProfessorRequest
+									setMsgModal={setMsgModal}
+									setShowModal={setShowModal}
+									rapidFilter={rapidFilterSecretary}
+									setRapidFilter={setRapidFilterSecretary}
+									isProfessor={false}
+								/>
+							) : null
+						}
+					/>
+					<Route
+						path='/proposal/:id'
+						element={
+							<Proposal
 								setMsgModal={setMsgModal}
-								activatedFilters={activatedFilters}
-								setActivatedFilters={setActivatedFilters}
-								selectedSupervisor={selectedSupervisor}
-								setSelectedSupervisor={setSelectedSupervisor}
-								selectedCoSupervisors={selectedCoSupervisors}
-								setSelectedCoSupervisors={setSelectedCoSupervisors}
-								selectedKeywords={selectedKeywords}
-								setSelectedKeywords={setSelectedKeywords}
-								selectedTypes={selectedTypes}
-								setSelectedTypes={setSelectedTypes}
-								selectedGroups={selectedGroups}
-								setSelectedGroups={setSelectedGroups}
-								expirationDate={expirationDate}
-								setExpirationDate={setExpirationDate}
-								setThesis={setThesis}
-								date={dateVirtualClock}
-								rapidFilter={rapidFilterProfessorHome}
-								setRapidFilter={setRapidFilterProfessorHome}
-								filterThesis={filterThesisArchive}
-								setFilterThesis={setFilterThesisArchive}
-							/>
-						) : isStudent ? (
-							<StudentHome
-								thesis={thesis}
-								setThesis={setThesis}
-								accessToken={accessToken}
-								activatedFilters={activatedFilters}
-								setActivatedFilters={setActivatedFilters}
-								selectedSupervisor={selectedSupervisor}
-								setSelectedSupervisor={setSelectedSupervisor}
-								selectedCoSupervisors={selectedCoSupervisors}
-								setSelectedCoSupervisors={setSelectedCoSupervisors}
-								selectedKeywords={selectedKeywords}
-								setSelectedKeywords={setSelectedKeywords}
-								selectedTypes={selectedTypes}
-								setSelectedTypes={setSelectedTypes}
-								selectedGroups={selectedGroups}
-								setSelectedGroups={setSelectedGroups}
-								expirationDate={expirationDate}
-								setExpirationDate={setExpirationDate}
-								handleError={handleError}
-								handleSuccess={handleSuccess}
-								setMsgModal={setMsgModal}
 								setShowModal={setShowModal}
-								applications={applications}
 								setDirty={setDirty}
 								hasApplied={hasApplied}
-								hasRequested={hasRequested}
-								date={dateVirtualClock}
-								rapidFilter={rapidFilterStudent}
-								setRapidFilter={setRapidFilterStudent}
+								applications={applications}
 							/>
-						) : isSecretary ? (
-							<SecretaryAndProfessorRequest
-								handleError={handleError}
-								handleSuccess={handleSuccess}
-								accessToken={accessToken}
+						}
+					/>
+					<Route
+						path='/proposals/add'
+						element={
+							isProfessor ? (
+								<InsertProposal setDirty={setDirty} user={userData} date={dateVirtualClock} copiedProposal={copiedProposal} setThesis={setThesis} />
+							) : isStudent ? (
+								<NotFound />
+							) : null
+						}
+					/>
+					<Route
+						path='/proposals/edit/:id'
+						element={isProfessor ? <EditProposal setDirty={setDirty} user={userData} date={dateVirtualClock} /> : isStudent ? <NotFound /> : null}
+					/>
+					<Route
+						path='/applications'
+						element={
+							isProfessor ? (
+								<ProfessorApplications
+									date={dateVirtualClock}
+									rapidFilter={rapidFilterProfessorApplication}
+									setRapidFilter={setRapidFilterProfessorApplication}
+								/>
+							) : isStudent ? (
+								<StudentApplications />
+							) : null
+						}
+					/>
+					<Route
+						path='/applications/proposal/:id'
+						element={
+							<ProfessorApplicationsThesis
 								setMsgModal={setMsgModal}
 								setShowModal={setShowModal}
-								rapidFilter={rapidFilterSecretary}
-								setRapidFilter={setRapidFilterSecretary}
-								isProfessor={false}
-							/>
-						) : null
-					}
-				/>
-				<Route
-					path='/proposal/:id'
-					element={
-						<Proposal
-							accessToken={accessToken}
-							isProfessor={isProfessor}
-							handleError={handleError}
-							handleSuccess={handleSuccess}
-							setMsgModal={setMsgModal}
-							setShowModal={setShowModal}
-							setDirty={setDirty}
-							hasApplied={hasApplied}
-							applications={applications}
-						/>
-					}
-				/>
-				<Route
-					path='/proposals/add'
-					element={
-						isProfessor ? (
-							<InsertProposal
-								accessToken={accessToken}
+								date={dateVirtualClock}
+								dirty={dirty}
 								setDirty={setDirty}
-								user={userData}
-								handleError={handleError}
-								date={dateVirtualClock}
-								copiedProposal={copiedProposal}
-								setThesis={setThesis}
 							/>
-						) : isStudent ? (
-							<NotFound />
-						) : null
-					}
-				/>
-				<Route
-					path='/proposals/edit/:id'
-					element={
-						isProfessor ? (
-							<EditProposal accessToken={accessToken} setDirty={setDirty} user={userData} handleError={handleError} date={dateVirtualClock} />
-						) : isStudent ? (
-							<NotFound />
-						) : null
-					}
-				/>
-				<Route
-					path='/applications'
-					element={
-						isProfessor ? (
-							<ProfessorApplications
-								accessToken={accessToken}
-								handleError={handleError}
-								isProfessor={isProfessor}
-								date={dateVirtualClock}
-								rapidFilter={rapidFilterProfessorApplication}
-								setRapidFilter={setRapidFilterProfessorApplication}
+						}
+					/>
+					<Route
+						path='/applications/proposal/:id/applications/:idApplication'
+						element={<StudentApplicationInfo setDirtyParent={setDirty} setShowModal={setShowModal} setMsgModal={setMsgModal} />}
+					/>
+					<Route
+						path='/requests'
+						element={
+							isStudent ? (
+								<StudentRequests requests={requests} hasApplied={hasApplied} hasRequested={hasRequested} />
+							) : isProfessor ? (
+								<SecretaryAndProfessorRequest
+									setShowModal={setShowModal}
+									setMsgModal={setMsgModal}
+									rapidFilter={rapidFilterProfessorRequest}
+									setRapidFilter={setRapidFilterProfessorRequest}
+								/>
+							) : null
+						}
+					/>
+					<Route path='/requests/add' element={<InsertThesisRequest setDirty={setDirty} />} />
+					<Route path='/requests/add' element={<NotFound />} />
+					<Route path='requests/:id' element={<RequestThesisDetails setMsgModal={setMsgModal} setShowModal={setShowModal} />} />
+					<Route
+						path='/settings'
+						element={
+							<Settings
+								virtualClock={virtualClock}
+								setVirtualClock={setVirtualClock}
+								dateVirtualClock={dateVirtualClock}
+								setDateVirtualClock={setDateVirtualClock}
+								setDirty={setDirty}
 							/>
-						) : isStudent ? (
-							<StudentApplications accessToken={accessToken} handleError={handleError} />
-						) : null
-					}
-				/>
-				<Route
-					path='/applications/proposal/:id'
-					element={
-						<ProfessorApplicationsThesis
-							accessToken={accessToken}
-							handleError={handleError}
-							isProfessor={isProfessor}
-							handleSuccess={handleSuccess}
-							setMsgModal={setMsgModal}
-							setShowModal={setShowModal}
-							date={dateVirtualClock}
-							dirty={dirty}
-							setDirty={setDirty}
-						/>
-					}
-				/>
-				<Route
-					path='/applications/proposal/:id/applications/:idApplication'
-					element={
-						<StudentApplicationInfo
-							accessToken={accessToken}
-							handleError={handleError}
-							handleSuccess={handleSuccess}
-							setDirtyParent={setDirty}
-							setShowModal={setShowModal}
-							setMsgModal={setMsgModal}
-						/>
-					}
-				/>
-				<Route
-					path='/requests'
-					element={
-						isStudent ? (
-							<StudentRequests requests={requests} hasApplied={hasApplied} hasRequested={hasRequested} />
-						) : isProfessor ? (
-							<SecretaryAndProfessorRequest
-								handleError={handleError}
-								handleSuccess={handleSuccess}
-								accessToken={accessToken}
-								setShowModal={setShowModal}
-								setMsgModal={setMsgModal}
-								rapidFilter={rapidFilterProfessorRequest}
-								setRapidFilter={setRapidFilterProfessorRequest}
-								isProfessor={isProfessor}
-							/>
-						) : null
-					}
-				/>
-				<Route path='/requests/add' element={<InsertThesisRequest accessToken={accessToken} handleError={handleError} />} />
-				<Route path='/requests/add' element={<NotFound />} />
-				<Route
-					path='requests/:id'
-					element={
-						<RequestThesisDetails
-							accessToken={accessToken}
-							handleError={handleError}
-							handleSuccess={handleSuccess}
-							setMsgModal={setMsgModal}
-							setShowModal={setShowModal}
-							isProfessor={isProfessor}
-							isSecretary={isSecretary}
-						/>
-					}
-				/>
-				<Route
-					path='/settings'
-					element={
-						<Settings
-							virtualClock={virtualClock}
-							setVirtualClock={setVirtualClock}
-							dateVirtualClock={dateVirtualClock}
-							setDateVirtualClock={setDateVirtualClock}
-							accessToken={accessToken}
-							handleError={handleError}
-							handleSuccess={handleSuccess}
-							setDirty={setDirty}
-						/>
-					}
-				/>
-			</Routes>
-		</BrowserRouter>
+						}
+					/>
+				</Routes>
+			</BrowserRouter>
+		</UserContext.Provider>
 	);
 }
 

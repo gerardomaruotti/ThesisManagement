@@ -1,20 +1,19 @@
-import PropsTypes from 'prop-types';
-import { useState } from 'react';
+import React from 'react';
 import { Container } from 'react-bootstrap';
 import ThesisRequestForm from '../components/ThesisRequestForm';
+import PropTypes from 'prop-types';
 
-function InsertThesisRequest({ accessToken, handleError }) {
+function InsertThesisRequest({ setDirty }) {
 	return (
 		<Container>
 			<h2 style={{ textAlign: 'center', marginTop: 20 }}>Insert Thesis Request</h2>
-			<ThesisRequestForm accessToken={accessToken} handleError={handleError} />
+			<ThesisRequestForm setDirty={setDirty} />
 		</Container>
 	);
 }
 
 InsertThesisRequest.propTypes = {
-	accessToken: PropsTypes.string,
-	handleError: PropsTypes.func,
+	setDirty: PropTypes.func.isRequired,
 };
 
 export default InsertThesisRequest;

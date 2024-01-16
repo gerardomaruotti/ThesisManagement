@@ -1,15 +1,18 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { useEffect, useState, useContext } from 'react';
+import UserContext from '../contexts/UserContext';
 import { Row, Col, Card, Table, Button, Container, Offcanvas } from 'react-bootstrap';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useEffect, useState } from 'react';
 import API from '../API.jsx';
-import { useLoading } from '../LoadingContext.jsx';
+import { useLoading } from '../contexts/LoadingContext.jsx';
 import Loading from '../components/Loading.jsx';
 import DetailsProposalLeftBar from '../components/DetailsProposalLeftBar.jsx';
 import dayjs from 'dayjs';
 import PropTypes from 'prop-types';
+import { handleError, handleSuccess } from '../utils/toastHandlers.js';
 
-function ProfessorApplicationsThesis({ accessToken, handleError, handleSuccess, isProfessor, date, dirty, setDirty, setShowModal, setMsgModal }) {
+function ProfessorApplicationsThesis({ date, dirty, setDirty, setShowModal, setMsgModal }) {
+	const { accessToken, isProfessor } = useContext(UserContext);
 	const { loading, setLoading } = useLoading();
 	const navigate = useNavigate();
 	const [thesis, setThesis] = useState(null);
@@ -103,7 +106,7 @@ function ProfessorApplicationsThesis({ accessToken, handleError, handleSuccess, 
 					<Row>
 						<Col md={4} className='d-none d-md-flex'>
 							<Card style={{ padding: 20, paddingBottom: 30, position: 'sticky', top: 25 }} className='custom-card'>
-								<DetailsProposalLeftBar thesis={thesis} isProfessor={isProfessor} fromApplication={true} id={id} />
+								<DetailsProposalLeftBar thesis={thesis} fromApplication={true} id={id} />
 							</Card>
 						</Col>
 						<Col md={8} sm={12}>
@@ -300,7 +303,7 @@ function ProfessorApplicationsThesis({ accessToken, handleError, handleSuccess, 
 					<Offcanvas.Title>Details</Offcanvas.Title>
 				</Offcanvas.Header>
 				<Offcanvas.Body>
-					<DetailsProposalLeftBar thesis={thesis} isProfessor={isProfessor} />
+					<DetailsProposalLeftBar thesis={thesis} />
 				</Offcanvas.Body>
 			</Offcanvas>
 		</>
@@ -308,10 +311,6 @@ function ProfessorApplicationsThesis({ accessToken, handleError, handleSuccess, 
 }
 
 ProfessorApplicationsThesis.propTypes = {
-	accessToken: PropTypes.string,
-	handleError: PropTypes.func.isRequired,
-	handleSuccess: PropTypes.func.isRequired,
-	isProfessor: PropTypes.bool.isRequired,
 	date: PropTypes.string,
 	dirty: PropTypes.bool.isRequired,
 	setDirty: PropTypes.func.isRequired,

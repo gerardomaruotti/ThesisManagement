@@ -3,14 +3,17 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import Select from 'react-select';
 import CreatableSelect from 'react-select/creatable';
 import { Form, Button, Row, Col, Container, Alert } from 'react-bootstrap';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
+import UserContext from '../contexts/UserContext';
 import { useNavigate } from 'react-router-dom';
 import { colorStyles } from '../constants/colors.js';
 import API from '../API.jsx';
 import dayjs from 'dayjs';
 import PropTypes from 'prop-types';
+import { handleError } from '../utils/toastHandlers.js';
 
-function ProposalForm({ accessToken, handleError, thesis, createProposal, editProposal, user, date, copiedProposal }) {
+function ProposalForm({ thesis, createProposal, editProposal, user, date, copiedProposal }) {
+	const { accessToken } = useContext(UserContext);
 	const navigate = useNavigate();
 	const [title, setTitle] = useState(thesis ? thesis.title : '');
 	const [requiredKnowledge, setRequiredKnowledge] = useState(thesis ? thesis.requiredKnowledge : '');
@@ -352,8 +355,6 @@ function ProposalForm({ accessToken, handleError, thesis, createProposal, editPr
 }
 
 ProposalForm.propTypes = {
-	accessToken: PropTypes.string.isRequired,
-	handleError: PropTypes.func.isRequired,
 	thesis: PropTypes.object,
 	createProposal: PropTypes.func,
 	editProposal: PropTypes.func,

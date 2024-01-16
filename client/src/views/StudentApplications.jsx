@@ -1,14 +1,16 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import StudentApplicationCard from '../components/StudentApplicationCard';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
+import UserContext from '../contexts/UserContext';
+import { handleError } from '../utils/toastHandlers.js';
 import { Container, Row } from 'react-bootstrap';
-import { useLoading } from '../LoadingContext';
+import { useLoading } from '../contexts/LoadingContext.jsx';
 import Loading from '../components/Loading.jsx';
 import API from '../API.jsx';
-import PropTypes from 'prop-types';
+import StudentApplicationCard from '../components/StudentApplicationCard';
 
 //Status: 0 pending, 1 accepted, 2 rejected, 3 canceled
-function StudentApplications({ accessToken, handleError }) {
+function StudentApplications() {
+	const { accessToken } = useContext(UserContext);
 	const { loading, setLoading } = useLoading();
 	const [applications, setApplications] = useState([]);
 
@@ -43,10 +45,5 @@ function StudentApplications({ accessToken, handleError }) {
 		</Container>
 	);
 }
-
-StudentApplications.propTypes = {
-	accessToken: PropTypes.string.isRequired,
-	handleError: PropTypes.func.isRequired,
-};
 
 export default StudentApplications;

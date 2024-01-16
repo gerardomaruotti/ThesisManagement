@@ -1,24 +1,23 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Container, Row, Col, Button, Form, InputGroup, Nav } from 'react-bootstrap';
 import '../constants/custom-styles.scss';
+import { useEffect, useState, useContext } from 'react';
+import UserContext from '../contexts/UserContext';
+import { Container, Row, Col, Button, Form, InputGroup, Nav } from 'react-bootstrap';
 import { Color } from '../constants/colors.js';
-import ProposalCard from '../components/ProposalCard.jsx';
-import FiltersModal from '../components/FiltersModal.jsx';
-import { useEffect, useState } from 'react';
-import { useAuth0 } from '@auth0/auth0-react';
-import { useLoading } from '../LoadingContext.jsx';
-import API from '../API.jsx';
-import Loading from '../components/Loading.jsx';
-import PropTypes from 'prop-types';
 import { filterThesis } from '../utils/filterThesis';
+import { handleError } from '../utils/toastHandlers.js';
+import { useAuth0 } from '@auth0/auth0-react';
+import { useLoading } from '../contexts/LoadingContext.jsx';
+import API from '../API.jsx';
+import PropTypes from 'prop-types';
+import FiltersModal from '../components/FiltersModal.jsx';
+import ProposalCard from '../components/ProposalCard.jsx';
+import Loading from '../components/Loading.jsx';
 
 function StudentHome({
 	thesis,
 	setThesis,
 	applications,
-	handleError,
-	handleSuccess,
-	accessToken,
 	setDirty,
 	setShowModal,
 	setMsgModal,
@@ -42,6 +41,7 @@ function StudentHome({
 	rapidFilter,
 	setRapidFilter,
 }) {
+	const { accessToken } = useContext(UserContext);
 	const { loginWithRedirect, isAuthenticated, isLoading } = useAuth0();
 	const { loading, setLoading } = useLoading();
 	const [filtersShow, setFiltersShow] = useState(false);
@@ -143,7 +143,6 @@ function StudentHome({
 				thesis={thesis}
 				setThesis={setThesis}
 				onHide={() => setFiltersShow(false)}
-				accessToken={accessToken}
 				activatedFilters={activatedFilters}
 				setActivatedFilters={setActivatedFilters}
 				selectedSupervisor={selectedSupervisor}
@@ -159,7 +158,6 @@ function StudentHome({
 				expirationDate={expirationDate}
 				setExpirationDate={setExpirationDate}
 				setFilterThesis={setFilteredThesis}
-				handleError={handleError}
 				date={date}
 			/>
 			<Container>
@@ -171,11 +169,8 @@ function StudentHome({
 								<ProposalCard
 									key={thesis.ID}
 									thesis={thesis}
-									accessToken={accessToken}
 									setMsgModal={setMsgModal}
 									setShowModal={setShowModal}
-									handleError={handleError}
-									handleSuccess={handleSuccess}
 									setDirty={setDirty}
 									state={
 										applications.find((app) => app.id === thesis.ID && app.state != 2)
@@ -201,9 +196,6 @@ StudentHome.propTypes = {
 	thesis: PropTypes.array.isRequired,
 	setThesis: PropTypes.func.isRequired,
 	applications: PropTypes.array.isRequired,
-	handleError: PropTypes.func.isRequired,
-	handleSuccess: PropTypes.func.isRequired,
-	accessToken: PropTypes.string.isRequired,
 	setDirty: PropTypes.func.isRequired,
 	setShowModal: PropTypes.func.isRequired,
 	setMsgModal: PropTypes.func.isRequired,

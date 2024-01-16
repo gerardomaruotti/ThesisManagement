@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import { useState, useContext } from 'react';
+import UserContext from '../contexts/UserContext';
 import { Card, Col, Button, Image, OverlayTrigger, Popover } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import Avatar from '../assets/avatar.svg';
@@ -8,39 +9,41 @@ import { useNavigate } from 'react-router-dom';
 import { Color } from '../constants/colors.js';
 import dayjs from 'dayjs';
 import ModalWithTextField from './ModalWithTextField.jsx';
+import { handleError, handleSuccess } from '../utils/toastHandlers.js';
 
-const SecretaryCard = ({ request, setInternalDirty, accessToken, handleError, handleSuccess, setShowModal, setMsgModal, isProfessor }) => {
+const SecretaryCard = ({ request, setInternalDirty, setShowModal, setMsgModal }) => {
+	const { accessToken, isProfessor } = useContext(UserContext);
 	const navigate = useNavigate();
 	const [showModalWithText, setShowModalWithText] = useState(false);
 	const popover = (
 		<Popover>
-			{!request.notes ?
+			{!request.notes ? (
 				<Popover.Body>No note left by supervisor</Popover.Body>
-				: (
-					<>
-						<Popover.Header as="h3" style={{ color: Color.primary }}>Changes requested by the supervisor</Popover.Header>
-						<Popover.Body>
-							{request.notes}
-						</Popover.Body>
-					</>
-				)}
+			) : (
+				<>
+					<Popover.Header as='h3' style={{ color: Color.primary }}>
+						Changes requested by the supervisor
+					</Popover.Header>
+					<Popover.Body>{request.notes}</Popover.Body>
+				</>
+			)}
 		</Popover>
 	);
 	const styleStatus =
 		request.status == 0
 			? {
-				backgroundColor: 'rgba(164, 161, 141, 0.2)',
-				color: 'rgba(164, 161, 141)',
-				icon: (
-					<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '14px', height: '14px' }}>
-						<i className='bi bi-headphones' style={{ fontSize: '18px' }}></i>
-						<i className='bi bi-hourglass-split' style={{ fontSize: '10px', alignSelf: 'flex-end' }}></i>
-					</div>
-				),
-				text: 'Secretary review',
-			}
+					backgroundColor: 'rgba(164, 161, 141, 0.2)',
+					color: 'rgba(164, 161, 141)',
+					icon: (
+						<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '14px', height: '14px' }}>
+							<i className='bi bi-headphones' style={{ fontSize: '18px' }}></i>
+							<i className='bi bi-hourglass-split' style={{ fontSize: '10px', alignSelf: 'flex-end' }}></i>
+						</div>
+					),
+					text: 'Secretary review',
+			  }
 			: request.status == 1
-				? {
+			? {
 					backgroundColor: 'rgba(164, 161, 141, 0.2)',
 					color: 'rgba(164, 161, 141)',
 					icon: (
@@ -50,29 +53,29 @@ const SecretaryCard = ({ request, setInternalDirty, accessToken, handleError, ha
 						</div>
 					),
 					text: 'Supervisor review',
-				}
-				: request.status == 3
-					? {
-						backgroundColor: 'rgba(1, 133, 114, 0.2)',
-						color: 'rgba(1, 133, 114)',
-						icon: <i className='bi bi-check-circle' style={{ fontSize: '16px' }}></i>,
-						text: 'Accepted',
-					}
-					: request.status == 2 || request.status == 4
-						? {
-							backgroundColor: 'rgba(234, 84, 85, 0.2)',
-							color: 'rgba(234, 84, 85)',
-							icon: <i className='bi bi-x-circle' style={{ fontSize: '16px' }}></i>,
-							text: 'Rejected',
-						}
-						: request.status == 5
-							? {
-								backgroundColor: 'rgba(230,120,43, 0.2)',
-								color: 'rgba(230,120,43)',
-								icon: <i className='bi bi-pencil' style={{ fontSize: '16px' }}></i>,
-								text: 'Request change',
-							}
-							: null;
+			  }
+			: request.status == 3
+			? {
+					backgroundColor: 'rgba(1, 133, 114, 0.2)',
+					color: 'rgba(1, 133, 114)',
+					icon: <i className='bi bi-check-circle' style={{ fontSize: '16px' }}></i>,
+					text: 'Accepted',
+			  }
+			: request.status == 2 || request.status == 4
+			? {
+					backgroundColor: 'rgba(234, 84, 85, 0.2)',
+					color: 'rgba(234, 84, 85)',
+					icon: <i className='bi bi-x-circle' style={{ fontSize: '16px' }}></i>,
+					text: 'Rejected',
+			  }
+			: request.status == 5
+			? {
+					backgroundColor: 'rgba(230,120,43, 0.2)',
+					color: 'rgba(230,120,43)',
+					icon: <i className='bi bi-pencil' style={{ fontSize: '16px' }}></i>,
+					text: 'Request change',
+			  }
+			: null;
 
 	function acceptRequest() {
 		setShowModal(false);
@@ -197,12 +200,8 @@ const SecretaryCard = ({ request, setInternalDirty, accessToken, handleError, ha
 							</div>
 						)}
 					</div>
-					{request.status == 5 ?
-						<OverlayTrigger
-							placement='bottom'
-							delay={{ show: 100, hide: 200 }}
-							overlay={popover}
-						>
+					{request.status == 5 ? (
+						<OverlayTrigger placement='bottom' delay={{ show: 100, hide: 200 }} overlay={popover}>
 							<div>
 								<span
 									className='badge'
@@ -217,7 +216,8 @@ const SecretaryCard = ({ request, setInternalDirty, accessToken, handleError, ha
 								</span>
 								<span style={{ color: 'rgba(0, 0, 0, 0.5)', fontSize: 15, paddingLeft: 10 }}>{styleStatus.text}</span>
 							</div>
-						</OverlayTrigger> :
+						</OverlayTrigger>
+					) : (
 						<div>
 							<span
 								className='badge'
@@ -231,7 +231,8 @@ const SecretaryCard = ({ request, setInternalDirty, accessToken, handleError, ha
 								{styleStatus.icon}
 							</span>
 							<span style={{ color: 'rgba(0, 0, 0, 0.5)', fontSize: 15, paddingLeft: 10 }}>{styleStatus.text}</span>
-						</div>}
+						</div>
+					)}
 				</div>
 
 				{(request.status == 0 && isProfessor == false) || (request.status == 1 && isProfessor == true) ? (
@@ -297,10 +298,7 @@ const SecretaryCard = ({ request, setInternalDirty, accessToken, handleError, ha
 			<ModalWithTextField
 				showModal={showModalWithText}
 				setShowModal={setShowModalWithText}
-				handleError={handleError}
-				handleSuccess={handleSuccess}
 				requestID={request.id}
-				accessToken={accessToken}
 				setInternalDirty={setInternalDirty}
 			/>
 		</Col>
@@ -310,12 +308,8 @@ const SecretaryCard = ({ request, setInternalDirty, accessToken, handleError, ha
 SecretaryCard.propTypes = {
 	request: PropTypes.object.isRequired,
 	setInternalDirty: PropTypes.func.isRequired,
-	accessToken: PropTypes.string.isRequired,
-	handleError: PropTypes.func.isRequired,
-	handleSuccess: PropTypes.func.isRequired,
 	setShowModal: PropTypes.func,
 	setMsgModal: PropTypes.func,
-	isProfessor: PropTypes.bool.isRequired,
 };
 
 export default SecretaryCard;

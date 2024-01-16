@@ -1,5 +1,5 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Row, Col, Card, Image, Button, OverlayTrigger, Popover } from 'react-bootstrap';
+import { Col, Card, Image, Button, Popover } from 'react-bootstrap';
 import { Color } from '../constants/colors.js';
 import { useNavigate } from 'react-router-dom';
 import Avatar from '../assets/avatar.svg';
