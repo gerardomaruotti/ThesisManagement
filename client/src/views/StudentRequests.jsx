@@ -1,7 +1,7 @@
 import { Container, Row, Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import PropsTypes from 'prop-types';
-import StudentRequestCard from '../components/StudentRequestCard';
+import RequestCard from '../components/RequestCard';
 
 function StudentRequests({ hasApplied, requests, hasRequested }) {
 	const navigate = useNavigate();
@@ -11,7 +11,7 @@ function StudentRequests({ hasApplied, requests, hasRequested }) {
 			<Row>
 				{requests.length > 0 ? (
 					requests.map((request) => {
-						return <StudentRequestCard key={request.id} request={request} />;
+						return <RequestCard key={request.id} request={request} />;
 					})
 				) : (
 					<h1 style={{ textAlign: 'center', marginTop: 50 }}>No thesis request made</h1>

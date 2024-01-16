@@ -2,8 +2,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import '../constants/custom-styles.scss';
 import { useEffect, useState, useContext } from 'react';
 import UserContext from '../contexts/UserContext';
-import { Container, Row, Col, Button, Form, InputGroup, Nav } from 'react-bootstrap';
-import { Color } from '../constants/colors.js';
+import { Container, Row, Col, Button, Nav } from 'react-bootstrap';
 import { filterThesis } from '../utils/filterThesis';
 import { handleError } from '../utils/toastHandlers.js';
 import { useAuth0 } from '@auth0/auth0-react';
@@ -13,6 +12,7 @@ import PropTypes from 'prop-types';
 import FiltersModal from '../components/FiltersModal.jsx';
 import ProposalCard from '../components/ProposalCard.jsx';
 import Loading from '../components/Loading.jsx';
+import SearchBar from '../components/SearchBar.jsx';
 
 function StudentHome({
 	thesis,
@@ -89,21 +89,7 @@ function StudentHome({
 		<>
 			<div style={{ position: 'sticky', top: 0, zIndex: 2, backgroundColor: 'white', boxShadow: '0 4px 2px -2px rgba(0, 0, 0, 0.2)' }}>
 				<Container>
-					<Row style={{ paddingTop: 25 }}>
-						<Col lg={{ span: 4, offset: 4 }} md={12}>
-							<InputGroup>
-								<Form.Control
-									placeholder='Search'
-									style={{ borderTopLeftRadius: 50, borderBottomLeftRadius: 50, borderColor: Color.primary }}
-									value={search}
-									onChange={handleSearch}
-								/>
-								<Button variant='outline-primary' style={{ borderTopRightRadius: 50, borderBottomRightRadius: 50 }}>
-									<i className='bi bi-search'></i>
-								</Button>
-							</InputGroup>
-						</Col>
-					</Row>
+					<SearchBar search={search} handleSearch={handleSearch} />
 					<Row style={{ marginTop: 25, paddingBottom: 10 }}>
 						<Col md='auto' style={{ paddingBottom: 10, overflowX: 'auto' }}>
 							<Nav variant='pills' activeKey={rapidFilter} style={{ display: 'flex', flexWrap: 'nowrap' }}>
