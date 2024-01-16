@@ -10,6 +10,7 @@ import { useLoading } from '../LoadingContext.jsx';
 import API from '../API.jsx';
 import Loading from '../components/Loading.jsx';
 import PropTypes from 'prop-types';
+import { filterThesis } from '../utils/filterThesis';
 
 function StudentHome({
 	thesis,
@@ -48,13 +49,7 @@ function StudentHome({
 	const [filteredThesis, setFilteredThesis] = useState(thesis);
 
 	function handleRapidFilters(filter) {
-		if (filter === 'all') {
-			setRapidFilter('all');
-		} else if (filter === 'company') {
-			setRapidFilter('company');
-		} else if (filter === 'abroad') {
-			setRapidFilter('abroad');
-		}
+		setRapidFilter(filter);
 	}
 
 	function handleSearch(e) {
@@ -62,43 +57,8 @@ function StudentHome({
 	}
 
 	useEffect(() => {
-		setFilteredThesis(thesis);
-		if (rapidFilter === 'all') {
-			let filtered = thesis.filter((thesis) => {
-				return (
-					thesis.title.toLowerCase().includes(search.toLowerCase()) ||
-					thesis.description.toLowerCase().includes(search.toLowerCase()) ||
-					thesis.notes.toLowerCase().includes(search.toLowerCase()) ||
-					thesis.req_know.toLowerCase().includes(search.toLowerCase()) ||
-					thesis.keywords.filter((keyword) => keyword.toLowerCase().includes(search.toLowerCase())).length > 0
-				);
-			});
-			setFilteredThesis(filtered);
-		} else if (rapidFilter === 'company') {
-			let filtered = thesis.filter((thesis) => {
-				return (
-					(thesis.title.toLowerCase().includes(search.toLowerCase()) ||
-						thesis.description.toLowerCase().includes(search.toLowerCase()) ||
-						thesis.notes.toLowerCase().includes(search.toLowerCase()) ||
-						thesis.req_know.toLowerCase().includes(search.toLowerCase()) ||
-						thesis.keywords.filter((keyword) => keyword.toLowerCase().includes(search.toLowerCase())).length > 0) &&
-					thesis.types.filter((type) => type === 'IN COMPANY').length > 0
-				);
-			});
-			setFilteredThesis(filtered);
-		} else if (rapidFilter === 'abroad') {
-			let filtered = thesis.filter((thesis) => {
-				return (
-					(thesis.title.toLowerCase().includes(search.toLowerCase()) ||
-						thesis.description.toLowerCase().includes(search.toLowerCase()) ||
-						thesis.notes.toLowerCase().includes(search.toLowerCase()) ||
-						thesis.req_know.toLowerCase().includes(search.toLowerCase()) ||
-						thesis.keywords.filter((keyword) => keyword.toLowerCase().includes(search.toLowerCase())).length > 0) &&
-					thesis.types.filter((type) => type === 'ABROAD').length > 0
-				);
-			});
-			setFilteredThesis(filtered);
-		}
+		const filteredThesis = filterThesis(thesis, rapidFilter, search);
+		setFilteredThesis(filteredThesis);
 	}, [rapidFilter, search, thesis]);
 
 	useEffect(() => {
@@ -198,6 +158,7 @@ function StudentHome({
 				setSelectedGroups={setSelectedGroups}
 				expirationDate={expirationDate}
 				setExpirationDate={setExpirationDate}
+				setFilterThesis={setFilteredThesis}
 				handleError={handleError}
 				date={date}
 			/>

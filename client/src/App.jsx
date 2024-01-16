@@ -69,7 +69,12 @@ function App() {
 	const [rapidFilterProfessorRequest, setRapidFilterProfessorRequest] = useState('supervisor-review');
 
 	function handleError(err) {
-		toast.error(err.error ? err.error : err, {
+		let errorMessage = err;
+		if (err instanceof Error) {
+			errorMessage = err.message;
+		}
+
+		toast.error(errorMessage, {
 			position: 'bottom-center',
 			duration: 5000,
 			style: {
