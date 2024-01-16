@@ -1,15 +1,18 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { useEffect, useState, useContext } from 'react';
+import UserContext from '../contexts/UserContext';
 import { Row, Col, Card, Button, Container, Offcanvas } from 'react-bootstrap';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
-import { useEffect, useState } from 'react';
 import API from '../API.jsx';
-import { useLoading } from '../LoadingContext.jsx';
+import { useLoading } from '../contexts/LoadingContext.jsx';
 import Loading from '../components/Loading.jsx';
 import DetailsProposalLeftBar from '../components/DetailsProposalLeftBar.jsx';
 import PropTypes from 'prop-types';
 import ModalWithUpload from '../components/ModalWithUpload.jsx';
+import { handleError, handleSuccess } from '../utils/toastHandlers.js';
 
-function Proposal({ accessToken, handleError, handleSuccess, isProfessor, applications, hasApplied, setDirty }) {
+function Proposal({ applications, hasApplied, setDirty }) {
+	const { accessToken } = useContext(UserContext);
 	const { loading, setLoading } = useLoading();
 	const navigate = useNavigate();
 	const [thesis, setThesis] = useState(null);
@@ -77,7 +80,6 @@ function Proposal({ accessToken, handleError, handleSuccess, isProfessor, applic
 									id={id}
 									thesis={thesis}
 									apply={() => setShowModal(true)}
-									isProfessor={isProfessor}
 									applications={applications}
 									hasApplied={hasApplied}
 								/>
@@ -133,25 +135,16 @@ function Proposal({ accessToken, handleError, handleSuccess, isProfessor, applic
 					<Offcanvas.Title>Details</Offcanvas.Title>
 				</Offcanvas.Header>
 				<Offcanvas.Body>
-					<DetailsProposalLeftBar id={id} thesis={thesis} apply={() => setShowModal(true)} isProfessor={isProfessor} applications={applications} />
+					<DetailsProposalLeftBar id={id} thesis={thesis} apply={() => setShowModal(true)} applications={applications} />
 				</Offcanvas.Body>
 			</Offcanvas>
 
-			<ModalWithUpload
-				showModal={showModal}
-				setShowModal={setShowModal}
-				apply={apply}
-				setCv={setCv}
-			/>
+			<ModalWithUpload showModal={showModal} setShowModal={setShowModal} apply={apply} setCv={setCv} />
 		</>
 	);
 }
 
 Proposal.propTypes = {
-	accessToken: PropTypes.string,
-	handleError: PropTypes.func.isRequired,
-	handleSuccess: PropTypes.func.isRequired,
-	isProfessor: PropTypes.bool.isRequired,
 	applications: PropTypes.array.isRequired,
 	hasApplied: PropTypes.bool.isRequired,
 	setDirty: PropTypes.func.isRequired,

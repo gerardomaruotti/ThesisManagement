@@ -2,18 +2,17 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Modal, Button, Container, Form, Row, Col } from 'react-bootstrap';
 import Select from 'react-select';
 import { colorStyles } from '../constants/colors.js';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
+import UserContext from '../contexts/UserContext';
 import API from '../API.jsx';
 import dayjs from 'dayjs';
-import { useLoading } from '../LoadingContext.jsx';
+import { useLoading } from '../contexts/LoadingContext.jsx';
 import PropTypes from 'prop-types';
+import { handleError } from '../utils/toastHandlers.js';
 
 function FiltersModal({
 	show,
 	onHide,
-	accessToken,
-	handleError,
-	setThesis,
 	activatedFilters,
 	setActivatedFilters,
 	selectedSupervisor,
@@ -29,9 +28,9 @@ function FiltersModal({
 	expirationDate,
 	setExpirationDate,
 	date,
-	isProfessor,
 	setFilterThesis,
 }) {
+	const { accessToken, isProfessor } = useContext(UserContext);
 	const { setLoading } = useLoading();
 	const [keywords, setKeywords] = useState([]);
 	const [types, setTypes] = useState([]);
@@ -251,9 +250,6 @@ function FiltersModal({
 FiltersModal.propTypes = {
 	show: PropTypes.bool,
 	onHide: PropTypes.func,
-	accessToken: PropTypes.string,
-	handleError: PropTypes.func,
-	setThesis: PropTypes.func,
 	activatedFilters: PropTypes.bool,
 	setActivatedFilters: PropTypes.func,
 	selectedSupervisor: PropTypes.array,
@@ -269,7 +265,6 @@ FiltersModal.propTypes = {
 	expirationDate: PropTypes.string,
 	setExpirationDate: PropTypes.func,
 	date: PropTypes.string,
-	isProfessor: PropTypes.bool,
 	setFilterThesis: PropTypes.func,
 };
 

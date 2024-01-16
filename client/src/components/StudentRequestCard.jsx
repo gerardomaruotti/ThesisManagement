@@ -1,5 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Row, Col, Card, Image, Button, OverlayTrigger, Popover } from 'react-bootstrap';
+import { statusConfig } from '../constants/statusConfig.js';
+import { Col, Card, Image, Button, Popover, OverlayTrigger } from 'react-bootstrap';
 import { Color } from '../constants/colors.js';
 import { useNavigate } from 'react-router-dom';
 import Avatar from '../assets/avatar.svg';
@@ -8,18 +9,19 @@ import dayjs from 'dayjs';
 
 function StudentRequestCard({ request }) {
 	const navigate = useNavigate();
+	const config = statusConfig[request.status];
 	const popover = (
 		<Popover>
-			{!request.notes ?
+			{!request.notes ? (
 				<Popover.Body>No note left by supervisor</Popover.Body>
-				: (
-					<>
-						<Popover.Header as="h3" style={{ color: Color.primary }}>Changes requested by the supervisor</Popover.Header>
-						<Popover.Body>
-							{request.notes}
-						</Popover.Body>
-					</>
-				)}
+			) : (
+				<>
+					<Popover.Header as='h3' style={{ color: Color.primary }}>
+						Changes requested by the supervisor
+					</Popover.Header>
+					<Popover.Body>{request.notes}</Popover.Body>
+				</>
+			)}
 		</Popover>
 	);
 
@@ -67,165 +69,49 @@ function StudentRequestCard({ request }) {
 				>
 					{request.description}
 				</div>
-				<Row style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
-					<Col>
-						<div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15, display: 'flex', alignItems: 'center' }}>
-							<span
-								className='badge'
-								style={{ backgroundColor: 'rgba(230, 120, 43, 0.1)', color: Color.secondary, padding: '1em 1em', borderRadius: '0.25rem' }}
-							>
-								<i className='bi bi-calendar3' style={{ fontSize: '16px' }}></i>
+				<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 10 }}>
+					<div style={{ display: 'flex', alignItems: 'center' }}>
+						<span
+							className='badge'
+							style={{ backgroundColor: 'rgba(230, 120, 43, 0.1)', color: Color.secondary, padding: '1em 1em', borderRadius: '0.25rem' }}
+						>
+							<i className='bi bi-calendar3' style={{ fontSize: '16px' }}></i>
+						</span>
+						<div className='d-flex flex-column'>
+							<span style={{ color: 'rgba(0, 0, 0, 0.8)', paddingLeft: 8, fontWeight: 400 }}>
+								{request.status === 3 && request.approval_date ? 'Approval Date' : 'Request Date'}
 							</span>
-							{request.status === 3 && request.approval_date ? (
-								<div className='d-flex flex-column'>
-									<span style={{ color: 'rgba(0, 0, 0, 0.8)', paddingLeft: 8, fontWeight: 400 }}>Approval Date</span>
-									<span style={{ marginLeft: 8, color: 'rgba(0, 0, 0, 0.5)' }}>{dayjs(request.approval_date).format('DD/MM/YYYY')}</span>
-								</div>
-							) : (
-								<div className='d-flex flex-column'>
-									<span style={{ color: 'rgba(0, 0, 0, 0.8)', paddingLeft: 8, fontWeight: 400 }}>Request Date</span>
-									<span style={{ marginLeft: 8, color: 'rgba(0, 0, 0, 0.5)' }}>{dayjs(request.request_date).format('DD/MM/YYYY')}</span>
-								</div>
-							)}
+							<span style={{ marginLeft: 8, color: 'rgba(0, 0, 0, 0.5)' }}>
+								{request.status === 3 && request.approval_date
+									? dayjs(request.approval_date).format('DD/MM/YYYY')
+									: dayjs(request.request_date).format('DD/MM/YYYY')}
+							</span>
 						</div>
-					</Col>
-					<Col style={{ display: 'flex', justifyContent: 'end' }}>
-						{request.status === 0 ? (
-							<div style={{ display: 'flex', alignItems: 'center', float: 'left', marginTop: 20 }}>
-								<Col style={{ display: 'flex', alignItems: 'center', float: 'left' }}>
-									<span
-										className='badge'
-										style={{
-											backgroundColor: 'rgba(164, 161, 141, 0.2)',
-											color: 'rgba(164, 161, 141)',
-											padding: '1em 1em',
-											borderRadius: '0.25rem',
-										}}
-									>
-										<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '14px', height: '14px' }}>
-											<i className='bi bi-headphones' style={{ fontSize: '18px' }}></i>
-											<i className='bi bi-hourglass-split' style={{ fontSize: '10px', alignSelf: 'flex-end' }}></i>
-										</div>
-									</span>
-								</Col>
-								<Col style={{ display: 'flex', alignItems: 'left', float: 'left', marginLeft: 5, whiteSpace: 'nowrap' }}>
-									<span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>In review by secretary</span>
-								</Col>
+					</div>
+					{config ? (
+						<OverlayTrigger placement='bottom' delay={{ show: 100, hide: 200 }} overlay={request.status === 5 ? popover : <></>}>
+							<div style={{ display: 'flex', alignItems: 'center' }}>
+								<span
+									className='badge'
+									style={{
+										backgroundColor: config.backgroundColor,
+										color: config.color,
+										padding: '1em 1em',
+										borderRadius: '0.25rem',
+									}}
+								>
+									<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '14px', height: '14px' }}>
+										<i className={config.icon} style={{ fontSize: '18px' }}></i>
+										<i className={config.smallIcon} style={{ fontSize: '10px', alignSelf: 'flex-end' }}></i>
+									</div>
+								</span>
+								<span style={{ color: 'rgba(0, 0, 0, 0.5)', fontSize: 15, paddingLeft: 10 }}>{config.text}</span>
 							</div>
-						) : null}
-						{request.status === 1 ? (
-							<div style={{ display: 'flex', alignItems: 'center', float: 'left', marginTop: 20 }}>
-								<Col style={{ display: 'flex', alignItems: 'center', float: 'left' }}>
-									<span
-										className='badge'
-										style={{
-											backgroundColor: 'rgba(164, 161, 141, 0.2)',
-											color: 'rgba(164, 161, 141)',
-											padding: '1em 1em',
-											borderRadius: '0.25rem',
-										}}
-									>
-										<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '14px', height: '14px' }}>
-											<i className='bi bi-person' style={{ fontSize: '18px' }}></i>
-											<i className='bi bi-hourglass-split' style={{ fontSize: '10px', alignSelf: 'flex-end' }}></i>
-										</div>
-									</span>
-								</Col>
-								<Col style={{ display: 'flex', alignItems: 'left', float: 'left', marginLeft: 5, whiteSpace: 'nowrap' }}>
-									<span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>In review by supervisor</span>
-								</Col>
-							</div>
-						) : null}
-						{request.status === 2 ? (
-							<div style={{ display: 'flex', alignItems: 'center', float: 'left', marginTop: 20 }}>
-								<Col style={{ display: 'flex', alignItems: 'center', float: 'left' }}>
-									<span
-										className='badge'
-										style={{
-											backgroundColor: 'rgba(234, 84, 85, 0.2)',
-											color: 'rgba(234, 84, 85)',
-											padding: '1em 1em',
-											borderRadius: '0.25rem',
-										}}
-									>
-										<i className='bi bi-x-circle' style={{ fontSize: '16px' }}></i>
-									</span>
-								</Col>
-								<Col style={{ display: 'flex', alignItems: 'left', float: 'left', marginLeft: 5, whiteSpace: 'nowrap' }}>
-									<span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>Rejected by secretary</span>
-								</Col>
-							</div>
-						) : null}
-						{request.status === 3 ? (
-							<div style={{ display: 'flex', alignItems: 'center', float: 'left', marginTop: 20 }}>
-								<Col style={{ display: 'flex', alignItems: 'center', float: 'left' }}>
-									<span
-										className='badge'
-										style={{
-											backgroundColor: 'rgba(1, 133, 114, 0.2)',
-											color: 'rgba(1, 133, 114)',
-											padding: '1em 1em',
-											borderRadius: '0.25rem',
-										}}
-									>
-										<i className='bi bi-check-circle' style={{ fontSize: '16px' }}></i>
-									</span>
-								</Col>
-								<Col style={{ display: 'flex', alignItems: 'left', float: 'left', marginLeft: 5, whiteSpace: 'nowrap' }}>
-									<span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>Accepted</span>
-								</Col>
-							</div>
-						) : null}
-						{request.status === 4 ? (
-							<div style={{ display: 'flex', alignItems: 'center', float: 'left', marginTop: 20 }}>
-								<Col style={{ display: 'flex', alignItems: 'center', float: 'left' }}>
-									<span
-										className='badge'
-										style={{
-											backgroundColor: 'rgba(234, 84, 85, 0.2)',
-											color: 'rgba(234, 84, 85)',
-											padding: '1em 1em',
-											borderRadius: '0.25rem',
-										}}
-									>
-										<i className='bi bi-x-circle' style={{ fontSize: '16px' }}></i>
-									</span>
-								</Col>
-								<Col style={{ display: 'flex', alignItems: 'left', float: 'left', marginLeft: 5, whiteSpace: 'nowrap' }}>
-									<span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>Rejected</span>
-								</Col>
-							</div>
-						) : null}
-						{request.status === 5 ? (
-							<OverlayTrigger
-								placement='bottom'
-								delay={{ show: 100, hide: 200 }}
-								overlay={popover}
-							>
-								<div style={{ display: 'flex', alignItems: 'center', float: 'left', marginTop: 20 }}>
-									<Col style={{ display: 'flex', alignItems: 'center', float: 'left' }}>
-										<span
-											className='badge'
-											style={{
-												backgroundColor: 'rgba(230, 120, 43, 0.2)',
-												color: 'rgba(230, 120, 43)',
-												padding: '1em 1em',
-												borderRadius: '0.25rem',
-											}}
-										>
-											<i className='bi bi-pencil' style={{ fontSize: '16px' }}></i>
-										</span>
-									</Col>
-									<Col style={{ display: 'flex', alignItems: 'left', float: 'left', marginLeft: 5, whiteSpace: 'nowrap' }}>
-										<span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>Requested change</span>
-									</Col>
-								</div>
-							</OverlayTrigger>
-						) : null}
-					</Col>
-				</Row>
+						</OverlayTrigger>
+					) : null}
+				</div>
 			</Card>
-		</Col >
+		</Col>
 	);
 }
 

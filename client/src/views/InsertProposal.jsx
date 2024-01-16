@@ -1,11 +1,15 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { useContext } from 'react';
+import UserContext from '../contexts/UserContext';
 import { Container } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import API from '../API.jsx';
 import ProposalForm from '../components/ProposalForm.jsx';
 import PropsType from 'prop-types';
+import { handleError } from '../utils/toastHandlers.js';
 
-function InsertProposal({ accessToken, user, handleError, setDirty, date, copiedProposal }) {
+function InsertProposal({ user, setDirty, date, copiedProposal }) {
+	const { accessToken } = useContext(UserContext);
 	const navigate = useNavigate();
 
 	function createProposal(thesis) {
@@ -22,22 +26,13 @@ function InsertProposal({ accessToken, user, handleError, setDirty, date, copied
 	return (
 		<Container>
 			<h2 style={{ textAlign: 'center', marginTop: 20 }}>New Proposal</h2>
-			<ProposalForm
-				accessToken={accessToken}
-				user={user}
-				handleError={handleError}
-				createProposal={createProposal}
-				date={date}
-				copiedProposal={copiedProposal}
-			/>
+			<ProposalForm user={user} createProposal={createProposal} date={date} copiedProposal={copiedProposal} />
 		</Container>
 	);
 }
 
 InsertProposal.propTypes = {
-	accessToken: PropsType.string.isRequired,
 	user: PropsType.object.isRequired,
-	handleError: PropsType.func.isRequired,
 	setDirty: PropsType.func.isRequired,
 	date: PropsType.string,
 	copiedProposal: PropsType.object,

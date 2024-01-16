@@ -1,23 +1,22 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import { useEffect, useState, useContext } from 'react';
+import UserContext from '../contexts/UserContext';
 import { Button, Container, Row, Col, Nav, InputGroup, Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import ProposalCard from '../components/ProposalCard';
 import { useAuth0 } from '@auth0/auth0-react';
-import { useEffect, useState } from 'react';
-import { useLoading } from '../LoadingContext.jsx';
+import { useLoading } from '../contexts/LoadingContext.jsx';
 import Loading from '../components/Loading.jsx';
 import PropTypes from 'prop-types';
 import { Color } from '../constants/colors.js';
 import FiltersModal from '../components/FiltersModal.jsx';
 import API from '../API.jsx';
+import { handleError } from '../utils/toastHandlers.js';
 
 function ProfessorHome({
 	thesis,
 	applications,
-	handleError,
-	handleSuccess,
-	accessToken,
 	dirty,
 	setDirty,
 	setCopiedProposal,
@@ -44,6 +43,7 @@ function ProfessorHome({
 	filterThesis,
 	setFilterThesis,
 }) {
+	const { accessToken } = useContext(UserContext);
 	const navigate = useNavigate();
 	const { loginWithRedirect, isAuthenticated, isLoading } = useAuth0();
 	const { loading, setLoading } = useLoading();
@@ -55,15 +55,17 @@ function ProfessorHome({
 		if (rapidFilter === 'active') {
 			setFilteredThesis(thesis.filter((thesis) => thesis.status == 1));
 		} else {
-			let filtered = filterThesis.filter((thesis) => thesis.status == 0).filter((thesis) => {
-				return (
-					thesis.title.toLowerCase().includes(search.toLowerCase()) ||
-					thesis.description.toLowerCase().includes(search.toLowerCase()) ||
-					thesis.notes.toLowerCase().includes(search.toLowerCase()) ||
-					thesis.req_know.toLowerCase().includes(search.toLowerCase()) ||
-					thesis.keywords.filter((keyword) => keyword.toLowerCase().includes(search.toLowerCase())).length > 0
-				);
-			});
+			let filtered = filterThesis
+				.filter((thesis) => thesis.status == 0)
+				.filter((thesis) => {
+					return (
+						thesis.title.toLowerCase().includes(search.toLowerCase()) ||
+						thesis.description.toLowerCase().includes(search.toLowerCase()) ||
+						thesis.notes.toLowerCase().includes(search.toLowerCase()) ||
+						thesis.req_know.toLowerCase().includes(search.toLowerCase()) ||
+						thesis.keywords.filter((keyword) => keyword.toLowerCase().includes(search.toLowerCase())).length > 0
+					);
+				});
 			setFilteredThesis(filtered);
 		}
 	}, [rapidFilter, thesis, applications, dirty, search, filterThesis]);
@@ -71,7 +73,6 @@ function ProfessorHome({
 	function handleSearch(e) {
 		setSearch(e.target.value);
 	}
-
 
 	function resetFilters() {
 		setLoading(true);
@@ -113,8 +114,8 @@ function ProfessorHome({
 		<>
 			<div style={{ position: 'sticky', top: 0, zIndex: 2, backgroundColor: 'white', boxShadow: '0 4px 2px -2px rgba(0, 0, 0, 0.2)' }}>
 				<Container>
-					{rapidFilter === 'active' ? null :
-						(< Row style={{ paddingTop: 25 }}>
+					{rapidFilter === 'active' ? null : (
+						<Row style={{ paddingTop: 25 }}>
 							<Col lg={{ span: 4, offset: 4 }} md={12}>
 								<InputGroup>
 									<Form.Control
@@ -128,7 +129,8 @@ function ProfessorHome({
 									</Button>
 								</InputGroup>
 							</Col>
-						</Row>)}
+						</Row>
+					)}
 					<Row style={{ paddingTop: 25, paddingBottom: 20 }}>
 						<Col xs={12} md={'auto'} style={{ paddingBottom: 10 }}>
 							<Nav variant='pills' activeKey={rapidFilter}>
@@ -144,7 +146,7 @@ function ProfessorHome({
 								</Nav.Item>
 							</Nav>
 						</Col>
-						{rapidFilter === 'active' ? null :
+						{rapidFilter === 'active' ? null : (
 							<Col style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 10 }}>
 								{activatedFilters ? (
 									<Button variant='outline-secondary' style={{ borderRadius: 50, float: 'right', width: 150, marginRight: 8 }} onClick={resetFilters}>
@@ -155,16 +157,16 @@ function ProfessorHome({
 									<span style={{ marginRight: 12 }}>Filters</span>
 									<i className='bi bi-filter-circle'></i>
 								</Button>
-							</Col>}
+							</Col>
+						)}
 					</Row>
 				</Container>
-			</div >
+			</div>
 			<FiltersModal
 				show={filtersShow}
 				thesis={thesis}
 				setThesis={setThesis}
 				onHide={() => setFiltersShow(false)}
-				accessToken={accessToken}
 				activatedFilters={activatedFilters}
 				setActivatedFilters={setActivatedFilters}
 				selectedSupervisor={selectedSupervisor}
@@ -179,7 +181,6 @@ function ProfessorHome({
 				setSelectedGroups={setSelectedGroups}
 				expirationDate={expirationDate}
 				setExpirationDate={setExpirationDate}
-				handleError={handleError}
 				date={date}
 				isProfessor={true}
 				setFilterThesis={setFilterThesis}
@@ -187,22 +188,21 @@ function ProfessorHome({
 			<Container>
 				<Row style={{ marginBottom: 25 }}>
 					{filteredThesis.length !== 0 ? (
-						filteredThesis.sort((a, b) => b.count - a.count).map((thesis, index) => (
-							<ProposalCard
-								key={thesis.ID}
-								isProfessor={1}
-								thesis={thesis}
-								setDirty={setDirty}
-								handleError={handleError}
-								handleSuccess={handleSuccess}
-								accessToken={accessToken}
-								isEditable={!applications.some((app) => app.id == thesis.ID && app.state == 1)}
-								isArchived={thesis.status == 0}
-								setCopiedProposal={setCopiedProposal}
-								setGenericModal={setShowModal}
-								setMsgModal={setMsgModal}
-							/>
-						))
+						filteredThesis
+							.sort((a, b) => b.count - a.count)
+							.map((thesis, index) => (
+								<ProposalCard
+									key={thesis.ID}
+									isProfessor={1}
+									thesis={thesis}
+									setDirty={setDirty}
+									isEditable={!applications.some((app) => app.id == thesis.ID && app.state == 1)}
+									isArchived={thesis.status == 0}
+									setCopiedProposal={setCopiedProposal}
+									setGenericModal={setShowModal}
+									setMsgModal={setMsgModal}
+								/>
+							))
 					) : (
 						<Col style={{ marginTop: 25 }}>
 							<p>No thesis to display</p>
@@ -226,9 +226,6 @@ function ProfessorHome({
 ProfessorHome.propTypes = {
 	thesis: PropTypes.array.isRequired,
 	applications: PropTypes.array.isRequired,
-	handleError: PropTypes.func.isRequired,
-	handleSuccess: PropTypes.func.isRequired,
-	accessToken: PropTypes.string.isRequired,
 	dirty: PropTypes.bool.isRequired,
 	setDirty: PropTypes.func.isRequired,
 	setCopiedProposal: PropTypes.func.isRequired,

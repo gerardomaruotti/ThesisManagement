@@ -1,14 +1,17 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
+import UserContext from '../contexts/UserContext';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Container } from 'react-bootstrap';
 import API from '../API.jsx';
 import ProposalForm from '../components/ProposalForm.jsx';
 import Loading from '../components/Loading.jsx';
-import { useLoading } from '../LoadingContext.jsx';
+import { useLoading } from '../contexts/LoadingContext.jsx';
 import PropTypes from 'prop-types';
+import { handleError } from '../utils/toastHandlers.js';
 
-function EditProposal({ accessToken, user, handleError, setDirty, date }) {
+function EditProposal({ user, setDirty, date }) {
+	const { accessToken } = useContext(UserContext);
 	const { id } = useParams();
 	const navigate = useNavigate();
 	const [thesis, setThesis] = useState(null);
@@ -44,15 +47,13 @@ function EditProposal({ accessToken, user, handleError, setDirty, date }) {
 	) : (
 		<Container>
 			<h2 style={{ textAlign: 'center', marginTop: 20 }}>Edit Proposal</h2>
-			<ProposalForm thesis={thesis} accessToken={accessToken} user={user} handleError={handleError} editProposal={editProposal} date={date} />
+			<ProposalForm thesis={thesis} user={user} editProposal={editProposal} date={date} />
 		</Container>
 	);
 }
 
 EditProposal.propTypes = {
-	accessToken: PropTypes.string.isRequired,
 	user: PropTypes.object.isRequired,
-	handleError: PropTypes.func.isRequired,
 	setDirty: PropTypes.func.isRequired,
 	date: PropTypes.string,
 };
