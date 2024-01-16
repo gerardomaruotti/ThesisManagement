@@ -1380,17 +1380,3 @@ exports.changeRequestTeacher = (reqID, notes) => {
     });
   });
 }
-
-exports.deleteRequestCoSupervisor = (reqID) => {
-  return new Promise((resolve, reject) => {
-    const sql = "DELETE FROM REQUEST_COSUPERVISOR WHERE REQUEST=?";
-    db.run(sql, [reqID], function (err) {
-      if (err) {
-        reject(err);
-         
-      }
-      resolve(1);
-    });
-  });
-}
-
