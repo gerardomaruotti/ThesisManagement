@@ -1,6 +1,6 @@
 import { useState, useContext } from 'react';
 import UserContext from '../contexts/UserContext';
-import { Row, Col, Image, Button } from 'react-bootstrap';
+import { Row, Col, Image, Button, OverlayTrigger, Popover } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import Avatar from '../assets/avatar.svg';
 import { Color } from '../constants/colors.js';
@@ -8,47 +8,26 @@ import API from '../API';
 import dayjs from 'dayjs';
 import ModalWithTextField from './ModalWithTextField.jsx';
 import { handleSuccess, handleError } from '../utils/toastHandlers.js';
+import { statusConfig } from '../constants/statusConfig.js';
 
 const DetailsRequestLeftBar = ({ request, setInternalDirty, setShowModal, setMsgModal }) => {
 	const { accessToken, isSecretary, isProfessor } = useContext(UserContext);
 	const [showModalWithText, setShowModalWithText] = useState(false);
-	const styleStatus =
-		request.status == 0
-			? {
-					backgroundColor: 'rgba(164, 161, 141, 0.2)',
-					color: 'rgba(164, 161, 141)',
-					icon: 'bi bi-hourglass-split',
-					text: 'In review by secretary',
-			  }
-			: request.status == 1
-			? {
-					backgroundColor: 'rgba(164, 161, 141, 0.2)',
-					color: 'rgba(164, 161, 141)',
-					icon: 'bi bi-hourglass-split',
-					text: 'In review by supervisor',
-			  }
-			: request.status == 3
-			? {
-					backgroundColor: 'rgba(1, 133, 114, 0.2)',
-					color: 'rgba(1, 133, 114)',
-					icon: 'bi bi-check-circle',
-					text: 'Approved',
-			  }
-			: request.status == 2 || request.status == 4
-			? {
-					backgroundColor: 'rgba(234, 84, 85, 0.2)',
-					color: 'rgba(234, 84, 85)',
-					icon: 'bi bi-x-circle',
-					text: 'Rejected',
-			  }
-			: request.status == 5
-			? {
-					backgroundColor: 'rgba(230,120,43, 0.2)',
-					color: 'rgba(230,120,43)',
-					icon: 'bi bi-pencil',
-					text: 'Requested change',
-			  }
-			: null;
+	const config = statusConfig[request.status];
+	const popover = (
+		<Popover>
+			{!request.notes ? (
+				<Popover.Body>No note left by supervisor</Popover.Body>
+			) : (
+				<>
+					<Popover.Header as='h3' style={{ color: Color.primary }}>
+						Changes requested by the supervisor
+					</Popover.Header>
+					<Popover.Body>{request.notes}</Popover.Body>
+				</>
+			)}
+		</Popover>
+	);
 
 	function acceptRequest() {
 		setShowModal(false);
@@ -158,26 +137,31 @@ const DetailsRequestLeftBar = ({ request, setInternalDirty, setShowModal, setMsg
 					</div>
 				</Col>
 			)}
-			{!styleStatus ? null : (
-				<div>
-					<div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}> Request status </div>
-					<div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}>
-						<span
-							className='badge'
-							style={{
-								backgroundColor: styleStatus.backgroundColor,
-								color: styleStatus.color,
-								padding: '1em 1em',
-								borderRadius: '0.25rem',
-								marginRight: 10,
-							}}
-						>
-							<i className={styleStatus.icon} style={{ fontSize: '16px' }}></i>
-						</span>
-						<span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>{styleStatus.text}</span>
+			{config ? (
+				<OverlayTrigger placement='bottom' delay={{ show: 100, hide: 200 }} overlay={request.status === 5 ? popover : <></>}>
+					<div>
+						<div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}> Request status </div>
+						<div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}>
+							<span
+								className='badge'
+								style={{
+									backgroundColor: config.backgroundColor,
+									color: config.color,
+									padding: '1em 1em',
+									borderRadius: '0.25rem',
+									marginRight: 10,
+								}}
+							>
+								<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '14px', height: '14px' }}>
+									<i className={config.icon} style={{ fontSize: '18px' }}></i>
+									<i className={config.smallIcon} style={{ fontSize: '10px', alignSelf: 'flex-end' }}></i>
+								</div>
+							</span>
+							<span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>{config.text}</span>
+						</div>
 					</div>
-				</div>
-			)}
+				</OverlayTrigger>
+			) : null}
 			{(request.status == 0 && isSecretary == true) || (request.status == 1 && isProfessor == true) ? (
 				<div className='d-flex justify-content-around' style={{ marginTop: 30 }}>
 					<Button

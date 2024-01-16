@@ -10,11 +10,13 @@ import { Color } from '../constants/colors.js';
 import dayjs from 'dayjs';
 import ModalWithTextField from './ModalWithTextField.jsx';
 import { handleError, handleSuccess } from '../utils/toastHandlers.js';
+import { statusConfig } from '../constants/statusConfig.js';
 
 const SecretaryCard = ({ request, setInternalDirty, setShowModal, setMsgModal }) => {
 	const { accessToken, isProfessor } = useContext(UserContext);
 	const navigate = useNavigate();
 	const [showModalWithText, setShowModalWithText] = useState(false);
+	const config = statusConfig[request.status];
 	const popover = (
 		<Popover>
 			{!request.notes ? (
@@ -29,53 +31,6 @@ const SecretaryCard = ({ request, setInternalDirty, setShowModal, setMsgModal })
 			)}
 		</Popover>
 	);
-	const styleStatus =
-		request.status == 0
-			? {
-					backgroundColor: 'rgba(164, 161, 141, 0.2)',
-					color: 'rgba(164, 161, 141)',
-					icon: (
-						<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '14px', height: '14px' }}>
-							<i className='bi bi-headphones' style={{ fontSize: '18px' }}></i>
-							<i className='bi bi-hourglass-split' style={{ fontSize: '10px', alignSelf: 'flex-end' }}></i>
-						</div>
-					),
-					text: 'Secretary review',
-			  }
-			: request.status == 1
-			? {
-					backgroundColor: 'rgba(164, 161, 141, 0.2)',
-					color: 'rgba(164, 161, 141)',
-					icon: (
-						<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '14px', height: '14px' }}>
-							<i className='bi bi-person' style={{ fontSize: '18px' }}></i>
-							<i className='bi bi-hourglass-split' style={{ fontSize: '10px', alignSelf: 'flex-end' }}></i>
-						</div>
-					),
-					text: 'Supervisor review',
-			  }
-			: request.status == 3
-			? {
-					backgroundColor: 'rgba(1, 133, 114, 0.2)',
-					color: 'rgba(1, 133, 114)',
-					icon: <i className='bi bi-check-circle' style={{ fontSize: '16px' }}></i>,
-					text: 'Approved',
-			  }
-			: request.status == 2 || request.status == 4
-			? {
-					backgroundColor: 'rgba(234, 84, 85, 0.2)',
-					color: 'rgba(234, 84, 85)',
-					icon: <i className='bi bi-x-circle' style={{ fontSize: '16px' }}></i>,
-					text: 'Rejected',
-			  }
-			: request.status == 5
-			? {
-					backgroundColor: 'rgba(230,120,43, 0.2)',
-					color: 'rgba(230,120,43)',
-					icon: <i className='bi bi-pencil' style={{ fontSize: '16px' }}></i>,
-					text: 'Requested change',
-			  }
-			: null;
 
 	function acceptRequest() {
 		setShowModal(false);
@@ -200,39 +155,27 @@ const SecretaryCard = ({ request, setInternalDirty, setShowModal, setMsgModal })
 							</div>
 						)}
 					</div>
-					{request.status == 5 ? (
-						<OverlayTrigger placement='bottom' delay={{ show: 100, hide: 200 }} overlay={popover}>
+					{config ? (
+						<OverlayTrigger placement='bottom' delay={{ show: 100, hide: 200 }} overlay={request.status === 5 ? popover : <></>}>
 							<div>
 								<span
 									className='badge'
 									style={{
-										backgroundColor: styleStatus.backgroundColor,
-										color: styleStatus.color,
+										backgroundColor: config.backgroundColor,
+										color: config.color,
 										padding: '1em 1em',
 										borderRadius: '0.25rem',
 									}}
 								>
-									{styleStatus.icon}
+									<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '14px', height: '14px' }}>
+										<i className={config.icon} style={{ fontSize: '18px' }}></i>
+										<i className={config.smallIcon} style={{ fontSize: '10px', alignSelf: 'flex-end' }}></i>
+									</div>
 								</span>
-								<span style={{ color: 'rgba(0, 0, 0, 0.5)', fontSize: 15, paddingLeft: 10 }}>{styleStatus.text}</span>
+								<span style={{ color: 'rgba(0, 0, 0, 0.5)', fontSize: 15, paddingLeft: 10 }}>{config.text}</span>
 							</div>
 						</OverlayTrigger>
-					) : (
-						<div>
-							<span
-								className='badge'
-								style={{
-									backgroundColor: styleStatus.backgroundColor,
-									color: styleStatus.color,
-									padding: '1em 1em',
-									borderRadius: '0.25rem',
-								}}
-							>
-								{styleStatus.icon}
-							</span>
-							<span style={{ color: 'rgba(0, 0, 0, 0.5)', fontSize: 15, paddingLeft: 10 }}>{styleStatus.text}</span>
-						</div>
-					)}
+					) : null}
 				</div>
 
 				{(request.status == 0 && isProfessor == false) || (request.status == 1 && isProfessor == true) ? (
@@ -269,7 +212,7 @@ const SecretaryCard = ({ request, setInternalDirty, setShowModal, setMsgModal })
 								>
 									<div className='d-flex align-items-center'>
 										<Image className='mobile-icon' style={{ height: 25, width: 25, paddingRight: 8 }} src={Pencil} roundedCircle />
-										<span className='d-none d-md-flex'>Requested change</span>
+										<span className='d-none d-md-flex'>Request change</span>
 									</div>
 								</Button>
 							</div>

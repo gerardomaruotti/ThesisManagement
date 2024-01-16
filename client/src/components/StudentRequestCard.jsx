@@ -1,5 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Col, Card, Image, Button, Popover } from 'react-bootstrap';
+import { statusConfig } from '../constants/statusConfig.js';
+import { Col, Card, Image, Button, Popover, OverlayTrigger } from 'react-bootstrap';
 import { Color } from '../constants/colors.js';
 import { useNavigate } from 'react-router-dom';
 import Avatar from '../assets/avatar.svg';
@@ -8,6 +9,7 @@ import dayjs from 'dayjs';
 
 function StudentRequestCard({ request }) {
 	const navigate = useNavigate();
+	const config = statusConfig[request.status];
 	const popover = (
 		<Popover>
 			{!request.notes ? (
@@ -22,49 +24,6 @@ function StudentRequestCard({ request }) {
 			)}
 		</Popover>
 	);
-
-	const statusConfig = {
-		0: {
-			backgroundColor: 'rgba(164, 161, 141, 0.2)',
-			color: 'rgba(164, 161, 141)',
-			icon: 'bi bi-headphones',
-			smallIcon: 'bi bi-hourglass-split',
-			text: 'In review by secretary',
-		},
-		1: {
-			backgroundColor: 'rgba(164, 161, 141, 0.2)',
-			color: 'rgba(164, 161, 141)',
-			icon: 'bi bi-person',
-			smallIcon: 'bi bi-hourglass-split',
-			text: 'In review by supervisor',
-		},
-		2: {
-			backgroundColor: 'rgba(234, 84, 85, 0.2)',
-			color: 'rgba(234, 84, 85)',
-			icon: 'bi bi-x-circle',
-			text: 'Rejected by secretary',
-		},
-		3: {
-			backgroundColor: 'rgba(1, 133, 114, 0.2)',
-			color: 'rgba(1, 133, 114)',
-			icon: 'bi bi-check-circle',
-			text: 'Approved',
-		},
-		4: {
-			backgroundColor: 'rgba(234, 84, 85, 0.2)',
-			color: 'rgba(234, 84, 85)',
-			icon: 'bi bi-x-circle',
-			text: 'Rejected',
-		},
-		5: {
-			backgroundColor: 'rgba(230, 120, 43, 0.2)',
-			color: 'rgba(230, 120, 43)',
-			icon: 'bi bi-pencil',
-			text: 'Requested change',
-		},
-	};
-
-	const config = statusConfig[request.status];
 
 	return (
 		<Col lg={6} sm={12} style={{ marginTop: 25 }}>
@@ -133,8 +92,8 @@ function StudentRequestCard({ request }) {
 						</div>
 					</div>
 					{config ? (
-						<div style={{ display: 'flex', alignItems: 'center', marginTop: 20 }}>
-							<div style={{ display: 'flex', alignItems: 'center' }}>
+						<OverlayTrigger placement='bottom' delay={{ show: 100, hide: 200 }} overlay={request.status === 5 ? popover : <></>}>
+							<div>
 								<span
 									className='badge'
 									style={{
@@ -149,11 +108,9 @@ function StudentRequestCard({ request }) {
 										<i className={config.smallIcon} style={{ fontSize: '10px', alignSelf: 'flex-end' }}></i>
 									</div>
 								</span>
+								<span style={{ color: 'rgba(0, 0, 0, 0.5)', fontSize: 15, paddingLeft: 10 }}>{config.text}</span>
 							</div>
-							<div style={{ display: 'flex', alignItems: 'center', marginLeft: 5, whiteSpace: 'nowrap' }}>
-								<span style={{ color: 'rgba(0, 0, 0, 0.5)' }}>{config.text}</span>
-							</div>
-						</div>
+						</OverlayTrigger>
 					) : null}
 				</div>
 			</Card>
