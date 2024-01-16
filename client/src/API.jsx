@@ -39,7 +39,7 @@ function callAPI(endpoint, accessToken, method, body) {
 							reject(message);
 						}) // error message in the response body
 						.catch(() => {
-							reject(new Error('Cannot parse server response2.'));
+							reject(new Error('Cannot parse server response.'));
 						});
 				}
 			})
