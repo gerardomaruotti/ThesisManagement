@@ -33,7 +33,7 @@ function StudentApplications() {
 		<Container>
 			<Row style={{ marginBottom: 25 }}>
 				{applications.length > 0 ? (
-					applications.map((application, index) => <StudentApplicationCard key={index} application={application} />)
+					applications.map((application) => <StudentApplicationCard key={application.id} application={application} />)
 				) : (
 					<div className='d-flex justify-content-center align-items-center min-vh-100'>
 						<div className='text-center'>

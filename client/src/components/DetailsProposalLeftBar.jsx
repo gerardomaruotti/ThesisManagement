@@ -26,8 +26,8 @@ function DetailsProposalLeftBar({ thesis, apply, id, applications, hasApplied, f
 				<Col md={12}>
 					<div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}> Co-Supervisors </div>
 					<div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}>
-						{thesis.coSupervisors.map((coSupervisor, index) => (
-							<div key={index} style={{ display: 'flex', alignItems: 'center', marginBottom: 10 }}>
+						{thesis.coSupervisors.map((coSupervisor) => (
+							<div key={coSupervisor.email} style={{ display: 'flex', alignItems: 'center', marginBottom: 10 }}>
 								<Image style={{ height: 38, width: 38 }} src={Avatar} roundedCircle />
 								<span style={{ marginLeft: 15, color: 'rgba(0, 0, 0, 0.8)', marginRight: 15 }}>{coSupervisor.name + ' ' + coSupervisor.surname}</span>
 							</div>
@@ -39,9 +39,9 @@ function DetailsProposalLeftBar({ thesis, apply, id, applications, hasApplied, f
 				<Col md={12}>
 					<div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}> Keywords </div>
 					<div style={{ fontWeight: 'semi-bold', fontSize: 14, marginTop: 15 }}>
-						{thesis.keywords.map((keyword, index) => (
+						{thesis.keywords.map((keyword) => (
 							<span
-								key={index}
+								key={keyword}
 								className='badge'
 								style={{
 									backgroundColor: randomcolor({ seed: keyword, luminosity: 'bright', format: 'rgba', alpha: 1 }).replace(/1(?=\))/, '0.1'),
@@ -62,8 +62,8 @@ function DetailsProposalLeftBar({ thesis, apply, id, applications, hasApplied, f
 				<Col md={12}>
 					<div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}> Types </div>
 					<div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}>
-						{thesis.types.map((type, index) => (
-							<div key={index} style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}>
+						{thesis.types.map((type) => (
+							<div key={type} style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}>
 								<span
 									className='badge'
 									style={{
@@ -102,8 +102,8 @@ function DetailsProposalLeftBar({ thesis, apply, id, applications, hasApplied, f
 			{thesis.groups.length > 0 ? (
 				<Col md={12}>
 					<div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}> Groups </div>
-					{thesis.groups.map((group, index) => (
-						<div key={index} style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}>
+					{thesis.groups.map((group) => (
+						<div key={group.cod_group} style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}>
 							<span
 								className='badge'
 								style={{

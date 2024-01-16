@@ -40,8 +40,12 @@ const DetailsRequestLeftBar = ({ request, setInternalDirty, setShowModal, setMsg
 			{!request.co_supervisors ? null : request.co_supervisors.length > 0 ? (
 				<Col md={12}>
 					<div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}> Co-Supervisors </div>
-					{request.co_supervisors.map((coSupervisor, index) => (
-						<div key={index} className='d-flex flex-row align-items-center' style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}>
+					{request.co_supervisors.map((coSupervisor) => (
+						<div
+							key={coSupervisor.email}
+							className='d-flex flex-row align-items-center'
+							style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}
+						>
 							<Image style={{ height: 38, width: 38 }} src={Avatar} roundedCircle />
 							<div className='d-flex flex-column'>
 								<span style={{ marginLeft: 15, color: 'rgba(0, 0, 0, 0.8)' }}>{coSupervisor.name + ' ' + coSupervisor.surname}</span>

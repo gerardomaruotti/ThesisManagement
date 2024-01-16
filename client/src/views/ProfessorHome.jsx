@@ -114,9 +114,7 @@ function ProfessorHome({
 		<>
 			<div style={{ position: 'sticky', top: 0, zIndex: 2, backgroundColor: 'white', boxShadow: '0 4px 2px -2px rgba(0, 0, 0, 0.2)' }}>
 				<Container>
-					{rapidFilter === 'active' ? null : (
-						<SearchBar search={search} handleSearch={handleSearch} />
-					)}
+					{rapidFilter === 'active' ? null : <SearchBar search={search} handleSearch={handleSearch} />}
 					<Row style={{ paddingTop: 25, paddingBottom: 20 }}>
 						<Col xs={12} md={'auto'} style={{ paddingBottom: 10 }}>
 							<Nav variant='pills' activeKey={rapidFilter}>
@@ -176,7 +174,7 @@ function ProfessorHome({
 					{filteredThesis.length !== 0 ? (
 						filteredThesis
 							.sort((a, b) => b.count - a.count)
-							.map((thesis, index) => (
+							.map((thesis) => (
 								<ProposalCard
 									key={thesis.ID}
 									isProfessor={1}

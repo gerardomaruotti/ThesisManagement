@@ -255,8 +255,8 @@ function StudentApplicationInfo({ setShowModal, setMsgModal, setDirtyParent }) {
 										</tr>
 									</thead>
 									<tbody>
-										{studentInfo.exams.map((exam, index) => (
-											<tr key={index}>
+										{studentInfo.exams.map((exam) => (
+											<tr key={exam.cod_course}>
 												<td>{exam.cod_course}</td>
 												<td>{exam.title_course}</td>
 												<td>{exam.date}</td>
