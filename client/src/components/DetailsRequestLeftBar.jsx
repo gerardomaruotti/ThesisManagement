@@ -132,7 +132,7 @@ const DetailsRequestLeftBar = ({ request, setInternalDirty, setShowModal, setMsg
 							});
 						}}
 					>
-						<i className='bi bi-check2' style={{ paddingRight: 5 }}></i>
+						<i className='bi bi-check2' style={{ paddingRight: 5 }} />
 						Approve
 					</Button>
 					{isProfessor ? (
@@ -143,7 +143,7 @@ const DetailsRequestLeftBar = ({ request, setInternalDirty, setShowModal, setMsg
 								setShowModalWithText(true);
 							}}
 						>
-							<i className='bi bi-pen' style={{ paddingRight: 5 }}></i>
+							<i className='bi bi-pen' style={{ paddingRight: 5 }} />
 							Request change
 						</Button>
 					) : null}
@@ -159,7 +159,7 @@ const DetailsRequestLeftBar = ({ request, setInternalDirty, setShowModal, setMsg
 							});
 						}}
 					>
-						<i className='bi bi-x-lg' style={{ paddingRight: 5 }}></i>
+						<i className='bi bi-x-lg' style={{ paddingRight: 5 }} />
 						Reject
 					</Button>
 				</div>
