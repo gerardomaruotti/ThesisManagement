@@ -805,23 +805,18 @@ app.get('/api/requests', checkJwt, (req,res) => {
 			let teacherRequests = await db.getTeacherRequests(userRole.id);
 			teacherRequests = await processIDS(teacherRequests);
 			return res.status(200).json(teacherRequests);
-		} else {
-			if (userRole.role == "secretary") {
+		} else if(userRole.role == "secretary"){
 				let secretaryRequests = await db.getSecretaryRequests();
 				secretaryRequests = await processIDS(secretaryRequests);
 				return res.status(200).json(secretaryRequests);
-			} else {
-				if (userRole.role == "student") {
+			} else if (userRole.role == "student") {
 					let studentRequests = await db.getStudentRequests(userRole.id);
 					studentRequests = await processIDS(studentRequests);
 					return res.status(200).json(studentRequests);
 				} else {
 					return res.status(401).json({error: "Unauthorized user"})
 				}
-			}
-		}
-
-	} catch(err){
+		} catch(err){
 		return res.status(503).json({error: "Error get Requests"})
 	}
 	

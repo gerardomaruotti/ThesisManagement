@@ -1,14 +1,17 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import { Card, Container, Row, Col, Form, Button } from 'react-bootstrap';
-import { useLoading } from '../LoadingContext.jsx';
-import Loading from '../components/Loading.jsx';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
+import UserContext from '../contexts/UserContext';
 import dayjs from 'dayjs';
+import { useLoading } from '../contexts/LoadingContext.jsx';
+import { handleError, handleSuccess } from '../utils/toastHandlers.js';
+import { Card, Container, Row, Col, Form, Button } from 'react-bootstrap';
 import API from '../API.jsx';
+import Loading from '../components/Loading.jsx';
 import PropTypes from 'prop-types';
 
-function Settings({ accessToken, handleError, handleSuccess, setDirty, virtualClock, setVirtualClock, dateVirtualClock, setDateVirtualClock }) {
+function Settings({ setDirty, virtualClock, setVirtualClock, dateVirtualClock, setDateVirtualClock }) {
+	const { accessToken } = useContext(UserContext);
 	const { loading } = useLoading();
 	const [date, setDate] = useState(dateVirtualClock ? dateVirtualClock : null);
 
@@ -102,9 +105,6 @@ function Settings({ accessToken, handleError, handleSuccess, setDirty, virtualCl
 }
 
 Settings.propTypes = {
-	accessToken: PropTypes.string,
-	handleError: PropTypes.func.isRequired,
-	handleSuccess: PropTypes.func.isRequired,
 	setDirty: PropTypes.func.isRequired,
 	virtualClock: PropTypes.bool.isRequired,
 	setVirtualClock: PropTypes.func.isRequired,

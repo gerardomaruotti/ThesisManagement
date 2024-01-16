@@ -1,7 +1,7 @@
 import { Container, Row, Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import StudentRequestCard from '../components/StudentRequestCard';
 import PropsTypes from 'prop-types';
+import StudentRequestCard from '../components/StudentRequestCard';
 
 function StudentRequests({ hasApplied, requests, hasRequested }) {
 	const navigate = useNavigate();

@@ -1,12 +1,15 @@
-import PropsTypes from 'prop-types';
 import Select from 'react-select';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
+import UserContext from '../contexts/UserContext';
 import { useNavigate } from 'react-router-dom';
 import { colorStyles } from '../constants/colors.js';
 import { Form, Container, Row, Col, Button } from 'react-bootstrap';
 import API from '../API.jsx';
+import { handleError } from '../utils/toastHandlers.js';
+import PropTypes from 'prop-types';
 
-function ThesisRequestForm({ accessToken, handleError }) {
+function ThesisRequestForm({ setDirty }) {
+	const { accessToken } = useContext(UserContext);
 	const navigate = useNavigate();
 	const [title, setTitle] = useState('');
 	const [description, setDescription] = useState('');
@@ -86,7 +89,10 @@ function ThesisRequestForm({ accessToken, handleError }) {
 		};
 
 		API.insertThesisRequest(accessToken, newRequest)
-			.then(() => navigate(-1))
+			.then(() => {
+				setDirty(true);
+				navigate(-1);
+			})
 			.catch((err) => handleError(err.errors));
 	};
 
@@ -142,8 +148,7 @@ function ThesisRequestForm({ accessToken, handleError }) {
 }
 
 ThesisRequestForm.propTypes = {
-	accessToken: PropsTypes.string,
-	handleError: PropsTypes.func,
+	setDirty: PropTypes.func.isRequired,
 };
 
 export default ThesisRequestForm;

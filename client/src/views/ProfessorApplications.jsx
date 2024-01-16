@@ -1,15 +1,18 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Container, Row, Col, Button, Form, InputGroup, Nav } from 'react-bootstrap';
 import '../constants/custom-styles.scss';
+import { useEffect, useState, useContext } from 'react';
+import UserContext from '../contexts/UserContext';
+import { Container, Row, Col, Nav } from 'react-bootstrap';
 import Loading from '../components/Loading.jsx';
-import { useLoading } from '../LoadingContext.jsx';
+import { useLoading } from '../contexts/LoadingContext.jsx';
 import ProfessorApplicationCard from '../components/ProfessorApplicationCard.jsx';
-import { useEffect, useState } from 'react';
 import API from '../API.jsx';
 import dayjs from 'dayjs';
 import PropTypes from 'prop-types';
+import { handleError } from '../utils/toastHandlers.js';
 
-function ProfessorApplications({ accessToken, handleError, date, rapidFilter, setRapidFilter }) {
+function ProfessorApplications({ date, rapidFilter, setRapidFilter }) {
+	const { accessToken } = useContext(UserContext);
 	const { loading, setLoading } = useLoading();
 	const [applicationsThesis, setApplicationsThesis] = useState([]);
 	const [filteredApplications, setFilteredApplications] = useState({});
@@ -144,8 +147,6 @@ function ProfessorApplications({ accessToken, handleError, date, rapidFilter, se
 }
 
 ProfessorApplications.propTypes = {
-	accessToken: PropTypes.string.isRequired,
-	handleError: PropTypes.func.isRequired,
 	date: PropTypes.string,
 	rapidFilter: PropTypes.string.isRequired,
 	setRapidFilter: PropTypes.func.isRequired,

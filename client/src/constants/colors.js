@@ -10,15 +10,45 @@ export const Color = {
 export const colorStyles = {
 	control: (styles) => ({ ...styles, backgroundColor: 'white' }),
 	option: (styles, { data, isDisabled, isFocused, isSelected }) => {
+		let backgroundColor;
+		let color;
+		let cursor;
+
+		if (isDisabled) {
+			backgroundColor = undefined;
+			color = '#ccc';
+			cursor = 'not-allowed';
+		} else if (isSelected) {
+			backgroundColor = Color.primary;
+			color = 'white';
+			cursor = 'default';
+		} else if (isFocused) {
+			backgroundColor = Color.light;
+			color = Color.primary;
+			cursor = 'default';
+		} else {
+			backgroundColor = undefined;
+			color = Color.primary;
+			cursor = 'default';
+		}
+
+		let activeBackgroundColor;
+		if (!isDisabled && isSelected) {
+			activeBackgroundColor = Color.primary;
+		} else if (!isDisabled) {
+			activeBackgroundColor = Color.light;
+		} else {
+			activeBackgroundColor = undefined;
+		}
+
 		return {
 			...styles,
-			backgroundColor: isDisabled ? undefined : isSelected ? Color.primary : isFocused ? Color.light : undefined,
-			color: isDisabled ? '#ccc' : isSelected ? 'white' : Color.primary,
-			cursor: isDisabled ? 'not-allowed' : 'default',
-
+			backgroundColor: backgroundColor,
+			color: color,
+			cursor: cursor,
 			':active': {
 				...styles[':active'],
-				backgroundColor: !isDisabled ? (isSelected ? Color.primary : Color.light) : undefined,
+				backgroundColor: activeBackgroundColor,
 			},
 		};
 	},

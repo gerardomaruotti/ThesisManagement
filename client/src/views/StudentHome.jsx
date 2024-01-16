@@ -1,23 +1,23 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Container, Row, Col, Button, Form, InputGroup, Nav } from 'react-bootstrap';
 import '../constants/custom-styles.scss';
+import { useEffect, useState, useContext } from 'react';
+import UserContext from '../contexts/UserContext';
+import { Container, Row, Col, Button, Form, InputGroup, Nav } from 'react-bootstrap';
 import { Color } from '../constants/colors.js';
-import ProposalCard from '../components/ProposalCard.jsx';
-import FiltersModal from '../components/FiltersModal.jsx';
-import { useEffect, useState } from 'react';
+import { filterThesis } from '../utils/filterThesis';
+import { handleError } from '../utils/toastHandlers.js';
 import { useAuth0 } from '@auth0/auth0-react';
-import { useLoading } from '../LoadingContext.jsx';
+import { useLoading } from '../contexts/LoadingContext.jsx';
 import API from '../API.jsx';
-import Loading from '../components/Loading.jsx';
 import PropTypes from 'prop-types';
+import FiltersModal from '../components/FiltersModal.jsx';
+import ProposalCard from '../components/ProposalCard.jsx';
+import Loading from '../components/Loading.jsx';
 
 function StudentHome({
 	thesis,
 	setThesis,
 	applications,
-	handleError,
-	handleSuccess,
-	accessToken,
 	setDirty,
 	setShowModal,
 	setMsgModal,
@@ -41,6 +41,7 @@ function StudentHome({
 	rapidFilter,
 	setRapidFilter,
 }) {
+	const { accessToken } = useContext(UserContext);
 	const { loginWithRedirect, isAuthenticated, isLoading } = useAuth0();
 	const { loading, setLoading } = useLoading();
 	const [filtersShow, setFiltersShow] = useState(false);
@@ -48,13 +49,7 @@ function StudentHome({
 	const [filteredThesis, setFilteredThesis] = useState(thesis);
 
 	function handleRapidFilters(filter) {
-		if (filter === 'all') {
-			setRapidFilter('all');
-		} else if (filter === 'company') {
-			setRapidFilter('company');
-		} else if (filter === 'abroad') {
-			setRapidFilter('abroad');
-		}
+		setRapidFilter(filter);
 	}
 
 	function handleSearch(e) {
@@ -62,43 +57,8 @@ function StudentHome({
 	}
 
 	useEffect(() => {
-		setFilteredThesis(thesis);
-		if (rapidFilter === 'all') {
-			let filtered = thesis.filter((thesis) => {
-				return (
-					thesis.title.toLowerCase().includes(search.toLowerCase()) ||
-					thesis.description.toLowerCase().includes(search.toLowerCase()) ||
-					thesis.notes.toLowerCase().includes(search.toLowerCase()) ||
-					thesis.req_know.toLowerCase().includes(search.toLowerCase()) ||
-					thesis.keywords.filter((keyword) => keyword.toLowerCase().includes(search.toLowerCase())).length > 0
-				);
-			});
-			setFilteredThesis(filtered);
-		} else if (rapidFilter === 'company') {
-			let filtered = thesis.filter((thesis) => {
-				return (
-					(thesis.title.toLowerCase().includes(search.toLowerCase()) ||
-						thesis.description.toLowerCase().includes(search.toLowerCase()) ||
-						thesis.notes.toLowerCase().includes(search.toLowerCase()) ||
-						thesis.req_know.toLowerCase().includes(search.toLowerCase()) ||
-						thesis.keywords.filter((keyword) => keyword.toLowerCase().includes(search.toLowerCase())).length > 0) &&
-					thesis.types.filter((type) => type === 'IN COMPANY').length > 0
-				);
-			});
-			setFilteredThesis(filtered);
-		} else if (rapidFilter === 'abroad') {
-			let filtered = thesis.filter((thesis) => {
-				return (
-					(thesis.title.toLowerCase().includes(search.toLowerCase()) ||
-						thesis.description.toLowerCase().includes(search.toLowerCase()) ||
-						thesis.notes.toLowerCase().includes(search.toLowerCase()) ||
-						thesis.req_know.toLowerCase().includes(search.toLowerCase()) ||
-						thesis.keywords.filter((keyword) => keyword.toLowerCase().includes(search.toLowerCase())).length > 0) &&
-					thesis.types.filter((type) => type === 'ABROAD').length > 0
-				);
-			});
-			setFilteredThesis(filtered);
-		}
+		const filteredThesis = filterThesis(thesis, rapidFilter, search);
+		setFilteredThesis(filteredThesis);
 	}, [rapidFilter, search, thesis]);
 
 	useEffect(() => {
@@ -183,7 +143,6 @@ function StudentHome({
 				thesis={thesis}
 				setThesis={setThesis}
 				onHide={() => setFiltersShow(false)}
-				accessToken={accessToken}
 				activatedFilters={activatedFilters}
 				setActivatedFilters={setActivatedFilters}
 				selectedSupervisor={selectedSupervisor}
@@ -198,7 +157,7 @@ function StudentHome({
 				setSelectedGroups={setSelectedGroups}
 				expirationDate={expirationDate}
 				setExpirationDate={setExpirationDate}
-				handleError={handleError}
+				setFilterThesis={setFilteredThesis}
 				date={date}
 			/>
 			<Container>
@@ -210,11 +169,8 @@ function StudentHome({
 								<ProposalCard
 									key={thesis.ID}
 									thesis={thesis}
-									accessToken={accessToken}
 									setMsgModal={setMsgModal}
 									setShowModal={setShowModal}
-									handleError={handleError}
-									handleSuccess={handleSuccess}
 									setDirty={setDirty}
 									state={
 										applications.find((app) => app.id === thesis.ID && app.state != 2)
@@ -240,9 +196,6 @@ StudentHome.propTypes = {
 	thesis: PropTypes.array.isRequired,
 	setThesis: PropTypes.func.isRequired,
 	applications: PropTypes.array.isRequired,
-	handleError: PropTypes.func.isRequired,
-	handleSuccess: PropTypes.func.isRequired,
-	accessToken: PropTypes.string.isRequired,
 	setDirty: PropTypes.func.isRequired,
 	setShowModal: PropTypes.func.isRequired,
 	setMsgModal: PropTypes.func.isRequired,

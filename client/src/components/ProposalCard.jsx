@@ -6,17 +6,15 @@ import { useNavigate } from 'react-router-dom';
 import API from '../API.jsx';
 import randomcolor from 'randomcolor';
 import EditingButtons from './EditingButtons.jsx';
-import { useState } from 'react';
-import { useLoading } from '../LoadingContext.jsx';
+import { useState, useContext } from 'react';
+import UserContext from '../contexts/UserContext';
+import { useLoading } from '../contexts/LoadingContext.jsx';
 import PropsTypes from 'prop-types';
 import ModalWithUpload from './ModalWithUpload.jsx';
+import { handleError, handleSuccess } from '../utils/toastHandlers.js';
 
 function ProposalCard({
-	accessToken,
-	handleError,
-	handleSuccess,
 	thesis,
-	isProfessor,
 	isEditable,
 	isArchived,
 	setGenericModal,
@@ -27,6 +25,7 @@ function ProposalCard({
 	hasApplied,
 	hasRequested,
 }) {
+	const { accessToken, isProfessor } = useContext(UserContext);
 	const navigate = useNavigate();
 	const [cv, setCv] = useState(null);
 	const [showModal, setShowModal] = useState(false);
@@ -273,11 +272,7 @@ function ProposalCard({
 }
 
 ProposalCard.propTypes = {
-	accessToken: PropsTypes.string,
-	handleError: PropsTypes.func,
-	handleSuccess: PropsTypes.func,
 	thesis: PropsTypes.object,
-	isProfessor: PropsTypes.number,
 	isEditable: PropsTypes.bool,
 	isArchived: PropsTypes.bool,
 	setGenericModal: PropsTypes.func,

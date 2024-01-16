@@ -1,4 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { useContext } from 'react';
+import UserContext from '../contexts/UserContext';
 import Avatar from '../assets/avatar.svg';
 import { Color } from '../constants/colors.js';
 import randomcolor from 'randomcolor';
@@ -7,8 +9,10 @@ import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 import PropsTypes from 'prop-types';
 
-function DetailsProposalLeftBar({ thesis, apply, id, isProfessor, applications, hasApplied, setDirty, fromApplication }) {
+function DetailsProposalLeftBar({ thesis, apply, id, applications, hasApplied, fromApplication }) {
+	const { isProfessor } = useContext(UserContext);
 	const navigate = useNavigate();
+
 	return (
 		<Row>
 			<Col md={12}>
@@ -31,7 +35,6 @@ function DetailsProposalLeftBar({ thesis, apply, id, isProfessor, applications, 
 					</div>
 				</Col>
 			) : null}
-
 			{thesis.keywords.length > 0 ? (
 				<Col md={12}>
 					<div style={{ fontWeight: 'medium', fontSize: 15, marginTop: 15 }}> Keywords </div>
@@ -211,10 +214,8 @@ DetailsProposalLeftBar.propTypes = {
 	thesis: PropsTypes.object,
 	apply: PropsTypes.func,
 	id: PropsTypes.string,
-	isProfessor: PropsTypes.bool.isRequired,
 	applications: PropsTypes.array,
 	hasApplied: PropsTypes.bool,
-	setDirty: PropsTypes.func,
 	fromApplication: PropsTypes.bool,
 };
 

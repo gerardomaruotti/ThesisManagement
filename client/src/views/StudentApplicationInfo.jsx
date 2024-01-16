@@ -1,14 +1,17 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
+import UserContext from '../contexts/UserContext';
+import image from '../assets/default_image_profile.jpg';
+import { useLoading } from '../contexts/LoadingContext.jsx';
+import { handleError, handleSuccess } from '../utils/toastHandlers.js';
 import { Container, Card, Row, Col, Image, Button, Table, Offcanvas } from 'react-bootstrap';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useLoading } from '../LoadingContext.jsx';
-import Loading from '../components/Loading.jsx';
-import image from '../assets/default_image_profile.jpg';
 import { Color } from '../constants/colors.js';
 import API from '../API.jsx';
 import PropTypes from 'prop-types';
+import Loading from '../components/Loading.jsx';
 
-function StudentApplicationInfo({ accessToken, handleError, handleSuccess, setShowModal, setMsgModal, setDirtyParent }) {
+function StudentApplicationInfo({ setShowModal, setMsgModal, setDirtyParent }) {
+	const { accessToken } = useContext(UserContext);
 	const [showDetails, setShowDetails] = useState(false);
 	const handleClose = () => setShowDetails(false);
 	const handleShow = () => setShowDetails(true);
@@ -295,9 +298,6 @@ function StudentApplicationInfo({ accessToken, handleError, handleSuccess, setSh
 }
 
 StudentApplicationInfo.propTypes = {
-	accessToken: PropTypes.string,
-	handleError: PropTypes.func.isRequired,
-	handleSuccess: PropTypes.func.isRequired,
 	setShowModal: PropTypes.func.isRequired,
 	setMsgModal: PropTypes.func.isRequired,
 	setDirtyParent: PropTypes.func.isRequired,
