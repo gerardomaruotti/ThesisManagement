@@ -256,20 +256,24 @@ app.get('/api/thesis/:id/groups', checkJwt,(req, res) => {
 	})();
 });
 
+const validateInputs = () => [
+	check('title').isString().trim().isLength({ min: 1 }),
+	check('description').isString().trim().isLength({ min: 1 }),
+	check('required_knowledge').isString(),
+	check('notes').isString(),
+	check('expiration_date').isString().trim().isLength({ min: 10, max: 10 }),
+	check('level').isString().trim().isLength({ min: 1 }),
+	check('degree').isString().trim().isLength({ min: 1 }),
+	check('co_supervisors').isArray(),
+	check('keywords').isArray(),
+	check('types').isArray(),
+  ];
+
+
+
 app.post(
 	'/api/insert/thesis',
-	[
-		check('title').isString().trim().isLength({ min: 1 }),
-		check('description').isString().trim().isLength({ min: 1 }),
-		check('required_knowledge').isString(),
-		check('notes').isString(),
-		check('expiration_date').isString().trim().isLength({ min: 10, max: 10 }),
-		check('level').isString().trim().isLength({ min: 1 }),
-		check('degree').isString().trim().isLength({ min: 1 }),
-		check('co_supervisors').isArray(),
-		check('keywords').isArray(),
-		check('types').isArray(),
-	],
+	validateInputs(),
 	checkJwt,
 	(req, res) => {
 		(async () => {
@@ -443,11 +447,12 @@ app.get('/api/thesis/applications/browse', checkJwt,(req, res) => {
 	})();
 });
 
-app.post('/api/accept/application', [
+const validateInputAppl = () => [
 	check('studentID').isString().trim().notEmpty(),
 	check('thesisID').isInt().custom(value => value > 0),
+]
 
-], checkJwt,(req, res) => {
+app.post('/api/accept/application', validateInputAppl(), checkJwt,(req, res) => {
 	(async () => {
 		try {
 			const errors = validationResult(req);
@@ -495,11 +500,7 @@ app.post('/api/accept/application', [
 	})();
 });
 
-app.post('/api/reject/application', [
-	check('studentID').isString().trim().notEmpty(),
-	check('thesisID').isInt().custom(value => value > 0),
-
-], checkJwt, (req, res) => {
+app.post('/api/reject/application', validateInputAppl(), checkJwt, (req, res) => {
 	(async () => {
 		try {
 
@@ -544,18 +545,7 @@ app.post('/api/reject/application', [
 });
 
 app.put('/api/edit/thesis/:id',
-	[
-		check('title').isString().trim().isLength({ min: 1 }),
-		check('description').isString().trim().isLength({ min: 1 }),
-		check('required_knowledge').isString(),
-		check('notes').isString(),
-		check('expiration_date').isString().trim().isLength({ min: 10, max: 10 }),
-		check('level').isString().trim().isLength({ min: 1 }),
-		check('degree').isString().trim().isLength({ min: 1 }),
-		check('co_supervisors').isArray(),
-		check('keywords').isArray(),
-		check('types').isArray(),
-	],
+	validateInputs(),
 	checkJwt,
 	(req, res) => {
 		(async () => {
@@ -685,12 +675,11 @@ app.put('/api/virtualClockOff', checkJwt,(req, res) => {
 	})();
 });
 
-
+const validateInputThesis = () => [
+	check('thesisID').isInt().custom(value => value > 0)
+]
 //DELETE THESIS 
-app.post('/api/delete/thesis', [
-	check('thesisID').isInt().custom(value => value > 0),
-
-], checkJwt, (req, res) => {
+app.post('/api/delete/thesis', validateInputThesis(), checkJwt, (req, res) => {
 	(async () => {
 		try {
 
@@ -719,10 +708,7 @@ app.post('/api/delete/thesis', [
 });
 
 //Archive thesis proposal
-app.post('/api/archive/thesis', [
-	check('thesisID').isInt().custom(value => value > 0),
-
-], checkJwt, (req, res) => {
+app.post('/api/archive/thesis',validateInputThesis(), checkJwt, (req, res) => {
 	(async () => {
 		try {
 
@@ -888,13 +874,13 @@ app.post(
 		})();
 });
 
-
+const validateInputReq = () => [
+	check('requestID').isInt()
+]
 
 app.post(
 	'/api/approve/request/secretary',
-	[
-		check('requestID').isInt()
-	], checkJwt,
+	validateInputReq(), checkJwt,
 	(req, res) => {
 		(async () => {
 			const errors = validationResult(req);
@@ -943,9 +929,7 @@ app.post(
 
 app.post( //i am supposed to be a secretary 
 	'/api/reject/request/secretary',
-	[
-		check('requestID').isInt()
-	], checkJwt,
+	validateInputReq, checkJwt,
 	(req, res) => {
 		(async () => {
 			const errors = validationResult(req);
@@ -973,9 +957,7 @@ app.post( //i am supposed to be a secretary
 
 app.post( 
 	'/api/approve/request/professor',
-	[
-		check('requestID').isInt()
-	], checkJwt,
+	validateInputReq(), checkJwt,
 	(req, res) => {
 		(async () => {
 			const errors = validationResult(req);
@@ -1004,9 +986,7 @@ app.post(
 
 app.post( 
 	'/api/reject/request/professor',
-	[
-		check('requestID').isInt()
-	], checkJwt,
+	validateInputReq, checkJwt,
 	(req, res) => {
 		(async () => {
 			const errors = validationResult(req);
