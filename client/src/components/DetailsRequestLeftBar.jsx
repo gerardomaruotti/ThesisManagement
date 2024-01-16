@@ -135,6 +135,7 @@ const DetailsRequestLeftBar = ({ request, setInternalDirty, setShowModal, setMsg
 						<span style={{ paddingRight: 5 }}>
 							<i className='bi bi-check2' />
 						</span>
+						{''}
 						Approve
 					</Button>
 					{isProfessor ? (
@@ -148,6 +149,7 @@ const DetailsRequestLeftBar = ({ request, setInternalDirty, setShowModal, setMsg
 							<span style={{ paddingRight: 5 }}>
 								<i className='bi bi-pen' />
 							</span>
+							{''}
 							Request change
 						</Button>
 					) : null}
@@ -166,6 +168,7 @@ const DetailsRequestLeftBar = ({ request, setInternalDirty, setShowModal, setMsg
 						<span style={{ paddingRight: 5 }}>
 							<i className='bi bi-x-lg' />
 						</span>
+						{''}
 						Reject
 					</Button>
 				</div>
