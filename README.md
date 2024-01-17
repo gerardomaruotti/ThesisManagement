@@ -3,6 +3,8 @@
 
 ## API Server
 
+### Miscellaneous
+
 - GET `/api/keywords`
   - request parameters: none.
   - response body content: list of keywords.
@@ -21,8 +23,12 @@
 - GET `/api/cds`
   - request parameters: none.
   - response body content: list of cds identified with the code of the degree and the related title.
+
+
+### API over Thesis
+
 - POST `/api/thesis`
-  - request parameters: an object containing filters.
+  - request parameters: none.
   - request body content: an object that may containing filters: a list of keywords, a list of types, a supervisor, a list of co-supervisors, a list of groups and an expiration date. 
   - response body content: list of thesis identified with an identifier, a title, a description, required knowledge, notes, expiration date, the level, related degree, a list containing the related types and a list containing the related keywords.
 - GET `/api/thesis/:id/groups`
@@ -34,6 +40,22 @@
 - GET `/api/thesis/:id`
   - request parameters: thesis identifier.
   - response body content: an object including all the data related to a thesis: a title, a description, required knowledge, notes, expiration date, the level, related degree, the supervisor and a list of co-supervisors, the list of groups to which the supervisors belong, a list of related keywords and a list of related types.
+- PUT `/api/edit/thesis/:id`
+  - request parameters: thesis identifier.
+  - request body content: an object including all the data necessary to update a thesis: a title, a description, required knowledge, notes, expiration date, the level, related degree, a list of co-supervisors, a list of related keywords and a list of related types.
+  - response body content: the identifier of the just modified thesis.
+- POST `/api/delete/thesis`
+  - request parameters: none.
+  - request body content: thesis identifier.
+  - response body content: a message indicating the outcome of the deleting process.
+- POST `/api/archive/thesis`
+  - request parameters: none.
+  - request body content: thesis identifier.
+  - response body content: a message indicating the outcome of the archiving process.
+
+
+### API over Applications
+
 - POST `/api/thesis/:id/apply`
   - request parameters: thesis identifier.
   - request body content: none.
@@ -52,25 +74,42 @@
   - request parameters: none.
   - request body content: student identifier and thesis identifier.
   - response body content: a string 'Rejected' validating the success of the operation.
-- PUT `/api/edit/thesis/:id`
-  - request parameters: thesis identifier.
-  - request body content: an object including all the data necessary to update a thesis: a title, a description, required knowledge, notes, expiration date, the level, related degree, a list of co-supervisors, a list of related keywords and a list of related types.
-  - response body content: the identifier of the just modified thesis.
-- POST `/api/delete/thesis`
-  - request parameters: none.
-  - request body content: thesis identifier.
-  - response body content: a message indicating the outcome of the deleting process.
-- POST `/api/archive/thesis`
-  - request parameters: none.
-  - request body content: thesis identifier.
-  - response body content: a message indicating the outcome of the archiving process.
 - POST `/api/applications/details`
   - request parameters: none.
   - request body content: application identifier.
   - response body content: an object containing the student's information: list of exams, the state and eventually a related cv.
 
 
-## API Virtual Clock 
+### API over Requests
+
+- GET `/api/requests`
+  - request parameters: none.
+  - request body: none.
+  - response body content:
+    - if called by a `teacher`: a list of requests that have been approved by the secretary and that have as supervisor the user, along with their status.
+    - if called by a `student`: the list of requests that the student has performed, along with their status.
+    - if called by a `secretary clerk`: a list of requests made by any student to any professor, along with their status.   
+- POST `/api/insert/request`
+  - request body: all the data necessary to create a new request: the supervisor's identifier, a title, a description and an array containing the co-supervisors.
+  - response body content: a message indicating the outcome of the insert process.
+- POST `/api/approve/request/secretary`
+  - request body: the identifier of the request that should be approved by secretary.
+  - response body content: a message indicating the outcome of the approve process.
+- POST `/api/reject/request/secretary`
+  - request body: the identifier of the request that should be rejected by secretary.
+  - response body content: a message indicating the outcome of the reject process.
+- POST `/api/approve/request/professor`
+  - request body: the identifier of the request that should be approved by a professor.
+  - response body content: a message indicating the outcome of the approve process.
+- POST `/api/reject/request/professor`
+  - request body: the identifier of the request that should be rejected by a professor.
+  - response body content: a message indicating the outcome of the reject process.  
+- POST `/api/change/request/professor`
+  - request body: the identifier of the request that needs changes, a note containing the changes to be made.
+  - response body content: a message indicating the outcome of the request change process.  
+
+
+### API Virtual Clock 
 - GET `/api/virtualClockStatus`
   - request parameters: none.
   - response body content: 
@@ -89,12 +128,14 @@
 
 - Table `Student` : (id, name, surname, gender, nationality, email, enrollment_year, cod_degree)
 - Table `Teacher` : (id, name, surname, email, cod_group, cod_department)
+- Table `Secretary_Clerk` : (id, name, surname, email)
 - Table `Degree` : (cod_degree, title_degree)
 - Table `Career` : (id, cod_course, title_course, cfu, grade, date)
 - Table `Group` : (cod_group, name)
 - Table `Department` : (cod_department, name)
 - Table `Thesis` : (id_thesis, title, description, required_knowledge, notes, expiration_date, level, degree, supervisor)
-- Table `Thesis_Proposal` : (student, id, state)
+- Table `Thesis_Application` : (id_application, student, thesis, state, application_date)
+- Table `Thesis_Request` : (id_request, student, supervisor, title, description, request_date, approval_date, status, notes)
 
 
 ## User Credentials
