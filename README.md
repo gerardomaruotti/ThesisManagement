@@ -167,6 +167,12 @@
 | s318927 | s315327@studenti.polito.it  |      Davide Vilella      |  LM-31  | s318927  |
 | s318927 | s318927@studenti.polito.it  |    Andrea Scamporrino    |  LM-33  | s318927  |
 
+### Secretary Clerk
+
+|   id    |       email        |        name           | password |
+| ------- | -----------------  | --------------------- | -------- |
+| p543236 | p543236@polito.it  |    Giacomo Ferrari    | p543236  |
+
 ## Sequence for running the project on Docker
 
 Before starting the process described below, download [Docker Desktop](https://www.docker.com/products/docker-desktop/)
