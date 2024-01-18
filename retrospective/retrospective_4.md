@@ -95,7 +95,7 @@ RETROSPECTIVE (Team 18)
   > We didn't encounter any additional issues to resolve.
 
 - Improvement goals for the next sprint and how to achieve them (technical tasks, team coordination, etc.)
- > We have finished the demos
+  > We have finished the demos
 
 - One thing you are proud of as a Team!!
   > We are very proud of the level of interoperability developed within our team. Each one of us has been a fundamental pillar for the structure of our project. Many of us have challenged ourselves, stepping out of our comfort zones, as seen in the case of presentations during the demos. We are also very proud of the final result; in our opinion, the project is both beautiful and functional."
