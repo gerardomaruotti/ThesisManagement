@@ -69,8 +69,8 @@ RETROSPECTIVE (Team 18)
   - Total hours spent: 6h 15m
   - Hours estimated for remediation by SonarQube : 1d 6h
   - Hours estimated for remediation by SonarQube only for the selected and planned issues :  15h
-  - Hours spent on remediation: 4h 30m
-  - Hours estimated on remediation: 6h 15m  
+  - Hours spent on remediation: 6h 15m 
+  - Hours estimated on remediation: 4h 30m 
   - Debt ratio: 0.6 %
   - ratio for each quality characteristic report in SonarQube under "Measures":
     - Reliability: A
