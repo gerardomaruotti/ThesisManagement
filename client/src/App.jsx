@@ -41,6 +41,7 @@ function App() {
 	const [copiedProposal, setCopiedProposal] = useState(null);
 	const [isSecretary, setIsSecretary] = useState(false);
 	const [filterThesisArchive, setFilterThesisArchive] = useState([]);
+	const [isPending, setIsPending] = useState(false);
 
 	// Requests
 	const [requests, setRequests] = useState([]);
@@ -134,7 +135,9 @@ function App() {
 				.then((app) => {
 					setApplications(app);
 					let applied = app.some((application) => application.state == 0 || application.state == 1);
+					let pending = app.some((application) => application.state == 0);
 					setHasApplied(applied);
+					setIsPending(pending);
 					setDirty(false);
 				})
 				.catch((err) => {
@@ -340,7 +343,7 @@ function App() {
 						path='/requests'
 						element={
 							isStudent ? (
-								<StudentRequests requests={requests} hasApplied={hasApplied} hasRequested={hasRequested} />
+								<StudentRequests requests={requests} hasApplied={isPending} hasRequested={hasRequested} />
 							) : isProfessor ? (
 								<SecretaryAndProfessorRequest
 									setShowModal={setShowModal}
