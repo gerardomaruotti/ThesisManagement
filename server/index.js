@@ -860,8 +860,8 @@ app.post(
 				let status = 0;
 				const pendingRequests = await db.checkPendingStudentRequests(student);
 				let applications = await db.getStudentApplications(student, date)
-				applications = applications.filter((elem) => (elem.state == '0' || elem.state == '1'))
-				if(pendingRequests || applications.length > 0) return res.status(400).json({ error: 'Pending or accepted application or requests already exists' })
+				applications = applications.filter((elem) => (elem.state == '0'))
+				if(pendingRequests || applications.length > 0) return res.status(400).json({ error: 'Pending application or accepted requests already exists' })
 				const requestId = await db.insertRequest(supervisor, title, description, student, request_date, approval_date, status);
 				for (let i = 0; i < co_supervisors.length; i++) {	
 					await db.insertCoSupervisorRequest(requestId, co_supervisors[i].name, co_supervisors[i].surname, co_supervisors[i].email);
